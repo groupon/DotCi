@@ -1,0 +1,62 @@
+<!--
+The MIT License (MIT)
+
+Copyright (c) 2014, Groupon, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <f:section title="DotCi Configuration">
+
+        <f:entry title=" Configuration" description="${%MongoDb Configuration}">
+
+                     <f:entry title="MongoDB Host">
+                        <f:textbox name="dotci.dbHost" value="${instance.dbHost}"/>
+                    </f:entry>
+                    
+                     <f:entry title="MongoDB Port">
+                        <f:textbox name="dotci.dbPort" value="${instance.dbPort}"/>
+                    </f:entry>
+                    
+                     <f:entry title="Db Name">
+                        <f:textbox name="dotci.dbName" value="${instance.dbName}"/>
+                    </f:entry>
+
+        </f:entry>
+                     <f:entry title="Github Api Url (eg: https://github.acme.com/api/v3)">
+                        <f:textbox name="dotci.githubApiUrl" value="${instance.githubApiUrl}"/>
+                    </f:entry>
+                    
+                    
+                     <f:entry title="Github callback url">
+                        <f:textbox name="dotci.githubCallbackUrl" value="${instance.githubCallbackUrl}"/>
+                    </f:entry>
+                    
+                     <f:entry title="Assigned label for newly created jobs (leave it empty if there is no label restriction)">
+                        <f:textbox name="dotci.label" value="${instance.label}"/>
+                    </f:entry>
+                    
+                     <f:entry title="Email Address (This is used as from address for failure/recovery emails)">
+                        <f:textbox name="dotci.fromEmailAddress" value="${instance.fromEmailAddress}"/>
+                    </f:entry>
+
+
+    </f:section>
+</j:jelly>

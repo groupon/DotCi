@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<!--
+The MIT License (MIT)
+
+Copyright (c) 2014, Groupon, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+ -->
+ 
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.jenkins-ci.plugins</groupId>
+		<artifactId>plugin</artifactId>
+		<version>1.502</version>
+		<!-- which version of Jenkins is this plugin built against? -->
+	</parent>
+	<groupId>com.groupon.jenkins-ci.plugins</groupId>
+	<artifactId>DotCi</artifactId>
+	<version>3.0.10-SNAPSHOT</version>
+	<packaging>hpi</packaging>
+	 <licenses>
+	   <license>
+	     <name>MIT License</name>
+	     <url>http://opensource.org/licenses/MIT</url>
+	   </license>
+	 </licenses>
+
+	<url>https://github.com/groupon/DotCi</url>
+	<scm>
+          <connection>scm:git:ssh://github.com/groupon/DotCi.git</connection>
+	  <developerConnection>scm:git:ssh://git@github.com/groupon/DotCi.git</developerConnection>
+	  <url>https://github.com/groupon/DotCi</url>
+	 </scm>
+
+	 <repositories>
+	    <repository>
+	      <id>repo.jenkins-ci.org</id>
+	      <url>http://repo.jenkins-ci.org/public/</url>
+	    </repository>
+	  </repositories>
+
+	 <pluginRepositories>
+	   <pluginRepository>
+	     <id>repo.jenkins-ci.org</id>
+	     <url>http://repo.jenkins-ci.org/public/</url>
+	   </pluginRepository>
+	 </pluginRepositories>
+	<properties>
+		<checkstyle.version>2.9.1</checkstyle.version>
+		<cobertura.version>2.5.2</cobertura.version>
+		<powermock.version> 1.5</powermock.version>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<forkMode>once</forkMode>
+					<argLine>-Xms512m -Xmx512m -XX:-UseSplitVerifier</argLine>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<format>{0,date,yyyy.MM.dd_HH.mm}</format>
+					<items>
+						<item>timestamp</item>
+					</items>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${checkstyle.version}</version>
+				<executions>
+					<execution>
+						<id>checkstyle-check</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>checkstyle</goal>
+							<goal>checkstyle-aggregate</goal>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<consoleOutput>true</consoleOutput>
+							<logViolationsToConsole>true</logViolationsToConsole>
+							<failOnViolation>false</failOnViolation>
+							<maxAllowedViolations>10</maxAllowedViolations>
+							<configLocation>${project.basedir}/resources/checkstyle.xml</configLocation>
+							<includeTestSourceDirectory>true</includeTestSourceDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>${cobertura.version}</version>
+				<executions>
+					<execution>
+						<id>cobertura-check</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>clean</goal>
+							<goal>cobertura</goal>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<aggregate>true</aggregate>
+							<formats>
+								<format>html</format>
+								<format>xml</format>
+							</formats>
+                                                         <check>
+								<branchRate>0</branchRate>
+								<lineRate>0</lineRate>
+								<totalBranchRate>0</totalBranchRate>
+								<totalLineRate>0</totalLineRate>
+								<packageLineRate>0</packageLineRate>
+								<packageBranchRate>0</packageBranchRate>
+							</check>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.jenkins-ci.plugins</groupId>
+			<artifactId>github-oauth</artifactId>
+			<version>0.14</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>2.10.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>1.11</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

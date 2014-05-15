@@ -1,0 +1,54 @@
+#
+#The MIT License (MIT)
+#
+#Copyright (c) 2014, Groupon, Inc.
+#
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+#
+#The above copyright notice and this permission notice shall be included in
+#all copies or substantial portions of the Software.
+#
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#THE SOFTWARE.
+#
+environment:
+  vars:
+    TZ: UTC
+    LANG: en_US.UTF-8
+    LC_ALL: en_US.UTF-8
+    DISPLAY: ":1"
+    DOTCI_SHA_SHORT: '\${DOTCI_SHA:0:10}'
+    <% if( DOTCI_BRANCH =~ /^pr\/[0-9]+\/head$/ ) { %>
+      DOTCI_BRANCH_PULL: '`echo \${DOTCI_BRANCH} | cut -d / -f 2`'
+    <% } %>
+
+build:
+  checkout: 
+    - find . -delete 
+    - git init
+    - git remote add origin $GIT_URL
+    <% if( DOTCI_BRANCH =~ /^pr\/[0-9]+\/head$/ ) { %>
+    - git config remote.origin.fetch +refs/pull/$DOTCI_BRANCH_PULL/head:refs/remotes/origin/pr/$DOTCI_BRANCH_PULL
+    <% } else { %>
+    - git config remote.origin.fetch +refs/heads/$DOTCI_BRANCH:refs/remotes/origin/$DOTCI_BRANCH
+    <% } %>
+    - git fetch --quiet --no-tags
+    - git checkout -qf $SHA
+  before_install:
+    - mkdir -p tmp
+  info:
+    - env
+  
+notifications:
+  - pusher_email
+  - github_commit_status

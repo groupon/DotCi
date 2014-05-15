@@ -1,0 +1,41 @@
+{
+  "hook_callpath": "new",
+  "pusher": {
+    "name": "surya",
+    "email": "surya@acme.com"
+  },
+  "repository": {
+    "name": "bar",
+    "created_at": "2012-11-26T00:28:24+00:00",
+    "size": 2724,
+    "has_wiki": true,
+    "private": false,
+    "watchers": 3,
+    "fork": false,
+    "url": "https://github.acme.com/meow/bar",
+    "language": "JavaScript",
+    "id": 2000,
+    "pushed_at": "2013-02-27T00:36:15+00:00",
+    "has_downloads": true,
+    "open_issues": 2,
+    "has_issues": true,
+    "stargazers": 3,
+    "forks": 21,
+    "organization": "meow",
+    "owner": {
+      "name": "meow",
+      "email": "i-tier@acme.com"
+    }
+  },
+  "forced": true,
+  "after": "0000000000000000000000000000000000000000",
+  "head_commit": null,
+  "deleted": true,
+  "commits": [
+    
+  ],
+  "ref": "refs/heads/sean/foo-dummy",
+  "compare": "https://github.acme.com/meow/bar/compare/c15d080e846f...000000000000",
+  "before": "c15d080e846f5c5210db521c4d4b62f85c1e12ae",
+  "created": false
+}

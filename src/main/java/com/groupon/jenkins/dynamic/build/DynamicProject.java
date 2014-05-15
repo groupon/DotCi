@@ -1,0 +1,252 @@
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014, Groupon, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+ */
+package com.groupon.jenkins.dynamic.build;
+
+import hudson.Extension;
+import hudson.PermalinkList;
+import hudson.matrix.Combination;
+import hudson.model.DescriptorVisibilityFilter;
+import hudson.model.Item;
+import hudson.model.ItemGroup;
+import hudson.model.Saveable;
+import hudson.model.TopLevelItem;
+import hudson.model.Descriptor;
+import hudson.model.Queue.Task;
+import hudson.util.CaseInsensitiveComparator;
+import hudson.util.CopyOnWriteMap;
+import hudson.util.RunList;
+import hudson.widgets.HistoryWidget;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+
+import jenkins.model.Jenkins;
+
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.groupon.jenkins.branchhistory.BranchHistoryWidget;
+import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
+import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
+import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
+import com.groupon.jenkins.github.GithubRepoProperty;
+import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
+
+public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild> implements TopLevelItem, Saveable, IdentifableItemGroup<DynamicSubProject> {
+	private transient Map<String, DynamicSubProject> items;
+
+	@Extension
+	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+
+	protected DynamicProject(ItemGroup parent, String name) {
+		super(parent, name);
+		init();
+	}
+
+	private void init() {
+		Iterable<DynamicSubProject> projects = new DynamicProjectRepository().getChildren(this);
+		items = new CopyOnWriteMap.Tree<String, DynamicSubProject>(CaseInsensitiveComparator.INSTANCE);
+		for (DynamicSubProject dbBackedProject : projects) {
+			items.put(dbBackedProject.getName(), dbBackedProject);
+		}
+
+	}
+
+	@Override
+	public void onLoad(ItemGroup<? extends Item> parent, String name) throws IOException {
+		super.onLoad(parent, name);
+		init();
+
+	}
+
+	@Override
+	public DescriptorImpl getDescriptor() {
+		return DESCRIPTOR;
+	}
+
+	public static final class DescriptorImpl extends AbstractProjectDescriptor {
+		/**
+		 * We are hiding the "DotCI" project from "/newJob" page, because we'll
+		 * have our own flow for doing this ...
+		 */
+		@Extension
+		public static class FilterDotCIProjectTypeFromNewJobPage extends DescriptorVisibilityFilter {
+			@Override
+			public boolean filter(Object context, Descriptor descriptor) {
+				return !(descriptor instanceof DynamicProject.DescriptorImpl);
+			}
+		}
+
+		@Override
+		public String getDisplayName() {
+			return "DotCi Project";
+		}
+
+		@Override
+		public TopLevelItem newInstance(ItemGroup parent, String name) {
+			return new DynamicProject(parent, name);
+		}
+
+	}
+
+	@Override
+	public PermalinkList getPermalinks() {
+		PermalinkList permalinks = super.getPermalinks();
+		permalinks.add(new LastSuccessfulMasterPermalink());
+		return permalinks;
+	}
+
+	@Override
+	@WithBridgeMethods(value = Jenkins.class, castRequired = true)
+	public OrganizationContainer getParent() {
+		return (OrganizationContainer) super.getParent();
+	}
+
+	public void doMasterBuilds(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+		req.getSession().setAttribute("branchView" + this.getName(), "master");
+		rsp.forwardToPreviousPage(req);
+	}
+
+	public void doMyBuilds(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+		req.getSession().setAttribute("branchView" + this.getName(), "mine");
+		rsp.forwardToPreviousPage(req);
+	}
+
+	public void doAllBuilds(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+		req.getSession().removeAttribute("branchView" + this.getName());
+		rsp.forwardToPreviousPage(req);
+	}
+
+	@Override
+	protected HistoryWidget createHistoryWidget() {
+		return new BranchHistoryWidget(this, new RunList(), HISTORY_ADAPTER, new DynamicBuildRepository(), getCurrentBranch());
+	}
+
+	protected String getCurrentBranch() {
+		return (String) Stapler.getCurrentRequest().getSession().getAttribute("branchView" + getName());
+	}
+
+	@Override
+	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
+		if ("sha".equals(token)) {
+			String sha = req.getParameter("value");
+			return dynamicBuildRepository.getBuildBySha(this, sha);
+		}
+
+		Object permalink = super.getDynamic(token, req, rsp);
+		if (permalink == null) {
+			DynamicSubProject item = getItem(token);
+			return item;
+		}
+		return permalink;
+	}
+
+	@Override
+	protected Class<DynamicBuild> getBuildClass() {
+		return DynamicBuild.class;
+	}
+
+	@Override
+	public String getUrlChildPrefix() {
+		return ".";
+	}
+
+	private DynamicSubProject createNewSubProject(Combination requestedCombination) {
+		DynamicSubProject project = new DynamicSubProject(this, requestedCombination);
+		try {
+			project.save();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		items.put(project.getName(), project);
+		return project;
+	}
+
+	public Iterable<DynamicSubProject> getSubProjects(Iterable<Combination> subBuildCombinations) {
+
+		return Iterables.transform(subBuildCombinations, new Function<Combination, DynamicSubProject>() {
+
+			@Override
+			public DynamicSubProject apply(final Combination requestedCombination) {
+				return Iterables.find(getItems(), new Predicate<DynamicSubProject>() {
+
+					@Override
+					public boolean apply(DynamicSubProject subProject) {
+						return requestedCombination.equals(subProject.getCombination());
+					}
+				}, DynamicProject.this.createNewSubProject(requestedCombination));
+			}
+
+		});
+	}
+
+	public Task getItem(Combination combination) {
+		return null;
+	}
+
+	@Override
+	public DynamicSubProject getItem(String name) {
+		return dynamicProjectRepository.getChild(this, name);
+	}
+
+	private File getConfigurationsDir() {
+		return new File(getRootDir(), "configurations");
+	}
+
+	@Override
+	public File getRootDirFor(DynamicSubProject child) {
+		File f = new File(getConfigurationsDir(), child.getName());
+		f.getParentFile().mkdirs();
+		return f;
+	}
+
+	@Override
+	public Collection<DynamicSubProject> getItems() {
+		return items == null ? new ArrayList<DynamicSubProject>() : this.items.values();
+	}
+
+	public String getGithubRepoUrl() {
+		return getProperty(GithubRepoProperty.class) == null ? null : getProperty(GithubRepoProperty.class).getRepoUrl();
+	}
+
+	@Override
+	public void onRenamed(DynamicSubProject item, String oldName, String newName) throws IOException {
+		throw new IllegalStateException("Renaming not allowed outside .ci.yml");
+	}
+
+	@Override
+	public void onDeleted(DynamicSubProject item) throws IOException {
+		throw new IllegalStateException("Cannot delete Sub Project without deleting the parent");
+	}
+
+}
