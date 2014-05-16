@@ -68,7 +68,7 @@ public class DynamicProjectRepository extends MongoRepository {
 	}
 
 	protected DynamicProjectRepository(OrganizationContainerRepository organizationRepository, DynamicBuildRepository dynamicBuildRepository) {
-		super("mongo_project");
+		super("dotci_project");
 		this.organizationRepository = organizationRepository;
 		this.dynamicBuildRepository = dynamicBuildRepository;
 	}

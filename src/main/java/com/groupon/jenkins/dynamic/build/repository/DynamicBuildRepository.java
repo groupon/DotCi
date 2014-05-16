@@ -54,7 +54,7 @@ public class DynamicBuildRepository extends MongoRepository {
 	private static final Logger LOGGER = Logger.getLogger(DynamicBuildRepository.class.getName());
 
 	public DynamicBuildRepository() {
-		super("mongo_build");
+		super("dotci_build");
 	}
 
 	public void save(DbBackedProject project, int buildNumber, Map<String, Object> attributes) {
