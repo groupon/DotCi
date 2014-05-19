@@ -28,9 +28,7 @@ environment:
     LC_ALL: en_US.UTF-8
     DISPLAY: ":1"
     DOTCI_SHA_SHORT: '\${DOTCI_SHA:0:10}'
-    <% if( DOTCI_BRANCH =~ /^pr\/[0-9]+\/head$/ ) { %>
-      DOTCI_BRANCH_PULL: '`echo \${DOTCI_BRANCH} | cut -d / -f 2`'
-    <% } %>
+    <% if( DOTCI_BRANCH =~ /^pr\/[0-9]+\/head$/ ) { %>DOTCI_BRANCH_PULL: '`echo \${DOTCI_BRANCH} | cut -d / -f 2`'<% } %>
 
 build:
   checkout: 
