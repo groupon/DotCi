@@ -28,20 +28,18 @@ environment:
     LC_ALL: en_US.UTF-8
     DISPLAY: ":1"
     DOTCI_SHA_SHORT: '\${DOTCI_SHA:0:10}'
-    <% if( DOTCI_BRANCH =~ /^pr\/[0-9]+\/head$/ ) { %>DOTCI_BRANCH_PULL: '`echo \${DOTCI_BRANCH} | cut -d / -f 2`'<% } %>
 
 build:
   checkout: 
     - find . -delete 
-    - git init
-    - git remote add origin $GIT_URL
     <% if( DOTCI_BRANCH =~ /^pr\/[0-9]+\/head$/ ) { %>
-    - git config remote.origin.fetch +refs/pull/$DOTCI_BRANCH_PULL/head:refs/remotes/origin/pr/$DOTCI_BRANCH_PULL
+    - git clone --depth=50  $GIT_URL .    
+    - "git fetch origin +refs/pull/$DOTCI_PULL_REQUEST/merge:" #quotes needed here to escape the colon
+    - git checkout -qf FETCH_HEAD
     <% } else { %>
-    - git config remote.origin.fetch +refs/heads/$DOTCI_BRANCH:refs/remotes/origin/$DOTCI_BRANCH
-    <% } %>
-    - git fetch --quiet --no-tags
+    - git clone --depth=50 --branch=$DOTCI_BRANCH $GIT_URL .
     - git checkout -qf $SHA
+    <% } %>
   before_install:
     - mkdir -p tmp
   info:
