@@ -33,12 +33,12 @@ build:
   checkout: 
     - find . -delete 
     <% if( DOTCI_BRANCH =~ /^pr\/[0-9]+\/head$/ ) { %>
-    - git clone --depth=50  $GIT_URL .    
+    - git clone  $GIT_URL .    
     - "git fetch origin +refs/pull/$DOTCI_PULL_REQUEST/merge:" #quotes needed here to escape the colon
-    - git checkout -qf FETCH_HEAD
+    - git reset --hard FETCH_HEAD
     <% } else { %>
-    - git clone --depth=50 --branch=$DOTCI_BRANCH $GIT_URL .
-    - git checkout -qf $SHA
+    - git clone  --branch=$DOTCI_BRANCH $GIT_URL .
+    - git reset --hard  $SHA
     <% } %>
   before_install:
     - mkdir -p tmp
