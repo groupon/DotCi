@@ -108,7 +108,7 @@ public class EnvironmentSection extends CompositeConfigSection {
 			List<String> commands = servicesSection.getCleanupCommands(buildId);
 			return new ShellCommands(commands).toShellScript();
 		}
-		return "/bin/true";
+		return "true";
 	}
 
 	public boolean isDocker() {
