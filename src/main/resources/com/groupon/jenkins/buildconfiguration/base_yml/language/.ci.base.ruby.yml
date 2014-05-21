@@ -32,6 +32,7 @@ environment:
     BUNDLE_FROZEN: true
     BUNDLE_WITHOUT: production:development
     GEM_HOME: /tmp
+    PATH: $GEM_HOME/bin:$PATH
 
 build:
   info:
