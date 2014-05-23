@@ -117,7 +117,7 @@ public class GithubReposController extends AuthenticatedRootAction {
 	}
 
 	protected String redirectAfterCreateItem(StaplerRequest req, TopLevelItem result) throws IOException {
-		return '/' + result.getUrl();
+		return result.getUrl();
 	}
 
 	@Override
