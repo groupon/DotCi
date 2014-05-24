@@ -9,19 +9,19 @@
   - Install DotCi plugin from the update center. This should also install [github-oauth-plugin](https://wiki.jenkins-ci.org/display/JENKINS/Github+OAuth+Plugin)
 
 ## Mongodb setup
-   Install [mongodb](https://www.mongodb.org/) accessible to your jenkins instance.
+   Install [mongodb](https://www.mongodb.org/) accessible to your Jenkins instance.
 
 ## Github oauth plugin configuration
    * Register an OAuth [application](https://github.com/settings/applications/new) with github to obtain Client-ID/Secret.
 
-   * Go to 'Manage Jenkins' > 'Configure Global Security'
-     Under 'Security Realm' select 'Github Authentication Plugin' and fill out required oauth credentials.
+   * Go to `Manage Jenkins` > `Configure Global Security`
+     Under `Security Realm` select `Github Authentication Plugin` and fill out required oauth credentials.
 
 
 ## DotCi plugin configuration
-  Got to 'Manage Jenkins'> 'Configure System' and fill out required information under DotCi Configuration
+  Got to `Manage Jenkins`> `Configure System` and fill out required information under DotCi Configuration
 
-![dotci setup](/screenshots/dotci-plugin-configuration.png)
+![dotci setup](screenshots/dotci-plugin-configuration.png)
 
 
 ## Configure package management

@@ -1,10 +1,14 @@
 ##DotCi - Jenkins github integration, .ci.yml.
- ![Commit status](docs/screenshots/logos/jenkins.png) **+** ![Commit status](docs/screenshots/logos/github.png) **+** ![Commit status](docs/screenshots/logos/docker.png)
+Brings ease of build configuration of cloud ci systems like travisci and ease of runtime environment configuration of docker to jenkins.
+
+![Commit status](docs/screenshots/logos/jenkins.png) **+** ![Commit status](docs/screenshots/logos/github.png) **+** ![Commit status](docs/screenshots/logos/docker.png)
 ***
  - [Features](#features)
+ - [Installation](docs/Installation.md)
  - [Usage](docs/Usage.md)
- - [Setup](docs/Setup.md)
+ - [.ci.yml examples](docs/Examples.md)
  - [Extending DotCi](docs/Extending.md)
+ - [Developer Setup](docs/DevelopmentSetup.md)
  - [License](#license)
 
 ###Features
@@ -13,22 +17,22 @@
     - Automatically sets up Github webhooks for pull requests and github pushes when a new job is setup.
     - Sets [commit status](https://github.com/blog/1227-commit-status-api) during and after build run.
       ![Commit status](docs/screenshots/commit-status.png)
-
     - Projects are name-spaced under organization which allows creation of multiple projects with same names under different organizations.
 
 
  * **Build configuration through .ci.yml**  
-    * Speed up builds by running builds in parallel.
-    * Configure build environment (language/version/dbs etc).
-    * Branch/pusher specific build customization through groovy templating.
-    * Plugin configuration.
+    * Speed up builds by running builds in parallel.([Example](docs/Examples.md#parallelization))
+    * Configure build environment (language/version/dbs etc). ([Example](docs/Examples.md#build-environment-configuration))
+    * Branch/pusher specific build customization through groovy templating.([Example](docs/Examples.md#build-templating))
+    * Plugin configuration.([Example](docs/Examples.md#plugin-configuration))
     * Notification configuration.
-    * Skip Builds based on sha/branch/pusher/pull request etc.
+    * Skip Builds based on sha/branch/pusher/pull request etc.([Example](docs/Examples.md#build-skipping))
 
 
  * **Docker Support**
     * Having a Dockerfile in the repo will build an image and run tests against the image.
-    * Or specify a docker image to run build against in .ci.yml
+    * Or specify a docker image to run build against in .ci.yml. ([Example](docs/Examples.md#docker))
+    * Link against services like mysql, redis ect. ([Example](docs/Examples.md#docker))
 
  * **Defaults** for each language type (eg: ``mvn install`` for java), language is auto detected.
 
@@ -54,14 +58,18 @@
 
      ![branch history](docs/screenshots/branch-view.png)
 
- ###Usage
-   See: [Usage](docs/Usage.md)
 ###Setup
-   See:  [Setup](docs/Setup.md)
+   See:  [Installation](docs/Installation.md)
+###Usage
+   See: [Usage](docs/Usage.md)
+###.ci.yml examples
+   See: [.ci.yml examples](docs/Examples.md)
 ###Extending DotCi
  See: [Extending DotCi](docs/Extending.md)
+###Developer Setup
+  See: [Developer Setup](docs/DevelopmentSetup.md)
 ###License
-
+```
 The MIT License (MIT)
 
 Copyright (c) 2014, Groupon, Inc.
@@ -83,3 +91,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+```
