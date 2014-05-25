@@ -2,6 +2,8 @@ package com.groupon.jenkins.buildsetup;
 
 import java.io.IOException;
 
+import jenkins.model.Jenkins;
+
 import org.kohsuke.github.GHRepository;
 
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
@@ -46,6 +48,10 @@ public class ProjectConfigInfo {
 
 	public String getHookAssignedTo() {
 		return githubAccessTokenRepository.getAssociatedLogin(repository.getUrl());
+	}
+
+	public String getJenkinsRootUrl() {
+		return Jenkins.getInstance().getRootUrlFromRequest();
 	}
 
 	public String getName() {

@@ -33,6 +33,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import jenkins.model.Jenkins;
+
 import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.GithubAuthenticationToken;
@@ -117,7 +119,7 @@ public class GithubReposController extends AuthenticatedRootAction {
 	}
 
 	protected String redirectAfterCreateItem(StaplerRequest req, TopLevelItem result) throws IOException {
-		return result.getUrl();
+		return Jenkins.getInstance().getRootUrlFromRequest() + "/" + result.getUrl();
 	}
 
 	@Override

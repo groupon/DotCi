@@ -24,7 +24,7 @@ THE SOFTWARE.
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
  <j:if test="${!j.projectPresent}">
- <form action="/mygithubprojects/createProject"  name="addproject">
+ <form action="${j.jenkinsRootUrl}/mygithubprojects/createProject"  name="addproject">
    	  <input type="hidden" name="fullName" value="${j.fullName}" />
 	  <input type="submit" value="New Job"/> 
  </form>
@@ -36,7 +36,7 @@ THE SOFTWARE.
  
    <j:if test="${j.hookConfigured}">
      <p>
-     <form action="/mygithubprojects/refreshHook" method="get" name="addhook">
+     <form action="${j.jenkinsRootUrl}/mygithubprojects/refreshHook" method="get" name="addhook">
    	  <input type="hidden" name="fullName" value="${j.fullName}" />
 				       <input type="submit" value="Use my login to acess github"/> 
            			   <label>(currently using <b>${j.hookAssignedTo}</b>)</label>
