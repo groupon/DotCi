@@ -33,10 +33,12 @@ import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import com.google.common.io.CharStreams;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 
 @Extension
@@ -53,10 +55,17 @@ public class GithubWebhook implements UnprotectedRootAction {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void doIndex(StaplerRequest req, StaplerResponse response) throws IOException {
 		String payload = req.getParameter("payload");
-		if (payload == null) {
+		if (StringUtils.isEmpty(payload) && "POST".equalsIgnoreCase(req.getMethod())) {
+			payload = getRequestPayload(req);
+		}
+		if (StringUtils.isEmpty(payload)) {
 			throw new IllegalArgumentException("Not intended to be browsed interactively (must specify payload parameter)");
 		}
 		processGitHubPayload(payload);
+	}
+
+	protected String getRequestPayload(StaplerRequest req) throws IOException {
+		return CharStreams.toString(req.getReader());
 	}
 
 	public void processGitHubPayload(String payloadData) {
