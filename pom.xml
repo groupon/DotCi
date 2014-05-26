@@ -42,6 +42,7 @@ THE SOFTWARE.
 	   </license>
 	 </licenses>
 
+	 <description> Github integration, build management through .ci.yml, environment management thought docker. </description>
 	<url>https://github.com/groupon/DotCi</url>
 	<scm>
           <connection>scm:git:ssh://github.com/groupon/DotCi.git</connection>
