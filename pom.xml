@@ -33,7 +33,7 @@ THE SOFTWARE.
 	</parent>
 	<groupId>com.groupon.jenkins-ci.plugins</groupId>
 	<artifactId>DotCi</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 	 <licenses>
 	   <license>
