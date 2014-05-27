@@ -25,13 +25,13 @@ package com.groupon.jenkins.dynamic.build.execution;
 
 import hudson.Util;
 import hudson.console.ModelHyperlinkNote;
-import hudson.matrix.MatrixChildAction;
 import hudson.matrix.Messages;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.TaskListener;
 import hudson.model.Executor;
+import hudson.model.ParametersAction;
 import hudson.model.Queue;
 import hudson.model.Queue.Item;
 
@@ -82,7 +82,7 @@ public class SubBuildScheduler {
 		for (DynamicSubProject c : subProjects) {
 			listener.getLogger().println(Messages.MatrixBuild_Triggering(ModelHyperlinkNote.encodeTo(c)));
 			List<Action> childActions = new ArrayList<Action>();
-			childActions.addAll(Util.filter(build.getActions(), MatrixChildAction.class));
+			childActions.addAll(Util.filter(build.getActions(), ParametersAction.class));
 			childActions.add(subBuildParamsAction);
 			c.scheduleBuild(childActions, build.getCause());
 		}
