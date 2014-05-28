@@ -38,7 +38,7 @@ THE SOFTWARE.
      <p>
      <form action="${j.jenkinsRootUrl}/mygithubprojects/refreshHook" method="get" name="addhook">
    	  <input type="hidden" name="fullName" value="${j.fullName}" />
-				       <input type="submit" value="Use my login to acess github"/> 
+				       <input type="submit" value="Use my login to access github"/> 
            			   <label>(currently using <b>${j.hookAssignedTo}</b>)</label>
            			     </form> 
            			     </p>
