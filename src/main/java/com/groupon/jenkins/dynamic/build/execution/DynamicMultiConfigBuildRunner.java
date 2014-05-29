@@ -59,6 +59,7 @@ public class DynamicMultiConfigBuildRunner implements DynamicBuildRunner {
 				Result runSubBuildResults = subBuildScheduler.runSubBuilds(postBuildSubProjects, listener);
 				combinedResult = combinedResult.combine(runSubBuildResults);
 			}
+			build.setResult(combinedResult);
 			dotCiPluginRunner.runPlugins(listener);
 			return combinedResult;
 		} finally {

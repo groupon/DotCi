@@ -25,6 +25,7 @@ package com.groupon.jenkins;
 
 import hudson.Extension;
 import jenkins.model.GlobalConfiguration;
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
@@ -56,6 +57,9 @@ public class SetupConfig extends GlobalConfiguration {
 	}
 
 	public String getDbName() {
+		if (StringUtils.isEmpty(dbName)) {
+			return "dotci";
+		}
 		return dbName;
 	}
 
@@ -63,11 +67,10 @@ public class SetupConfig extends GlobalConfiguration {
 		this.dbName = dbName;
 	}
 
-	public boolean isConfigured() {
-		return StringUtils.isNotEmpty(dbName);
-	}
-
 	public String getDbHost() {
+		if (StringUtils.isEmpty(dbHost)) {
+			return "localhost";
+		}
 		return dbHost;
 	}
 
@@ -76,6 +79,9 @@ public class SetupConfig extends GlobalConfiguration {
 	}
 
 	public int getDbPort() {
+		if (dbPort == 0) {
+			return 27017;
+		}
 		return dbPort;
 	}
 
@@ -84,6 +90,9 @@ public class SetupConfig extends GlobalConfiguration {
 	}
 
 	public String getGithubApiUrl() {
+		if (StringUtils.isEmpty(githubApiUrl)) {
+			return "https://api.github.com/";
+		}
 		return githubApiUrl;
 	}
 
@@ -96,6 +105,9 @@ public class SetupConfig extends GlobalConfiguration {
 	}
 
 	public String getGithubCallbackUrl() {
+		if (StringUtils.isEmpty(githubCallbackUrl)) {
+			return Jenkins.getInstance().getRootUrl() + "/githook/";
+		}
 		return this.githubCallbackUrl;
 	}
 
@@ -108,6 +120,9 @@ public class SetupConfig extends GlobalConfiguration {
 	}
 
 	public String getFromEmailAddress() {
+		if (StringUtils.isEmpty(fromEmailAddress)) {
+			return "ci@example.com";
+		}
 		return fromEmailAddress;
 	}
 

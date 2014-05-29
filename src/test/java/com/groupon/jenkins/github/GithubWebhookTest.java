@@ -43,6 +43,7 @@ import static org.mockito.Matchers.eq;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -62,8 +63,22 @@ public class GithubWebhookTest {
 	}
 
 	@Test
+	public void should_get_payload_from_post_if_post() throws IOException, InterruptedException {
+		StaplerRequest request = mock(StaplerRequest.class);
+		when(request.getParameter("payload")).thenReturn(null);
+		when(request.getMethod()).thenReturn("POST");
+		doReturn("payload").when(githubWebhook).getRequestPayload(request);
+		verifyBuildTrigger(request);
+	}
+
+	@Test
 	public void should_trigger_builds_for_payload() throws IOException, InterruptedException {
 		StaplerRequest request = mock(StaplerRequest.class);
+		when(request.getParameter("payload")).thenReturn("payload");
+		verifyBuildTrigger(request);
+	}
+
+	protected void verifyBuildTrigger(StaplerRequest request) throws IOException, InterruptedException {
 		Payload payload = mock(Payload.class);
 
 		DynamicProject projectForRepo = mock(DynamicProject.class);
@@ -73,7 +88,6 @@ public class GithubWebhookTest {
 		when(payload.getProjectUrl()).thenReturn("git@repo");
 		when(projectRepo.getJobsFor("git@repo")).thenReturn(newArrayList(projectForRepo));
 
-		when(request.getParameter("payload")).thenReturn("payload");
 		doReturn(payload).when(githubWebhook).makePayload("payload");
 		doReturn(projectRepo).when(githubWebhook).makeDynamicProjectRepo();
 

@@ -49,11 +49,23 @@ public class GithubRepositoryService {
 	private GHRepository repository;
 	private GitHub github;
 	private String repoUrl;
+	private GithubAccessTokenRepository githubAccessTokenRepository;
 
 	public GithubRepositoryService(GHRepository repository) {
-		this.repository = repository;
+		this(repository, new GithubAccessTokenRepository());
 	}
 
+	protected GithubRepositoryService(GHRepository repository, GithubAccessTokenRepository githubAccessTokenRepository) {
+		this.repository = repository;
+		this.githubAccessTokenRepository = githubAccessTokenRepository;
+
+	}
+
+	/**
+	 * GHRepository is lazily intialized when this constructor is used
+	 * 
+	 * @param repoUrl
+	 */
 	public GithubRepositoryService(String repoUrl) {
 		this.repoUrl = repoUrl;
 	}
@@ -67,10 +79,14 @@ public class GithubRepositoryService {
 	}
 
 	public void addHook() {
-		Map<String, String> params = ImmutableMap.of("url", SetupConfig.get().getGithubCallbackUrl());
+		String githubCallbackUrl = getSetupConfig().getGithubCallbackUrl();
+		if (!githubCallbackUrl.endsWith("/")) {
+			githubCallbackUrl = githubCallbackUrl + "/";
+		}
+		Map<String, String> params = ImmutableMap.of("url", githubCallbackUrl);
 		List<GHEvent> events = Arrays.asList(GHEvent.PUSH, GHEvent.PULL_REQUEST);
 		try {
-			new GithubAccessTokenRepository().put(getRepository().getUrl());
+			githubAccessTokenRepository.put(getRepository().getUrl());
 			removeExistingHook();
 			getRepository().createHook("web", params, events, true);
 		} catch (IOException e) {
@@ -80,10 +96,14 @@ public class GithubRepositoryService {
 
 	private void removeExistingHook() throws IOException {
 		for (GHHook hook : getRepository().getHooks()) {
-			if (hook.isActive() && SetupConfig.get().getGithubCallbackUrl().equals(hook.getConfig().get("url"))) {
+			if (hook.isActive() && getSetupConfig().getGithubCallbackUrl().equals(hook.getConfig().get("url"))) {
 				hook.delete();
 			}
 		}
+	}
+
+	protected SetupConfig getSetupConfig() {
+		return SetupConfig.get();
 	}
 
 	public GHRef getRef(String refName) throws IOException {
@@ -105,7 +125,7 @@ public class GithubRepositoryService {
 
 	public boolean isHookConfigured() throws IOException {
 		for (GHHook hook : getGithubRepository().getHooks()) {
-			if (hook.isActive() && SetupConfig.get().getGithubCallbackUrl().equals(hook.getConfig().get("url"))) {
+			if (hook.isActive() && getSetupConfig().getGithubCallbackUrl().equals(hook.getConfig().get("url"))) {
 				return true;
 			}
 		}

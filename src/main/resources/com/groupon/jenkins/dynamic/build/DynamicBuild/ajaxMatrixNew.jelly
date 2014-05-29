@@ -22,25 +22,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
- <j:if test="${!j.projectPresent}">
- <form action="${j.jenkinsRootUrl}/mygithubprojects/createProject"  name="addproject">
-   	  <input type="hidden" name="fullName" value="${j.fullName}" />
-	  <input type="submit" value="New Job"/> 
- </form>
- </j:if>	
- 
- <j:if test="${j.projectPresent}">
-   <a href="${j.jenkinsProjectUrl}">${j.name}</a>
-  </j:if>
- 
-   <j:if test="${j.hookConfigured}">
-     <p>
-     <form action="${j.jenkinsRootUrl}/mygithubprojects/refreshHook" method="get" name="addhook">
-   	  <input type="hidden" name="fullName" value="${j.fullName}" />
-				       <input type="submit" value="Use my login to access github"/> 
-           			   <label>(currently using <b>${j.hookAssignedTo}</b>)</label>
-           			     </form> 
-           			     </p>
-</j:if>				   
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:s="/lib/form" xmlns:p="/lib/hudson/matrix-project">
+  <l:ajax>
+    <p:matrix autoRefresh="${it.isBuilding()}">
+      <j:set var="b" value="${p.run}" />
+      <j:choose>
+        <j:when test="${b==null}">
+          <img src="${imagesURL}/24x24/grey.png" tooltip="${%Not run}" alt="${%Not run}" height="24" width="24"/>
+        </j:when>
+        <j:otherwise>
+          <a href="${p.nearestRunUrl}" class="model-link">
+            <img src="${imagesURL}/24x24/${b.buildStatusUrl}" tooltip="${p.tooltip} ${it.number!=b.number?(it.isBuilding()?'- pending' : '- skipped'):''}" alt="${p.tooltip}" style="${it.number!=b.number?'opacity:0.5':''}" height="24" width="24"/>
+            <j:if test="${empty(o.x) and empty(o.y)}">
+              ${p.toName(o.z)}
+            </j:if>
+          </a>
+        </j:otherwise>
+      </j:choose>
+    </p:matrix>
+  </l:ajax>
 </j:jelly>
