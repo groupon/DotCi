@@ -35,7 +35,7 @@ public class DotCiGitHubOAuthScope extends GitHubOAuthScope {
 
 	@Override
 	public Collection<String> getScopesToRequest() {
-		return Arrays.asList("public_repo", "repo:status", "user:email"); // add
+		return Arrays.asList("repo", "user:email"); // add
 																			// "read:org"
 	}
 }
