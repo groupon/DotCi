@@ -40,7 +40,7 @@ build:
   before:
     - 'test -f Gemfile && [[ "`gem env gempath`" =~ jruby ]] && export RUN_AS_JRUBY="jruby -S"'
     - test -f Gemfile && $RUN_AS_JRUBY gem install bundler
-    - test -f Gemfile && $RUN_AS_JRUBY bundle install --no-deployment
+    - test -f Gemfile && $RUN_AS_JRUBY bundle install --no-deployment -j 10
     # DotCi locally redefine PATH of "ruby" as "jruby" ... this fix routing of rake and/or irb per "puts RUBY_VERSION"
     - '[[ ! -z "$RUN_AS_JRUBY" ]] && mkdir -p bin && ln -sf `which jruby` bin/ruby && export PATH="./bin:$PATH"'
   run:
