@@ -54,7 +54,7 @@ environment:
     - webhook:
         url: http://example.com/hook
         params:
-          branch: DOTCI_BRANCH
+          branch: ${DOTCI_BRANCH}
  ```
 
 ##Build skipping
