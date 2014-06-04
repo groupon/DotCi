@@ -49,9 +49,9 @@ public class PackagesSection extends ConfigSection<ListOrSingleValue<String>> {
 		return BuildType.BareMetal.equals(buildType) ? new ShellCommands(getInstallPackagesScript(combination)) : ShellCommands.NOOP;
 	}
 
-	private String getInstallPackagesScript(Combination combination) {
+	protected String getInstallPackagesScript(Combination combination) {
 		List<String> allPackages = new ArrayList<String>();
-		if (!"UNKNOWN".equals(languageSection.getLanguage())) {
+		if (!"unknown".equalsIgnoreCase(languageSection.getLanguage())) {
 			String languageVersion = combination.get("language_version");
 			if (languageVersion == null) {
 				languageVersion = languageVersionsSection.getConfigValue().getValues().get(0);
