@@ -198,7 +198,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 
 		}
 
-		public BuildType getBuildType() {
+		public BuildType getBuildType() throws IOException {
 			if (getBuildConfiguration().isDocker()) {
 				return BuildType.DockerImage;
 			}

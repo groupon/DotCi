@@ -25,14 +25,16 @@ package com.groupon.jenkins.dynamic.buildconfiguration;
 
 import hudson.EnvVars;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.kohsuke.github.GHContent;
 
-import com.groupon.jenkins.github.GHFile;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 
 public class EffectiveBuildConfigurationCalculator {
@@ -81,15 +83,15 @@ public class EffectiveBuildConfigurationCalculator {
 
 	public BuildConfiguration calculateBuildConfiguration(String githubRepoUrl, String sha, EnvVars envVars) throws IOException, InterruptedException, InvalidDotCiYmlException {
 		GithubRepositoryService githubRepositoryService = getGithubRepositoryService(githubRepoUrl);
-		GHFile file = githubRepositoryService.getGHFile(".ci.yml", sha);
-		if (file.exists()) {
-			BuildConfiguration configuration = new BuildConfiguration(file.getContents(), envVars);
+		try {
+			GHContent file = githubRepositoryService.getGHFile(".ci.yml", sha);
+			BuildConfiguration configuration = new BuildConfiguration(file.getContent(), envVars);
 			if (!configuration.isValid()) {
 				throw new InvalidDotCiYmlException(configuration.getValidationErrors());
 			}
 			String language = configuration.getLanguage() == null ? autoDetectedLanguage(githubRepositoryService) : configuration.getLanguage();
 			return get(configuration, language, envVars);
-		} else {
+		} catch (FileNotFoundException e) {
 			return get(autoDetectedLanguage(githubRepositoryService), envVars);
 		}
 	}

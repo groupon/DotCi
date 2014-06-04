@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.github.services;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -30,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
+import org.kohsuke.github.GHContent;
 import org.kohsuke.github.GHEvent;
 import org.kohsuke.github.GHHook;
 import org.kohsuke.github.GHRef;
@@ -38,7 +41,6 @@ import org.kohsuke.github.GitHub;
 
 import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.github.GHFile;
 import com.groupon.jenkins.github.GitBranch;
 import com.groupon.jenkins.github.GitSshUrl;
 import com.groupon.jenkins.github.GithubUtils;
@@ -119,8 +121,8 @@ public class GithubRepositoryService {
 		return getRepository();
 	}
 
-	public GHFile getGHFile(String fileName, String sha) {
-		return new GHFile(getGithub(), getGithubRepository(), fileName, sha);
+	public GHContent getGHFile(String fileName, String sha) throws IOException {
+		return getGithubRepository().getFileContent(fileName, sha);
 	}
 
 	public boolean isHookConfigured() throws IOException {
@@ -174,8 +176,14 @@ public class GithubRepositoryService {
 		return github;
 	}
 
-	public boolean hasDockerFile(String sha) {
+	public boolean hasDockerFile(String sha) throws IOException {
 		LOGGER.info("Checking for dockerfile in: " + repoUrl);
-		return getGHFile("Dockerfile", sha).exists();
+		try {
+			getGHFile("Dockerfile", sha).getContent();
+		} catch (FileNotFoundException e) {
+			return false;
+		}
+		return true;
+
 	}
 }
