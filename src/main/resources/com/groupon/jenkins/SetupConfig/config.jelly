@@ -53,6 +53,16 @@ THE SOFTWARE.
                      <f:entry title="Email Address (This is used as from address for failure/recovery emails)">
                         <f:textbox name="dotci.fromEmailAddress" value="${instance.fromEmailAddress}"/>
                     </f:entry>
+                   
+                    <f:block>
+                     <table>
+                      <f:optionalBlock name="dotci.privateRepoSupport" title="Enable private repository support" checked="${instance.privateRepoSupport}">
+                       <f:entry   title="Deploy key">
+                        <f:textarea name="dotci.deployKey" value="${instance.deployKey}"/>
+                       </f:entry>
+                      </f:optionalBlock>
+                    </table>
+                  </f:block>
 
 
     </f:section>

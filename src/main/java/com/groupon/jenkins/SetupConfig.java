@@ -29,6 +29,7 @@ import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 @Extension
@@ -41,6 +42,8 @@ public class SetupConfig extends GlobalConfiguration {
 	private String label;
 	private String fromEmailAddress;
 
+	private String deployKey;
+
 	public static SetupConfig get() {
 		return GlobalConfiguration.all().get(SetupConfig.class);
 	}
@@ -51,6 +54,13 @@ public class SetupConfig extends GlobalConfiguration {
 
 	@Override
 	public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
+		JSONObject privateRepoSupportJson = (JSONObject) json.get("privateRepoSupport");
+		if (privateRepoSupportJson != null) {
+			deployKey = privateRepoSupportJson.getString("deployKey");
+			json.remove("privateRepoSupport");
+		} else {
+			deployKey = null;
+		}
 		req.bindJSON(this, json);
 		save();
 		return true;
@@ -128,6 +138,23 @@ public class SetupConfig extends GlobalConfiguration {
 
 	public void setFromEmailAddress(String fromEmailAddress) {
 		this.fromEmailAddress = fromEmailAddress;
+	}
+
+	// for EL
+	public boolean getPrivateRepoSupport() {
+		return deployKey != null;
+	}
+
+	public boolean hasPrivateRepoSupport() {
+		return getPrivateRepoSupport();
+	}
+
+	public String getDeployKey() {
+		return deployKey;
+	}
+
+	public void setDeployKey(String deployKey) {
+		this.deployKey = deployKey;
 	}
 
 }
