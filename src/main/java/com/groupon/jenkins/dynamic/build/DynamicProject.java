@@ -26,9 +26,11 @@ package com.groupon.jenkins.dynamic.build;
 import hudson.Extension;
 import hudson.PermalinkList;
 import hudson.matrix.Combination;
+import hudson.model.BallColor;
 import hudson.model.DescriptorVisibilityFilter;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
+import hudson.model.Result;
 import hudson.model.Saveable;
 import hudson.model.TopLevelItem;
 import hudson.model.Descriptor;
@@ -48,6 +50,7 @@ import javax.servlet.ServletException;
 
 import jenkins.model.Jenkins;
 
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -249,4 +252,21 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 		throw new IllegalStateException("Cannot delete Sub Project without deleting the parent");
 	}
 
+	@Override
+	public BallColor getIconColor() {
+		if (isDisabled()) {
+			return BallColor.DISABLED;
+		}
+		StaplerRequest currentRequest = Stapler.getCurrentRequest();
+		if (currentRequest != null && StringUtils.isNotEmpty(currentRequest.getParameter("branch"))) {
+			String branch = currentRequest.getParameter("branch");
+			DynamicBuild lastBuildForBranch = new DynamicBuildRepository().getLastBuild(this, branch);
+			if (lastBuildForBranch == null) {
+				return BallColor.DISABLED;
+			} else {
+				return Result.SUCCESS.equals(lastBuildForBranch.getResult()) ? BallColor.BLUE : BallColor.RED;
+			}
+		}
+		return super.getIconColor();
+	}
 }
