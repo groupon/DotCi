@@ -35,21 +35,21 @@ environment:
  build:
     run: rake spec
     #run integration tests only on production branch
-    <% if(DOTCI_BRANCH == 'production') %>
+    <% if(DOTCI_BRANCH == 'production'){ %>
     after: rake integration
-    <%end %>
+    <%} %>
  notifications:
-   <% if(DOTCI_BRANCH == 'master') %>
+   <% if(DOTCI_BRANCH == 'master') {%>
    - hipchat: 'DevOps'
-   <%end %>
+   <%}%>
 ```
 
 ## Plugin Configuration
  ```yaml
   plugins:
-    <% if(DOTCI_BRANCH == 'master') %>
+    <% if( DOTCI_BRANCH == 'master'){ %>
     - artifacts: 'packages/**/*.war'
-    <%end%>
+    <%}%>
     - checkstyle
     - webhook:
         url: http://example.com/hook
@@ -61,7 +61,7 @@ environment:
  ```yaml
    build:
      #only build master
-     <% if(DOTCI_BRANCH != 'master') %>
+     <% if( DOTCI_BRANCH != 'master') {%>
      - artifacts: 'packages/**/*.war'
-     <%end%>
+     <%}%>
  ```
