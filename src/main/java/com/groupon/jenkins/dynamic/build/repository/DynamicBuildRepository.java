@@ -41,6 +41,7 @@ import com.groupon.jenkins.dynamic.build.DbBackedProject;
 import com.groupon.jenkins.dynamic.build.DbBackedRunList;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DbBackedBuild;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.github.services.GithubCurrentUserService;
 import com.groupon.jenkins.mongo.BuildInfo;
 import com.groupon.jenkins.mongo.MongoRepository;
@@ -245,4 +246,8 @@ public class DynamicBuildRepository extends MongoRepository {
 		return fetchBuildInfo(new BasicDBObject("pusher", pusher).append("main_build", true), numberOfBuilds);
 	}
 
+	public <T extends DbBackedBuild> T getLastBuild(DynamicProject project, String branch) {
+		BasicDBObject query = getQuery(project).append("branch", branch);
+		return findOne(query, new BasicDBObject("number", -1), DynamicBuildRepository.<T> getTransformer(project), ReadPreference.secondary());
+	}
 }

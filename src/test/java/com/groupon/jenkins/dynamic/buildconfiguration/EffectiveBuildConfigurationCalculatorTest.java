@@ -25,11 +25,12 @@ package com.groupon.jenkins.dynamic.buildconfiguration;
 
 import hudson.EnvVars;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.kohsuke.github.GHContent;
 
-import com.groupon.jenkins.github.GHFile;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 
 import static org.junit.Assert.assertTrue;
@@ -51,8 +52,7 @@ public class EffectiveBuildConfigurationCalculatorTest {
 	@Test
 	public void should_use_default_language_template_if_no_dotci_yml() throws IOException, InterruptedException, InvalidDotCiYmlException {
 		final GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
-		GHFile dotCiYml = mock(GHFile.class);
-		when(githubRepositoryService.getGHFile(".ci.yml", "sha")).thenReturn(dotCiYml);
+		when(githubRepositoryService.getGHFile(".ci.yml", "sha")).thenThrow(FileNotFoundException.class);
 		when(githubRepositoryService.getRepoLanguage()).thenReturn("ruby");
 		EffectiveBuildConfigurationCalculator calculator = new EffectiveBuildConfigurationCalculator() {
 			@Override
@@ -67,12 +67,11 @@ public class EffectiveBuildConfigurationCalculatorTest {
 	@Test
 	public void should_merge_specified_configuration_into_base() throws IOException, InterruptedException, InvalidDotCiYmlException {
 		final GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
-		GHFile dotCiYml = mock(GHFile.class);
+		GHContent dotCiYml = mock(GHContent.class);
 		when(githubRepositoryService.getGHFile(".ci.yml", "sha")).thenReturn(dotCiYml);
 		when(githubRepositoryService.getRepoLanguage()).thenReturn("ruby");
 
-		when(dotCiYml.exists()).thenReturn(true);
-		when(dotCiYml.getContents()).thenReturn("build:\n   run: echo blah ");
+		when(dotCiYml.getContent()).thenReturn("build:\n   run: echo blah ");
 
 		EffectiveBuildConfigurationCalculator calculator = new EffectiveBuildConfigurationCalculator() {
 			@Override
