@@ -162,7 +162,7 @@ THE SOFTWARE.
 		<dependency>
 			<groupId>org.jenkins-ci.plugins</groupId>
 			<artifactId>github-oauth</artifactId>
-			<version>0.17</version>
+			<version>0.18</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
