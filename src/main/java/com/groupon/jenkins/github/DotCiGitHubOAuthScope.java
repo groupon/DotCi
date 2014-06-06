@@ -30,14 +30,21 @@ import java.util.Collection;
 
 import org.jenkinsci.plugins.GitHubOAuthScope;
 
+import com.groupon.jenkins.SetupConfig;
+
 @Extension
 public class DotCiGitHubOAuthScope extends GitHubOAuthScope {
 
 	@Override
 	public Collection<String> getScopesToRequest() {
-		// return Arrays.asList("public_repo", "repo:status", "user:email"); //
-		// add
-		// "read:org"
-		return Arrays.asList("repo", "user:email");
+		if (getSetupConfig().hasPrivateRepoSupport()) {
+			return Arrays.asList("repo", "user:email");
+		}
+		return Arrays.asList("public_repo", "repo:status", "user:email"); // add
+																			// "read:org"
+	}
+
+	protected SetupConfig getSetupConfig() {
+		return SetupConfig.get();
 	}
 }
