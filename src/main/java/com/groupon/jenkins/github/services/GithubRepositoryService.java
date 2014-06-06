@@ -80,20 +80,16 @@ public class GithubRepositoryService {
 		}
 	}
 
-	public void addHook() {
+	public void addHook() throws IOException {
 		String githubCallbackUrl = getSetupConfig().getGithubCallbackUrl();
 		if (!githubCallbackUrl.endsWith("/")) {
 			githubCallbackUrl = githubCallbackUrl + "/";
 		}
 		Map<String, String> params = ImmutableMap.of("url", githubCallbackUrl);
 		List<GHEvent> events = Arrays.asList(GHEvent.PUSH, GHEvent.PULL_REQUEST);
-		try {
-			githubAccessTokenRepository.put(getRepository().getUrl());
-			removeExistingHook();
-			getRepository().createHook("web", params, events, true);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		githubAccessTokenRepository.put(getRepository().getUrl());
+		removeExistingHook();
+		getRepository().createHook("web", params, events, true);
 	}
 
 	private void removeExistingHook() throws IOException {
@@ -185,5 +181,12 @@ public class GithubRepositoryService {
 		}
 		return true;
 
+	}
+
+	public void linkProjectToCi() throws IOException {
+		addHook();
+		if (getRepository().isPrivate()) {
+			getRepository().addDeployKey("DotCI", SetupConfig.get().getDeployKey());
+		}
 	}
 }

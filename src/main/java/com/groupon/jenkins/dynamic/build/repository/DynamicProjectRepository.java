@@ -136,8 +136,7 @@ public class DynamicProjectRepository extends MongoRepository {
 
 	public DynamicProject createNewProject(GHRepository githubRepository) {
 		try {
-			GithubRepositoryService githubRepositoryService = new GithubRepositoryService(githubRepository);
-			githubRepositoryService.addHook();
+			new GithubRepositoryService(githubRepository).linkProjectToCi();
 
 			OrganizationContainer folder = this.organizationRepository.getOrCreateContainer(githubRepository.getOwner().getLogin());
 			String projectName = githubRepository.getName();
