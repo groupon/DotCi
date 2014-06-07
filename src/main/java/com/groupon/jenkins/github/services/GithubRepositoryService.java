@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.github.GHContent;
+import org.kohsuke.github.GHDeployKey;
 import org.kohsuke.github.GHEvent;
 import org.kohsuke.github.GHHook;
 import org.kohsuke.github.GHRef;
@@ -185,8 +186,23 @@ public class GithubRepositoryService {
 
 	public void linkProjectToCi() throws IOException {
 		addHook();
+		addDeployKey();
+	}
+
+	protected void addDeployKey() throws IOException {
 		if (getRepository().isPrivate()) {
-			getRepository().addDeployKey("DotCI", SetupConfig.get().getDeployKey());
+			removeDeployKeyIfPreviouslyAdded();
+			getRepository().addDeployKey("DotCi", getSetupConfig().getDeployKey());
+		}
+	}
+
+	private void removeDeployKeyIfPreviouslyAdded() throws IOException {
+		String configuredDeployKey = StringUtils.trim(getSetupConfig().getDeployKey());
+		for (GHDeployKey deployKey : getRepository().getDeployKeys()) {
+			// needs startsWith as email address is trimmed out
+			if (configuredDeployKey.startsWith(deployKey.getKey())) {
+				deployKey.delete();
+			}
 		}
 	}
 }

@@ -6,12 +6,15 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.kohsuke.github.GHDeployKey;
 import org.kohsuke.github.GHEvent;
 import org.kohsuke.github.GHRepository;
 
 import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.mongo.GithubAccessTokenRepository;
+
+import static com.google.common.collect.Lists.asList;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -63,5 +66,30 @@ public class GithubRepositoryServiceTest {
 
 		List<GHEvent> events = Arrays.asList(GHEvent.PUSH, GHEvent.PULL_REQUEST);
 		verify(githubRepository).createHook("web", ImmutableMap.of("url", "http://jenkins/githook/"), events, true);
+	}
+
+	@Test
+	public void should_add_deploy_key_from_setup_config_if_private_repo() throws IOException {
+		when(githubRepository.isPrivate()).thenReturn(true);
+		when(setupConfig.getDeployKey()).thenReturn("deploy_key");
+
+		githubRepositoryService.addDeployKey();
+
+		verify(githubRepository).addDeployKey("DotCi", "deploy_key");
+
+	}
+
+	@Test
+	public void should_delete_existing_deploy_key_before_adding_new_one() throws IOException {
+		when(githubRepository.isPrivate()).thenReturn(true);
+		when(setupConfig.getDeployKey()).thenReturn("deploy_key");
+		GHDeployKey deployKey = mock(GHDeployKey.class);
+		when(deployKey.getKey()).thenReturn("deploy_key");
+		when(githubRepository.getDeployKeys()).thenReturn(Arrays.asList(deployKey));
+
+		githubRepositoryService.addDeployKey();
+
+		verify(deployKey).delete();
+
 	}
 }
