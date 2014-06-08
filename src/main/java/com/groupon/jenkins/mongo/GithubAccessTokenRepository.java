@@ -23,6 +23,8 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.mongo;
 
+import hudson.util.Secret;
+
 import java.io.IOException;
 
 import org.acegisecurity.context.SecurityContextHolder;
@@ -40,7 +42,7 @@ public class GithubAccessTokenRepository extends MongoRepository {
 
 	public String getAccessToken(String repourl) {
 		DBObject token = getToken(repourl);
-		return token.get("access_token").toString();
+		return Secret.fromString(token.get("access_token").toString()).getPlainText();
 	}
 
 	public String getAssociatedLogin(String repoUrl) {
@@ -60,8 +62,8 @@ public class GithubAccessTokenRepository extends MongoRepository {
 		if (token != null) {
 			delete(token);
 		}
-		BasicDBObject doc = new BasicDBObject("user", gh.getMyself().getLogin()).append("access_token", auth.getAccessToken()).append("repo_url", url);
+		String accessToken = Secret.fromString(auth.getAccessToken()).getEncryptedValue();
+		BasicDBObject doc = new BasicDBObject("user", gh.getMyself().getLogin()).append("access_token", accessToken).append("repo_url", url);
 		save(doc);
 	}
-
 }
