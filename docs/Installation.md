@@ -23,6 +23,10 @@
 
 ![dotci setup](screenshots/dotci-plugin-configuration.png)
 
+####Private Repository configuration
+Setting this up would use `repo` github oauth scope when users login.
+![dotci private repo config](screenshots/private-repo-config.png)
+
 
 ## Configure package management
 
