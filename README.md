@@ -9,6 +9,7 @@ Brings ease of build configuration of cloud ci systems like travisci and ease of
  - [.ci.yml examples](docs/Examples.md)
  - [Extending DotCi](docs/Extending.md)
  - [Developer Setup](docs/DevelopmentSetup.md)
+ - [Extras](#extras)
  - [License](#license)
 
 ###Features
@@ -68,6 +69,12 @@ Brings ease of build configuration of cloud ci systems like travisci and ease of
  See: [Extending DotCi](docs/Extending.md)
 ###Developer Setup
   See: [Developer Setup](docs/DevelopmentSetup.md)
+###Extras  
+  * Branch Specific build status badges using [Embeddable Build Status Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Embeddable+Build+Status+Plugin).
+     Add `branch=<branch-name>` param to build status url,  eg `https://ci.example.com/job/myorg/job/railsapp/badge/icon?branch=master`
+
+  * [Quick setup guide for digitalocean](https://github.com/groupon/DotCi/wiki/Setup-Cloud-CI-in-15-minutes-with-Jenkins,-DotCi,-Docker-and-DigitalOcean).   
+
 ###License
 ```
 The MIT License (MIT)
