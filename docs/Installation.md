@@ -6,7 +6,7 @@
  5. [Configure package management](#configure-package-management)
 
 ## Install Plugin
-  - Install DotCi plugin from the update center. This should also install [github-oauth-plugin](https://wiki.jenkins-ci.org/display/JENKINS/Github+OAuth+Plugin)
+  - Install DotCi plugin from the update center. This should automatically install [github-oauth-plugin](https://wiki.jenkins-ci.org/display/JENKINS/Github+OAuth+Plugin)
 
 ## Mongodb setup
    Install [mongodb](https://www.mongodb.org/) accessible to your Jenkins instance.
