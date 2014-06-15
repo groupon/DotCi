@@ -9,3 +9,5 @@ work/
 /bin
 _site
 DotCi.iws
+DotCi.ipr
+DotCi.iml
