@@ -28,7 +28,7 @@ environment:
   vars:
     RACK_ENV: test
     RAILS_ENV: test
-    BUNDLE_PATH: /tmp/`echo $WORKSPACE | awk -F "/" '{print \$5"/"\$6}'`/bundle_cache
+    BUNDLE_PATH: /tmp/`echo $WORKSPACE | awk -F "/" '{print \$5"/"\$6}'`/`jruby -v 2>&1 | awk '{print $1"-"$2}' || ruby -v 2>&1 | awk '{print $1"-"$2}'`/bundle_cache
     BUNDLE_FROZEN: true
     BUNDLE_WITHOUT: production:development
     GEM_HOME: /tmp
