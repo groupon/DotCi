@@ -40,8 +40,7 @@ public class DotCiGitHubOAuthScope extends GitHubOAuthScope {
 		if (getSetupConfig().hasPrivateRepoSupport()) {
 			return Arrays.asList("repo", "user:email");
 		}
-		return Arrays.asList("public_repo", "repo:status", "user:email"); // add
-																			// "read:org"
+		return Arrays.asList("public_repo", "repo:status", "user:email", "read:org");
 	}
 
 	protected SetupConfig getSetupConfig() {
