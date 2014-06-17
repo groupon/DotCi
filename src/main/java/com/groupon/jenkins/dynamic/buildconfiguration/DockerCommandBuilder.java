@@ -53,12 +53,16 @@ public class DockerCommandBuilder {
 	}
 
 	public DockerCommandBuilder flag(String flag) {
-		flags.add("-" + flag);
+        flags.add(getOption(flag));
 		return this;
 	}
 
+    private String getOption(String option){
+        return option.length() > 1? "--" + option: "-" + option;
+    }
+
 	public DockerCommandBuilder flag(String flag, String value) {
-		flags.add(spaceJoiner.join("-" + flag, value));
+		flags.add(spaceJoiner.join(getOption(flag), value));
 		return this;
 	}
 }
