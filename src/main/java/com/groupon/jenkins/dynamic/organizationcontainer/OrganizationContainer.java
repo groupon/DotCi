@@ -122,6 +122,7 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
 				primaryView = name;
 			}
 		};
+        items = new CopyOnWriteMap.Tree<String, DynamicProject>(CaseInsensitiveComparator.INSTANCE);
 		items = getJobsForThisContainer();
 	}
 
