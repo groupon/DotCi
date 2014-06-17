@@ -53,7 +53,7 @@ public class ServicesSectionTest {
 
 	@Test
 	public void should_start_containers_in_deamon_mode() {
-		assertEquals("docker run -d -name chairman_mongodb_buildId chairman/mongodb", startCommands.get(1));
+		assertEquals("docker run -d --name chairman_mongodb_buildId chairman/mongodb", startCommands.get(1));
 	}
 
 	@Test

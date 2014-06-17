@@ -28,7 +28,7 @@ THE SOFTWARE.
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>1.502</version>
+		<version>1.567</version>
 		<!-- which version of Jenkins is this plugin built against? -->
 	</parent>
 	<groupId>com.groupon.jenkins-ci.plugins</groupId>
@@ -159,6 +159,11 @@ THE SOFTWARE.
 		</plugins>
 	</build>
 	<dependencies>
+		<dependency>
+			 <groupId>org.jenkins-ci.plugins</groupId>
+			 <artifactId>matrix-project</artifactId>
+			 <version>1.2</version>
+		</dependency>
 		<dependency>
 			<groupId>org.jenkins-ci.plugins</groupId>
 			<artifactId>github-oauth</artifactId>

@@ -60,7 +60,7 @@ public class EnvironmentSectionTest {
 		EnvironmentSection envSection = new EnvironmentSection(config);
 		this.commands = envSection.getDockerBuildRunScriptForImage("buildId", map("meow", "purr"));
 		assertEquals("docker pull  mongodb", commands.get(1));
-		assertEquals("docker run -d -name mongodb_buildId mongodb", commands.get(2));
+		assertEquals("docker run -d --name mongodb_buildId mongodb", commands.get(2));
 		assertTrue(commands.get(3).contains("-link mongodb_buildId:mongodb"));
 	}
 }
