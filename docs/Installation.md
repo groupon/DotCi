@@ -34,7 +34,7 @@ There are two options for installing packages that the build needs,
 
 - **Docker** - Install docker on jenkins slaves where builds would run.
 - **Non-Docker** - DotCi calls a bash function 'install_packages' with requested packages and languages specified in the enviroment
-section of .ci.yml. It is upto you to provide implementation of this shell function available to jenkins slave running dotci build.
+section of .ci.yml. It is up to you to provide implementation of this shell function available to jenkins slave running dotci build.
 
  Here is an example of of install_packages function using rvm for ruby builds
   ```bash
