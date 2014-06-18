@@ -160,4 +160,8 @@ public class MyBuildsView extends AuthenticatedView {
 		return viewType == null ? "builds" : viewType;
 	}
 
+    @Override
+    public boolean isEditable() {
+        return false;
+    }
 }
