@@ -127,7 +127,7 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
 
 	public Object getState(String state) {
 		try {
-			return Enum.<Enum> valueOf((Class<Enum>) Class.forName("hudson.model.Run$State"), state);
+			return Enum.valueOf((Class<Enum>) Class.forName("hudson.model.Run$State"), state);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
