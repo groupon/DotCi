@@ -23,11 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
-import hudson.model.HealthReport;
-import hudson.model.ItemGroup;
-import hudson.model.TaskListener;
-import hudson.model.Project;
-import hudson.model.Queue;
+import hudson.model.*;
 import hudson.model.Queue.Item;
 import hudson.scm.PollingResult;
 import hudson.search.QuickSilver;
@@ -40,7 +36,10 @@ import java.util.SortedMap;
 
 import jenkins.model.Jenkins;
 
+import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.export.Exported;
 
 import com.google.common.base.Objects;
@@ -152,7 +151,12 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
 
 	@Override
 	public B getLastBuild() {
-		return dynamicBuildRepository.<B> getLastBuild(this);
+        String branch = "master";
+        StaplerRequest currentRequest = Stapler.getCurrentRequest();
+        if (currentRequest != null && StringUtils.isNotEmpty(currentRequest.getParameter("branch"))) {
+            branch = currentRequest.getParameter("branch");
+        }
+		return dynamicBuildRepository.<B> getLastBuild(this,branch);
 	}
 
 	@Override

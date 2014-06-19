@@ -252,21 +252,8 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 		throw new IllegalStateException("Cannot delete Sub Project without deleting the parent");
 	}
 
-	@Override
-	public BallColor getIconColor() {
-		if (isDisabled()) {
-			return BallColor.DISABLED;
-		}
-		StaplerRequest currentRequest = Stapler.getCurrentRequest();
-		if (currentRequest != null && StringUtils.isNotEmpty(currentRequest.getParameter("branch"))) {
-			String branch = currentRequest.getParameter("branch");
-			DynamicBuild lastBuildForBranch = new DynamicBuildRepository().getLastBuild(this, branch);
-			if (lastBuildForBranch == null) {
-				return BallColor.DISABLED;
-			} else {
-				return Result.SUCCESS.equals(lastBuildForBranch.getResult()) ? BallColor.BLUE : BallColor.RED;
-			}
-		}
-		return super.getIconColor();
-	}
+    @Override
+    public DynamicBuild getLastBuild() {
+        return super.getLastBuild();
+    }
 }

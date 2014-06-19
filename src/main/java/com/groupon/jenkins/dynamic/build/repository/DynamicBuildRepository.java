@@ -246,7 +246,7 @@ public class DynamicBuildRepository extends MongoRepository {
 		return fetchBuildInfo(new BasicDBObject("pusher", pusher).append("main_build", true), numberOfBuilds);
 	}
 
-	public <T extends DbBackedBuild> T getLastBuild(DynamicProject project, String branch) {
+	public <T extends DbBackedBuild> T getLastBuild(DbBackedProject project, String branch) {
 		BasicDBObject query = getQuery(project).append("branch", branch);
 		return findOne(query, new BasicDBObject("number", -1), DynamicBuildRepository.<T> getTransformer(project), ReadPreference.secondary());
 	}
