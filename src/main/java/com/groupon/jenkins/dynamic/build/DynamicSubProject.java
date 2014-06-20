@@ -86,7 +86,7 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
 
 	@Override
 	public int getNextBuildNumber() {
-		AbstractBuild<?, ?> lb = getParent().getLastBuild();
+		AbstractBuild<?, ?> lb = getParent().getLastBuildAnyBranch();
 		int n = lb.getNumber() + 1;
 		return n;
 	}

@@ -149,6 +149,9 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
 		return dynamicBuildRepository.<B> getFirstBuild(this);
 	}
 
+    public B getLastBuildAnyBranch() {
+        return dynamicBuildRepository.<B> getLastBuild(this);
+    }
 	@Override
 	public B getLastBuild() {
         String branch = "master";

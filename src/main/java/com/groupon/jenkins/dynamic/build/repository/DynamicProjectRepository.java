@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.repository;
 
+import com.groupon.jenkins.dynamic.build.*;
 import hudson.model.ItemGroup;
 import hudson.model.Items;
 import hudson.model.ParametersDefinitionProperty;
@@ -43,10 +44,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.dynamic.build.DbBackedProject;
-import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.DynamicSubProject;
-import com.groupon.jenkins.dynamic.build.IdentifableItemGroup;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainerRepository;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
 import com.groupon.jenkins.github.GithubRepoProperty;
@@ -147,7 +144,7 @@ public class DynamicProjectRepository extends MongoRepository {
 			if (StringUtils.isNotEmpty(SetupConfig.get().getLabel())) {
 				project.setAssignedLabel(Jenkins.getInstance().getLabel(SetupConfig.get().getLabel()));
 			}
-			project.addProperty(new ParametersDefinitionProperty(new StringParameterDefinition("BRANCH", "master")));
+			project.addProperty(new ParametersDefinitionProperty(new GithubBranchParameterDefinition("BRANCH", "master",githubRepository.getUrl())));
 			project.addProperty(new GithubRepoProperty(githubRepository.getUrl()));
 
 			project.getPublishersList().add(new DotCiNotifier());
