@@ -120,6 +120,11 @@ public class EnvironmentSection extends CompositeConfigSection {
 		String buildImageCommand = dockerCommand("build").flag("t").args(buildId, ".").get();
 		commands.add(buildImageCommand);
 
+        // If we are running a command in the container and we have services to link to, try socat
+        if (servicesSection.isSpecified()) {
+            buildCommand = buildCommandAmbassador(buildCommand);
+        }
+
 		/* @formatter:off */
 		DockerCommandBuilder runCommand = dockerCommand("run")
 				                          .flag("rm")
@@ -138,4 +143,17 @@ public class EnvironmentSection extends CompositeConfigSection {
 		return commands;
 	}
 
+    public String buildCommandAmbassador(String buildCommand) {
+        String shellPrefix = "sh -c \"env && ";
+        if (buildCommand.contains(shellPrefix)) {
+            int defaultEnvLength = shellPrefix.length();
+            return new StringBuilder(buildCommand).insert(defaultEnvLength, DEFAULT_LINK_PROXY).toString();
+        }
+        return buildCommand;
+    }
+
+    // See the ambassador pattern :  https://docs.docker.com/articles/ambassador_pattern_linking/
+    public final String DEFAULT_LINK_PROXY = "if [ -x /usr/bin/socat ]; then env | grep _TCP= | sed 's/.*_PORT_\\" +
+            "([0-9]*\\)_TCP=tcp:\\/\\/\\(.*\\):\\(.*\\)/socat TCP4-LISTEN:\\1,fork,reuseaddr TCP4:\\2:\\3 \\&/' " +
+            "| sh ;fi && ";
 }
