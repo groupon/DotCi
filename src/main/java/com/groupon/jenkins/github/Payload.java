@@ -23,21 +23,18 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.github;
 
-import hudson.model.Cause;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
-import org.kohsuke.github.GHRepository;
-
 import com.groupon.jenkins.dynamic.build.cause.GitHubPullRequestCause;
 import com.groupon.jenkins.dynamic.build.cause.GitHubPushCause;
 import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
+import hudson.model.Cause;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.kohsuke.github.GHRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class Payload {
 
@@ -90,7 +87,7 @@ public class Payload {
 
 	public String getBranch() {
 		if (isPullRequest()) {
-			return "pr/" + getPullRequestNumber() + "/head";
+			return "Pull Request: " + getPullRequestNumber();
 		} else {
 			return payloadJson.getString("ref").replaceAll("refs/heads/", "");
 		}

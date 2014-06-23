@@ -23,19 +23,16 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.github;
 
-import java.io.IOException;
-import java.io.InputStream;
-
+import com.google.common.collect.Iterables;
+import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.google.common.collect.Iterables;
-import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
+import java.io.IOException;
+import java.io.InputStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class PayloadTest {
 
@@ -64,7 +61,7 @@ public class PayloadTest {
 	public void testProjectPullRequestUnmergableBranch() throws IOException {
 		String payloadReq = readFile("pull_request.json");
 		Payload payload = new Payload(payloadReq);
-		assertEquals("pr/4/head", payload.getBranch());
+		assertEquals("Pull Request: 4", payload.getBranch());
 	}
 
 	@Test

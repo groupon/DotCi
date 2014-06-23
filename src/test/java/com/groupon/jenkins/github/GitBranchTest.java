@@ -38,12 +38,12 @@ public class GitBranchTest {
 
 	@Test
 	public void pull_request_branches_follow_convention() {
-		assertTrue(new GitBranch("pr/27/head").isPullRequest());
+		assertTrue(new GitBranch("Pull Request: 27").isPullRequest());
 	}
 
 	@Test
 	public void should_extract_pull_request_number() {
-		assertEquals(27, new GitBranch("pr/27/head").pullRequestNumber());
+		assertEquals(27, new GitBranch("Pull Request: 27").pullRequestNumber());
 	}
 
 	@Test
@@ -53,7 +53,7 @@ public class GitBranchTest {
 
 	@Test
 	public void should_return_pr_number_if_not_pull_request_when_asked_for_pull_request_number() {
-		assertEquals(27, new GitBranch("pr/27/head").pullRequestNumber());
+		assertEquals(27, new GitBranch("Pull Request: 27").pullRequestNumber());
 	}
 
 }

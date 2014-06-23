@@ -27,22 +27,22 @@ import com.google.common.base.Objects;
 
 public class GitBranch {
 
-	private final String branch;
+    public static final String PULL_REQUEST_PREFIX = "Pull Request:";
+    private final String branch;
 
-	private final String PULL_REQUEST_PATTERN = "(^pr/)(\\d*)(/head)";
 
 	public GitBranch(String branch) {
 		this.branch = branch;
 	}
 
 	public int pullRequestNumber() {
-		String number = branch.replaceAll(PULL_REQUEST_PATTERN, "$2");
+		String number = branch.replace(PULL_REQUEST_PREFIX,"").trim();
 		return Integer.parseInt(number);
 	}
 
 	public boolean isPullRequest() {
-		return branch.matches(PULL_REQUEST_PATTERN);
-	}
+        return branch.startsWith(PULL_REQUEST_PREFIX);
+    }
 
 	@Override
 	public String toString() {

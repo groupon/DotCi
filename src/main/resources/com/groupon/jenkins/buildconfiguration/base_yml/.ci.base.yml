@@ -32,7 +32,7 @@ environment:
 build:
   checkout: 
     - find . -delete 
-    <% if( DOTCI_BRANCH =~ /^pr\/[0-9]+\/head$/ ) { %>
+    <% if(DOTCI_PULL_REQUEST) { %>
     - git clone  $GIT_URL .    
     - "git fetch origin +refs/pull/$DOTCI_PULL_REQUEST/merge:" #quotes needed here to escape the colon
     - git reset --hard FETCH_HEAD
