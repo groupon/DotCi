@@ -3,7 +3,7 @@
 * Install mongodb
 * Register an [oauth application with github](https://github.com/settings/applications/new) with the following values
    * Homepage URL - http://127.0.0.1:8080
-   * Authorization callback URL - http://127.0.0.1:8080/securityRealm/finishLogin
+   * Authorization callback URL - http://127.0.0.1:8080/jenkins/securityRealm/finishLogin
 * Launch local instance with `mvn hpi:run`
 *  Go to `Manage Jenkins` > `Configure Global Security`
   Under `Security Realm` select `Github Authentication Plugin` and fill out required oauth credentials.  
