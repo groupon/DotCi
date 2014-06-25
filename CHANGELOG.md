@@ -2,6 +2,7 @@
 
 Features:
  - Add autocomplete for branch parameter textbox
+ - Point `getLastBuild()` to `master` branch.
 
 Bugfixes: 
   - Fix bundle caching for ruby based on version(#33)
