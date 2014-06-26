@@ -21,18 +21,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.mongo;
+package com.groupon.jenkins.github.services;
 
+import com.groupon.jenkins.mongo.MongoRepository;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import hudson.util.Secret;
-
-import java.io.IOException;
-
 import org.acegisecurity.context.SecurityContextHolder;
 import org.jenkinsci.plugins.GithubAuthenticationToken;
 import org.kohsuke.github.GitHub;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import java.io.IOException;
 
 public class GithubAccessTokenRepository extends MongoRepository {
 
@@ -57,13 +56,27 @@ public class GithubAccessTokenRepository extends MongoRepository {
 
 	public void put(String url) throws IOException {
 		DBObject token = getToken(url);
-		GithubAuthenticationToken auth = (GithubAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+		GithubAuthenticationToken auth = getAuthentication();
+        String accessToken = getEncryptedToken(auth);
 		GitHub gh = auth.getGitHub();
 		if (token != null) {
 			delete(token);
 		}
-		String accessToken = Secret.fromString(auth.getAccessToken()).getEncryptedValue();
 		BasicDBObject doc = new BasicDBObject("user", gh.getMyself().getLogin()).append("access_token", accessToken).append("repo_url", url);
 		save(doc);
 	}
+
+    private GithubAuthenticationToken getAuthentication() {
+        return (GithubAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    private String getEncryptedToken(GithubAuthenticationToken auth) {
+        return Secret.fromString(auth.getAccessToken()).getEncryptedValue();
+    }
+
+    public void updateAccessToken(String username) {
+        BasicDBObject query = new BasicDBObject("user", username);
+        BasicDBObject update = new BasicDBObject("access_token", getEncryptedToken(getAuthentication()));
+        update(query,update);
+    }
 }

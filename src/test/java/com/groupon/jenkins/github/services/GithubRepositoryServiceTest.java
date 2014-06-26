@@ -12,7 +12,6 @@ import org.kohsuke.github.GHRepository;
 
 import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.mongo.GithubAccessTokenRepository;
 
 import static com.google.common.collect.Lists.asList;
 

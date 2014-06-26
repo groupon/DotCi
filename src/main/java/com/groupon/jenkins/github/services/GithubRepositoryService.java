@@ -23,6 +23,14 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.github.services;
 
+import com.google.common.collect.ImmutableMap;
+import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.github.GitBranch;
+import com.groupon.jenkins.github.GitSshUrl;
+import com.groupon.jenkins.github.GithubUtils;
+import org.apache.commons.lang.StringUtils;
+import org.kohsuke.github.*;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -30,22 +38,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import org.apache.commons.lang.StringUtils;
-import org.kohsuke.github.GHContent;
-import org.kohsuke.github.GHDeployKey;
-import org.kohsuke.github.GHEvent;
-import org.kohsuke.github.GHHook;
-import org.kohsuke.github.GHRef;
-import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GitHub;
-
-import com.google.common.collect.ImmutableMap;
-import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.github.GitBranch;
-import com.groupon.jenkins.github.GitSshUrl;
-import com.groupon.jenkins.github.GithubUtils;
-import com.groupon.jenkins.mongo.GithubAccessTokenRepository;
 
 public class GithubRepositoryService {
 	private static final Logger LOGGER = Logger.getLogger(GithubRepositoryService.class.getName());

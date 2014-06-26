@@ -8,7 +8,7 @@ import org.kohsuke.github.GHRepository;
 
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
-import com.groupon.jenkins.mongo.GithubAccessTokenRepository;
+import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
 
 public class ProjectConfigInfo {
 
