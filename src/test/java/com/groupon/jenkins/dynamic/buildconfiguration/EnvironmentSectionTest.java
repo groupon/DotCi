@@ -63,4 +63,14 @@ public class EnvironmentSectionTest {
 		assertEquals("docker run -d --name mongodb_buildId mongodb", commands.get(2));
 		assertTrue(commands.get(3).contains("-link mongodb_buildId:mongodb"));
 	}
+
+    @Test
+    public void should_inject_default_socat_if_services_are_specified() {
+        MapValue<String, Object> config = configMap("image", "surya/cool_docker_image", "services", "mysql");
+        EnvironmentSection envSection = new EnvironmentSection(config);
+        this.commands = envSection.getDockerBuildRunScriptForLocal("buildId", map("meow", "purr"), "sh -c \"env && echo meooooow");
+        assertEquals("docker pull  mysql", commands.get(1));
+        assertTrue(commands.get(3).contains("-x /usr/bin/socat"));
+        assertTrue(commands.get(3).contains("meooooow"));
+    }
 }
