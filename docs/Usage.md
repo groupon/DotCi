@@ -9,7 +9,7 @@
    - [Environment Variables](#environment-variables)
    - [Groovy templating](#groovy-templating )
 - [Build url shortcuts](#build-url-shortcuts)
-
+- [Docker Configuration](#docker-configuration)
 
 ## Setup a new DotCi Job
    - Click new DotCi job on side-panel
@@ -147,3 +147,16 @@ notifications:
  * Fetch builds by git sha ( `job/meow/23/sha?value=<sha>`) 
  * Or branch specific permalinks (`lastSuccessfulMaster`) .
      
+## Docker Configuration
+ DotCi supports [docker linking](https://docs.docker.com/userguide/dockerlinks/) out of the box. If socat is installed on the container we will attempt to use [socat](https://docs.docker.com/articles/ambassador_pattern_linking/) to link the containers. For example if your .ci.yml has the following:
+```yaml
+environment:
+  services:
+    - orchardup/mysql
+build:
+  run:
+    - echo meooooooooooooooow
+    - sleep 10
+    - mysql -u root -e 'show databases' -h 127.0.0.1
+```
+The container under test is able to communicate with the linked mysql container by directly using 127.0.0.1 instead of pulling the address information out of the linked environment variable.
