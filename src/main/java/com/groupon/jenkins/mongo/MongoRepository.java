@@ -23,21 +23,14 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.mongo;
 
+import com.google.common.base.Function;
+import com.groupon.jenkins.SetupConfig;
+import com.mongodb.*;
+import org.bson.types.ObjectId;
+
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.bson.types.ObjectId;
-
-import com.google.common.base.Function;
-import com.groupon.jenkins.SetupConfig;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
-import com.mongodb.ReadPreference;
 
 public abstract class MongoRepository {
 	/**
@@ -77,6 +70,14 @@ public abstract class MongoRepository {
 			client.close();
 		}
 	}
+    protected void update(DBObject query, DBObject object,boolean upsert , boolean multi ) {
+        MongoClient client = getClient();
+        try {
+            getCollection(client).update(query, object,upsert,multi);
+        } finally {
+            client.close();
+        }
+    }
 
 	protected ObjectId saveOrUpdate(BasicDBObject query, BasicDBObject doc) {
 		DBObject exisistingObject = findOne(query);

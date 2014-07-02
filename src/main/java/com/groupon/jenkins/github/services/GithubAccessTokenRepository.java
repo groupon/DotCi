@@ -76,7 +76,7 @@ public class GithubAccessTokenRepository extends MongoRepository {
 
     public void updateAccessToken(String username) {
         BasicDBObject query = new BasicDBObject("user", username);
-        BasicDBObject update = new BasicDBObject("access_token", getEncryptedToken(getAuthentication()));
-        update(query,update);
+        BasicDBObject update = new BasicDBObject("$set", new BasicDBObject("access_token", getEncryptedToken(getAuthentication())));
+        update(query,update,false,true);
     }
 }
