@@ -26,6 +26,7 @@ package com.groupon.jenkins.github.services;
 import com.groupon.jenkins.mongo.MongoRepository;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.mongodb.DBCollection;
 import hudson.util.Secret;
 import java.io.IOException;
 import org.acegisecurity.context.SecurityContextHolder;
@@ -34,36 +35,40 @@ import org.kohsuke.github.GitHub;
 
 public class GithubAccessTokenRepository extends MongoRepository {
 
-	public GithubAccessTokenRepository() {
-		super("github_tokens");
-	}
+    public static final String COLLECTION_NAME = "github_tokens";
 
-	public String getAccessToken(String repourl) {
-		DBObject token = getToken(repourl);
-		return Secret.fromString(token.get("access_token").toString()).getPlainText();
-	}
+    public GithubAccessTokenRepository() {
+    }
 
-	public String getAssociatedLogin(String repoUrl) {
-		DBObject token = getToken(repoUrl);
-		return token.get("user").toString();
-	}
+    public String getAccessToken(String repourl) {
+        DBObject token = getToken(repourl);
+        return Secret.fromString(token.get("access_token").toString()).getPlainText();
+    }
 
-	private DBObject getToken(String repourl) {
-		BasicDBObject query = new BasicDBObject("repo_url", repourl);
-		return findOne(query);
-	}
+    public String getAssociatedLogin(String repoUrl) {
+        DBObject token = getToken(repoUrl);
+        return token.get("user").toString();
+    }
 
-	public void put(String url) throws IOException {
-		DBObject token = getToken(url);
-		GithubAuthenticationToken auth = getAuthentication();
+    private DBObject getToken(String repourl) {
+        BasicDBObject query = new BasicDBObject("repo_url", repourl);
+        return getCollection().findOne(query);
+    }
+
+  	public void put(String url) throws IOException {
+        DBObject token = getToken(url);
+
+        GithubAuthenticationToken auth = getAuthentication();
+        GitHub gh = auth.getGitHub();
         String accessToken = getEncryptedToken(auth);
-		GitHub gh = auth.getGitHub();
-		if (token != null) {
-			delete(token);
-		}
-		BasicDBObject doc = new BasicDBObject("user", gh.getMyself().getLogin()).append("access_token", accessToken).append("repo_url", url);
-		save(doc);
-	}
+
+		    if (token != null) {
+			     getCollection().remove(token);
+		    }
+
+		    BasicDBObject doc = new BasicDBObject("user", gh.getMyself().getLogin()).append("access_token", accessToken).append("repo_url", url);
+		    getCollection().insert(doc);
+	  }
 
     private GithubAuthenticationToken getAuthentication() {
         return (GithubAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
@@ -76,10 +81,14 @@ public class GithubAccessTokenRepository extends MongoRepository {
     public void updateAccessToken(String username) {
         BasicDBObject query = new BasicDBObject("user", username);
         BasicDBObject update = new BasicDBObject("$set", new BasicDBObject("access_token", getEncryptedToken(getAuthentication())));
-        update(query,update,false,true);
+        getCollection().update(query,update,false,true);
     }
 
     public boolean isConfigured(String url) {
         return getToken(url) !=null;
+    }
+
+    protected DBCollection getCollection() {
+        return getDatastore().getDB().getCollection(COLLECTION_NAME);
     }
 }

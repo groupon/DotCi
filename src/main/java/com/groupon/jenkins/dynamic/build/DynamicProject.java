@@ -33,6 +33,7 @@ import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.dynamic.buildtype.BuildTypeProperty;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
+import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainerRepository;
 import com.groupon.jenkins.github.GithubRepoProperty;
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 import hudson.Extension;
@@ -58,11 +59,33 @@ import jenkins.model.Jenkins;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.mongodb.morphia.annotations.PostLoad;
+import org.mongodb.morphia.annotations.PrePersist;
 
 import javax.servlet.ServletException;
 
 public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild> implements TopLevelItem, Saveable, IdentifableItemGroup<DynamicSubProject> {
 	private transient Map<String, DynamicSubProject> items;
+    private String containerName;
+
+    @PrePersist
+    void saveProjectId() {
+        containerName = (String) getParent().getId();
+    }
+
+    @PostLoad
+    void loadParent() {
+        try {
+            // If it didn't load on main Jenkins start, try loading it again.
+            OrganizationContainer container = new OrganizationContainerRepository().getOrganizationContainer(containerName);
+            if(container != null) {
+                onLoad(container, getName());
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Unable to load container for project: " + containerName);
+        }
+
+    }
 
 	@Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
@@ -73,19 +96,17 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 	}
 
 	private void init() {
-		Iterable<DynamicSubProject> projects = new DynamicProjectRepository().getChildren(this);
-		items = new CopyOnWriteMap.Tree<String, DynamicSubProject>(CaseInsensitiveComparator.INSTANCE);
-		for (DynamicSubProject dbBackedProject : projects) {
-			items.put(dbBackedProject.getName(), dbBackedProject);
-		}
-
+        Iterable<DynamicSubProject> projects = new DynamicProjectRepository().getChildren(this);
+        items = new CopyOnWriteMap.Tree<String, DynamicSubProject>(CaseInsensitiveComparator.INSTANCE);
+        for (DynamicSubProject dbBackedProject : projects) {
+            items.put(dbBackedProject.getName(), dbBackedProject);
+        }
 	}
 
 	@Override
 	public void onLoad(ItemGroup<? extends Item> parent, String name) throws IOException {
 		super.onLoad(parent, name);
 		init();
-
 	}
 
 	@Override

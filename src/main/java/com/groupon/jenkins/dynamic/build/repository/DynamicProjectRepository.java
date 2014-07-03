@@ -64,57 +64,61 @@ public class DynamicProjectRepository extends MongoRepository {
 	}
 
 	protected DynamicProjectRepository(OrganizationContainerRepository organizationRepository, DynamicBuildRepository dynamicBuildRepository) {
-		super("dotci_project");
 		this.organizationRepository = organizationRepository;
 		this.dynamicBuildRepository = dynamicBuildRepository;
 	}
 
 	public ObjectId saveOrUpdate(DbBackedProject project) {
-		String buildXml = Items.XSTREAM.toXML(project);
-		BasicDBObject doc = new BasicDBObject("xml", buildXml).append("name", project.getName()).append("parent", project.getIdentifableParent().getId());
-		BasicDBObject query = new BasicDBObject("name", project.getName()).append("parent", project.getIdentifableParent().getId());
-		return saveOrUpdate(query, doc);
+        getDatastore().save(project);
+        return project.getId();
 	}
 
 	public DynamicSubProject getChild(IdentifableItemGroup<DynamicSubProject> parent, String name) {
-		BasicDBObject query = new BasicDBObject("name", name).append("parent", parent.getId());
-		return findOne(query, DynamicProjectRepository.<DynamicSubProject> getTransformer(parent));
+        DynamicSubProject subProject = getDatastore().createQuery(DynamicSubProject.class).
+                disableValidation().
+                field("name").equal(name).
+                field("parentId").exists().
+                field("parentId").equal(parent.getId()).
+                get();
+
+        if(subProject != null) {
+            try {
+                subProject.onLoad(parent, name);
+            } catch(IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
+        return subProject;
 	}
 
 	public Iterable<DynamicSubProject> getChildren(DynamicProject parent) {
-		BasicDBObject query = new BasicDBObject("parent", parent.getId());
-		return find(query, DynamicProjectRepository.<DynamicSubProject> getTransformer(parent));
-	}
+        List<DynamicSubProject> children = getDatastore().createQuery(DynamicSubProject.class).
+                disableValidation().
+                field("parentId").exists().
+                field("parentId").equal(parent.getId()).
+                asList();
 
-	private static <T extends DbBackedProject> Function<DBObject, T> getTransformer(final ItemGroup parent) {
+        for(DynamicSubProject subProject : children) {
+            try {
+                subProject.onLoad(parent, subProject.getName());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
-		return new Function<DBObject, T>() {
-			@Override
-			public T apply(@Nonnull DBObject input) {
-				String xml = (String) input.get("xml");
-				T project = (T) hudson.model.Items.XSTREAM.fromXML(xml);
-				project.setId((ObjectId) input.get("_id"));
-				try {
-					project.onLoad(parent, (String) input.get("name"));
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-				return project;
-			}
-		};
+        return children;
 	}
 
 	public void delete(DynamicProject project) {
-		for (DbBackedProject subProject : getChildren(project)) {
-			BasicDBObject subProjectDeleteQuery = new BasicDBObject("name", subProject.getName()).append("parent", project.getId());
-			delete(subProjectDeleteQuery);
-			dynamicBuildRepository.delete(subProject);
-
+        // TODO do this in a query not iteratively in memory
+		for (DynamicSubProject subProject : getChildren(project)) {
+            dynamicBuildRepository.delete(subProject);
+			getDatastore().delete(subProject);
 		}
-		BasicDBObject mainProjectDeleteQuery = new BasicDBObject("name", project.getName()).append("parent", project.getParent().getId());
-		delete(mainProjectDeleteQuery);
-		dynamicBuildRepository.delete(project);
-
+        dynamicBuildRepository.delete(project);
+		getDatastore().delete(project);
 	}
 
 	public Iterable<DynamicProject> getJobsFor(final String url) {
@@ -162,15 +166,13 @@ public class DynamicProjectRepository extends MongoRepository {
 	}
 
 	public Iterable<DynamicProject> getProjectsForOrg(final OrganizationContainer organizationContainer) {
-		return find(new BasicDBObject("parent", organizationContainer.getId()), castToDynamicProject(getTransformer(organizationContainer)));
+        return getDatastore().createQuery(DynamicProject.class).disableValidation().field("containerName").equal(organizationContainer.getName()).asList();
 	}
 
-	private Function<DBObject, DynamicProject> castToDynamicProject(final Function<DBObject, DbBackedProject> transformer) {
-		return new Function<DBObject, DynamicProject>() {
-			@Override
-			public DynamicProject apply(DBObject input) {
-				return (DynamicProject) transformer.apply(input);
-			}
-		};
-	}
+    public DynamicProject getProjectById(ObjectId id) {
+        return getDatastore()
+                .createQuery(DynamicProject.class)
+                .field("id").equal(id).get();
+    }
+
 }

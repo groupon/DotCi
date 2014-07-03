@@ -98,12 +98,7 @@ public class GithubRepositoryService {
 	}
 
 	public GHRef getRef(String refName) throws IOException {
-		String url = String.format("/repos/%s/%s/git/refs/%s", getRepository().getOwner().getLogin(), getRepository().getName(), refName);
-		try {
-			return GithubUtils.getObject(getGithub(), url, GHRef.class);
-		} catch (InvocationTargetException e) {
-			throw new IOException(e);
-		}
+        return getRepository().getRef(refName);
 	}
 
 	public GHRepository getGithubRepository() {
