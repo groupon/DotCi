@@ -23,32 +23,30 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildsetup;
 
-import hudson.Extension;
-import hudson.model.TopLevelItem;
-
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-
-import jenkins.model.Jenkins;
-
-import org.acegisecurity.context.SecurityContextHolder;
-import org.apache.commons.lang.StringUtils;
-import org.jenkinsci.plugins.GithubAuthenticationToken;
-import org.kohsuke.github.GHRepository;
-import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.github.services.GithubCurrentUserService;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import com.groupon.jenkins.util.AuthenticatedRootAction;
+import hudson.Extension;
+import hudson.model.TopLevelItem;
+import hudson.security.SecurityRealm;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import jenkins.model.Jenkins;
+import org.acegisecurity.context.SecurityContextHolder;
+import org.apache.commons.lang.StringUtils;
+import org.jenkinsci.plugins.GithubAuthenticationToken;
+import org.jenkinsci.plugins.GithubSecurityRealm;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+
+import javax.servlet.ServletException;
 
 @Extension
 public class GithubReposController extends AuthenticatedRootAction {
@@ -126,5 +124,9 @@ public class GithubReposController extends AuthenticatedRootAction {
 	public String getSearchUrl() {
 		return getUrlName();
 	}
+    public boolean isSecurityConfigured(){
+        SecurityRealm securityRealm = Jenkins.getInstance().getSecurityRealm();
+        return securityRealm instanceof GithubSecurityRealm;
+    }
 
 }

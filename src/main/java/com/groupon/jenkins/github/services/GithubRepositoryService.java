@@ -114,15 +114,6 @@ public class GithubRepositoryService {
 		return getGithubRepository().getFileContent(fileName, sha);
 	}
 
-	public boolean isHookConfigured() throws IOException {
-		for (GHHook hook : getGithubRepository().getHooks()) {
-			if (hook.isActive() && getSetupConfig().getGithubCallbackUrl().equals(hook.getConfig().get("url"))) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public String getRepoLanguage() {
 		return getRepository().getLanguage().toLowerCase();
 	}

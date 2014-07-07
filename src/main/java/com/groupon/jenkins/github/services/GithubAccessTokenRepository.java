@@ -27,11 +27,10 @@ import com.groupon.jenkins.mongo.MongoRepository;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import hudson.util.Secret;
+import java.io.IOException;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.jenkinsci.plugins.GithubAuthenticationToken;
 import org.kohsuke.github.GitHub;
-
-import java.io.IOException;
 
 public class GithubAccessTokenRepository extends MongoRepository {
 
@@ -78,5 +77,9 @@ public class GithubAccessTokenRepository extends MongoRepository {
         BasicDBObject query = new BasicDBObject("user", username);
         BasicDBObject update = new BasicDBObject("$set", new BasicDBObject("access_token", getEncryptedToken(getAuthentication())));
         update(query,update,false,true);
+    }
+
+    public boolean isConfigured(String url) {
+        return getToken(url) !=null;
     }
 }

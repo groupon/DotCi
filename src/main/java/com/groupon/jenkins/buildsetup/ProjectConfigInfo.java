@@ -31,7 +31,7 @@ public class ProjectConfigInfo {
 	}
 
 	public boolean isHookConfigured() throws IOException {
-		return githubRepositoryService.isHookConfigured();
+		return githubAccessTokenRepository.isConfigured(repository.getUrl());
 	}
 
 	public boolean isProjectPresent() throws IOException {
