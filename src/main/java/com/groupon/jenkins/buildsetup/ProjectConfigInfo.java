@@ -39,7 +39,7 @@ public class ProjectConfigInfo {
 	}
 
 	public String getJenkinsProjectUrl() throws IOException {
-		return String.format("/job/%s/job/%s", repository.getOwner().getLogin(), repository.getName());
+		return String.format("%s/job/%s/job/%s", getJenkinsRootUrl(), repository.getOwner().getLogin(), repository.getName());
 	}
 
 	public String getFullName() throws IOException {
