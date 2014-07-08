@@ -24,10 +24,14 @@ THE SOFTWARE.
 package com.groupon.jenkins.github;
 
 import com.google.common.base.Objects;
+import com.groupon.jenkins.ForBackwardCompatiblity;
 
 public class GitBranch {
+    @ForBackwardCompatiblity
+    private transient  final String PULL_REQUEST_PATTERN = null;
 
-    public static final String PULL_REQUEST_PREFIX = "Pull Request:";
+    public transient static final String PULL_REQUEST_PREFIX = "Pull Request:";
+
     private final String branch;
 
 
