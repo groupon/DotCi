@@ -23,18 +23,15 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.buildconfiguration;
 
+import com.groupon.jenkins.testhelpers.TestHelpers;
 import hudson.EnvVars;
-
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Test;
 
-import com.groupon.jenkins.testhelpers.TestHelpers;
+import static org.junit.Assert.*;
 
 import static com.groupon.jenkins.testhelpers.TestHelpers.loadFile;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class BuildConfigurationFilterTest {
 
@@ -72,4 +69,15 @@ public class BuildConfigurationFilterTest {
 		Object run = ((Map<?, ?>) config.get("build")).get("run");
 		assertEquals("echo $PATH", run);
 	}
+
+    @Test
+    public void should_return_null_for_missing_DOTCI_vars() {
+        EnvVars envVars = new EnvVars();
+        envVars.put("DOTCI_PULL_REQUEST", "1");
+        BuildConfigurationFilter effectiveConfiguration = new BuildConfigurationFilter(TestHelpers.loadFile("/com/groupon/jenkins/dynamic/buildconfiguration/BuildConfigurationFilterTest/.ci_pr.yml"), envVars);
+        Map<?, ?> config = effectiveConfiguration.getConfig();
+        assertNotNull(config);
+        Object run = ((Map<?, ?>) config.get("build")).get("run");
+        assertEquals("echo pr 1", run);
+    }
 }

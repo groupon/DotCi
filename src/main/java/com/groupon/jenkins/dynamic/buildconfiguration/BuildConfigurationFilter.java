@@ -70,7 +70,10 @@ public class BuildConfigurationFilter {
 		@Override
 		public String get(Object key) {
 			String value = super.get(key);
-			return value == null ? "$" + key : value;
+			if(value == null){
+              return ((String)key).startsWith("DOTCI")? null : "$" + key;
+            }
+            return value;
 		}
 
 		@Override

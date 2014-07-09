@@ -22,29 +22,10 @@
 #THE SOFTWARE.
 #
 environment:
-  vars:
-    TZ: UTC
-    LANG: en_US.UTF-8
-    LC_ALL: en_US.UTF-8
-    DISPLAY: ":1"
-    DOTCI_SHA_SHORT: '\${DOTCI_SHA:0:10}'
-
+ language: ruby 
 build:
-  checkout: 
-    - find . -delete 
-    <% if($DOTCI_PULL_REQUEST) { %>
-    - git clone  $GIT_URL .    
-    - git fetch origin "+refs/pull/$DOTCI_PULL_REQUEST/merge:"
-    - git reset --hard FETCH_HEAD
-    <% } else { %>
-    - git clone  --branch=$DOTCI_BRANCH $GIT_URL .
-    - git reset --hard  $SHA
-    <% } %>
-  before_install:
-    - mkdir -p tmp
-  info:
-    - env
-  
-notifications:
-  - pusher_email
-  - github_commit_status
+ <% if($DOTCI_PULL_REQUEST) { %>
+ run: echo pr $DOTCI_PULL_REQUEST
+ <% } else { %>
+ run: echo not pr
+ <% } %>
