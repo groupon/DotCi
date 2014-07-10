@@ -23,38 +23,6 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
-import hudson.Extension;
-import hudson.PermalinkList;
-import hudson.matrix.Combination;
-import hudson.model.BallColor;
-import hudson.model.DescriptorVisibilityFilter;
-import hudson.model.Item;
-import hudson.model.ItemGroup;
-import hudson.model.Result;
-import hudson.model.Saveable;
-import hudson.model.TopLevelItem;
-import hudson.model.Descriptor;
-import hudson.model.Queue.Task;
-import hudson.util.CaseInsensitiveComparator;
-import hudson.util.CopyOnWriteMap;
-import hudson.util.RunList;
-import hudson.widgets.HistoryWidget;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-
-import jenkins.model.Jenkins;
-
-import org.apache.commons.lang.StringUtils;
-import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -64,6 +32,31 @@ import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
 import com.groupon.jenkins.github.GithubRepoProperty;
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
+import hudson.Extension;
+import hudson.PermalinkList;
+import hudson.matrix.Combination;
+import hudson.model.Descriptor;
+import hudson.model.DescriptorVisibilityFilter;
+import hudson.model.Item;
+import hudson.model.ItemGroup;
+import hudson.model.Queue.Task;
+import hudson.model.Saveable;
+import hudson.model.TopLevelItem;
+import hudson.util.CaseInsensitiveComparator;
+import hudson.util.CopyOnWriteMap;
+import hudson.util.RunList;
+import hudson.widgets.HistoryWidget;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import jenkins.model.Jenkins;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+
+import javax.servlet.ServletException;
 
 public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild> implements TopLevelItem, Saveable, IdentifableItemGroup<DynamicSubProject> {
 	private transient Map<String, DynamicSubProject> items;
@@ -201,13 +194,14 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
 			@Override
 			public DynamicSubProject apply(final Combination requestedCombination) {
-				return Iterables.find(getItems(), new Predicate<DynamicSubProject>() {
+                DynamicSubProject subProject = Iterables.find(getItems(), new Predicate<DynamicSubProject>() {
 
-					@Override
-					public boolean apply(DynamicSubProject subProject) {
-						return requestedCombination.equals(subProject.getCombination());
-					}
-				}, DynamicProject.this.createNewSubProject(requestedCombination));
+                    @Override
+                    public boolean apply(DynamicSubProject subProject) {
+                        return requestedCombination.equals(subProject.getCombination());
+                    }
+                }, null);
+                return subProject == null? DynamicProject.this.createNewSubProject(requestedCombination): subProject;
 			}
 
 		});
