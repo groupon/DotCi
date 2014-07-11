@@ -1,3 +1,16 @@
+## 1.2.2 (07/10/2014)
+
+Bugfixes: 
+  - PR checking typo fix.
+  
+## 1.2.1 (07/10/2014)
+
+Features: 
+ - Linked docker container mapped to localhost if socat utility is installed.
+
+Bugfixes: 
+  - DotCi vars are set to null if they are missing.
+ 
 ## 1.2.0 (06/25/2014)
 
 Features:
