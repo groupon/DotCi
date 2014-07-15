@@ -1,6 +1,7 @@
 ## 1.3.0(07/15/2014)
  Bugfixes: 
    - Call `onLoad` on build load. Not calling this was causing junit action to fail.
+ 
  Features: 
    - New DotCi Authorization which maps github org/repo permissions to OrgContainers and DotCiJobs.
 
