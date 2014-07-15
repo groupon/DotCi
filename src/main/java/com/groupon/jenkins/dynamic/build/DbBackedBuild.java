@@ -123,6 +123,7 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
 		setField(project, "project");
 		setField(date.getTime(), "timestamp");
 		setField(getState(state), "state");
+        super.onLoad();
 	}
 
 	public Object getState(String state) {
