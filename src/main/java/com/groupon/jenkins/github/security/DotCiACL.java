@@ -67,7 +67,7 @@ public class DotCiACL extends ACL {
 
     @Override
     public boolean hasPermission(Authentication a, Permission permission) {
-        if (isAdmin(a)) {
+        if (isSystem(a)|| isAdmin(a)) {
             return true;
         }
         if (isDotCi()) {
@@ -82,6 +82,10 @@ public class DotCiACL extends ACL {
             return false;
         }
         return  isReadPermission(permission);
+    }
+
+    private boolean isSystem(Authentication a) {
+        return a == ACL.SYSTEM;
     }
 
 

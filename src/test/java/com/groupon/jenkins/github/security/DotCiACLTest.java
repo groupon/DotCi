@@ -26,6 +26,7 @@ package com.groupon.jenkins.github.security;
 
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
+import hudson.security.ACL;
 import hudson.security.Permission;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.GithubAuthenticationToken;
@@ -34,6 +35,12 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 public class DotCiACLTest {
+
+    @Test
+    public void should_allow_system_user_to_do_anything() throws Exception {
+        DotCiACL acl = new DotCiACL("suryagaddipati", false);
+        Assert.assertTrue(acl.hasPermission(ACL.SYSTEM, Permission.DELETE));
+    }
 
     @Test
     public void should_allow_admins_to_do_anything() throws Exception {
