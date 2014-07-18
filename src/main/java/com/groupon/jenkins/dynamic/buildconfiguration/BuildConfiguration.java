@@ -23,17 +23,15 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.buildconfiguration;
 
-import hudson.EnvVars;
-
-import java.util.List;
-import java.util.Map;
-
-import org.yaml.snakeyaml.Yaml;
-
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ListValue;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.MapValue;
+import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.StringValue;
 import com.groupon.jenkins.dynamic.buildconfiguration.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
+import hudson.EnvVars;
+import java.util.List;
+import java.util.Map;
+import org.yaml.snakeyaml.Yaml;
 
 public class BuildConfiguration extends CompositeConfigSection {
 
@@ -41,6 +39,7 @@ public class BuildConfiguration extends CompositeConfigSection {
 	protected BuildSection buildSection;
 	private NotificationsSection notificationsSection;
 	private PluginsSection pluginsSection;
+    private ParentTemplateSection parentTemplateSection;
 
 	public BuildConfiguration(String ymlDefintion, EnvVars envVars) {
 		this(translateIfOne(new BuildConfigurationFilter(ymlDefintion, envVars).getConfig(), envVars));
@@ -52,6 +51,7 @@ public class BuildConfiguration extends CompositeConfigSection {
 	}
 
 	private void setSections() {
+        this.parentTemplateSection = new ParentTemplateSection(getSectionConfig(ParentTemplateSection.NAME, StringValue.class));
 		this.environmentSection = new EnvironmentSection(getSectionConfig(EnvironmentSection.NAME, MapValue.class));
 		this.buildSection = new BuildSection(this.getSectionConfig(BuildSection.NAME, MapValue.class));
 		this.notificationsSection = new NotificationsSection(getSectionConfig(NotificationsSection.NAME, ListValue.class));
@@ -68,6 +68,10 @@ public class BuildConfiguration extends CompositeConfigSection {
 		}
 		return this;
 	}
+
+    public String getParentTemplate(){
+        return parentTemplateSection.getConfigValue().getValue();
+    }
 
 	private static MapValue<String, ?> translateIfOne(Map config, EnvVars envVars) {
 		return new MapValue<String, Object>(new OneToTwoTranslator(config, envVars).getConfig());
@@ -140,4 +144,7 @@ public class BuildConfiguration extends CompositeConfigSection {
 		return dockerCommands.toShellScript();
 	}
 
+    public boolean isBaseTemplate() {
+        return !parentTemplateSection.isSpecified();
+    }
 }

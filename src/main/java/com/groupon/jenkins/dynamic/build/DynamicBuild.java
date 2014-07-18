@@ -23,36 +23,6 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
-import hudson.EnvVars;
-import hudson.Functions;
-import hudson.matrix.Combination;
-import hudson.model.Build;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import hudson.model.AbstractProject;
-import hudson.model.Cause;
-import hudson.model.CauseAction;
-import hudson.model.Executor;
-import hudson.tasks.BuildStep;
-import hudson.util.HttpResponses;
-import hudson.util.VersionNumber;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-
-import jenkins.model.Jenkins;
-
-import org.kohsuke.stapler.HttpResponse;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-import org.kohsuke.stapler.export.Exported;
-import org.kohsuke.stapler.interceptor.RequirePOST;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
@@ -65,6 +35,32 @@ import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfiguration;
 import com.groupon.jenkins.dynamic.buildconfiguration.EffectiveBuildConfigurationCalculator;
 import com.groupon.jenkins.dynamic.buildconfiguration.InvalidDotCiYmlException;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
+import hudson.EnvVars;
+import hudson.Functions;
+import hudson.matrix.Combination;
+import hudson.model.AbstractProject;
+import hudson.model.Build;
+import hudson.model.BuildListener;
+import hudson.model.Cause;
+import hudson.model.CauseAction;
+import hudson.model.Executor;
+import hudson.model.Result;
+import hudson.tasks.BuildStep;
+import hudson.util.HttpResponses;
+import hudson.util.VersionNumber;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+import jenkins.model.Jenkins;
+import org.kohsuke.stapler.HttpResponse;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.interceptor.RequirePOST;
+
+import javax.servlet.ServletException;
 
 public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 

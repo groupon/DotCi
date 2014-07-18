@@ -43,11 +43,11 @@ public class EffectiveBuildConfigurationCalculatorTest {
 		return new EnvVars("WORKSPACE", "", "GIT_URL", "", "SHA", "");
 	}
 
-	@Test
-	public void should_load_base_ymls() {
-		EffectiveBuildConfigurationCalculator calculator = new EffectiveBuildConfigurationCalculator();
-		assertTrue(calculator.languageBaseYmls.containsKey("ruby"));
-	}
+//	@Test
+//	public void should_load_base_ymls() {
+//		EffectiveBuildConfigurationCalculator calculator = new EffectiveBuildConfigurationCalculator();
+//		assertTrue(calculator.languageBaseYmls.containsKey("ruby"));
+//	}
 
 	@Test
 	public void should_use_default_language_template_if_no_dotci_yml() throws IOException, InterruptedException, InvalidDotCiYmlException {

@@ -39,11 +39,6 @@ public class LanguageVersionsSection extends ConfigSection<ListOrSingleValue<Str
 	}
 
 	@Override
-	protected void merge(ConfigSection<ListOrSingleValue<String>> otherConfigSection) {
-		super.merge(otherConfigSection);
-	}
-
-	@Override
 	public ShellCommands toScript(Combination combination, BuildType buildType) {
 		return ShellCommands.NOOP;
 	}
