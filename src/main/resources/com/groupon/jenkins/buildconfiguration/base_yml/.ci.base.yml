@@ -33,7 +33,8 @@ build:
   checkout: 
     - find . -delete 
     <% if(DOTCI_PULL_REQUEST) { %>
-    - git clone  $GIT_URL .    
+    - git init
+    - git remote add origin $GIT_URL
     - git fetch origin "+refs/pull/$DOTCI_PULL_REQUEST/merge:" || { echo -e "\\n === Merge conflict response ! ===\\n\\n Recommend rebase and resolve the pull request.\\n" && exit 1; } #quotes required to escape the colon during git fetch
     - git reset --hard FETCH_HEAD
     <% } else { %>
