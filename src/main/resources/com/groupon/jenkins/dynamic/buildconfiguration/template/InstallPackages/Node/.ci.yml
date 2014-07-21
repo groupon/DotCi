@@ -23,25 +23,12 @@
 #
 parent_template: install_packages
 environment:
-  language_versions: 1.9.3_p392
-
-  vars:
-    RACK_ENV: test
-    RAILS_ENV: test
-    BUNDLE_PATH: /tmp/`echo $WORKSPACE | awk -F "/" '{print \$5"/"\$6}'`/`jruby -v 2>&1 | awk '{print \$1"-"\$2}' | grep jruby || ruby -v | awk '{print \$1"-"\$2}'`/bundle_cache
-    BUNDLE_FROZEN: true
-    BUNDLE_WITHOUT: production:development
-    GEM_HOME: /tmp
-    PATH: $GEM_HOME/bin:$PATH
+  language: node
+  language_versions: v0.8.25
 
 build:
-  info:
-    - gem env
   before:
-    - 'test -f Gemfile && [[ "`gem env gempath`" =~ jruby ]] && export RUN_AS_JRUBY="jruby -S"'
-    - test -f Gemfile && $RUN_AS_JRUBY gem install bundler
-    - test -f Gemfile && $RUN_AS_JRUBY bundle install --no-deployment -j 10
-    # DotCi locally redefine PATH of "ruby" as "jruby" ... this fix routing of rake and/or irb per "puts RUBY_VERSION"
-    - '[[ ! -z "$RUN_AS_JRUBY" ]] && mkdir -p bin && ln -sf `which jruby 2>/dev/null` bin/ruby && export PATH="./bin:$PATH"'
+    - npm cache clear
+    - npm install
   run:
-    - test -f Gemfile && $RUN_AS_JRUBY bundle exec rake
+    - npm test

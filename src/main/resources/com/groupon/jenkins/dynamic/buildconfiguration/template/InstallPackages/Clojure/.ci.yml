@@ -21,20 +21,25 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
 #
+parent_template: install_packages
 environment:
-  language: golang
-  language_versions: 1.0.3
-
+  language: clojure
+  language_versions: 1.5.1p2
   vars:
-    GOPATH: "$DOTCI_WORKSPACE/tmp/go:${GOPATH:-$(go env GOPATH)}"
-    # Since `go get` installs things to first path in GOPATH, let's use a non-shared tmp directory...
+    LEIN_HOME: $WORKSPACE/tmp/lein
+    LEIN_JVM_OPTS: ''   # see TieredStopAtLevel in https://github.com/technomancy/leiningen/blob/master/doc/FAQ.md
 
 build:
   before_install:
-    - mkdir -p `echo $GOPATH | cut -d: -f1`
-  info:
-    - go env
-  before:
-    - go get -v -u all ... # this '...' is intentional (special meaning in Go)
+    - rm -rf $HOME/.lein
+    - mkdir -p $LEIN_HOME/bin
+    - curl -L https://raw.github.com/technomancy/leiningen/stable/bin/lein > /tmp/lein-tmp
+    - grep '#!' /tmp/lein-tmp > /dev/null && mv /tmp/lein-tmp /tmp/lein # check that we got a shell script
+    - cp -f /tmp/lein $LEIN_HOME/bin/lein
+    - chmod 755 $LEIN_HOME/bin/lein
+    - export PATH=$LEIN_HOME/bin:$PATH
+    - cp -p $HOME/.profiles.clj $LEIN_HOME/profiles.clj # SNC1Nexus
+    - which lein
+    - lein do --version, deps, pprint
   run:
-    - go test
+    - lein test

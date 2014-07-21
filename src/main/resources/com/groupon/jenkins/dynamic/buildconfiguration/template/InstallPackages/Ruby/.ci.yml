@@ -21,24 +21,28 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
 #
+parent_template: install_packages
 environment:
-  language: clojure
-  language_versions: 1.5.1p2
+  language: ruby
+  language_versions: 1.9.3_p392
+
   vars:
-    LEIN_HOME: $WORKSPACE/tmp/lein
-    LEIN_JVM_OPTS: ''   # see TieredStopAtLevel in https://github.com/technomancy/leiningen/blob/master/doc/FAQ.md
+    RACK_ENV: test
+    RAILS_ENV: test
+    BUNDLE_PATH: /tmp/`echo $WORKSPACE | awk -F "/" '{print \$5"/"\$6}'`/`jruby -v 2>&1 | awk '{print \$1"-"\$2}' | grep jruby || ruby -v | awk '{print \$1"-"\$2}'`/bundle_cache
+    BUNDLE_FROZEN: true
+    BUNDLE_WITHOUT: production:development
+    GEM_HOME: /tmp
+    PATH: $GEM_HOME/bin:$PATH
 
 build:
-  before_install:
-    - rm -rf $HOME/.lein
-    - mkdir -p $LEIN_HOME/bin
-    - curl -L https://raw.github.com/technomancy/leiningen/stable/bin/lein > /tmp/lein-tmp
-    - grep '#!' /tmp/lein-tmp > /dev/null && mv /tmp/lein-tmp /tmp/lein # check that we got a shell script
-    - cp -f /tmp/lein $LEIN_HOME/bin/lein
-    - chmod 755 $LEIN_HOME/bin/lein
-    - export PATH=$LEIN_HOME/bin:$PATH
-    - cp -p $HOME/.profiles.clj $LEIN_HOME/profiles.clj # SNC1Nexus
-    - which lein
-    - lein do --version, deps, pprint
+  info:
+    - gem env
+  before:
+    - 'test -f Gemfile && [[ "`gem env gempath`" =~ jruby ]] && export RUN_AS_JRUBY="jruby -S"'
+    - test -f Gemfile && $RUN_AS_JRUBY gem install bundler
+    - test -f Gemfile && $RUN_AS_JRUBY bundle install --no-deployment -j 10
+    # DotCi locally redefine PATH of "ruby" as "jruby" ... this fix routing of rake and/or irb per "puts RUBY_VERSION"
+    - '[[ ! -z "$RUN_AS_JRUBY" ]] && mkdir -p bin && ln -sf `which jruby 2>/dev/null` bin/ruby && export PATH="./bin:$PATH"'
   run:
-    - lein test
+    - test -f Gemfile && $RUN_AS_JRUBY bundle exec rake

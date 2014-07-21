@@ -26,7 +26,6 @@ package com.groupon.jenkins.dynamic.buildconfiguration.template;
 
 import com.google.common.base.CaseFormat;
 import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfiguration;
-import com.groupon.jenkins.dynamic.buildconfiguration.InvalidDotCiYmlException;
 import hudson.EnvVars;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
@@ -47,13 +46,6 @@ public class DotCiTemplate implements ExtensionPoint {
         return Jenkins.getInstance().getExtensionList(DotCiTemplate.class);
     }
 
-
-    public static DotCiTemplate getTemplate(String templateName, GHRepository githubRepository) {
-        for (DotCiTemplate template : all()) {
-            if (templateName.equals(template.getName())) return template;
-        }
-        throw new InvalidDotCiYmlException("No Template with name: " + templateName);
-    }
 
     private String getName() {
         String className = getClass().getSimpleName();
@@ -107,5 +99,16 @@ public class DotCiTemplate implements ExtensionPoint {
             clazz = clazz.getSuperclass();
         }
         return null;
+    }
+
+    public static DotCiTemplate getDefaultFor(GHRepository githubRepository) {
+        for(DotCiTemplate template : templates.values()){
+           if(template.isDefault(githubRepository)) return template;
+        }
+        return null;
+    }
+
+    protected boolean isDefault(GHRepository githubRepository) {
+        return false;
     }
 }

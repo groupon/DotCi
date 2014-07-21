@@ -21,12 +21,21 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
 #
+parent_template: install_packages
 environment:
-  language: java
-  language_versions: 1.6.0_24
-  
+  language: golang
+  language_versions: 1.0.3
+
+  vars:
+    GOPATH: "$DOTCI_WORKSPACE/tmp/go:${GOPATH:-$(go env GOPATH)}"
+    # Since `go get` installs things to first path in GOPATH, let's use a non-shared tmp directory...
+
 build:
+  before_install:
+    - mkdir -p `echo $GOPATH | cut -d: -f1`
   info:
-    - echo "Env:" ; env
-    - java -version
-  run:  mvn install 
+    - go env
+  before:
+    - go get -v -u all ... # this '...' is intentional (special meaning in Go)
+  run:
+    - go test

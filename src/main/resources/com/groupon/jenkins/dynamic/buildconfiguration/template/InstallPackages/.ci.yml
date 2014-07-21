@@ -1,5 +1,0 @@
-#Call install_packages bash function
-parent_template: base
-environment:
-   language_versions: null #Parallelizes on this if its an array
-   packages: null

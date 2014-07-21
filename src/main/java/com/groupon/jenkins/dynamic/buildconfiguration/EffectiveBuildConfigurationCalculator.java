@@ -32,48 +32,6 @@ import org.kohsuke.github.GHContent;
 
 public class EffectiveBuildConfigurationCalculator {
 
-//	private static String baseYml;
-//	static final Map<String, String> languageBaseYmls = new HashMap<String, String>();
-//	private static final String YML_DIR_PATH = "/com/groupon/jenkins/buildconfiguration/base_yml/";
-//
-//	static {
-//		loadLanguageBaseYmls();
-//	}
-//
-//	protected static void loadLanguageBaseYmls() {
-//		baseYml = readFile(YML_DIR_PATH + ".ci.yml");
-//		String[] languages = { "clojure", "golang", "java", "node", "ruby", "UNKNOWN" };
-//		for (String language : languages) {
-//			String ymlContents = readFile(YML_DIR_PATH + "language/.ci.base." + language + ".yml");
-//			languageBaseYmls.put(language, ymlContents);
-//		}
-//	}
-//
-//	private static String readFile(String ymlResource) {
-//		InputStream base = null;
-//		try {
-//			base = EffectiveBuildConfigurationCalculator.class.getResourceAsStream(ymlResource);
-//			return IOUtils.toString(base);
-//		} catch (IOException e) {
-//			throw new RuntimeException(e);
-//		} finally {
-//			IOUtils.closeQuietly(base);
-//		}
-//	}
-
-//	public BuildConfiguration getMergedTemplate(BuildConfiguration specifiedConfiguration, String language, EnvVars environment) {
-//		BuildConfiguration baseConfiguation = getMergedTemplate(language, environment);
-//		baseConfiguation.merge(specifiedConfiguration);
-//		return baseConfiguation;
-//	}
-//
-//	public BuildConfiguration getMergedTemplate(String language, EnvVars envVars) {
-//		BuildConfiguration languageBuildConfiguration = new BuildConfiguration(languageBaseYmls.getMergedTemplate(language), envVars);
-//		BuildConfiguration baseConfiguration = new BuildConfiguration(baseYml, envVars);
-//		baseConfiguration.merge(languageBuildConfiguration);
-//		return baseConfiguration;
-//	}
-
 	public BuildConfiguration calculateBuildConfiguration(String githubRepoUrl, String sha, EnvVars envVars) throws IOException, InterruptedException, InvalidDotCiYmlException {
 		GithubRepositoryService githubRepositoryService = getGithubRepositoryService(githubRepoUrl);
 		try {
@@ -82,11 +40,12 @@ public class EffectiveBuildConfigurationCalculator {
 			if (!configuration.isValid()) {
 				throw new InvalidDotCiYmlException(configuration.getValidationErrors());
 			}
-		//	String language = configuration.getLanguage() == null ? autoDetectedLanguage(githubRepositoryService) : configuration.getLanguage();
-            //DotCiTemplate languageTemplate = DotCiTemplate.getMergedTemplate(configuration.getLanguage(),githubRepositoryService.getGithubRepository());
+		  if(configuration.getLanguage() == null){
+              return DotCiTemplate.getDefaultFor(githubRepositoryService.getGithubRepository()).getBuildConfiguration(envVars);
+          }
 			return DotCiTemplate.getMergedTemplate(configuration, configuration.getLanguage(), envVars);
 		} catch (FileNotFoundException e) {
-			return    null; //DotCiTemplate.get(githubRepositoryService.getGithubRepository(),envVars) ;
+            return DotCiTemplate.getDefaultFor(githubRepositoryService.getGithubRepository()).getBuildConfiguration(envVars);
 		}
 	}
 
@@ -94,11 +53,4 @@ public class EffectiveBuildConfigurationCalculator {
 		return new GithubRepositoryService(githubRepoUrl);
 	}
 
-//	private String autoDetectedLanguage(GithubRepositoryService githubRepositoryService) {
-//		String repoLanguage = githubRepositoryService.getRepoLanguage();
-//		if ("javascript".equals(repoLanguage) || "coffeescript".equals(repoLanguage)) {
-//			repoLanguage = "node";
-//		}
-//		return languageBaseYmls.containsKey(repoLanguage) ? repoLanguage : "UNKNOWN";
-//	}
 }

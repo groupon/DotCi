@@ -21,13 +21,13 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
 #
+parent_template: install_packages
 environment:
-  language: node
-  language_versions: v0.8.25
-  
+  language: java
+  language_versions: 1.6.0_24
+
 build:
-  before:
-    - npm cache clear
-    - npm install
-  run:
-    - npm test
+  info:
+    - echo "Env:" ; env
+    - java -version
+  run:  mvn install
