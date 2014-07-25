@@ -42,7 +42,7 @@ public class BuildConfiguration extends CompositeConfigSection {
     private ParentTemplateSection parentTemplateSection;
 
 	public BuildConfiguration(String ymlDefintion, EnvVars envVars) {
-		this(translateIfOne(new BuildConfigurationFilter(ymlDefintion, envVars).getConfig(), envVars));
+		this( new MapValue<String,Object> (new BuildConfigurationFilter(ymlDefintion, envVars).getConfig()));
 	}
 
 	public BuildConfiguration(MapValue<String, ?> config) {
@@ -59,23 +59,12 @@ public class BuildConfiguration extends CompositeConfigSection {
 		setSubSections(environmentSection, buildSection, notificationsSection, pluginsSection);
 	}
 
-	@SuppressWarnings({ "unchecked" })
-	private Object readResolve() {
-		OneToTwoTranslator translator = new OneToTwoTranslator(configValue.getValue(), new EnvVars("BRANCH", "unknown"));
-		if (translator.needsTranslation()) {
-			setConfigValue(new MapValue(translator.getConfig()));
-			setSections();
-		}
-		return this;
-	}
+
 
     public String getParentTemplate(){
         return parentTemplateSection.getConfigValue().getValue();
     }
 
-	private static MapValue<String, ?> translateIfOne(Map config, EnvVars envVars) {
-		return new MapValue<String, Object>(new OneToTwoTranslator(config, envVars).getConfig());
-	}
 
 	public boolean isSkipped() {
 		return buildSection.isSkipped();
