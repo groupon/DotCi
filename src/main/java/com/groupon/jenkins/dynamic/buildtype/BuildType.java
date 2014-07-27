@@ -21,18 +21,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.dynamic.build.execution;
-
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import hudson.matrix.Combination;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import hudson.model.Executor;
-import hudson.tasks.Shell;
-
-import java.io.IOException;
+package com.groupon.jenkins.dynamic.buildtype;
 
 import com.groupon.jenkins.dynamic.build.DbBackedBuild;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
+import com.groupon.jenkins.dynamic.build.execution.WorkspaceFileExporter;
+import hudson.matrix.Combination;
+import hudson.model.BuildListener;
+import hudson.model.Executor;
+import hudson.model.Result;
+import hudson.tasks.Shell;
+import java.io.IOException;
 
 public abstract class BuildType {
 //	BareMetal {
@@ -106,6 +106,15 @@ public abstract class BuildType {
 	public abstract Result runBuild(DbBackedBuild<?, ?> build, Combination combination, BuildExecutionContext buildContext, BuildListener listener) throws IOException, InterruptedException;
 
     public static BuildType getBuildType(DynamicBuild dynamicBuild) {
+        //		public BuildType getBuildType() throws IOException {
+//			if (getBuildConfiguration().isDocker()) {
+//				return BuildType.DockerImage;
+//			}
+//			if (new GithubRepositoryService(getGithubRepoUrl()).hasDockerFile(getSha())) {
+//				return BuildType.DockerLocal;
+//			}
+//			return BuildType.BareMetal;
+//		}
         return null;
     }
 }

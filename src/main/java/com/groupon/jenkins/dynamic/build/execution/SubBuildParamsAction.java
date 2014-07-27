@@ -23,9 +23,9 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.dynamic.build.execution;
 
-import hudson.model.InvisibleAction;
-
 import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfiguration;
+import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import hudson.model.InvisibleAction;
 
 public class SubBuildParamsAction extends InvisibleAction {
 

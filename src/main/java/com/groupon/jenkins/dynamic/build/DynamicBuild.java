@@ -28,13 +28,12 @@ import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.BuildEnvironment;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.build.execution.DotCiPluginRunner;
 import com.groupon.jenkins.dynamic.build.execution.DynamicBuildExection;
 import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfiguration;
 import com.groupon.jenkins.dynamic.buildconfiguration.EffectiveBuildConfigurationCalculator;
 import com.groupon.jenkins.dynamic.buildconfiguration.InvalidDotCiYmlException;
-import com.groupon.jenkins.github.services.GithubRepositoryService;
+import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.EnvVars;
 import hudson.Functions;
 import hudson.matrix.Combination;
@@ -190,15 +189,6 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 
 		}
 
-//		public BuildType getBuildType() throws IOException {
-//			if (getBuildConfiguration().isDocker()) {
-//				return BuildType.DockerImage;
-//			}
-//			if (new GithubRepositoryService(getGithubRepoUrl()).hasDockerFile(getSha())) {
-//				return BuildType.DockerLocal;
-//			}
-//			return BuildType.BareMetal;
-//		}
 
 		private BuildConfiguration calculateBuildConfiguration(BuildListener listener) throws IOException, InterruptedException, InvalidDotCiYmlException {
 			return new EffectiveBuildConfigurationCalculator().calculateBuildConfiguration(getGithubRepoUrl(), getSha(), getEnvironment(listener));

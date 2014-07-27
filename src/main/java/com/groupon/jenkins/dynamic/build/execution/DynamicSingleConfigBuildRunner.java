@@ -23,13 +23,12 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.dynamic.build.execution;
 
+import com.groupon.jenkins.dynamic.build.DbBackedBuild;
+import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.matrix.Combination;
 import hudson.model.BuildListener;
 import hudson.model.Result;
-
 import java.io.IOException;
-
-import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 
 public class DynamicSingleConfigBuildRunner implements DynamicBuildRunner {
 
