@@ -160,10 +160,6 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 	}
 
 	protected class DynamicRunExecution extends BuildExecution implements BuildExecutionContext {
-		public boolean executeShell(BuildStep buildStep, BuildListener listener) throws InterruptedException, IOException {
-			return performStep(buildStep, listener);
-		}
-
 		@Override
 		public boolean performStep(BuildStep execution, BuildListener listener) throws IOException, InterruptedException {
 			return perform(execution, listener);
