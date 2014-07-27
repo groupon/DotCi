@@ -33,13 +33,13 @@ import static org.junit.Assert.*;
 
 import static com.groupon.jenkins.testhelpers.TestHelpers.loadFile;
 
-public class BuildConfigurationFilterTest {
+public class GroovyTemplateProcessorTest {
 
 	@Test
 	public void should_filter_out_elements_that_are_filter_out_by_if_conditions() {
 		EnvVars envVars = new EnvVars();
 		envVars.put("DOTCI_BRANCH", "gh-pages");
-		BuildConfigurationFilter effectiveConfiguration = new BuildConfigurationFilter(loadFile("/com/groupon/jenkins/dynamic/buildconfiguration/BuildConfigurationFilterTest/.ci_skip_versions.yml"), envVars);
+		GroovyTemplateProcessor effectiveConfiguration = new GroovyTemplateProcessor(loadFile("/com/groupon/jenkins/dynamic/buildconfiguration/BuildConfigurationFilterTest/.ci_skip_versions.yml"), envVars);
 		Map<?, ?> config = effectiveConfiguration.getConfig();
 		assertNotNull(config);
 		List<?> langugeVersions = (List<?>) ((Map<?, ?>) config.get("environment")).get("language_versions");
@@ -50,7 +50,7 @@ public class BuildConfigurationFilterTest {
 	public void should_export_missing_variables_asis() {
 		EnvVars envVars = new EnvVars();
 		envVars.put("NOT_MISSING_PROP", "1.9.0");
-		BuildConfigurationFilter effectiveConfiguration = new BuildConfigurationFilter(TestHelpers.loadFile("/com/groupon/jenkins/dynamic/buildconfiguration/BuildConfigurationFilterTest/.ci_missing_props.yml"), envVars);
+		GroovyTemplateProcessor effectiveConfiguration = new GroovyTemplateProcessor(TestHelpers.loadFile("/com/groupon/jenkins/dynamic/buildconfiguration/BuildConfigurationFilterTest/.ci_missing_props.yml"), envVars);
 		Map<?, ?> config = effectiveConfiguration.getConfig();
 		assertNotNull(config);
 		Map<?, ?> env = (Map<?, ?>) config.get("environment");
@@ -63,7 +63,7 @@ public class BuildConfigurationFilterTest {
 	public void should_not_subsitute_PATH() {
 		EnvVars envVars = new EnvVars();
 		envVars.put("PATH", "/PATH/BIN");
-		BuildConfigurationFilter effectiveConfiguration = new BuildConfigurationFilter(TestHelpers.loadFile("/com/groupon/jenkins/dynamic/buildconfiguration/BuildConfigurationFilterTest/.ci_PATH.yml"), envVars);
+		GroovyTemplateProcessor effectiveConfiguration = new GroovyTemplateProcessor(TestHelpers.loadFile("/com/groupon/jenkins/dynamic/buildconfiguration/BuildConfigurationFilterTest/.ci_PATH.yml"), envVars);
 		Map<?, ?> config = effectiveConfiguration.getConfig();
 		assertNotNull(config);
 		Object run = ((Map<?, ?>) config.get("build")).get("run");
@@ -74,7 +74,7 @@ public class BuildConfigurationFilterTest {
     public void should_return_null_for_missing_DOTCI_vars() {
         EnvVars envVars = new EnvVars();
         envVars.put("DOTCI_PULL_REQUEST", "1");
-        BuildConfigurationFilter effectiveConfiguration = new BuildConfigurationFilter(TestHelpers.loadFile("/com/groupon/jenkins/dynamic/buildconfiguration/BuildConfigurationFilterTest/.ci_pr.yml"), envVars);
+        GroovyTemplateProcessor effectiveConfiguration = new GroovyTemplateProcessor(TestHelpers.loadFile("/com/groupon/jenkins/dynamic/buildconfiguration/BuildConfigurationFilterTest/.ci_pr.yml"), envVars);
         Map<?, ?> config = effectiveConfiguration.getConfig();
         assertNotNull(config);
         Object run = ((Map<?, ?>) config.get("build")).get("run");

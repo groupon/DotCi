@@ -32,12 +32,12 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.collect.ForwardingMap;
 
-public class BuildConfigurationFilter {
+public class GroovyTemplateProcessor {
 
 	private final String config;
 	private final EnvVars envVars;
 
-	public BuildConfigurationFilter(String config, EnvVars envVars) {
+	public GroovyTemplateProcessor(String config, EnvVars envVars) {
 		this.config = config;
 		this.envVars = new EnvVars(envVars);
 		this.envVars.remove("PATH");

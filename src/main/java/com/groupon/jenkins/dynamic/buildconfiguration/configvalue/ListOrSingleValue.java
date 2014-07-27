@@ -29,6 +29,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class ListOrSingleValue<T> extends ConfigValue<Object> {
+    public ListOrSingleValue(Object ... one){
+       super(null);
+    }
 
 	public ListOrSingleValue(Object value) {
 		super(toList(value));

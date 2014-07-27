@@ -42,7 +42,7 @@ public class BuildConfiguration extends CompositeConfigSection {
     private ParentTemplateSection parentTemplateSection;
 
 	public BuildConfiguration(String ymlDefintion, EnvVars envVars) {
-		this( new MapValue<String,Object> (new BuildConfigurationFilter(ymlDefintion, envVars).getConfig()));
+		this( new MapValue<String,Object> (new GroovyTemplateProcessor(ymlDefintion, envVars).getConfig()));
 	}
 
 	public BuildConfiguration(MapValue<String, ?> config) {

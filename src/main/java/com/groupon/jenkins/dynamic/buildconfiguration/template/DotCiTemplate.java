@@ -26,6 +26,8 @@ package com.groupon.jenkins.dynamic.buildconfiguration.template;
 
 import com.google.common.base.CaseFormat;
 import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfiguration;
+import com.groupon.jenkins.dynamic.buildconfiguration.GroovyTemplateProcessor;
+import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.MapValue;
 import hudson.EnvVars;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
@@ -39,8 +41,9 @@ import org.kohsuke.github.GHRepository;
 
 
 public class DotCiTemplate implements ExtensionPoint {
-    private String template;
+    private String ymlDefintion;
     protected static Map<String, DotCiTemplate> templates = new HashMap<String, DotCiTemplate>();
+    private MapValue<String, Object> templateConfig;
 
     public static ExtensionList<DotCiTemplate> all() {
         return Jenkins.getInstance().getExtensionList(DotCiTemplate.class);
@@ -59,7 +62,8 @@ public class DotCiTemplate implements ExtensionPoint {
     }
 
     public BuildConfiguration getBuildConfiguration(EnvVars envVars) {
-        BuildConfiguration buildConfiguration = new BuildConfiguration(template, envVars);
+        this.templateConfig = new MapValue<String,Object>(new GroovyTemplateProcessor(ymlDefintion, envVars).getConfig());
+        BuildConfiguration buildConfiguration = new BuildConfiguration(ymlDefintion, envVars);
         if (!buildConfiguration.isBaseTemplate()) {
             return DotCiTemplate.getMergedTemplate(buildConfiguration, buildConfiguration.getParentTemplate(), envVars);
         }
@@ -87,7 +91,7 @@ public class DotCiTemplate implements ExtensionPoint {
     }
 
     private void load() {
-        this.template = readFile(getTemplateFile());
+        this.ymlDefintion = readFile(getTemplateFile());
     }
 
     private String getTemplateFile() {
