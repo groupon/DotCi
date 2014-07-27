@@ -69,7 +69,7 @@ public class PluginsSectionTest {
 
 	@Test
 	public void shouldnt_run_any_shell_commands() {
-		assertEquals(ShellCommands.NOOP, new PluginsSection(null).toScript(null, null));
+		assertEquals(ShellCommands.NOOP, new PluginsSection(null).toScript(null));
 	}
 
 }

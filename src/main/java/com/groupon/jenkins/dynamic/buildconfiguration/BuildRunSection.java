@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ListOrMapOrString;
 
 public class BuildRunSection extends ConfigSection<ListOrMapOrString> {
@@ -44,7 +43,7 @@ public class BuildRunSection extends ConfigSection<ListOrMapOrString> {
 	}
 
 	@Override
-	public ShellCommands toScript(Combination combination, BuildType buildType) {
+	public ShellCommands toScript(Combination combination) {
 		return new ShellCommands(getShellCommands(combination));
 	}
 

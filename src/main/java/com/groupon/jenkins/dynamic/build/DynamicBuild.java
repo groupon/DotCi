@@ -176,7 +176,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 				DynamicBuild.this.setBuildConfiguration(calculateBuildConfiguration(listener));
 				BuildEnvironment buildEnvironment = new BuildEnvironment(DynamicBuild.this, launcher, listener);
 				DotCiPluginRunner dotCiPluginRunner = new DotCiPluginRunner(DynamicBuild.this, launcher, getBuildConfiguration());
-				DynamicBuildExection dynamicBuildExecution = new DynamicBuildExection(DynamicBuild.this, buildEnvironment, this, dotCiPluginRunner, getBuildType());
+				DynamicBuildExection dynamicBuildExecution = new DynamicBuildExection(DynamicBuild.this, buildEnvironment, this, dotCiPluginRunner, BuildType.getBuildType(DynamicBuild.this));
 
 				Result buildRunResult = dynamicBuildExecution.doRun(listener);
 				setResult(buildRunResult);
@@ -190,15 +190,15 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 
 		}
 
-		public BuildType getBuildType() throws IOException {
-			if (getBuildConfiguration().isDocker()) {
-				return BuildType.DockerImage;
-			}
-			if (new GithubRepositoryService(getGithubRepoUrl()).hasDockerFile(getSha())) {
-				return BuildType.DockerLocal;
-			}
-			return BuildType.BareMetal;
-		}
+//		public BuildType getBuildType() throws IOException {
+//			if (getBuildConfiguration().isDocker()) {
+//				return BuildType.DockerImage;
+//			}
+//			if (new GithubRepositoryService(getGithubRepoUrl()).hasDockerFile(getSha())) {
+//				return BuildType.DockerLocal;
+//			}
+//			return BuildType.BareMetal;
+//		}
 
 		private BuildConfiguration calculateBuildConfiguration(BuildListener listener) throws IOException, InterruptedException, InvalidDotCiYmlException {
 			return new EffectiveBuildConfigurationCalculator().calculateBuildConfiguration(getGithubRepoUrl(), getSha(), getEnvironment(listener));

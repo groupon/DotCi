@@ -25,7 +25,6 @@ package com.groupon.jenkins.dynamic.buildconfiguration;
 
 import hudson.matrix.Combination;
 
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ListOrSingleValue;
 
 public class SerialExecutionSection extends ConfigSection<ListOrSingleValue<String>> {
@@ -35,7 +34,7 @@ public class SerialExecutionSection extends ConfigSection<ListOrSingleValue<Stri
 	}
 
 	@Override
-	public ShellCommands toScript(Combination combination, BuildType buildType) {
+	public ShellCommands toScript(Combination combination) {
 		return new ShellCommands(getConfigValue().getValues());
 	}
 

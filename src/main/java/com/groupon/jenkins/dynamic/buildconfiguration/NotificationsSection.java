@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Iterables;
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ListValue;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
 
@@ -44,7 +43,7 @@ public class NotificationsSection extends ConfigSection<ListValue<?>> {
 	}
 
 	@Override
-	public ShellCommands toScript(Combination combination, BuildType buildType) {
+	public ShellCommands toScript(Combination combination) {
 		return ShellCommands.NOOP;
 	}
 

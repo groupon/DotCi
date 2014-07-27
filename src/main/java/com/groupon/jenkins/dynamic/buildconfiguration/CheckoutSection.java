@@ -25,7 +25,6 @@ package com.groupon.jenkins.dynamic.buildconfiguration;
 
 import hudson.matrix.Combination;
 
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ListValue;
 
 public class CheckoutSection extends ConfigSection<ListValue<String>> {
@@ -37,8 +36,8 @@ public class CheckoutSection extends ConfigSection<ListValue<String>> {
 	}
 
 	@Override
-	public ShellCommands toScript(Combination combination, BuildType buildType) {
-		return BuildType.BareMetal.equals(buildType) ? getCheckoutCommands() : ShellCommands.NOOP;
+	public ShellCommands toScript(Combination combination) {
+		return getCheckoutCommands();
 	}
 
 	public ShellCommands getCheckoutCommands() {

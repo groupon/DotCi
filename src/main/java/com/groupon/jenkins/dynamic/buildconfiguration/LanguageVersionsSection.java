@@ -27,7 +27,6 @@ import hudson.matrix.Combination;
 
 import java.util.List;
 
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ListOrSingleValue;
 
 public class LanguageVersionsSection extends ConfigSection<ListOrSingleValue<String>> {
@@ -39,7 +38,7 @@ public class LanguageVersionsSection extends ConfigSection<ListOrSingleValue<Str
 	}
 
 	@Override
-	public ShellCommands toScript(Combination combination, BuildType buildType) {
+	public ShellCommands toScript(Combination combination) {
 		return ShellCommands.NOOP;
 	}
 

@@ -29,7 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.MapValue;
 
 public class VarsSection extends ConfigSection<MapValue<String, String>> {
@@ -40,8 +39,8 @@ public class VarsSection extends ConfigSection<MapValue<String, String>> {
 	}
 
 	@Override
-	public ShellCommands toScript(Combination combination, BuildType buildType) {
-		return BuildType.DockerLocal.equals(buildType) ? ShellCommands.NOOP : new ShellCommands(getEnvVariablesExportCommands());
+	public ShellCommands toScript(Combination combination) {
+		return  new ShellCommands(getEnvVariablesExportCommands());
 	}
 
 	protected String[] getEnvVariablesExportCommands() {

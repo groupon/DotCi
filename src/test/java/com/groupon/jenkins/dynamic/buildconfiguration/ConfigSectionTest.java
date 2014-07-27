@@ -27,7 +27,6 @@ import hudson.matrix.Combination;
 
 import org.junit.Test;
 
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.buildconfiguration.ConfigSection.MergeStrategy;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ListOrSingleValue;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.MapValue;
@@ -71,7 +70,7 @@ public class ConfigSectionTest {
 		MapValue<String, Object> invalidMapValue = new MapValue<String, Object>("not_a_map");
 		ConfigSection<MapValue<String, Object>> invalidConfigSection = new ConfigSection<MapValue<String, Object>>("", invalidMapValue, MergeStrategy.APPEND) {
 			@Override
-			public ShellCommands toScript(Combination combination, BuildType buildType) {
+			public ShellCommands toScript(Combination combination) {
 				return null;
 			}
 		};
@@ -81,7 +80,7 @@ public class ConfigSectionTest {
 	private ConfigSection<ListOrSingleValue<String>> getConfigSection(String configValue, MergeStrategy mergeStrategy) {
 		return new ConfigSection<ListOrSingleValue<String>>("", new ListOrSingleValue<String>(configValue), mergeStrategy) {
 			@Override
-			public ShellCommands toScript(Combination combination, BuildType buildType) {
+			public ShellCommands toScript(Combination combination) {
 				return null;
 			}
 		};

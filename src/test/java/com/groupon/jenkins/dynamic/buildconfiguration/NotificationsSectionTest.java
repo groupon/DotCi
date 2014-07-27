@@ -70,6 +70,6 @@ public class NotificationsSectionTest {
 
 	@Test
 	public void shouldnt_run_any_shell_commands() {
-		assertEquals(ShellCommands.NOOP, new NotificationsSection(null).toScript(null, null));
+		assertEquals(ShellCommands.NOOP, new NotificationsSection(null).toScript(null));
 	}
 }

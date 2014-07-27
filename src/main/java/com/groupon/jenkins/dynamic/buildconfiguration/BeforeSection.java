@@ -25,7 +25,6 @@ package com.groupon.jenkins.dynamic.buildconfiguration;
 
 import hudson.matrix.Combination;
 
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ListOrSingleValue;
 
 public class BeforeSection extends ConfigSection<ListOrSingleValue<String>> {
@@ -37,7 +36,7 @@ public class BeforeSection extends ConfigSection<ListOrSingleValue<String>> {
 	}
 
 	@Override
-	public ShellCommands toScript(Combination combination, BuildType buildType) {
-		return BuildType.DockerLocal.equals(buildType) ? ShellCommands.NOOP : new ShellCommands(getConfigValue().getValues().toArray(new String[] {}));
+	public ShellCommands toScript(Combination combination) {
+		return  new ShellCommands(getConfigValue().getValues().toArray(new String[] {}));
 	}
 }

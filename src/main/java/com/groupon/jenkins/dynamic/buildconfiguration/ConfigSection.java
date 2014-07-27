@@ -23,14 +23,11 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.buildconfiguration;
 
+import com.google.common.collect.Iterables;
+import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ConfigValue;
 import hudson.matrix.Combination;
-
 import java.util.Arrays;
 import java.util.Collections;
-
-import com.google.common.collect.Iterables;
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
-import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ConfigValue;
 
 public abstract class ConfigSection<T extends ConfigValue<?>> {
 	protected T configValue;
@@ -47,7 +44,7 @@ public abstract class ConfigSection<T extends ConfigValue<?>> {
 		this.configValue = configValue;
 	}
 
-	public abstract ShellCommands toScript(Combination combination, BuildType buildType);
+	public abstract ShellCommands toScript(Combination combination);
 
 	protected void merge(ConfigSection<T> otherConfigSection) {
 		if (!otherConfigSection.getConfigValue().isEmpty()) {

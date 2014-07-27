@@ -25,7 +25,6 @@ package com.groupon.jenkins.dynamic.buildconfiguration;
 
 import hudson.matrix.Combination;
 
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ListOrSingleValue;
 
 public class AfterRunSection extends SerialExecutionSection {
@@ -35,8 +34,8 @@ public class AfterRunSection extends SerialExecutionSection {
 	}
 
 	@Override
-	public ShellCommands toScript(Combination combination, BuildType buildType) {
-		return "post_build".equals(combination.get("script")) ? super.toScript(combination, buildType) : null;
+	public ShellCommands toScript(Combination combination) {
+		return "post_build".equals(combination.get("script")) ? super.toScript(combination) : null;
 	}
 
 }

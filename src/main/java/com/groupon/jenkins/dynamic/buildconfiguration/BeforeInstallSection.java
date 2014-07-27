@@ -23,9 +23,6 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.dynamic.buildconfiguration;
 
-import hudson.matrix.Combination;
-
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ListOrSingleValue;
 
 public class BeforeInstallSection extends SerialExecutionSection {
@@ -35,9 +32,6 @@ public class BeforeInstallSection extends SerialExecutionSection {
 		super(NAME, configValue);
 	}
 
-	@Override
-	public ShellCommands toScript(Combination combination, BuildType buildType) {
-		return BuildType.DockerLocal.equals(buildType) ? ShellCommands.NOOP : super.toScript(combination, buildType);
-	}
+
 
 }

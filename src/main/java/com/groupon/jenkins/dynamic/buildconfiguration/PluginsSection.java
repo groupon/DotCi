@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Iterables;
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ListValue;
 import com.groupon.jenkins.dynamic.buildconfiguration.plugins.DotCiPluginAdapter;
 
@@ -71,7 +70,7 @@ public class PluginsSection extends ConfigSection<ListValue<?>> {
 	}
 
 	@Override
-	public ShellCommands toScript(Combination combination, BuildType buildType) {
+	public ShellCommands toScript(Combination combination) {
 		return ShellCommands.NOOP;
 	}
 

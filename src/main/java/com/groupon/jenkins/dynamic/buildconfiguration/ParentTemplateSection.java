@@ -24,7 +24,6 @@
 
 package com.groupon.jenkins.dynamic.buildconfiguration;
 
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.StringValue;
 import hudson.matrix.Combination;
 
@@ -35,7 +34,7 @@ public class ParentTemplateSection extends ConfigSection<StringValue> {
     }
 
     @Override
-    public ShellCommands toScript(Combination combination, BuildType buildType) {
+    public ShellCommands toScript(Combination combination) {
         return ShellCommands.NOOP;
     }
 }

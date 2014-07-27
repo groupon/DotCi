@@ -33,7 +33,6 @@ import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ConfigValue;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.MapValue;
 
@@ -60,10 +59,10 @@ public class CompositeConfigSection extends ConfigSection<MapValue<String, ?>> {
 	}
 
 	@Override
-	public ShellCommands toScript(Combination combination, BuildType buildType) {
+	public ShellCommands toScript(Combination combination) {
 		List<ShellCommands> subPhases = new ArrayList<ShellCommands>(subSections.length);
 		for (int i = 0; i < subSections.length; i++) {
-			subPhases.add(subSections[i].toScript(combination, buildType));
+			subPhases.add(subSections[i].toScript(combination));
 		}
 		return ShellCommands.combine(subPhases);
 	}

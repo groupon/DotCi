@@ -34,7 +34,7 @@ public class SkipSectionTest {
 
 	@Test
 	public void should_not_execute_any_shell_commands_during_build_execution() {
-		assertEquals(ShellCommands.NOOP, new SkipSection(null).toScript(null, null));
+		assertEquals(ShellCommands.NOOP, new SkipSection(null).toScript(null));
 	}
 
 	@Test

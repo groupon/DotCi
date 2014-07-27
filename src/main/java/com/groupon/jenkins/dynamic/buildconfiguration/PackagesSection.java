@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Joiner;
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ListOrSingleValue;
 
 public class PackagesSection extends ConfigSection<ListOrSingleValue<String>> {
@@ -45,8 +44,8 @@ public class PackagesSection extends ConfigSection<ListOrSingleValue<String>> {
 	}
 
 	@Override
-	public ShellCommands toScript(Combination combination, BuildType buildType) {
-		return BuildType.BareMetal.equals(buildType) ? new ShellCommands(getInstallPackagesScript(combination)) : ShellCommands.NOOP;
+	public ShellCommands toScript(Combination combination) {
+		return  new ShellCommands(getInstallPackagesScript(combination)) ;
 	}
 
 	protected String getInstallPackagesScript(Combination combination) {

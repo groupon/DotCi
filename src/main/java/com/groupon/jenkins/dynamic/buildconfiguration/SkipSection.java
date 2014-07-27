@@ -25,7 +25,6 @@ package com.groupon.jenkins.dynamic.buildconfiguration;
 
 import hudson.matrix.Combination;
 
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.BooleanValue;
 
 public class SkipSection extends ConfigSection<BooleanValue> {
@@ -37,7 +36,7 @@ public class SkipSection extends ConfigSection<BooleanValue> {
 	}
 
 	@Override
-	public ShellCommands toScript(Combination combination, BuildType buildType) {
+	public ShellCommands toScript(Combination combination) {
 		return ShellCommands.NOOP;
 	}
 

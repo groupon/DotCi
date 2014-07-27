@@ -28,7 +28,6 @@ import hudson.matrix.Combination;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 
 import static com.groupon.jenkins.testhelpers.TestHelpers.configListOrSingleValue;
 import static org.junit.Assert.assertNull;
@@ -41,7 +40,7 @@ public class AfterRunSectionTest {
 		ConfigSection afterRunSection = new AfterRunSection(configListOrSingleValue("spec integration1", "spec integration2"));
 
 		Combination combination = new Combination(ImmutableMap.of("script", "post_build"));
-		assertTrue(afterRunSection.toScript(combination, BuildType.BareMetal).toShellScript().contains("spec integration1"));
+		assertTrue(afterRunSection.toScript(combination).toShellScript().contains("spec integration1"));
 	}
 
 	@Test
@@ -49,6 +48,6 @@ public class AfterRunSectionTest {
 		ConfigSection afterRunSection = new AfterRunSection(configListOrSingleValue("spec integration1", "spec integration2"));
 
 		Combination combination = new Combination(ImmutableMap.of("script", "main"));
-		assertNull(afterRunSection.toScript(combination, BuildType.BareMetal));
+		assertNull(afterRunSection.toScript(combination));
 	}
 }

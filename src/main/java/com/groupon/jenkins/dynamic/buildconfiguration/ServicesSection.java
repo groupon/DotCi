@@ -32,7 +32,6 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.groupon.jenkins.dynamic.build.execution.BuildType;
 import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ListOrSingleValue;
 
 import static com.groupon.jenkins.dynamic.buildconfiguration.DockerCommandBuilder.dockerCommand;
@@ -46,7 +45,7 @@ public class ServicesSection extends ConfigSection<ListOrSingleValue<String>> {
 	}
 
 	@Override
-	public ShellCommands toScript(Combination combination, BuildType docker) {
+	public ShellCommands toScript(Combination combination) {
 		return ShellCommands.NOOP;
 	}
 
