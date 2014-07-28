@@ -23,35 +23,31 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.execution;
 
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import hudson.Launcher;
 import hudson.model.BuildListener;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfiguration;
-import com.groupon.jenkins.dynamic.buildconfiguration.plugins.DotCiPluginAdapter;
-
 public class DotCiPluginRunner {
-	public static final DotCiPluginRunner NOOP = new DotCiPluginRunner(null, null, null) {
+	public static final DotCiPluginRunner NOOP = new DotCiPluginRunner(null, null ) {
 		@Override
 		public void runPlugins(BuildListener listener) {
 		};
 	};
-	private final BuildConfiguration buildConfiguration;
+	//private final BuildConfiguration buildConfiguration;
 	private final DynamicBuild build;
 	private final Launcher launcher;
 
-	public DotCiPluginRunner(DynamicBuild build, Launcher launcher, BuildConfiguration buildConfiguration) {
+	public DotCiPluginRunner(DynamicBuild build, Launcher launcher) {
 		this.build = build;
 		this.launcher = launcher;
-		this.buildConfiguration = buildConfiguration;
 	}
 
 	public void runPlugins(BuildListener listener) {
-		if (buildConfiguration != null) {
-			for (DotCiPluginAdapter plugin : buildConfiguration.getPlugins()) {
-				plugin.perform(build, launcher, listener);
-			}
-		}
+//		if (buildConfiguration != null) {
+//			for (DotCiPluginAdapter plugin : buildConfiguration.getPlugins()) {
+//				plugin.perform(build, launcher, listener);
+//			}
+//		}
 	}
 
 }

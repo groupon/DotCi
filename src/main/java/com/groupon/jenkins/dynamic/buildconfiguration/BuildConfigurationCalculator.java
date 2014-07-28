@@ -30,7 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.kohsuke.github.GHContent;
 
-public class EffectiveBuildConfigurationCalculator {
+public class BuildConfigurationCalculator {
 
 	public BuildConfiguration calculateBuildConfiguration(String githubRepoUrl, String sha, EnvVars envVars) throws IOException, InterruptedException, InvalidDotCiYmlException {
 		GithubRepositoryService githubRepositoryService = getGithubRepositoryService(githubRepoUrl);

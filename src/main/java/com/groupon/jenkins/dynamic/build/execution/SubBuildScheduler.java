@@ -23,31 +23,27 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.execution;
 
+import com.groupon.jenkins.dynamic.build.CurrentBuildState;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
+import com.groupon.jenkins.dynamic.build.DynamicSubProject;
+import com.groupon.jenkins.dynamic.build.DynamicSubProject.ParentBuildAction;
 import hudson.Util;
 import hudson.console.ModelHyperlinkNote;
 import hudson.matrix.Messages;
 import hudson.model.Action;
 import hudson.model.BuildListener;
-import hudson.model.Result;
-import hudson.model.TaskListener;
 import hudson.model.Executor;
 import hudson.model.ParametersAction;
 import hudson.model.Queue;
 import hudson.model.Queue.Item;
-
+import hudson.model.Result;
+import hudson.model.TaskListener;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import jenkins.model.Jenkins;
-
-import com.groupon.jenkins.dynamic.build.CurrentBuildState;
-import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
-import com.groupon.jenkins.dynamic.build.DynamicSubProject;
-import com.groupon.jenkins.dynamic.build.DynamicSubProject.ParentBuildAction;
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.buildconfiguration.plugins.DotCiPluginAdapter;
 
 public class SubBuildScheduler {
 
@@ -67,9 +63,9 @@ public class SubBuildScheduler {
 			Result runResult = getResult(runState);
 			r = r.combine(runResult);
 			listener.getLogger().println("Run " + c.getName() + " finished with : " + runResult);
-			for (DotCiPluginAdapter plugin : build.getBuildConfiguration().getPlugins()) {
-				plugin.runFinished(c.getBuildByNumber(build.getNumber()), build, listener);
-			}
+//			for (DotCiPluginAdapter plugin : build.getBuildConfiguration().getPlugins()) {
+//				plugin.runFinished(c.getBuildByNumber(build.getNumber()), build, listener);
+//			}
 		}
 		return r;
 	}

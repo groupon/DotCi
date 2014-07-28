@@ -23,22 +23,18 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.notifications;
 
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import hudson.Extension;
 import hudson.Launcher;
-import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.BuildListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
-
 import java.io.IOException;
-import java.util.List;
-
 import org.kohsuke.stapler.DataBoundConstructor;
-
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
 
 public class DotCiNotifier extends Notifier {
 	@DataBoundConstructor
@@ -49,12 +45,12 @@ public class DotCiNotifier extends Notifier {
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
 		DynamicBuild currentBuild = (DynamicBuild) build;
 		boolean result = true;
-		if (currentBuild.isConfigurationCalculated()) {
-			List<PostBuildNotifier> notifiers = currentBuild.getBuildConfiguration().getNotifiers();
-			for (PostBuildNotifier notifier : notifiers) {
-				result = result & notifier.perform((DynamicBuild) build, listener);
-			}
-		}
+//		if (currentBuild.isConfigurationCalculated()) {
+//			List<PostBuildNotifier> notifiers = currentBuild.getBuildConfiguration().getNotifiers();
+//			for (PostBuildNotifier notifier : notifiers) {
+//				result = result & notifier.perform((DynamicBuild) build, listener);
+//			}
+//		}
 		return true;
 	}
 

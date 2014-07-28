@@ -25,7 +25,6 @@ package com.groupon.jenkins.dynamic.build.execution;
 
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfiguration;
 import com.groupon.jenkins.dynamic.buildconfiguration.InvalidDotCiYmlException;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.model.BuildListener;
@@ -41,12 +40,13 @@ public class DynamicBuildExection {
 	private final BuildEnvironment buildEnvironment;
 	private final DynamicBuildRunner dynamicBuildRunner;
 
-	private static DynamicBuildRunner getBuildRunner(DynamicBuild build, BuildExecutionContext dynamicBuildRun, BuildType buildType, DotCiPluginRunner dotCiPluginRunner) {
-		return build.getBuildConfiguration().isParallized() ? new DynamicMultiConfigBuildRunner(build, buildType, dotCiPluginRunner) : new DynamicSingleConfigBuildRunner(build, dynamicBuildRun, buildType, dotCiPluginRunner, Iterables.getOnlyElement(build.getAxisList()));
+	private static DynamicBuildRunner getBuildRunner(DynamicBuild build, BuildExecutionContext dynamicBuildRun, DotCiPluginRunner dotCiPluginRunner) {
+		//return buildType.isParallized() ? new DynamicMultiConfigBuildRunner(build, buildType, dotCiPluginRunner) : new DynamicSingleConfigBuildRunner(build, dynamicBuildRun, buildType, dotCiPluginRunner, Iterables.getOnlyElement(build.getAxisList()));
+        return new DynamicSingleConfigBuildRunner();
 	}
 
-	public DynamicBuildExection(DynamicBuild build, BuildEnvironment buildEnvironment, BuildExecutionContext dynamicBuildRun, DotCiPluginRunner dotCiPluginRunner, BuildType buildType) {
-		this(build, buildEnvironment, getBuildRunner(build, dynamicBuildRun, buildType, dotCiPluginRunner));
+	public DynamicBuildExection(DynamicBuild build, BuildEnvironment buildEnvironment, BuildExecutionContext dynamicBuildRun, DotCiPluginRunner dotCiPluginRunner) {
+		this(build, buildEnvironment, getBuildRunner(build, dynamicBuildRun,  dotCiPluginRunner));
 	}
 
 	public DynamicBuildExection(DynamicBuild build, BuildEnvironment buildEnvironment, DynamicBuildRunner dynamicBuildRunner) {
@@ -61,10 +61,10 @@ public class DynamicBuildExection {
 				return Result.FAILURE;
 			}
 
-			if (getBuildConfiguration().isSkipped()) {
-				build.skip();
-				return Result.SUCCESS;
-			}
+//			if (getBuildConfiguration().isSkipped()) {
+//				build.skip();
+//				return Result.SUCCESS;
+//			}
 			build.setDescription(build.getCause().getBuildDescription());
 			return dynamicBuildRunner.runBuild(listener);
 		} catch (InterruptedException e) {
@@ -88,8 +88,5 @@ public class DynamicBuildExection {
 		}
 	}
 
-	private BuildConfiguration getBuildConfiguration() {
-		return build.getBuildConfiguration();
-	}
 
 }

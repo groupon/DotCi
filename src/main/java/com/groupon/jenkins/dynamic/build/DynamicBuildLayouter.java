@@ -23,35 +23,22 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
-import hudson.matrix.Axis;
+import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.matrix.AxisList;
 import hudson.matrix.Combination;
 import hudson.matrix.Layouter;
-
-
-import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfiguration;
 
 public class DynamicBuildLayouter extends Layouter<DynamicRunPtr> {
 
 	private final DynamicBuild dynamicBuild;
 
-	public DynamicBuildLayouter(DynamicBuild dynamicBuild) {
-		super(calculateAxisList(dynamicBuild));
+	public DynamicBuildLayouter(DynamicBuild dynamicBuild,BuildType buildType) {
+		super(calculateAxisList(dynamicBuild,buildType));
 		this.dynamicBuild = dynamicBuild;
 	}
 
-	public static AxisList calculateAxisList(DynamicBuild dynamicBuild) {
-		BuildConfiguration buildConfiguration = dynamicBuild.getBuildConfiguration();
-		if (buildConfiguration.isMultiLanguageVersions() && buildConfiguration.isMultiScript()) {
-			return new AxisList(new Axis("language_version", buildConfiguration.getLanguageVersions()), new Axis("script", buildConfiguration.getScriptKeys()));
-		}
-		if (buildConfiguration.isMultiLanguageVersions()) {
-			return new AxisList(new Axis("language_version", buildConfiguration.getLanguageVersions()));
-		}
-		if (buildConfiguration.isMultiScript()) {
-			return new AxisList(new Axis("script", buildConfiguration.getScriptKeys()));
-		}
-		return new AxisList(new Axis("script", "main"));
+	public static AxisList calculateAxisList(DynamicBuild build, BuildType buildType) {
+        return buildType.getAxisList(build);
 	}
 
 	@Override
@@ -59,8 +46,6 @@ public class DynamicBuildLayouter extends Layouter<DynamicRunPtr> {
 		return new DynamicRunPtr(c, dynamicBuild);
 	}
 
-	public static DynamicBuildLayouter get(DynamicBuild dynamicBuild) {
-		return dynamicBuild.isConfigurationCalculated() ? new DynamicBuildLayouter(dynamicBuild) : null;
-	}
+
 
 }

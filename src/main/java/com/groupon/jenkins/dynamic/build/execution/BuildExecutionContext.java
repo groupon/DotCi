@@ -26,10 +26,7 @@ package com.groupon.jenkins.dynamic.build.execution;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.tasks.BuildStep;
-
 import java.io.IOException;
-
-import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfiguration;
 
 public interface BuildExecutionContext {
 
@@ -37,5 +34,4 @@ public interface BuildExecutionContext {
 
 	void setResult(Result r);
 
-	public BuildConfiguration getBuildConfiguration();
 }

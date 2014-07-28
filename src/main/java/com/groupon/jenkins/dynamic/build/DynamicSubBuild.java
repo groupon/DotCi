@@ -29,7 +29,6 @@ import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.build.execution.DotCiPluginRunner;
 import com.groupon.jenkins.dynamic.build.execution.DynamicSingleConfigBuildRunner;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildParamsAction;
-import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfiguration;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.EnvVars;
 import hudson.FilePath;
@@ -160,10 +159,6 @@ public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSub
 			DynamicSubBuild.this.setResult(r);
 		}
 
-		@Override
-		public BuildConfiguration getBuildConfiguration() {
-			return getAction(SubBuildParamsAction.class).getBuildConfiguration();
-		}
 
 	}
 

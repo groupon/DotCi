@@ -140,7 +140,7 @@ public class DynamicBuildFactory {
 	}
 
 	public DynamicBuildFactory buildConfiguration(BuildConfiguration buildConfiguration) {
-		when(build.getBuildConfiguration()).thenReturn(buildConfiguration);
+	//	when(build.getBuildConfiguration()).thenReturn(buildConfiguration);
 		return this;
 	}
 

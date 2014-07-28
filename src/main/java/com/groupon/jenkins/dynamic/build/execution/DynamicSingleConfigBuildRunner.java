@@ -24,7 +24,6 @@ THE SOFTWARE.
 package com.groupon.jenkins.dynamic.build.execution;
 
 import com.groupon.jenkins.dynamic.build.DbBackedBuild;
-import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.matrix.Combination;
 import hudson.model.BuildListener;
 import hudson.model.Result;
@@ -33,15 +32,13 @@ import java.io.IOException;
 public class DynamicSingleConfigBuildRunner implements DynamicBuildRunner {
 
 	private final DbBackedBuild<?, ?> build;
-	private final BuildType buildType;
 	private final BuildExecutionContext dynamicBuildRun;
 	private final DotCiPluginRunner dotCiPluginRunner;
 	private final Combination combination;
 
-	public DynamicSingleConfigBuildRunner(DbBackedBuild<?, ?> build, BuildExecutionContext dynamicBuildRun, BuildType buildType, DotCiPluginRunner dotCiPluginRunner, Combination combination) {
+	public DynamicSingleConfigBuildRunner(DbBackedBuild<?, ?> build, BuildExecutionContext dynamicBuildRun,  DotCiPluginRunner dotCiPluginRunner, Combination combination) {
 		this.build = build;
 		this.dynamicBuildRun = dynamicBuildRun;
-		this.buildType = buildType;
 		this.dotCiPluginRunner = dotCiPluginRunner;
 		this.combination = combination;
 
@@ -49,7 +46,7 @@ public class DynamicSingleConfigBuildRunner implements DynamicBuildRunner {
 
 	@Override
 	public Result runBuild(BuildListener listener) throws IOException, InterruptedException {
-		Result result = buildType.runBuild(build, combination, dynamicBuildRun, listener);
+		Result result = null;//hbuildType.runBuild((com.groupon.jenkins.dynamic.build.DynamicBuild) build, combination, dynamicBuildRun, listener);
 		dotCiPluginRunner.runPlugins(listener);
 		return result;
 	}

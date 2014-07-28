@@ -26,12 +26,7 @@ package com.groupon.jenkins.dynamic.build;
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
-import com.groupon.jenkins.dynamic.build.execution.BuildEnvironment;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.build.execution.DotCiPluginRunner;
-import com.groupon.jenkins.dynamic.build.execution.DynamicBuildExection;
-import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfiguration;
-import com.groupon.jenkins.dynamic.buildconfiguration.EffectiveBuildConfigurationCalculator;
 import com.groupon.jenkins.dynamic.buildconfiguration.InvalidDotCiYmlException;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.EnvVars;
@@ -63,7 +58,6 @@ import javax.servlet.ServletException;
 
 public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 
-	private transient BuildConfiguration buildConfiguration;
 	private transient DynamicBuildModel model;
 
 	public DynamicBuild(DynamicProject project) throws IOException {
@@ -89,7 +83,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 	}
 
 	public DynamicBuildLayouter getLayouter() {
-		return DynamicBuildLayouter.get(this);
+		return  null ; //DynamicBuildLayouter.get(this);
 	}
 
 	// This needs to be overriden here to override @RequirePOST annotation,
@@ -102,19 +96,12 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 	@Override
 	public void restoreFromDb(AbstractProject project, Map<String, Object> input) {
 		super.restoreFromDb(project, input);
-		if (input.containsKey("build_configuration")) {
-			String buildConfigYml = (String) input.get("build_configuration");
-			this.buildConfiguration = BuildConfiguration.restoreFromYaml(buildConfigYml);
-		}
 		this.model = new DynamicBuildModel(this);
 	}
 
 	@Override
 	protected Map<String, Object> getBuildAttributesForDb() {
 		Map<String, Object> buildAttributes = super.getBuildAttributesForDb();
-		if (isConfigurationCalculated()) {
-			buildAttributes.put("build_configuration", buildConfiguration.toYaml());
-		}
 		buildAttributes.put("main_build", true);
 		return buildAttributes;
 	}
@@ -172,12 +159,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 		@Override
 		protected Result doRun(BuildListener listener) throws Exception, hudson.model.Run.RunnerAbortedException {
 			try {
-				DynamicBuild.this.setBuildConfiguration(calculateBuildConfiguration(listener));
-				BuildEnvironment buildEnvironment = new BuildEnvironment(DynamicBuild.this, launcher, listener);
-				DotCiPluginRunner dotCiPluginRunner = new DotCiPluginRunner(DynamicBuild.this, launcher, getBuildConfiguration());
-				DynamicBuildExection dynamicBuildExecution = new DynamicBuildExection(DynamicBuild.this, buildEnvironment, this, dotCiPluginRunner, BuildType.getBuildType(DynamicBuild.this));
-//
-				Result buildRunResult = dynamicBuildExecution.doRun(listener);
+				Result buildRunResult =   BuildType.getBuildType(DynamicBuild.this).runBuild(this,launcher,listener); //dynamicBuildExecution.doRun(listener);
 				setResult(buildRunResult);
 				return buildRunResult;
 			} catch (InvalidDotCiYmlException invalidDotCiYmlException) {
@@ -187,16 +169,6 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 				return Result.FAILURE;
 			}
 
-		}
-
-
-		private BuildConfiguration calculateBuildConfiguration(BuildListener listener) throws IOException, InterruptedException, InvalidDotCiYmlException {
-			return new EffectiveBuildConfigurationCalculator().calculateBuildConfiguration(getGithubRepoUrl(), getSha(), getEnvironment(listener));
-		}
-
-		@Override
-		public BuildConfiguration getBuildConfiguration() {
-			return DynamicBuild.this.getBuildConfiguration();
 		}
 
 	}
@@ -216,7 +188,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 	}
 
 	public Iterable<Combination> getAxisList() {
-		return DynamicBuildLayouter.calculateAxisList(this).list();
+		return  new ArrayList<Combination>();// DynamicBuildLayouter.calculateAxisList(this).list();
 	}
 
 	public Iterable<DynamicSubProject> getAllSubProjects() {
@@ -248,14 +220,6 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 		return r != null ? r : null;
 	}
 
-	public BuildConfiguration getBuildConfiguration() {
-		return buildConfiguration;
-	}
-
-	public void setBuildConfiguration(BuildConfiguration buildConfiguration) throws IOException {
-		this.buildConfiguration = buildConfiguration;
-		this.save(); // make sure it get saved into the db
-	}
 
 	@Override
 	public boolean equals(Object other) {
@@ -278,9 +242,6 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 		return this.getCause() == null ? "" : getCause().getSha();
 	}
 
-	public boolean isConfigurationCalculated() {
-		return buildConfiguration != null;
-	}
 
 	@Override
 	public BuildCause getCause() {

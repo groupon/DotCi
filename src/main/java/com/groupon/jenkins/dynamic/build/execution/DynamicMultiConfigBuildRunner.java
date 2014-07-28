@@ -40,7 +40,7 @@ public class DynamicMultiConfigBuildRunner implements DynamicBuildRunner {
 	private final DotCiPluginRunner dotCiPluginRunner;
 
 	public DynamicMultiConfigBuildRunner(DynamicBuild build, BuildType buildType, DotCiPluginRunner dotCiPluginRunner) {
-		this(build, new SubBuildScheduler(build, new SubBuildParamsAction(build.getBuildConfiguration(), buildType)), dotCiPluginRunner, buildType);
+		this(build, new SubBuildScheduler(build, new SubBuildParamsAction(null, buildType)), dotCiPluginRunner, buildType);
 	}
 
 	public DynamicMultiConfigBuildRunner(DynamicBuild build, SubBuildScheduler subBuildScheduler, DotCiPluginRunner dotCiPluginRunner, BuildType buildType) {
