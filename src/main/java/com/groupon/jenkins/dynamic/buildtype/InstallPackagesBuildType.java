@@ -24,32 +24,31 @@
 
 package com.groupon.jenkins.dynamic.buildtype;
 
+import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildEnvironment;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.build.execution.DotCiPluginRunner;
-import com.groupon.jenkins.dynamic.build.execution.DynamicBuildExection;
 import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfiguration;
 import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfigurationCalculator;
 import com.groupon.jenkins.dynamic.buildconfiguration.InvalidDotCiYmlException;
 import hudson.Launcher;
 import hudson.matrix.Axis;
 import hudson.matrix.AxisList;
+import hudson.matrix.Combination;
 import hudson.model.BuildListener;
+import hudson.model.Executor;
 import hudson.model.Result;
 import java.io.IOException;
+import java.io.PrintStream;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 public class InstallPackagesBuildType extends BuildType {
-    private DynamicBuild dynamicBuild;
+    private DynamicBuild build;
 
     public InstallPackagesBuildType(DynamicBuild dynamicBuild) {
-        this.dynamicBuild = dynamicBuild;
+        this.build = dynamicBuild;
     }
-//    @Override
-//    public Result runBuild(DynamicBuild build, Combination combination, BuildExecutionContext buildContext, BuildListener listener) throws IOException, InterruptedException {
-//        String mainBuildScript = calculateBuildConfiguration(build,listener).toScript(combination).toShellScript();
-//        return runShellScript(buildContext, listener, mainBuildScript);
-//    }
 
     @Override
     public boolean isParallized() {
@@ -72,14 +71,44 @@ public class InstallPackagesBuildType extends BuildType {
     }
 
     @Override
-    public Result runBuild(BuildExecutionContext dynamicRunExecution, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+    public Result runBuild(BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
         //	DynamicBuild.this.setBuildConfiguration(calculateBuildConfiguration(listener));
-        BuildEnvironment buildEnvironment = new BuildEnvironment(dynamicBuild, launcher, listener);
-        DotCiPluginRunner dotCiPluginRunner = new DotCiPluginRunner(dynamicBuild, launcher);
-        DynamicBuildExection dynamicBuildExecution = new DynamicBuildExection(dynamicBuild, buildEnvironment, this, dotCiPluginRunner);
+        BuildEnvironment buildEnvironment = new BuildEnvironment(build, launcher, listener);
+        DotCiPluginRunner dotCiPluginRunner = new DotCiPluginRunner(build, launcher);
 //
-        BuildConfiguration buildConfiguration = calculateBuildConfiguration(dynamicBuild, listener);
-        return Result.SUCCESS;
+        BuildConfiguration buildConfiguration = calculateBuildConfiguration(build, listener);
+        try {
+            if (!buildEnvironment.initialize()) {
+                return Result.FAILURE;
+            }
+
+			if (buildConfiguration.isSkipped()) {
+				build.skip();
+				return Result.SUCCESS;
+			}
+            build.setDescription(build.getCause().getBuildDescription());
+            Combination combination = new Combination(ImmutableMap.of("script", "main"));
+            String mainBuildScript = buildConfiguration.toScript(combination).toShellScript();
+			return runShellScript(buildExecutionContext, listener, mainBuildScript);
+        } catch (InterruptedException e) {
+            Executor x = Executor.currentExecutor();
+            x.recordCauseOfInterruption(build, listener);
+            return x.abortResult();
+        } catch (InvalidDotCiYmlException e) {
+            throw e;
+        } catch (Exception e) {
+            PrintStream logger = listener.getLogger();
+            logger.println(e.getMessage());
+            logger.println(ExceptionUtils.getStackTrace(e));
+            Executor x = Executor.currentExecutor();
+            x.recordCauseOfInterruption(build, listener);
+            x.doStop();
+            return Result.FAILURE;
+        } finally {
+            if (buildEnvironment.tearDownBuildEnvironments(listener)) {
+                return Result.FAILURE;
+            }
+        }
     }
 
     private BuildConfiguration calculateBuildConfiguration(DynamicBuild build, BuildListener listener) throws IOException, InterruptedException, InvalidDotCiYmlException {

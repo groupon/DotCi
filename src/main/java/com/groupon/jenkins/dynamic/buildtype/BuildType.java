@@ -38,8 +38,7 @@ public abstract class BuildType {
 //	BareMetal {
 //		@Override
 //		public Result runBuild(DbBackedBuild<?, ?> build, Combination combination, BuildExecutionContext buildContext, BuildListener listener) throws IOException, InterruptedException {
-//			String mainBuildScript = buildContext.getBuildConfiguration().toScript(combination, this).toShellScript();
-//			return runShellScript(buildContext, listener, mainBuildScript);
+
 //		}
 //	},
 //	DockerImage {

@@ -67,7 +67,7 @@ public class BuildEnvironment {
 
 	}
 
-	protected boolean tearDownBuildEnvironments(BuildListener listener) throws IOException, InterruptedException {
+	public boolean tearDownBuildEnvironments(BuildListener listener) throws IOException, InterruptedException {
 		boolean failed = false;
 		List<Environment> buildEnvironments = getBuildEnvironments();
 		for (int i = buildEnvironments.size() - 1; i >= 0; i--) {
