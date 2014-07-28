@@ -46,11 +46,13 @@ import hudson.model.Executor;
 import hudson.model.Result;
 import hudson.tasks.BuildStep;
 import hudson.util.HttpResponses;
+import hudson.util.VersionNumber;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import jenkins.model.Jenkins;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -81,6 +83,10 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 		execute(new DynamicRunExecution());
 	}
 
+	public boolean isNewJenkins() {
+		VersionNumber matrixBreakOutVersion = new VersionNumber("1.560");
+		return Jenkins.getVersion().isNewerThan(matrixBreakOutVersion);
+	}
 
 	public DynamicBuildLayouter getLayouter() {
 		return DynamicBuildLayouter.get(this);
