@@ -176,7 +176,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 				BuildEnvironment buildEnvironment = new BuildEnvironment(DynamicBuild.this, launcher, listener);
 				DotCiPluginRunner dotCiPluginRunner = new DotCiPluginRunner(DynamicBuild.this, launcher, getBuildConfiguration());
 				DynamicBuildExection dynamicBuildExecution = new DynamicBuildExection(DynamicBuild.this, buildEnvironment, this, dotCiPluginRunner, BuildType.getBuildType(DynamicBuild.this));
-
+//
 				Result buildRunResult = dynamicBuildExecution.doRun(listener);
 				setResult(buildRunResult);
 				return buildRunResult;

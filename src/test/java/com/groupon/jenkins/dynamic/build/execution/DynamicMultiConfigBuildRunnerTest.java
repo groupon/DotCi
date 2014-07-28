@@ -23,20 +23,18 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.execution;
 
+import com.google.common.collect.Lists;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.DynamicSubProject;
+import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.model.BuildListener;
 import hudson.model.Result;
-
 import java.io.IOException;
-
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
-import com.groupon.jenkins.dynamic.build.DynamicSubProject;
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import static org.junit.Assert.*;
 
 import static com.groupon.jenkins.testhelpers.DynamicBuildFactory.newBuild;
-import static org.junit.Assert.assertEquals;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

@@ -115,6 +115,6 @@ public abstract class BuildType {
 //			}
 //			return BuildType.BareMetal;
 //		}
-        return null;
+        return new InstallPackagesBuildType();
     }
 }
