@@ -47,13 +47,21 @@ import jenkins.model.Jenkins;
 
 public class SubBuildScheduler {
 
+    public interface SubBuildFinishListener{
+      public void runFinished(DynamicSubBuild subBuild) throws IOException;
+    }
+
 	private final DynamicBuild build;
 	private final SubBuildParamsAction subBuildParamsAction;
 
-	public SubBuildScheduler(DynamicBuild build, SubBuildParamsAction subBuildParamsAction) {
+    private SubBuildFinishListener subBuildFinishListener;
+
+	public SubBuildScheduler(DynamicBuild build, SubBuildParamsAction subBuildParamsAction, SubBuildFinishListener subBuildFinishListener) {
 		this.build = build;
 		this.subBuildParamsAction = subBuildParamsAction;
+        this.subBuildFinishListener = subBuildFinishListener;
 	}
+
 
 	public Result runSubBuilds(Iterable<DynamicSubProject> subProjects, BuildListener listener) throws InterruptedException, IOException {
 		scheduleSubBuilds(subProjects, listener);
@@ -63,9 +71,7 @@ public class SubBuildScheduler {
 			Result runResult = getResult(runState);
 			r = r.combine(runResult);
 			listener.getLogger().println("Run " + c.getName() + " finished with : " + runResult);
-//			for (DotCiPluginAdapter plugin : build.getBuildConfiguration().getPlugins()) {
-//				plugin.runFinished(c.getBuildByNumber(build.getNumber()), build, listener);
-//			}
+            subBuildFinishListener.runFinished(c.getBuildByNumber(build.getNumber()) );
 		}
 		return r;
 	}

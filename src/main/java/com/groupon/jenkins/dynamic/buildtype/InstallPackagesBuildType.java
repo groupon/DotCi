@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicBuildLayouter;
+import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import com.groupon.jenkins.dynamic.build.DynamicSubProject;
 import com.groupon.jenkins.dynamic.build.execution.BuildEnvironment;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
@@ -36,6 +37,7 @@ import com.groupon.jenkins.dynamic.build.execution.SubBuildScheduler;
 import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfiguration;
 import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfigurationCalculator;
 import com.groupon.jenkins.dynamic.buildconfiguration.InvalidDotCiYmlException;
+import com.groupon.jenkins.dynamic.buildconfiguration.plugins.DotCiPluginAdapter;
 import hudson.Launcher;
 import hudson.matrix.Axis;
 import hudson.matrix.AxisList;
@@ -107,8 +109,16 @@ public class InstallPackagesBuildType extends BuildType {
         }
     }
 
-    private Result runMultiConfigbuildRunner(BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, BuildListener listener, DotCiPluginRunner dotCiPluginRunner)throws InterruptedException, IOException {
-        SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, null);
+    private Result runMultiConfigbuildRunner(final BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, final BuildListener listener, DotCiPluginRunner dotCiPluginRunner)throws InterruptedException, IOException {
+        SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, null, new SubBuildScheduler.SubBuildFinishListener() {
+            @Override
+            public void runFinished(DynamicSubBuild subBuild) throws IOException {
+                for (DotCiPluginAdapter plugin : buildConfiguration.getPlugins()) {
+                    plugin.runFinished(subBuild, dynamicBuild, listener);
+                }
+            }
+        });
+
         try {
             Result combinedResult = subBuildScheduler.runSubBuilds(dynamicBuild.getRunSubProjects(), listener);
             Iterable<DynamicSubProject> postBuildSubProjects = dynamicBuild.getPostBuildSubProjects();

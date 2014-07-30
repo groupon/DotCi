@@ -30,8 +30,8 @@ import hudson.matrix.Layouter;
 public class DynamicBuildLayouter extends Layouter<DynamicRunPtr> {
 
 
-    private transient AxisList axisList;
-    private transient  DynamicBuild dynamicBuild;
+    private  AxisList axisList;
+    private   DynamicBuild dynamicBuild;
 
     public DynamicBuildLayouter(AxisList axisList, DynamicBuild dynamicBuild) {
 		super(axisList);
