@@ -14,7 +14,7 @@ import org.kohsuke.stapler.Stapler;
 
 public final class DynamicRunPtr {
 	private final Combination combination;
-	private final DynamicBuild dynamicBuild;
+	private transient final DynamicBuild dynamicBuild;
 
 	DynamicRunPtr(Combination c, DynamicBuild dynamicBuild) {
 		this.combination = c;

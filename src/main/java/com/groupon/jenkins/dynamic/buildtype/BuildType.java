@@ -27,7 +27,6 @@ import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.build.execution.WorkspaceFileExporter;
 import hudson.Launcher;
-import hudson.matrix.AxisList;
 import hudson.model.BuildListener;
 import hudson.model.Executor;
 import hudson.model.Result;
@@ -116,9 +115,9 @@ public abstract class BuildType {
         return new InstallPackagesBuildType(dynamicBuild);
     }
 
-    public abstract boolean isParallized();
 
-    public abstract AxisList getAxisList(DynamicBuild build);
 
     public abstract Result runBuild(BuildExecutionContext  dynamicRunExecution, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
+
+    public abstract void addLayoutListener(DynamicBuildLayoutListener dynamicBuild);
 }

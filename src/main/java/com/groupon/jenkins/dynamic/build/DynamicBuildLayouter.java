@@ -23,23 +23,21 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
-import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.matrix.AxisList;
 import hudson.matrix.Combination;
 import hudson.matrix.Layouter;
 
 public class DynamicBuildLayouter extends Layouter<DynamicRunPtr> {
 
-	private final DynamicBuild dynamicBuild;
 
-	public DynamicBuildLayouter(DynamicBuild dynamicBuild,BuildType buildType) {
-		super(calculateAxisList(dynamicBuild,buildType));
-		this.dynamicBuild = dynamicBuild;
-	}
+    private transient AxisList axisList;
+    private transient  DynamicBuild dynamicBuild;
 
-	public static AxisList calculateAxisList(DynamicBuild build, BuildType buildType) {
-        return buildType.getAxisList(build);
-	}
+    public DynamicBuildLayouter(AxisList axisList, DynamicBuild dynamicBuild) {
+		super(axisList);
+        this.axisList = axisList;
+        this.dynamicBuild = dynamicBuild;
+    }
 
 	@Override
 	protected DynamicRunPtr getT(Combination c) {
@@ -47,5 +45,7 @@ public class DynamicBuildLayouter extends Layouter<DynamicRunPtr> {
 	}
 
 
-
+    public Iterable<Combination> list() {
+        return axisList.list() ;
+    }
 }

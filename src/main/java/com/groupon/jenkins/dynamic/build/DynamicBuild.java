@@ -29,6 +29,7 @@ import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.buildconfiguration.InvalidDotCiYmlException;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import com.groupon.jenkins.dynamic.buildtype.DynamicBuildLayoutListener;
 import hudson.EnvVars;
 import hudson.Functions;
 import hudson.matrix.Combination;
@@ -56,9 +57,10 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
 
 import javax.servlet.ServletException;
 
-public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
+public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> implements DynamicBuildLayoutListener{
 
 	private transient DynamicBuildModel model;
+    private DynamicBuildLayouter dynamicBuildLayouter;
 
 	public DynamicBuild(DynamicProject project) throws IOException {
 		super(project);
@@ -83,7 +85,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 	}
 
 	public DynamicBuildLayouter getLayouter() {
-		return  null ; //DynamicBuildLayouter.get(this);
+		return  dynamicBuildLayouter;
 	}
 
 	// This needs to be overriden here to override @RequirePOST annotation,
@@ -145,7 +147,17 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 		return vars;
 	}
 
-	protected class DynamicRunExecution extends BuildExecution implements BuildExecutionContext {
+    @Override
+    public void setDyanamicBuildLayouter(DynamicBuildLayouter dyanamicBuildLayouter) {
+        this.dynamicBuildLayouter = dyanamicBuildLayouter;
+        try {
+            save();
+        } catch (IOException e) {
+           throw  new RuntimeException(e);
+        }
+    }
+
+    protected class DynamicRunExecution extends BuildExecution implements BuildExecutionContext {
 		@Override
 		public boolean performStep(BuildStep execution, BuildListener listener) throws IOException, InterruptedException {
 			return perform(execution, listener);
@@ -159,7 +171,9 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 		@Override
 		protected Result doRun(BuildListener listener) throws Exception, hudson.model.Run.RunnerAbortedException {
 			try {
-				Result buildRunResult =   BuildType.getBuildType(DynamicBuild.this).runBuild(this,launcher,listener); //dynamicBuildExecution.doRun(listener);
+                BuildType buildType = BuildType.getBuildType(DynamicBuild.this);
+                buildType.addLayoutListener(DynamicBuild.this);
+                Result buildRunResult =   buildType.runBuild(this, launcher, listener);
 				setResult(buildRunResult);
 				return buildRunResult;
 			} catch (InvalidDotCiYmlException invalidDotCiYmlException) {
@@ -188,7 +202,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 	}
 
 	public Iterable<Combination> getAxisList() {
-		return  new ArrayList<Combination>();// DynamicBuildLayouter.calculateAxisList(this).list();
+		return dynamicBuildLayouter == null? null: dynamicBuildLayouter.list();
 	}
 
 	public Iterable<DynamicSubProject> getAllSubProjects() {

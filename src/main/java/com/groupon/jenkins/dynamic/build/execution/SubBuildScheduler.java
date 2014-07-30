@@ -118,7 +118,7 @@ public class SubBuildScheduler {
 		}
 	}
 
-	protected void cancelSubBuilds(PrintStream logger) {
+	public void cancelSubBuilds(PrintStream logger) {
 		Queue q = getJenkins().getQueue();
 		synchronized (q) {
 			final int n = build.getNumber();
