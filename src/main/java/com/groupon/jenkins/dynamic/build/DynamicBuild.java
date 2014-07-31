@@ -24,6 +24,7 @@ THE SOFTWARE.
 package com.groupon.jenkins.dynamic.build;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.buildconfiguration.InvalidDotCiYmlException;
@@ -44,6 +45,7 @@ import hudson.util.HttpResponses;
 import hudson.util.VersionNumber;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.HttpResponse;
@@ -156,6 +158,10 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> im
 
     public Iterable<DynamicSubProject> getAllSubProjects() {
         return getConductor().getItems();
+    }
+
+    public DynamicSubProject getSubProject(Combination subBuildCombination) {
+        return Iterables.getOnlyElement( getSubProjects(Arrays.asList(subBuildCombination)));
     }
 
     protected class DynamicRunExecution extends BuildExecution implements BuildExecutionContext {

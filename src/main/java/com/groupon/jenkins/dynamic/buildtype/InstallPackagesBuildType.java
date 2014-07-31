@@ -30,7 +30,6 @@ import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicBuildLayouter;
 import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
-import com.groupon.jenkins.dynamic.build.DynamicSubProject;
 import com.groupon.jenkins.dynamic.build.execution.BuildEnvironment;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.build.execution.DotCiPluginRunner;
@@ -50,6 +49,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -112,7 +112,7 @@ public class InstallPackagesBuildType extends BuildType {
     }
 
     private Result runMultiConfigbuildRunner(final BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, final BuildListener listener, DotCiPluginRunner dotCiPluginRunner)throws InterruptedException, IOException {
-        SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, null, new SubBuildScheduler.SubBuildFinishListener() {
+        SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, new SubBuildScheduler.SubBuildFinishListener() {
             @Override
             public void runFinished(DynamicSubBuild subBuild) throws IOException {
                 for (DotCiPluginAdapter plugin : buildConfiguration.getPlugins()) {
@@ -123,10 +123,9 @@ public class InstallPackagesBuildType extends BuildType {
 
         try {
             Iterable<Combination> axisList = getAxisList(buildConfiguration).list();
-            Result combinedResult = subBuildScheduler.runSubBuilds(getRunSubProjects(axisList), listener);
-            Iterable<DynamicSubProject> postBuildSubProjects = getPostBuildSubProjects(axisList);
-            if (combinedResult.equals(Result.SUCCESS) && !Iterables.isEmpty(postBuildSubProjects)) {
-                Result runSubBuildResults = subBuildScheduler.runSubBuilds(postBuildSubProjects, listener);
+            Result combinedResult = subBuildScheduler.runSubBuilds(getMainRunCombinations(axisList), listener);
+            if (combinedResult.equals(Result.SUCCESS) && !Iterables.isEmpty(getPostBuildCombination(axisList))) {
+                Result runSubBuildResults = subBuildScheduler.runSubBuilds(getPostBuildCombination(axisList), listener);
                 combinedResult = combinedResult.combine(runSubBuildResults);
             }
             dynamicBuild.setResult(combinedResult);
@@ -141,16 +140,7 @@ public class InstallPackagesBuildType extends BuildType {
             }
         }
     }
-    public Iterable<DynamicSubProject> getRunSubProjects(Iterable<Combination> axisList) {
-        Iterable<Combination> mainRunCombinations = getMainRunCombinations(axisList);
-        return dynamicBuild.getSubProjects(mainRunCombinations);
-    }
 
-
-    public Iterable<DynamicSubProject> getPostBuildSubProjects(Iterable<Combination> axisList) {
-        Combination postBuildCombination = getPostBuildCombination(axisList);
-        return postBuildCombination == null ? new ArrayList<DynamicSubProject>() : dynamicBuild.getSubProjects(Arrays.asList(postBuildCombination));
-    }
 
     private Result runSingleConfigBuild(BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, BuildListener listener, DotCiPluginRunner dotCiPluginRunner) throws IOException, InterruptedException {
 
@@ -193,13 +183,13 @@ public class InstallPackagesBuildType extends BuildType {
         return axisList;
     }
 
-    public Combination getPostBuildCombination(Iterable<Combination> axisList) {
+    public List<Combination> getPostBuildCombination(Iterable<Combination> axisList) {
         for (Combination combination : axisList) {
             if (isPostBuild(combination)) {
-                return combination;
+                return Arrays.asList(combination);
             }
         }
-        return null;
+        return Collections.emptyList();
     }
 
     private boolean isPostBuild(Combination combination) {

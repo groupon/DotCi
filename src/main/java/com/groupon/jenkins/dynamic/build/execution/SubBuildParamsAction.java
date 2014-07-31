@@ -23,25 +23,9 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.dynamic.build.execution;
 
-import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfiguration;
-import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.model.InvisibleAction;
 
 public class SubBuildParamsAction extends InvisibleAction {
 
-	public transient BuildConfiguration buildConfiguration;
-	public transient BuildType buildType;
 
-	public SubBuildParamsAction(BuildConfiguration buildConfiguration, BuildType buildType) {
-		this.buildConfiguration = buildConfiguration;
-		this.buildType = buildType;
-	}
-
-	public BuildConfiguration getBuildConfiguration() {
-		return buildConfiguration;
-	}
-
-	public BuildType getBuildType() {
-		return buildType;
-	}
 }

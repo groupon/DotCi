@@ -30,6 +30,7 @@ import com.groupon.jenkins.dynamic.build.DynamicSubProject;
 import com.groupon.jenkins.dynamic.build.DynamicSubProject.ParentBuildAction;
 import hudson.Util;
 import hudson.console.ModelHyperlinkNote;
+import hudson.matrix.Combination;
 import hudson.matrix.Messages;
 import hudson.model.Action;
 import hudson.model.BuildListener;
@@ -42,6 +43,7 @@ import hudson.model.TaskListener;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import jenkins.model.Jenkins;
 
@@ -51,27 +53,26 @@ public class SubBuildScheduler {
       public void runFinished(DynamicSubBuild subBuild) throws IOException;
     }
 
-	private final DynamicBuild build;
-	private final SubBuildParamsAction subBuildParamsAction;
+	private final DynamicBuild dynamicBuild;
 
     private SubBuildFinishListener subBuildFinishListener;
 
-	public SubBuildScheduler(DynamicBuild build, SubBuildParamsAction subBuildParamsAction, SubBuildFinishListener subBuildFinishListener) {
-		this.build = build;
-		this.subBuildParamsAction = subBuildParamsAction;
+	public SubBuildScheduler(DynamicBuild build,  SubBuildFinishListener subBuildFinishListener) {
+		this.dynamicBuild = build;
         this.subBuildFinishListener = subBuildFinishListener;
 	}
 
 
-	public Result runSubBuilds(Iterable<DynamicSubProject> subProjects, BuildListener listener) throws InterruptedException, IOException {
-		scheduleSubBuilds(subProjects, listener);
+	public Result runSubBuilds(Iterable<Combination> subBuildCombinations, BuildListener listener) throws InterruptedException, IOException {
+        Iterable<DynamicSubProject> subProjects = getRunSubProjects(subBuildCombinations);
+		scheduleSubBuilds(subBuildCombinations, listener);
 		Result r = Result.SUCCESS;
 		for (DynamicSubProject c : subProjects) {
 			CurrentBuildState runState = waitForCompletion(c, listener);
 			Result runResult = getResult(runState);
 			r = r.combine(runResult);
 			listener.getLogger().println("Run " + c.getName() + " finished with : " + runResult);
-            subBuildFinishListener.runFinished(c.getBuildByNumber(build.getNumber()) );
+            subBuildFinishListener.runFinished(c.getBuildByNumber(dynamicBuild.getNumber()) );
 		}
 		return r;
 	}
@@ -80,13 +81,14 @@ public class SubBuildScheduler {
 		return run != null ? run.getResult() : Result.ABORTED;
 	}
 
-	protected void scheduleSubBuilds(Iterable<DynamicSubProject> subProjects, TaskListener listener) {
-		for (DynamicSubProject c : subProjects) {
+	protected void scheduleSubBuilds(Iterable<Combination> subBuildCombinations, TaskListener listener) {
+		for ( Combination subBuildCombination : subBuildCombinations) {
+            DynamicSubProject c = dynamicBuild.getSubProject(subBuildCombination);
 			listener.getLogger().println(Messages.MatrixBuild_Triggering(ModelHyperlinkNote.encodeTo(c)));
 			List<Action> childActions = new ArrayList<Action>();
-			childActions.addAll(Util.filter(build.getActions(), ParametersAction.class));
-			childActions.add(subBuildParamsAction);
-			c.scheduleBuild(childActions, build.getCause());
+			childActions.addAll(Util.filter(dynamicBuild.getActions(), ParametersAction.class));
+			//childActions.add(subBuildParamsAction);
+			c.scheduleBuild(childActions, dynamicBuild.getCause());
 		}
 	}
 
@@ -96,7 +98,7 @@ public class SubBuildScheduler {
 		int appearsCancelledCount = 0;
 		while (true) {
 			Thread.sleep(1000);
-			CurrentBuildState b = c.getCurrentStateByNumber(build.getNumber());
+			CurrentBuildState b = c.getCurrentStateByNumber(dynamicBuild.getNumber());
 			if (b != null) { // its building or is done
 				if (b.isBuilding()) {
 					continue;
@@ -127,14 +129,14 @@ public class SubBuildScheduler {
 	public void cancelSubBuilds(PrintStream logger) {
 		Queue q = getJenkins().getQueue();
 		synchronized (q) {
-			final int n = build.getNumber();
+			final int n = dynamicBuild.getNumber();
 			for (Item i : q.getItems()) {
 				ParentBuildAction parentBuildAction = i.getAction(ParentBuildAction.class);
-				if (parentBuildAction != null && build.equals(parentBuildAction.parent)) {
+				if (parentBuildAction != null && dynamicBuild.equals(parentBuildAction.parent)) {
 					q.cancel(i);
 				}
 			}
-			for (DynamicSubProject c : build.getAllSubProjects()) {
+			for (DynamicSubProject c : dynamicBuild.getAllSubProjects()) {
 				DynamicSubBuild b = c.getBuildByNumber(n);
 				if (b != null && b.isBuilding()) {
 					Executor exe = b.getExecutor();
@@ -147,7 +149,13 @@ public class SubBuildScheduler {
 		}
 	}
 
+    public Iterable<DynamicSubProject> getRunSubProjects(Iterable<Combination> combinations) {
+        return dynamicBuild.getSubProjects(combinations);
+    }
+
+
 	private Jenkins getJenkins() {
+
 		return Jenkins.getInstance();
 	}
 
