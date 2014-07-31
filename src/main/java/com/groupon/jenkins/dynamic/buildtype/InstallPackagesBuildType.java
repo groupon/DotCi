@@ -24,6 +24,7 @@
 
 package com.groupon.jenkins.dynamic.buildtype;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
@@ -48,6 +49,7 @@ import hudson.model.Result;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -120,8 +122,9 @@ public class InstallPackagesBuildType extends BuildType {
         });
 
         try {
-            Result combinedResult = subBuildScheduler.runSubBuilds(dynamicBuild.getRunSubProjects(), listener);
-            Iterable<DynamicSubProject> postBuildSubProjects = dynamicBuild.getPostBuildSubProjects();
+            Iterable<Combination> axisList = getAxisList(buildConfiguration).list();
+            Result combinedResult = subBuildScheduler.runSubBuilds(getRunSubProjects(axisList), listener);
+            Iterable<DynamicSubProject> postBuildSubProjects = getPostBuildSubProjects(axisList);
             if (combinedResult.equals(Result.SUCCESS) && !Iterables.isEmpty(postBuildSubProjects)) {
                 Result runSubBuildResults = subBuildScheduler.runSubBuilds(postBuildSubProjects, listener);
                 combinedResult = combinedResult.combine(runSubBuildResults);
@@ -137,6 +140,16 @@ public class InstallPackagesBuildType extends BuildType {
                 LOGGER.log(Level.SEVERE, "Failed to cancel subbuilds", e);
             }
         }
+    }
+    public Iterable<DynamicSubProject> getRunSubProjects(Iterable<Combination> axisList) {
+        Iterable<Combination> mainRunCombinations = getMainRunCombinations(axisList);
+        return dynamicBuild.getSubProjects(mainRunCombinations);
+    }
+
+
+    public Iterable<DynamicSubProject> getPostBuildSubProjects(Iterable<Combination> axisList) {
+        Combination postBuildCombination = getPostBuildCombination(axisList);
+        return postBuildCombination == null ? new ArrayList<DynamicSubProject>() : dynamicBuild.getSubProjects(Arrays.asList(postBuildCombination));
     }
 
     private Result runSingleConfigBuild(BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, BuildListener listener, DotCiPluginRunner dotCiPluginRunner) throws IOException, InterruptedException {
@@ -158,6 +171,15 @@ public class InstallPackagesBuildType extends BuildType {
     }
 
     public void setLayouter(BuildConfiguration buildConfiguration) {
+        AxisList axisList = getAxisList(buildConfiguration);
+        DynamicBuildLayouter dynamicBuildLayouter = new DynamicBuildLayouter(axisList, dynamicBuild);
+        for(DynamicBuildLayoutListener dynamicBuildLayoutListener : dynamicBuildLayoutListeners){
+           dynamicBuildLayoutListener.setDyanamicBuildLayouter(dynamicBuildLayouter);
+        }
+
+    }
+
+    private AxisList getAxisList(BuildConfiguration buildConfiguration) {
         AxisList  axisList = new AxisList(new Axis("script", "main"));
         if (buildConfiguration.isMultiLanguageVersions() && buildConfiguration.isMultiScript()) {
             axisList = new AxisList(new Axis("language_version", buildConfiguration.getLanguageVersions()), new Axis("script", buildConfiguration.getScriptKeys()));
@@ -168,12 +190,29 @@ public class InstallPackagesBuildType extends BuildType {
         else if (buildConfiguration.isMultiScript()) {
             axisList = new AxisList(new Axis("script", buildConfiguration.getScriptKeys()));
         }
-        DynamicBuildLayouter dynamicBuildLayouter = new DynamicBuildLayouter(axisList, dynamicBuild);
-        for(DynamicBuildLayoutListener dynamicBuildLayoutListener : dynamicBuildLayoutListeners){
-           dynamicBuildLayoutListener.setDyanamicBuildLayouter(dynamicBuildLayouter);
-        }
-
+        return axisList;
     }
 
+    public Combination getPostBuildCombination(Iterable<Combination> axisList) {
+        for (Combination combination : axisList) {
+            if (isPostBuild(combination)) {
+                return combination;
+            }
+        }
+        return null;
+    }
+
+    private boolean isPostBuild(Combination combination) {
+        return "post_build".equals(combination.get("script"));
+    }
+
+    public Iterable<Combination> getMainRunCombinations(Iterable<Combination> axisList) {
+        return Iterables.filter(axisList, new Predicate<Combination>() {
+            @Override
+            public boolean apply(Combination combination) {
+                return !isPostBuild(combination);
+            }
+        });
+    }
 
 }

@@ -24,7 +24,6 @@ THE SOFTWARE.
 package com.groupon.jenkins.dynamic.build;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.buildconfiguration.InvalidDotCiYmlException;
@@ -45,8 +44,6 @@ import hudson.util.HttpResponses;
 import hudson.util.VersionNumber;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.HttpResponse;
@@ -157,6 +154,10 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> im
         }
     }
 
+    public Iterable<DynamicSubProject> getAllSubProjects() {
+        return getConductor().getItems();
+    }
+
     protected class DynamicRunExecution extends BuildExecution implements BuildExecutionContext {
 		@Override
 		public boolean performStep(BuildStep execution, BuildListener listener) throws IOException, InterruptedException {
@@ -197,22 +198,11 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> im
 		return this.getParent();
 	}
 
-	public Iterable<DynamicSubProject> getRunSubProjects() {
-		return getConductor().getSubProjects(model.getMainRunCombinations(getAxisList()));
-	}
 
-	public Iterable<Combination> getAxisList() {
-		return dynamicBuildLayouter == null? null: dynamicBuildLayouter.list();
-	}
+    public Iterable<DynamicSubProject> getSubProjects(Iterable<Combination> mainRunCombinations) {
+        return getConductor().getSubProjects(mainRunCombinations);
+    }
 
-	public Iterable<DynamicSubProject> getAllSubProjects() {
-		return Iterables.concat(getRunSubProjects(), getPostBuildSubProjects());
-	}
-
-	public Iterable<DynamicSubProject> getPostBuildSubProjects() {
-		Combination postBuildCombination = model.getPostBuildCombination(getAxisList());
-		return postBuildCombination == null ? new ArrayList<DynamicSubProject>() : getConductor().getSubProjects(Arrays.asList(postBuildCombination));
-	}
 
 	public Build getRun(Combination combination) {
 		for (DynamicSubProject subProject : getAllSubProjects()) {

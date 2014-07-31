@@ -56,27 +56,7 @@ public class DynamicBuildModel {
 		this.githubRepositoryService = githubRepositoryService;
 	}
 
-	public Combination getPostBuildCombination(Iterable<Combination> axisList) {
-		for (Combination combination : axisList) {
-			if (isPostBuild(combination)) {
-				return combination;
-			}
-		}
-		return null;
-	}
 
-	private boolean isPostBuild(Combination combination) {
-		return "post_build".equals(combination.get("script"));
-	}
-
-	public Iterable<Combination> getMainRunCombinations(Iterable<Combination> axisList) {
-		return Iterables.filter(axisList, new Predicate<Combination>() {
-			@Override
-			public boolean apply(Combination combination) {
-				return !isPostBuild(combination);
-			}
-		});
-	}
 
 	public void run() {
 		addBuildCauseForNonGithubCauses();
