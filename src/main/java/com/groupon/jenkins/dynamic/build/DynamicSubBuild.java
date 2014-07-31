@@ -26,8 +26,6 @@ package com.groupon.jenkins.dynamic.build;
 import com.google.common.base.Objects;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.build.execution.SubBuildParamsAction;
-import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.matrix.Combination;
@@ -144,9 +142,6 @@ public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSub
 
 		}
 
-		public BuildType getBuildType() {
-			return getAction(SubBuildParamsAction.class).getBuildType();
-		}
 
 		@Override
 		public boolean performStep(BuildStep buildStep, BuildListener listener) throws InterruptedException, IOException {

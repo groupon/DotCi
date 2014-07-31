@@ -162,10 +162,10 @@ public class InstallPackagesBuildType extends BuildType {
         if (buildConfiguration.isMultiLanguageVersions() && buildConfiguration.isMultiScript()) {
             axisList = new AxisList(new Axis("language_version", buildConfiguration.getLanguageVersions()), new Axis("script", buildConfiguration.getScriptKeys()));
         }
-        if (buildConfiguration.isMultiLanguageVersions()) {
+        else if (buildConfiguration.isMultiLanguageVersions()) {
             axisList = new AxisList(new Axis("language_version", buildConfiguration.getLanguageVersions()));
         }
-        if (buildConfiguration.isMultiScript()) {
+        else if (buildConfiguration.isMultiScript()) {
             axisList = new AxisList(new Axis("script", buildConfiguration.getScriptKeys()));
         }
         DynamicBuildLayouter dynamicBuildLayouter = new DynamicBuildLayouter(axisList, dynamicBuild);
