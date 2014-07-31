@@ -27,6 +27,7 @@ import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.build.execution.WorkspaceFileExporter;
 import hudson.Launcher;
+import hudson.matrix.Combination;
 import hudson.model.BuildListener;
 import hudson.model.Executor;
 import hudson.model.Result;
@@ -120,4 +121,6 @@ public abstract class BuildType {
     public abstract Result runBuild(BuildExecutionContext  dynamicRunExecution, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
 
     public abstract void addLayoutListener(DynamicBuildLayoutListener dynamicBuild);
+
+    public abstract Result runSubBuild(Combination combination, BuildExecutionContext dynamicSubBuildExecution, BuildListener listener) throws IOException, InterruptedException;
 }

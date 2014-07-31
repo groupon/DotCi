@@ -59,6 +59,7 @@ public class InstallPackagesBuildType extends BuildType {
     private DynamicBuild dynamicBuild;
     private List<DynamicBuildLayoutListener> dynamicBuildLayoutListeners;
     private static final Logger LOGGER = Logger.getLogger(InstallPackagesBuildType.class.getName());
+    private BuildConfiguration buildConfiguration;
 
 
     public InstallPackagesBuildType(DynamicBuild dynamicBuild) {
@@ -71,7 +72,7 @@ public class InstallPackagesBuildType extends BuildType {
     public Result runBuild(BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
         BuildEnvironment buildEnvironment = new BuildEnvironment(dynamicBuild, launcher, listener);
         DotCiPluginRunner dotCiPluginRunner = new DotCiPluginRunner(dynamicBuild, launcher);
-        BuildConfiguration buildConfiguration = calculateBuildConfiguration(dynamicBuild, listener);
+        this.buildConfiguration = calculateBuildConfiguration(dynamicBuild, listener);
         try {
             if (!buildEnvironment.initialize()) {
                 return Result.FAILURE;
@@ -87,7 +88,7 @@ public class InstallPackagesBuildType extends BuildType {
             if(buildConfiguration.isParallized()){
                 return runMultiConfigbuildRunner(buildConfiguration,buildExecutionContext,listener, dotCiPluginRunner) ;
             }else{
-                return runSingleConfigBuild(buildConfiguration,buildExecutionContext,listener ,dotCiPluginRunner) ;
+                return runSingleConfigBuild(new Combination(ImmutableMap.of("script", "main")),buildConfiguration,buildExecutionContext,listener ,dotCiPluginRunner) ;
             }
 
         } catch (InterruptedException e) {
@@ -112,7 +113,7 @@ public class InstallPackagesBuildType extends BuildType {
     }
 
     private Result runMultiConfigbuildRunner(final BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, final BuildListener listener, DotCiPluginRunner dotCiPluginRunner)throws InterruptedException, IOException {
-        SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, new SubBuildScheduler.SubBuildFinishListener() {
+        SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, this, new SubBuildScheduler.SubBuildFinishListener() {
             @Override
             public void runFinished(DynamicSubBuild subBuild) throws IOException {
                 for (DotCiPluginAdapter plugin : buildConfiguration.getPlugins()) {
@@ -142,9 +143,7 @@ public class InstallPackagesBuildType extends BuildType {
     }
 
 
-    private Result runSingleConfigBuild(BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, BuildListener listener, DotCiPluginRunner dotCiPluginRunner) throws IOException, InterruptedException {
-
-        Combination combination = new Combination(ImmutableMap.of("script", "main"));
+    private Result runSingleConfigBuild(Combination combination, BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, BuildListener listener, DotCiPluginRunner dotCiPluginRunner) throws IOException, InterruptedException {
         String mainBuildScript = buildConfiguration.toScript(combination).toShellScript();
         Result result = runShellScript(buildExecutionContext, listener, mainBuildScript);
         dotCiPluginRunner.runPlugins(listener);
@@ -154,6 +153,11 @@ public class InstallPackagesBuildType extends BuildType {
     @Override
     public void addLayoutListener(DynamicBuildLayoutListener dynamicBuildLayoutListener) {
         this.dynamicBuildLayoutListeners.add(dynamicBuildLayoutListener);
+    }
+
+    @Override
+    public Result runSubBuild(Combination combination, BuildExecutionContext dynamicSubBuildExecution, BuildListener listener) throws IOException, InterruptedException {
+      return runSingleConfigBuild(combination, buildConfiguration,dynamicSubBuildExecution,listener,DotCiPluginRunner.NOOP);
     }
 
     private BuildConfiguration calculateBuildConfiguration(DynamicBuild build, BuildListener listener) throws IOException, InterruptedException, InvalidDotCiYmlException {

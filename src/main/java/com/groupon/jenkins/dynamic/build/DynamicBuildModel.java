@@ -23,23 +23,18 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
-import hudson.matrix.Combination;
-import hudson.model.Cause.UserIdCause;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.cause.ManualBuildCause;
 import com.groupon.jenkins.dynamic.build.cause.UnknownBuildCause;
 import com.groupon.jenkins.github.GitBranch;
 import com.groupon.jenkins.github.GitSshUrl;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
+import hudson.model.Cause.UserIdCause;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 //Testable proxy of dyanamicbuild
 public class DynamicBuildModel {

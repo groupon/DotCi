@@ -58,8 +58,6 @@ public class DynamicBuildFactory {
 		when(build.getSha()).thenReturn("sha-1234");
 		when(build.getFullUrl()).thenReturn("http://absolute.url/meow");
 		when(build.getCause()).thenReturn(mock(BuildCause.class));
-		when(build.getRunSubProjects()).thenReturn(Lists.<DynamicSubProject> newArrayList());
-		when(build.getPostBuildSubProjects()).thenReturn(Lists.<DynamicSubProject> newArrayList());
 	}
 
 	public static DynamicBuildFactory newBuild() {

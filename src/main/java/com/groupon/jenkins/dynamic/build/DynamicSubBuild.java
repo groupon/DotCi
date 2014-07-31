@@ -26,6 +26,7 @@ package com.groupon.jenkins.dynamic.build;
 import com.google.common.base.Objects;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
+import com.groupon.jenkins.dynamic.build.execution.SubBuildExecutionAction;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.matrix.Combination;
@@ -136,9 +137,8 @@ public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSub
 
 		@Override
 		protected Result doRun(BuildListener listener) throws Exception {
-//			DynamicSingleConfigBuildRunner buildRunner = new DynamicSingleConfigBuildRunner(DynamicSubBuild.this, this, getBuildType(), DotCiPluginRunner.NOOP, getCombination());
-//			return buildRunner.runBuild(listener);
-            return Result.SUCCESS;
+            SubBuildExecutionAction subBuildExecutionAction = getAction(SubBuildExecutionAction.class);
+            return subBuildExecutionAction.run(DynamicSubBuild.this.getCombination(), this, listener) ;
 
 		}
 
