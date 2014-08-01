@@ -3,7 +3,7 @@ The MIT License (MIT)
 
 Copyright (c) 2014, Groupon, Inc.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+P ermission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -21,24 +21,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.dynamic.buildtype;
+package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.buildtype.installpackages.InstallPackagesBuildType;
-import hudson.Launcher;
-import hudson.matrix.Combination;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import java.io.IOException;
+import org.junit.Assert;
+import org.junit.Test;
 
-public abstract class BuildType {
-    public static BuildType getBuildType(DynamicBuild dynamicBuild) {
-        return new InstallPackagesBuildType(dynamicBuild);
+public class DockerComandBuilderTest {
+    @Test
+    public void should_use_single_dash_for_single_letter_option(){
+        String dockerCommand = new DockerCommandBuilder("run").flag("d").args("java").get();
+        Assert.assertEquals("docker run -d java",dockerCommand);
     }
 
-
-    public abstract Result runBuild(BuildExecutionContext  buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
-
-    public abstract Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException;
+    @Test
+    public void should_use_double_dash_for_multiple_letter_option(){
+        String dockerCommand = new DockerCommandBuilder("run").flag("rm").args("java").get();
+        Assert.assertEquals("docker run --rm java",dockerCommand);
+        dockerCommand = new DockerCommandBuilder("run").flag("name","meow").args("java").get();
+        Assert.assertEquals("docker run --name meow java",dockerCommand);
+    }
 }

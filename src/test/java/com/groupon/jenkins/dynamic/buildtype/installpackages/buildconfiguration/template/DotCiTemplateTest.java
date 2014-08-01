@@ -22,13 +22,31 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins;
+package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.template;
 
-import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.template.DotCiTemplate;
-import hudson.Plugin;
+import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.BuildConfiguration;
+import hudson.EnvVars;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
 
-public class DotCiPlugin extends Plugin {
-    public void postInitialize() throws Exception {
-        DotCiTemplate.loadTemplates();
+public class DotCiTemplateTest {
+    @Rule
+    public JenkinsRule j = new JenkinsRule();
+
+    @Before
+    public void loadTemplates(){
+       DotCiTemplate.loadTemplates();
     }
+
+    @Test
+    public void should_load_base_templates(){
+        DotCiTemplate rubyTemplate = DotCiTemplate.templates.get("ruby");
+        Assert.assertNotNull(rubyTemplate);
+        BuildConfiguration buildConfiguration = rubyTemplate.getBuildConfiguration(new EnvVars());
+        Assert.assertNotNull(buildConfiguration);
+    }
+
 }

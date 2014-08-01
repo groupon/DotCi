@@ -20,25 +20,34 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
- */
-package com.groupon.jenkins.dynamic.buildtype;
+*/
+package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.buildtype.installpackages.InstallPackagesBuildType;
-import hudson.Launcher;
 import hudson.matrix.Combination;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import java.io.IOException;
 
-public abstract class BuildType {
-    public static BuildType getBuildType(DynamicBuild dynamicBuild) {
-        return new InstallPackagesBuildType(dynamicBuild);
-    }
+import java.util.List;
 
+import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue.ListOrSingleValue;
 
-    public abstract Result runBuild(BuildExecutionContext  buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
+public class LanguageVersionsSection extends ConfigSection<ListOrSingleValue<String>> {
 
-    public abstract Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException;
+	public static final String NAME = "language_versions";
+
+	protected LanguageVersionsSection(ListOrSingleValue<String> configValue) {
+		super(NAME, configValue, MergeStrategy.REPLACE);
+	}
+
+	@Override
+	public ShellCommands toScript(Combination combination) {
+		return ShellCommands.NOOP;
+	}
+
+	public boolean isMultiLanguageVersions() {
+		return getConfigValue().size() > 1;
+	}
+
+	public List<String> getLanguageVersions() {
+		return getConfigValue().getValues();
+	}
+
 }

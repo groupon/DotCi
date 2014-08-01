@@ -21,24 +21,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.dynamic.buildtype;
+package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.buildtype.installpackages.InstallPackagesBuildType;
-import hudson.Launcher;
-import hudson.matrix.Combination;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import java.io.IOException;
+public class BooleanValue extends ConfigValue<Boolean> {
 
-public abstract class BuildType {
-    public static BuildType getBuildType(DynamicBuild dynamicBuild) {
-        return new InstallPackagesBuildType(dynamicBuild);
-    }
+	public BooleanValue(Object value) {
+		super(value);
+	}
 
+	@Override
+	public void append(ConfigValue<?> config) {
+		throw new UnsupportedOperationException();
+	}
 
-    public abstract Result runBuild(BuildExecutionContext  buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
+	@Override
+	public Boolean getValue() {
+		return super.getValue() == null ? Boolean.FALSE : super.getValue();
+	}
 
-    public abstract Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException;
 }

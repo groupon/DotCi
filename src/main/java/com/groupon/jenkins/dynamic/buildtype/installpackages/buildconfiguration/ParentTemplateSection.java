@@ -22,13 +22,19 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins;
+package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration;
 
-import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.template.DotCiTemplate;
-import hudson.Plugin;
+import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue.StringValue;
+import hudson.matrix.Combination;
 
-public class DotCiPlugin extends Plugin {
-    public void postInitialize() throws Exception {
-        DotCiTemplate.loadTemplates();
+public class ParentTemplateSection extends ConfigSection<StringValue> {
+    public static final String NAME ="parent_template";
+    protected ParentTemplateSection(StringValue configValue) {
+        super(NAME, configValue, MergeStrategy.REPLACE);
+    }
+
+    @Override
+    public ShellCommands toScript(Combination combination) {
+        return ShellCommands.NOOP;
     }
 }

@@ -21,24 +21,29 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.dynamic.buildtype;
+package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.buildtype.installpackages.InstallPackagesBuildType;
-import hudson.Launcher;
-import hudson.matrix.Combination;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-public abstract class BuildType {
-    public static BuildType getBuildType(DynamicBuild dynamicBuild) {
-        return new InstallPackagesBuildType(dynamicBuild);
-    }
+public class ListValue<T> extends ConfigValue<List<T>> {
 
+	public ListValue(Object config) {
+		super(config == null ? Collections.emptyList() : config);
+	}
 
-    public abstract Result runBuild(BuildExecutionContext  buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
+	@Override
+	public void append(ConfigValue<?> otherConfig) {
+		ArrayList<T> mergedList = new ArrayList<T>();
+		mergedList.addAll(getValue());
+		mergedList.addAll((Collection<? extends T>) otherConfig.getValue());
+		setValue(mergedList);
+	}
 
-    public abstract Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException;
+	@Override
+	public boolean isEmpty() {
+		return getValue().isEmpty();
+	}
 }

@@ -21,24 +21,33 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.dynamic.buildtype;
+package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.buildtype.installpackages.InstallPackagesBuildType;
-import hudson.Launcher;
 import hudson.matrix.Combination;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import java.io.IOException;
 
-public abstract class BuildType {
-    public static BuildType getBuildType(DynamicBuild dynamicBuild) {
-        return new InstallPackagesBuildType(dynamicBuild);
-    }
+import org.junit.Test;
 
+import com.google.common.collect.ImmutableMap;
 
-    public abstract Result runBuild(BuildExecutionContext  buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
+import static com.groupon.jenkins.testhelpers.TestHelpers.configListOrSingleValue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-    public abstract Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException;
+public class AfterRunSectionTest {
+
+	@Test
+	public void should_run_post_build() {
+		ConfigSection afterRunSection = new AfterRunSection(configListOrSingleValue("spec integration1", "spec integration2"));
+
+		Combination combination = new Combination(ImmutableMap.of("script", "post_build"));
+		assertTrue(afterRunSection.toScript(combination).toShellScript().contains("spec integration1"));
+	}
+
+	@Test
+	public void should_not_run_post_build_if_not_post_build() {
+		ConfigSection afterRunSection = new AfterRunSection(configListOrSingleValue("spec integration1", "spec integration2"));
+
+		Combination combination = new Combination(ImmutableMap.of("script", "main"));
+		assertNull(afterRunSection.toScript(combination));
+	}
 }

@@ -21,24 +21,30 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.dynamic.buildtype;
+package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.buildtype.installpackages.InstallPackagesBuildType;
-import hudson.Launcher;
-import hudson.matrix.Combination;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import java.io.IOException;
+import java.util.Arrays;
 
-public abstract class BuildType {
-    public static BuildType getBuildType(DynamicBuild dynamicBuild) {
-        return new InstallPackagesBuildType(dynamicBuild);
-    }
+import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-    public abstract Result runBuild(BuildExecutionContext  buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
+public class ListValueTest {
 
-    public abstract Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException;
+	@Test
+	public void should_append_to_existing_values() {
+		ListValue<String> configValue = new ListValue<String>(Arrays.asList("one", "two"));
+		ListValue<String> configValueToBeAppended = new ListValue<String>(Arrays.asList("three"));
+		configValue.append(configValueToBeAppended);
+		assertEquals(3, configValue.getValue().size());
+		assertEquals("one", configValue.getValue().get(0));
+		assertEquals("two", configValue.getValue().get(1));
+		assertEquals("three", configValue.getValue().get(2));
+	}
+
+	@Test
+	public void null_value_should_be_empty() {
+		assertTrue(new ListValue<Object>(null).isEmpty());
+	}
 }

@@ -20,25 +20,26 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
- */
-package com.groupon.jenkins.dynamic.buildtype;
+*/
+package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.buildtype.installpackages.InstallPackagesBuildType;
-import hudson.Launcher;
-import hudson.matrix.Combination;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import java.io.IOException;
+import org.junit.Assert;
+import org.junit.Test;
 
-public abstract class BuildType {
-    public static BuildType getBuildType(DynamicBuild dynamicBuild) {
-        return new InstallPackagesBuildType(dynamicBuild);
-    }
+import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue.BooleanValue;
 
+import static org.junit.Assert.assertEquals;
 
-    public abstract Result runBuild(BuildExecutionContext  buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
+public class SkipSectionTest {
 
-    public abstract Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException;
+	@Test
+	public void should_not_execute_any_shell_commands_during_build_execution() {
+		assertEquals(ShellCommands.NOOP, new SkipSection(null).toScript(null));
+	}
+
+	@Test
+	public void should_use_value_specified_as_boolean_value() {
+		Assert.assertFalse(new SkipSection(new BooleanValue(false)).isSkipped());
+	}
+
 }

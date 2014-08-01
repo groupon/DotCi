@@ -21,24 +21,35 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.dynamic.buildtype;
+package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.buildtype.installpackages.InstallPackagesBuildType;
-import hudson.Launcher;
 import hudson.matrix.Combination;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import java.io.IOException;
 
-public abstract class BuildType {
-    public static BuildType getBuildType(DynamicBuild dynamicBuild) {
-        return new InstallPackagesBuildType(dynamicBuild);
-    }
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
+import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue.MapValue;
 
-    public abstract Result runBuild(BuildExecutionContext  buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
+public class VarsSection extends ConfigSection<MapValue<String, String>> {
+	public static final String NAME = "vars";
 
-    public abstract Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException;
+	public VarsSection(MapValue<String, String> configValue) {
+		super(NAME, configValue, MergeStrategy.APPEND);
+	}
+
+	@Override
+	public ShellCommands toScript(Combination combination) {
+		return  new ShellCommands(getEnvVariablesExportCommands());
+	}
+
+	protected String[] getEnvVariablesExportCommands() {
+		List<String> exportCommands = new LinkedList<String>();
+		Map<String, String> configValue = getConfigValue().getValue();
+		for (Map.Entry<String, String> var : configValue.entrySet()) {
+			exportCommands.add(String.format("export %s=%s", var.getKey(), var.getValue()));
+		}
+		return exportCommands.toArray(new String[exportCommands.size()]);
+	}
+
 }

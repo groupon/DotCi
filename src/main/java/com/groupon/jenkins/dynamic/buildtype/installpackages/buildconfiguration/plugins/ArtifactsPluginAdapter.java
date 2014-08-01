@@ -21,24 +21,40 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.dynamic.buildtype;
+package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.plugins;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.buildtype.installpackages.InstallPackagesBuildType;
+import hudson.Extension;
 import hudson.Launcher;
-import hudson.matrix.Combination;
 import hudson.model.BuildListener;
-import hudson.model.Result;
+import hudson.model.AbstractBuild;
+import hudson.tasks.ArtifactArchiver;
+
 import java.io.IOException;
 
-public abstract class BuildType {
-    public static BuildType getBuildType(DynamicBuild dynamicBuild) {
-        return new InstallPackagesBuildType(dynamicBuild);
-    }
+import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
 
+@Extension
+public class ArtifactsPluginAdapter extends DotCiPluginAdapter {
 
-    public abstract Result runBuild(BuildExecutionContext  buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
+	public ArtifactsPluginAdapter() {
+		super("artifacts", "");
+	}
 
-    public abstract Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException;
+	@Override
+	public boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener) {
+		ArtifactArchiver archiver = new ArtifactArchiver((String) options, null, true);
+		try {
+			return archiver.perform((AbstractBuild) dynamicBuild, launcher, listener);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			e.printStackTrace(listener.getLogger());
+		}
+		return false;
+	}
+
+	@Override
+	public void runFinished(DynamicSubBuild run, DynamicBuild parent, BuildListener listener) throws IOException {
+		copyFiles(run, parent, (String) options, listener);
+	}
 }

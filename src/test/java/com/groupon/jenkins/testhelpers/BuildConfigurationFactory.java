@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.testhelpers;
 
-import com.groupon.jenkins.dynamic.buildconfiguration.BuildConfiguration;
+import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.BuildConfiguration;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

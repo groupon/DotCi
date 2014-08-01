@@ -21,24 +21,52 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.dynamic.buildtype;
+package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.buildtype.installpackages.InstallPackagesBuildType;
-import hudson.Launcher;
-import hudson.matrix.Combination;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import java.io.IOException;
+import com.google.inject.TypeLiteral;
 
-public abstract class BuildType {
-    public static BuildType getBuildType(DynamicBuild dynamicBuild) {
-        return new InstallPackagesBuildType(dynamicBuild);
-    }
+//@formatter:off 
+/**
+ * Abstraction over value of section in .ci.yml . this could be a list or a map
+ * or a string 
+ * eg: a) run:echo hello
+ *     b) run :
+ *         - echo hello 
+ *         - echo world 
+ *      c) run:
+ *          unit: spec unit 
+ *          integration: spec unit
+ */
+//@formatter:on 
 
+public abstract class ConfigValue<T> extends TypeLiteral<T> {
+	private Object value;
 
-    public abstract Result runBuild(BuildExecutionContext  buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
+	public ConfigValue(Object value) {
+		this.value = value;
+	}
 
-    public abstract Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException;
+	public void replace(ConfigValue<?> otherConfig) {
+		this.value = otherConfig.getValue();
+	}
+
+	public boolean isEmpty() {
+		return value == null;
+	}
+
+	public boolean isValid() {
+		return isEmpty() ? true : getRawType().isAssignableFrom(value.getClass());
+	}
+
+	public abstract void append(ConfigValue<?> config);
+
+	@SuppressWarnings("unchecked")
+	public T getValue() {
+		return (T) value;
+	}
+
+	protected void setValue(T newValue) {
+		this.value = newValue;
+	}
+
 }

@@ -22,13 +22,16 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins;
+package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.template.installpackages;
 
-import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.template.DotCiTemplate;
-import hudson.Plugin;
+import hudson.Extension;
+import org.kohsuke.github.GHRepository;
 
-public class DotCiPlugin extends Plugin {
-    public void postInitialize() throws Exception {
-        DotCiTemplate.loadTemplates();
+@Extension
+public class Node extends  InstallPackages {
+    @Override
+    protected boolean isDefault(GHRepository githubRepository) {
+     		String repoLanguage = githubRepository.getLanguage();
+		return "javascript".equals(repoLanguage) || "coffeescript".equals(repoLanguage);
     }
 }

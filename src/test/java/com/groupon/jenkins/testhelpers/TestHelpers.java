@@ -32,9 +32,9 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 
-import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ListOrSingleValue;
-import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.ListValue;
-import com.groupon.jenkins.dynamic.buildconfiguration.configvalue.MapValue;
+import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue.ListOrSingleValue;
+import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue.ListValue;
+import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue.MapValue;
 
 public class TestHelpers {
 	public static Map map(Object... keyValues) {

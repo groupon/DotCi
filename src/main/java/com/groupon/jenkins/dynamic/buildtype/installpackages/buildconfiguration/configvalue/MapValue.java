@@ -21,24 +21,29 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.dynamic.buildtype;
+package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.buildtype.installpackages.InstallPackagesBuildType;
-import hudson.Launcher;
-import hudson.matrix.Combination;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import java.io.IOException;
+import java.util.Map;
 
-public abstract class BuildType {
-    public static BuildType getBuildType(DynamicBuild dynamicBuild) {
-        return new InstallPackagesBuildType(dynamicBuild);
-    }
+public class MapValue<K, V> extends ConfigValue<Map<K, V>> {
 
+	public MapValue(Object value) {
+		super(value);
+	}
 
-    public abstract Result runBuild(BuildExecutionContext  buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
+	public <T extends ConfigValue<?>> T getConfigValue(K key, Class<T> configValueType) {
+		try {
+			Object subConfigValue = this.isEmpty() || !this.isValid() ? null : getValue().get(key);
+			return configValueType.getConstructor(Object.class).newInstance(subConfigValue);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 
-    public abstract Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException;
+	}
+
+	@Override
+	public void append(ConfigValue<?> config) {
+		Map<K, V> otherValue = ((MapValue<K, V>) config).getValue();
+		getValue().putAll(otherValue);
+	}
 }

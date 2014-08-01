@@ -22,13 +22,11 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins;
+package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.template.installpackages;
 
 import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.template.DotCiTemplate;
-import hudson.Plugin;
+import hudson.Extension;
 
-public class DotCiPlugin extends Plugin {
-    public void postInitialize() throws Exception {
-        DotCiTemplate.loadTemplates();
-    }
+@Extension
+public class InstallPackages extends DotCiTemplate {
 }
