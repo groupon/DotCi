@@ -45,9 +45,9 @@ import hudson.matrix.Combination;
 import hudson.model.BuildListener;
 import hudson.model.Executor;
 import hudson.model.Result;
+import hudson.tasks.Shell;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -57,14 +57,12 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 
 public class InstallPackagesBuildType extends BuildType {
     private DynamicBuild dynamicBuild;
-    private List<DynamicBuildLayoutListener> dynamicBuildLayoutListeners;
     private static final Logger LOGGER = Logger.getLogger(InstallPackagesBuildType.class.getName());
     private BuildConfiguration buildConfiguration;
 
 
     public InstallPackagesBuildType(DynamicBuild dynamicBuild) {
         this.dynamicBuild = dynamicBuild;
-        this.dynamicBuildLayoutListeners = new ArrayList<DynamicBuildLayoutListener>();
     }
 
 
@@ -141,7 +139,21 @@ public class InstallPackagesBuildType extends BuildType {
             }
         }
     }
-
+	public Result runShellScript(BuildExecutionContext dynamicBuildRun, BuildListener listener, String script) throws IOException, InterruptedException {
+		Result r = Result.FAILURE;
+		try {
+			Shell execution = new Shell("#!/bin/bash -le \n" + script);
+			if (dynamicBuildRun.performStep(execution, listener)) {
+				r = Result.SUCCESS;
+			}
+		} catch (InterruptedException e) {
+			r = Executor.currentExecutor().abortResult();
+			throw e;
+		} finally {
+			dynamicBuildRun.setResult(r);
+		}
+		return r;
+	}
 
     private Result runSingleConfigBuild(Combination combination, BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, BuildListener listener, DotCiPluginRunner dotCiPluginRunner) throws IOException, InterruptedException {
         String mainBuildScript = buildConfiguration.toScript(combination).toShellScript();
@@ -150,10 +162,6 @@ public class InstallPackagesBuildType extends BuildType {
         return result;
     }
 
-    @Override
-    public void addLayoutListener(DynamicBuildLayoutListener dynamicBuildLayoutListener) {
-        this.dynamicBuildLayoutListeners.add(dynamicBuildLayoutListener);
-    }
 
     @Override
     public Result runSubBuild(Combination combination, BuildExecutionContext dynamicSubBuildExecution, BuildListener listener) throws IOException, InterruptedException {
@@ -167,10 +175,7 @@ public class InstallPackagesBuildType extends BuildType {
     public void setLayouter(BuildConfiguration buildConfiguration) {
         AxisList axisList = getAxisList(buildConfiguration);
         DynamicBuildLayouter dynamicBuildLayouter = new DynamicBuildLayouter(axisList, dynamicBuild);
-        for(DynamicBuildLayoutListener dynamicBuildLayoutListener : dynamicBuildLayoutListeners){
-           dynamicBuildLayoutListener.setDyanamicBuildLayouter(dynamicBuildLayouter);
-        }
-
+        dynamicBuild.setDyanamicBuildLayouter(dynamicBuildLayouter);
     }
 
     private AxisList getAxisList(BuildConfiguration buildConfiguration) {

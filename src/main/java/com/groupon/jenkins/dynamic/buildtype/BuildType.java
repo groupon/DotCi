@@ -25,102 +25,19 @@ package com.groupon.jenkins.dynamic.buildtype;
 
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.build.execution.WorkspaceFileExporter;
 import hudson.Launcher;
 import hudson.matrix.Combination;
 import hudson.model.BuildListener;
-import hudson.model.Executor;
 import hudson.model.Result;
-import hudson.tasks.Shell;
 import java.io.IOException;
 
 public abstract class BuildType {
-//	BareMetal {
-//		@Override
-//		public Result runBuild(DbBackedBuild<?, ?> build, Combination combination, BuildExecutionContext buildContext, BuildListener listener) throws IOException, InterruptedException {
-
-//		}
-//	},
-//	DockerImage {
-//		@Override
-//		public Result runBuild(DbBackedBuild<?, ?> build, Combination combination, BuildExecutionContext buildContext, BuildListener listener) throws IOException, InterruptedException {
-//			String buildScriptForDocker = buildContext.getBuildConfiguration().toScript(combination, this).toShellScript();
-//
-//			String dockerBuildRunScript = buildContext.getBuildConfiguration().getBuildRunScriptForDockerImage(build.getBuildId(), build.getDotCiEnvVars(build.getJenkinsEnvVariables(listener)));
-//			String dockerCleanupScript = buildContext.getBuildConfiguration().getDockerBuildRunCleanupScript(build.getBuildId());
-//
-//			Result checkoutResult = runShellScript(buildContext, listener, buildContext.getBuildConfiguration().getCheckoutScript());
-//
-//			Result buildScriptExportResult = checkoutResult.combine(createWorkspaceFile(buildContext, "dotci_build_script.sh", listener, buildScriptForDocker));
-//			if (buildScriptExportResult.equals(Result.SUCCESS)) {
-//				Result runResult = buildScriptExportResult.combine(runShellScript(buildContext, listener, dockerBuildRunScript));
-//				runShellScript(buildContext, listener, dockerCleanupScript);
-//				return runResult;
-//			}
-//			return buildScriptExportResult;
-//		}
-//	},
-//	DockerLocal {
-//		@Override
-//		public Result runBuild(DbBackedBuild<?, ?> build, Combination combination, BuildExecutionContext buildContext, BuildListener listener) throws IOException, InterruptedException {
-//			String buildScriptForDocker = "sh -c \"" + buildContext.getBuildConfiguration().toScript(combination, this).toShellCommand() + "\"";
-//			String dockerBuildRunScript = buildContext.getBuildConfiguration().getBuildRunScriptForDockerLocal(build.getBuildId(), build.getDotCiEnvVars(build.getJenkinsEnvVariables(listener)), buildScriptForDocker);
-//			String dockerCleanupScript = buildContext.getBuildConfiguration().getDockerBuildRunCleanupScript(build.getBuildId());
-//			Result checkoutResult = runShellScript(buildContext, listener, buildContext.getBuildConfiguration().getCheckoutScript());
-//			return checkoutResult.combine(runShellScript(buildContext, listener, dockerBuildRunScript)).combine(runShellScript(buildContext, listener, dockerCleanupScript));
-//		}
-//	};
-
-	public Result createWorkspaceFile(BuildExecutionContext dynamicBuildRun, String fileName, BuildListener listener, String contents) throws IOException, InterruptedException {
-		Result r = Result.FAILURE;
-		try {
-			if (dynamicBuildRun.performStep(new WorkspaceFileExporter(fileName, contents), listener)) {
-				r = Result.SUCCESS;
-			}
-		} catch (InterruptedException e) {
-			r = Executor.currentExecutor().abortResult();
-			throw e;
-		} finally {
-			dynamicBuildRun.setResult(r);
-		}
-		return r;
-	}
-
-	public Result runShellScript(BuildExecutionContext dynamicBuildRun, BuildListener listener, String script) throws IOException, InterruptedException {
-		Result r = Result.FAILURE;
-		try {
-			Shell execution = new Shell("#!/bin/bash -le \n" + script);
-			if (dynamicBuildRun.performStep(execution, listener)) {
-				r = Result.SUCCESS;
-			}
-		} catch (InterruptedException e) {
-			r = Executor.currentExecutor().abortResult();
-			throw e;
-		} finally {
-			dynamicBuildRun.setResult(r);
-		}
-		return r;
-	}
-
-
     public static BuildType getBuildType(DynamicBuild dynamicBuild) {
-        //		public BuildType getBuildType() throws IOException {
-//			if (getBuildConfiguration().isDocker()) {
-//				return BuildType.DockerImage;
-//			}
-//			if (new GithubRepositoryService(getGithubRepoUrl()).hasDockerFile(getSha())) {
-//				return BuildType.DockerLocal;
-//			}
-//			return BuildType.BareMetal;
-//		}
         return new InstallPackagesBuildType(dynamicBuild);
     }
 
 
+    public abstract Result runBuild(BuildExecutionContext  buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
 
-    public abstract Result runBuild(BuildExecutionContext  dynamicRunExecution, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
-
-    public abstract void addLayoutListener(DynamicBuildLayoutListener dynamicBuild);
-
-    public abstract Result runSubBuild(Combination combination, BuildExecutionContext dynamicSubBuildExecution, BuildListener listener) throws IOException, InterruptedException;
+    public abstract Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException;
 }

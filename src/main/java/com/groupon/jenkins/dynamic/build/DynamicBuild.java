@@ -29,7 +29,6 @@ import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.buildconfiguration.InvalidDotCiYmlException;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
-import com.groupon.jenkins.dynamic.buildtype.DynamicBuildLayoutListener;
 import hudson.EnvVars;
 import hudson.Functions;
 import hudson.matrix.Combination;
@@ -56,7 +55,7 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
 
 import javax.servlet.ServletException;
 
-public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> implements DynamicBuildLayoutListener{
+public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 
 	private transient DynamicBuildModel model;
     private DynamicBuildLayouter dynamicBuildLayouter;
@@ -146,7 +145,6 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> im
 		return vars;
 	}
 
-    @Override
     public void setDyanamicBuildLayouter(DynamicBuildLayouter dyanamicBuildLayouter) {
         this.dynamicBuildLayouter = dyanamicBuildLayouter;
         try {
@@ -179,7 +177,6 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> im
 		protected Result doRun(BuildListener listener) throws Exception, hudson.model.Run.RunnerAbortedException {
 			try {
                 BuildType buildType = BuildType.getBuildType(DynamicBuild.this);
-                buildType.addLayoutListener(DynamicBuild.this);
                 Result buildRunResult =   buildType.runBuild(this, launcher, listener);
 				setResult(buildRunResult);
 				return buildRunResult;
