@@ -34,7 +34,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue.ListOrSingleValue;
 
-import static com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.DockerCommandBuilder.dockerCommand;
+import static com.groupon.jenkins.dynamic.buildtype.dockerimage.DockerCommandBuilder.dockerCommand;
 
 public class ServicesSection extends ConfigSection<ListOrSingleValue<String>> {
 

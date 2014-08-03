@@ -27,7 +27,7 @@ import hudson.matrix.Combination;
 
 import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue.StringValue;
 
-import static com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.DockerCommandBuilder.dockerCommand;
+import static com.groupon.jenkins.dynamic.buildtype.dockerimage.DockerCommandBuilder.dockerCommand;
 
 public class ImageSection extends ConfigSection<StringValue> {
 

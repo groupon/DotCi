@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration;
 
+import com.groupon.jenkins.dynamic.buildtype.dockerimage.DockerCommandBuilder;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,7 +31,7 @@ import java.util.Map.Entry;
 import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue.ListOrSingleValue;
 import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue.MapValue;
 
-import static com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.DockerCommandBuilder.dockerCommand;
+import static com.groupon.jenkins.dynamic.buildtype.dockerimage.DockerCommandBuilder.dockerCommand;
 import static java.lang.String.format;
 
 public class EnvironmentSection extends CompositeConfigSection {

@@ -34,7 +34,7 @@ import java.io.IOException;
 
 public abstract class BuildType {
     public static BuildType getBuildType(DynamicBuild dynamicBuild) {
-        return new InstallPackagesBuildType(dynamicBuild);
+        return new Docker
     }
 
 

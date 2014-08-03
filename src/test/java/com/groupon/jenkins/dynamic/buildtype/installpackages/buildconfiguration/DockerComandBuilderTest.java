@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration;
 
+import com.groupon.jenkins.dynamic.buildtype.dockerimage.DockerCommandBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
