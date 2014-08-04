@@ -93,10 +93,6 @@ public class Payload {
 		}
 	}
 
-	public String getRefSpec() {
-		return isPullRequest() ? "+refs/pull/*:refs/remotes/origin/pr/*" : "+refs/heads/*:refs/remotes/origin/*";
-	}
-
 	public boolean needsBuild() {
 		if (payloadJson.has("ref") && payloadJson.getString("ref").startsWith("refs/tags/")) {
 			return false;
