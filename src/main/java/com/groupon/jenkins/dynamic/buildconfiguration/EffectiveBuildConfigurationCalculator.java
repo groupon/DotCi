@@ -34,6 +34,7 @@ public class EffectiveBuildConfigurationCalculator {
 
 	public BuildConfiguration calculateBuildConfiguration(String githubRepoUrl, String sha, EnvVars envVars) throws IOException, InterruptedException, InvalidDotCiYmlException {
 		GithubRepositoryService githubRepositoryService = getGithubRepositoryService(githubRepoUrl);
+        DotCiTemplate dotCiTemplate = new DotCiTemplate();
 		try {
 			GHContent file = githubRepositoryService.getGHFile(".ci.yml", sha);
 			BuildConfiguration configuration = new BuildConfiguration(file.getContent(), envVars);
@@ -41,11 +42,11 @@ public class EffectiveBuildConfigurationCalculator {
 				throw new InvalidDotCiYmlException(configuration.getValidationErrors());
 			}
 		  if(configuration.getLanguage() == null){
-              return DotCiTemplate.getDefaultFor(githubRepositoryService.getGithubRepository()).getBuildConfiguration(envVars);
+              return dotCiTemplate.getDefaultFor(githubRepositoryService.getGithubRepository()).getBuildConfiguration(envVars);
           }
-			return DotCiTemplate.getMergedTemplate(configuration, configuration.getLanguage(), envVars);
+			return dotCiTemplate.getMergedTemplate(configuration, configuration.getLanguage(), envVars);
 		} catch (FileNotFoundException e) {
-            return DotCiTemplate.getDefaultFor(githubRepositoryService.getGithubRepository()).getBuildConfiguration(envVars);
+            return dotCiTemplate.getDefaultFor(githubRepositoryService.getGithubRepository()).getBuildConfiguration(envVars);
 		}
 	}
 

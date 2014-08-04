@@ -41,7 +41,9 @@ import org.kohsuke.github.GHRepository;
 public class DotCiTemplate implements ExtensionPoint {
     private String template;
     protected static Map<String, DotCiTemplate> templates = new HashMap<String, DotCiTemplate>();
-
+    static {
+        loadTemplates();
+    }
     public static ExtensionList<DotCiTemplate> all() {
         return Jenkins.getInstance().getExtensionList(DotCiTemplate.class);
     }
@@ -52,7 +54,7 @@ public class DotCiTemplate implements ExtensionPoint {
         return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, className);
     }
 
-    public static BuildConfiguration getMergedTemplate(BuildConfiguration configuration, String parentTemplate, EnvVars envVars) {
+    public  BuildConfiguration getMergedTemplate(BuildConfiguration configuration, String parentTemplate, EnvVars envVars) {
         BuildConfiguration parentBuildConfiguration = templates.get(parentTemplate).getBuildConfiguration(envVars);
         parentBuildConfiguration.merge(configuration);
         return parentBuildConfiguration;
@@ -61,7 +63,7 @@ public class DotCiTemplate implements ExtensionPoint {
     public BuildConfiguration getBuildConfiguration(EnvVars envVars) {
         BuildConfiguration buildConfiguration = new BuildConfiguration(template, envVars);
         if (!buildConfiguration.isBaseTemplate()) {
-            return DotCiTemplate.getMergedTemplate(buildConfiguration, buildConfiguration.getParentTemplate(), envVars);
+            return getMergedTemplate(buildConfiguration, buildConfiguration.getParentTemplate(), envVars);
         }
         return buildConfiguration;
     }
@@ -101,7 +103,7 @@ public class DotCiTemplate implements ExtensionPoint {
         return null;
     }
 
-    public static DotCiTemplate getDefaultFor(GHRepository githubRepository) {
+    public  DotCiTemplate getDefaultFor(GHRepository githubRepository) {
         for(DotCiTemplate template : templates.values()){
            if(template.isDefault(githubRepository)) return template;
         }
