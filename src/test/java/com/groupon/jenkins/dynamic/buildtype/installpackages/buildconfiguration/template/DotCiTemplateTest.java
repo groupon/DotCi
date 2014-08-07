@@ -27,7 +27,6 @@ package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration
 import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.BuildConfiguration;
 import hudson.EnvVars;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -36,14 +35,10 @@ public class DotCiTemplateTest {
     @Rule
     public JenkinsRule j = new JenkinsRule();
 
-    @Before
-    public void loadTemplates(){
-       DotCiTemplate.loadTemplates();
-    }
 
     @Test
     public void should_load_base_templates(){
-        DotCiTemplate rubyTemplate = DotCiTemplate.templates.get("ruby");
+        DotCiTemplate rubyTemplate = new DotCiTemplate().getTemplates().get("ruby");
         Assert.assertNotNull(rubyTemplate);
         BuildConfiguration buildConfiguration = rubyTemplate.getBuildConfiguration(new EnvVars());
         Assert.assertNotNull(buildConfiguration);

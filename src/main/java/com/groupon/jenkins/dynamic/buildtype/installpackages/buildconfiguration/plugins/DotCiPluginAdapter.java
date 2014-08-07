@@ -37,6 +37,7 @@ import jenkins.model.Jenkins;
 import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.InvalidDotCiYmlException;
+import org.apache.commons.lang.StringUtils;
 
 public abstract class DotCiPluginAdapter implements ExtensionPoint {
 	protected String pluginInputFiles;
@@ -83,7 +84,9 @@ public abstract class DotCiPluginAdapter implements ExtensionPoint {
 	public abstract boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener);
 
 	public void runFinished(DynamicSubBuild run, DynamicBuild parent, BuildListener listener) throws IOException {
-		copyFiles(run, parent, pluginInputFiles, listener);
+        if(StringUtils.isNotEmpty(pluginInputFiles)){
+            copyFiles(run, parent, pluginInputFiles, listener);
+        }
 	}
 
 	protected void copyFiles(DynamicSubBuild run, DynamicBuild parent, String outputFiles, BuildListener listener) throws IOException {

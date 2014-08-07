@@ -22,11 +22,15 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.template.installpackages;
+package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.template.install_packages;
 
-import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.template.DotCiTemplate;
 import hudson.Extension;
+import org.kohsuke.github.GHRepository;
 
 @Extension
-public class InstallPackages extends DotCiTemplate {
+public class Java extends InstallPackages {
+    @Override
+    protected boolean isDefault(GHRepository githubRepository) {
+        return "java".equalsIgnoreCase( githubRepository.getLanguage());
+    }
 }

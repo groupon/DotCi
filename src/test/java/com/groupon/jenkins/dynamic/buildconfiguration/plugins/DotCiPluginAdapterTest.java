@@ -22,15 +22,31 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.template.installpackages;
+package com.groupon.jenkins.dynamic.buildconfiguration.plugins;
 
-import hudson.Extension;
-import org.kohsuke.github.GHRepository;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
+import hudson.Launcher;
+import hudson.model.BuildListener;
+import java.io.IOException;
+import org.junit.Test;
 
-@Extension
-public class GoLang extends InstallPackages {
-    @Override
-    protected boolean isDefault(GHRepository githubRepository) {
-        return "go".equalsIgnoreCase( githubRepository.getLanguage());
+import static org.mockito.Mockito.*;
+public class DotCiPluginAdapterTest {
+
+
+    @Test
+    public void should_copy_files_only_when_specified() throws IOException {
+        DotCiPluginAdapter plugin =spy( new DotCiPluginAdapter("myplugin", "") {
+
+            @Override
+            public boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener) {
+                return true;
+            }
+        });
+
+        plugin.runFinished(null,null,null);
+        verify(plugin,never()).copyFiles(any(DynamicSubBuild.class),any(DynamicBuild.class),anyString(),any(BuildListener.class));
     }
+
 }
