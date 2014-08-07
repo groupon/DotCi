@@ -26,12 +26,17 @@ package com.groupon.jenkins.dynamic.buildconfiguration.plugins;
 
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
+import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.plugins.DotCiPluginAdapter;
 import hudson.Launcher;
 import hudson.model.BuildListener;
 import java.io.IOException;
 import org.junit.Test;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 public class DotCiPluginAdapterTest {
 
 

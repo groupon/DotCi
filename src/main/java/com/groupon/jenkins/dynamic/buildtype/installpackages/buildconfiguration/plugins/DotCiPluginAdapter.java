@@ -89,7 +89,7 @@ public abstract class DotCiPluginAdapter implements ExtensionPoint {
         }
 	}
 
-	protected void copyFiles(DynamicSubBuild run, DynamicBuild parent, String outputFiles, BuildListener listener) throws IOException {
+	 public void copyFiles(DynamicSubBuild run, DynamicBuild parent, String outputFiles, BuildListener listener) throws IOException {
 		String baseWorkSpace;
 		try {
 			listener.getLogger().println("Copying files :" + outputFiles);

@@ -26,8 +26,6 @@ package com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration
 
 import com.google.common.base.CaseFormat;
 import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.BuildConfiguration;
-import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.GroovyTemplateProcessor;
-import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.configvalue.MapValue;
 import hudson.EnvVars;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
@@ -42,7 +40,6 @@ import org.kohsuke.github.GHRepository;
 
 public class DotCiTemplate implements ExtensionPoint {
     private String ymlDefintion;
-    private MapValue<String, Object> templateConfig;
     private static Map<String, DotCiTemplate> templates;
 
     public static ExtensionList<DotCiTemplate> all() {
@@ -69,7 +66,6 @@ public class DotCiTemplate implements ExtensionPoint {
     }
 
     public BuildConfiguration getBuildConfiguration(EnvVars envVars) {
-        this.templateConfig = new MapValue<String,Object>(new GroovyTemplateProcessor(ymlDefintion, envVars).getConfig());
         BuildConfiguration buildConfiguration = new BuildConfiguration(ymlDefintion, envVars);
         if (!buildConfiguration.isBaseTemplate()) {
             return getMergedTemplate(buildConfiguration, buildConfiguration.getParentTemplate(), envVars);
