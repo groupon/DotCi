@@ -22,16 +22,15 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.dynamic.buildconfiguration.template.installpackages;
+package com.groupon.jenkins.dynamic.buildconfiguration.template.install_packages;
 
 import hudson.Extension;
 import org.kohsuke.github.GHRepository;
 
 @Extension
-public class Node extends  InstallPackages {
+public class Clojure extends InstallPackages {
     @Override
     protected boolean isDefault(GHRepository githubRepository) {
-     		String repoLanguage = githubRepository.getLanguage();
-		return "javascript".equals(repoLanguage) || "coffeescript".equals(repoLanguage);
+        return "clojure".equalsIgnoreCase( githubRepository.getLanguage());
     }
 }

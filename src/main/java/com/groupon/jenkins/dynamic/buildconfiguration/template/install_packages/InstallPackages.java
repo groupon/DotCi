@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.dynamic.buildconfiguration.template.installpackages;
+package com.groupon.jenkins.dynamic.buildconfiguration.template.install_packages;
 
 import com.groupon.jenkins.dynamic.buildconfiguration.template.DotCiTemplate;
 import hudson.Extension;

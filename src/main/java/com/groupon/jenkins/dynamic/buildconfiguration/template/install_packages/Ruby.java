@@ -22,15 +22,15 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.dynamic.buildconfiguration.template.installpackages;
+package com.groupon.jenkins.dynamic.buildconfiguration.template.install_packages;
 
 import hudson.Extension;
 import org.kohsuke.github.GHRepository;
 
 @Extension
-public class GoLang extends InstallPackages {
+public class Ruby extends InstallPackages {
     @Override
     protected boolean isDefault(GHRepository githubRepository) {
-        return "go".equalsIgnoreCase( githubRepository.getLanguage());
+        return "ruby".equalsIgnoreCase( githubRepository.getLanguage());
     }
 }
