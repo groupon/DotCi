@@ -21,31 +21,33 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package com.groupon.jenkins.testhelpers;
+package com.groupon.jenkins.buildexecution.install_packages.buildconfiguration;
 
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfiguration;
+import hudson.matrix.Combination;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.util.List;
 
-public class BuildConfigurationFactory {
+import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.configvalue.ListOrSingleValue;
 
-	private final BuildConfiguration buildConfiguration;
+public class LanguageVersionsSection extends ConfigSection<ListOrSingleValue<String>> {
 
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
+	public static final String NAME = "language_versions";
+
+	protected LanguageVersionsSection(ListOrSingleValue<String> configValue) {
+		super(NAME, configValue, MergeStrategy.REPLACE);
 	}
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
+	@Override
+	public ShellCommands toScript(Combination combination) {
+		return ShellCommands.NOOP;
 	}
 
-	public BuildConfiguration get() {
-		return buildConfiguration;
+	public boolean isMultiLanguageVersions() {
+		return getConfigValue().size() > 1;
 	}
 
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
+	public List<String> getLanguageVersions() {
+		return getConfigValue().getValues();
 	}
+
 }

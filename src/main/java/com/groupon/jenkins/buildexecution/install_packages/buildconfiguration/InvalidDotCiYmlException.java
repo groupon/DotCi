@@ -20,32 +20,26 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.testhelpers;
+ */
+package com.groupon.jenkins.buildexecution.install_packages.buildconfiguration;
 
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfiguration;
+import java.util.Arrays;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+@SuppressWarnings("serial")
+public class InvalidDotCiYmlException extends RuntimeException {
 
-public class BuildConfigurationFactory {
+	private final Iterable<String> validationErrors;
 
-	private final BuildConfiguration buildConfiguration;
-
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
+	public InvalidDotCiYmlException(Iterable<String> validationErrors) {
+		this.validationErrors = validationErrors;
 	}
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
+	public InvalidDotCiYmlException(String validationError) {
+		this(Arrays.asList(validationError));
 	}
 
-	public BuildConfiguration get() {
-		return buildConfiguration;
+	public Iterable<String> getValidationErrors() {
+		return validationErrors;
 	}
 
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
-	}
 }

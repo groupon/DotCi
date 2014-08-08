@@ -20,32 +20,42 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.testhelpers;
+ */
+package com.groupon.jenkins.buildexecution.install_packages.buildconfiguration;
 
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfiguration;
+import hudson.matrix.Combination;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.configvalue.StringValue;
 
-public class BuildConfigurationFactory {
+import static com.groupon.jenkins.dynamic.buildtype.dockerimage.DockerCommandBuilder.dockerCommand;
 
-	private final BuildConfiguration buildConfiguration;
+public class ImageSection extends ConfigSection<StringValue> {
 
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
+	public static final String NAME = "image";
+
+	protected ImageSection(StringValue configValue) {
+		super(NAME, configValue, MergeStrategy.REPLACE);
 	}
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
+	@Override
+	public ShellCommands toScript(Combination combination) {
+		return ShellCommands.NOOP;
 	}
 
-	public BuildConfiguration get() {
-		return buildConfiguration;
+	public boolean isUsingPreBuiltImage() {
+		return this.isSpecified();
 	}
 
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
+	public String getImageName(String buildId) {
+		return isUsingPreBuiltImage() ? getConfigValue().getValue() : buildId;
+	}
+
+	public String getDockerCommand(String buildId) {
+		String imageName = getImageName(buildId);
+		if (isUsingPreBuiltImage()) {
+			return dockerCommand("pull").args(imageName).get();
+		} else {
+			return dockerCommand("build").flag("t").args(imageName, ".").get();
+		}
 	}
 }

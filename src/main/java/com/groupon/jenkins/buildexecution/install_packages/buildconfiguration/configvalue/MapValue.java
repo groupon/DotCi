@@ -20,32 +20,30 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.testhelpers;
+ */
+package com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.configvalue;
 
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfiguration;
+import java.util.Map;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+public class MapValue<K, V> extends ConfigValue<Map<K, V>> {
 
-public class BuildConfigurationFactory {
-
-	private final BuildConfiguration buildConfiguration;
-
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
+	public MapValue(Object value) {
+		super(value);
 	}
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
+	public <T extends ConfigValue<?>> T getConfigValue(K key, Class<T> configValueType) {
+		try {
+			Object subConfigValue = this.isEmpty() || !this.isValid() ? null : getValue().get(key);
+			return configValueType.getConstructor(Object.class).newInstance(subConfigValue);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
-	public BuildConfiguration get() {
-		return buildConfiguration;
-	}
-
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
+	@Override
+	public void append(ConfigValue<?> config) {
+		Map<K, V> otherValue = ((MapValue<K, V>) config).getValue();
+		getValue().putAll(otherValue);
 	}
 }

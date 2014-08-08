@@ -20,32 +20,25 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.testhelpers;
+ */
+package com.groupon.jenkins.buildexecution.install_packages.buildconfiguration;
 
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfiguration;
+import hudson.matrix.Combination;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Test;
 
-public class BuildConfigurationFactory {
+import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.configvalue.MapValue;
 
-	private final BuildConfiguration buildConfiguration;
+import static com.groupon.jenkins.testhelpers.TestHelpers.map;
+import static org.junit.Assert.assertTrue;
 
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
-	}
+public class VarsSectionTest {
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
-	}
-
-	public BuildConfiguration get() {
-		return buildConfiguration;
-	}
-
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
+	@Test
+	public void should_export_environment_variables() {
+		VarsSection varsSection = new VarsSection(new MapValue<String, String>(map("RBXOPT", "-X19", "JRUBY_OPTS", "--1.9")));
+		ShellCommands script = varsSection.toScript(new Combination(map("script", "main")));
+		assertTrue(script.toShellScript().contains("export RBXOPT=-X19"));
+		assertTrue(script.toShellScript().contains("export JRUBY_OPTS=--1.9"));
 	}
 }

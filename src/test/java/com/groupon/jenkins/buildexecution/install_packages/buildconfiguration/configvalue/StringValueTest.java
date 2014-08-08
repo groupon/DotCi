@@ -20,32 +20,22 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.testhelpers;
+ */
+package com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.configvalue;
 
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfiguration;
+import org.junit.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
 
-public class BuildConfigurationFactory {
+public class StringValueTest {
 
-	private final BuildConfiguration buildConfiguration;
-
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
+	@Test(expected = UnsupportedOperationException.class)
+	public void should_not_support_append() {
+		new StringValue("blah").append(new StringValue("blah"));
 	}
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
-	}
-
-	public BuildConfiguration get() {
-		return buildConfiguration;
-	}
-
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
+	@Test
+	public void should_preserve_string_value() {
+		assertEquals("blah", new StringValue("blah").getValue());
 	}
 }

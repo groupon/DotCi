@@ -21,31 +21,25 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package com.groupon.jenkins.testhelpers;
+package com.groupon.jenkins.buildexecution.install_packages.buildconfiguration;
 
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfiguration;
+import org.junit.Assert;
+import org.junit.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.configvalue.BooleanValue;
 
-public class BuildConfigurationFactory {
+import static org.junit.Assert.assertEquals;
 
-	private final BuildConfiguration buildConfiguration;
+public class SkipSectionTest {
 
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
+	@Test
+	public void should_not_execute_any_shell_commands_during_build_execution() {
+		assertEquals(ShellCommands.NOOP, new SkipSection(null).toScript(null));
 	}
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
+	@Test
+	public void should_use_value_specified_as_boolean_value() {
+		Assert.assertFalse(new SkipSection(new BooleanValue(false)).isSkipped());
 	}
 
-	public BuildConfiguration get() {
-		return buildConfiguration;
-	}
-
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
-	}
 }

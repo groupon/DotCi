@@ -22,36 +22,26 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.dynamic.buildconfiguration.plugins;
+package com.groupon.jenkins.buildexecution.install_packages.template;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.plugins.DotCiPluginAdapter;
-import hudson.Launcher;
-import hudson.model.BuildListener;
-import java.io.IOException;
+import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfiguration;
+import hudson.EnvVars;
+import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-public class DotCiPluginAdapterTest {
+public class DotCiTemplateTest {
+    @Rule
+    public JenkinsRule j = new JenkinsRule();
 
 
     @Test
-    public void should_copy_files_only_when_specified() throws IOException {
-        DotCiPluginAdapter plugin =spy( new DotCiPluginAdapter("myplugin", "") {
-
-            @Override
-            public boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener) {
-                return true;
-            }
-        });
-
-        plugin.runFinished(null,null,null);
-        verify(plugin,never()).copyFiles(any(DynamicSubBuild.class),any(DynamicBuild.class),anyString(),any(BuildListener.class));
+    public void should_load_base_templates(){
+        DotCiTemplate rubyTemplate = new DotCiTemplate().getTemplates().get("ruby");
+        Assert.assertNotNull(rubyTemplate);
+        BuildConfiguration buildConfiguration = rubyTemplate.getBuildConfiguration(new EnvVars());
+        Assert.assertNotNull(buildConfiguration);
     }
 
 }

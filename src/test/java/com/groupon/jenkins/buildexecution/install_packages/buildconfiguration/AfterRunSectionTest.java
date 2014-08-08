@@ -20,32 +20,34 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.testhelpers;
+ */
+package com.groupon.jenkins.buildexecution.install_packages.buildconfiguration;
 
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfiguration;
+import hudson.matrix.Combination;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Test;
 
-public class BuildConfigurationFactory {
+import com.google.common.collect.ImmutableMap;
 
-	private final BuildConfiguration buildConfiguration;
+import static com.groupon.jenkins.testhelpers.TestHelpers.configListOrSingleValue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
+public class AfterRunSectionTest {
+
+	@Test
+	public void should_run_post_build() {
+		ConfigSection afterRunSection = new AfterRunSection(configListOrSingleValue("spec integration1", "spec integration2"));
+
+		Combination combination = new Combination(ImmutableMap.of("script", "post_build"));
+		assertTrue(afterRunSection.toScript(combination).toShellScript().contains("spec integration1"));
 	}
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
-	}
+	@Test
+	public void should_not_run_post_build_if_not_post_build() {
+		ConfigSection afterRunSection = new AfterRunSection(configListOrSingleValue("spec integration1", "spec integration2"));
 
-	public BuildConfiguration get() {
-		return buildConfiguration;
-	}
-
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
+		Combination combination = new Combination(ImmutableMap.of("script", "main"));
+		assertNull(afterRunSection.toScript(combination));
 	}
 }

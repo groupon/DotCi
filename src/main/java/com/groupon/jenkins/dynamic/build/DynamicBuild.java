@@ -27,7 +27,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.InvalidDotCiYmlException;
+import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.InvalidDotCiYmlException;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.EnvVars;
 import hudson.Functions;
@@ -159,7 +159,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     }
 
     public DynamicSubProject getSubProject(Combination subBuildCombination) {
-        return Iterables.getOnlyElement( getSubProjects(Arrays.asList(subBuildCombination)));
+        return Iterables.getOnlyElement(getSubProjects(Arrays.asList(subBuildCombination)));
     }
 
     protected class DynamicRunExecution extends BuildExecution implements BuildExecutionContext {

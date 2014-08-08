@@ -20,32 +20,36 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.testhelpers;
+ */
+package com.groupon.jenkins.buildexecution.install_packages.buildconfiguration;
 
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfiguration;
+import hudson.matrix.Combination;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-public class BuildConfigurationFactory {
+import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.configvalue.MapValue;
 
-	private final BuildConfiguration buildConfiguration;
+public class VarsSection extends ConfigSection<MapValue<String, String>> {
+	public static final String NAME = "vars";
 
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
+	public VarsSection(MapValue<String, String> configValue) {
+		super(NAME, configValue, MergeStrategy.APPEND);
 	}
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
+	@Override
+	public ShellCommands toScript(Combination combination) {
+		return  new ShellCommands(getEnvVariablesExportCommands());
 	}
 
-	public BuildConfiguration get() {
-		return buildConfiguration;
+	protected String[] getEnvVariablesExportCommands() {
+		List<String> exportCommands = new LinkedList<String>();
+		Map<String, String> configValue = getConfigValue().getValue();
+		for (Map.Entry<String, String> var : configValue.entrySet()) {
+			exportCommands.add(String.format("export %s=%s", var.getKey(), var.getValue()));
+		}
+		return exportCommands.toArray(new String[exportCommands.size()]);
 	}
 
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
-	}
 }

@@ -23,33 +23,6 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.mybuildsview;
 
-import hudson.Extension;
-import hudson.model.Item;
-import hudson.model.ItemGroup;
-import hudson.model.ModifiableItemGroup;
-import hudson.model.TopLevelItem;
-import hudson.model.Computer;
-import hudson.model.Descriptor.FormException;
-import hudson.model.Job;
-import hudson.model.ViewDescriptor;
-import hudson.util.RunList;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.annotation.Nullable;
-import javax.servlet.ServletException;
-
-import jenkins.model.Jenkins;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
@@ -59,6 +32,29 @@ import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
 import com.groupon.jenkins.github.services.GithubCurrentUserService;
 import com.groupon.jenkins.views.AuthenticatedView;
+import hudson.Extension;
+import hudson.model.Computer;
+import hudson.model.Descriptor.FormException;
+import hudson.model.Item;
+import hudson.model.ItemGroup;
+import hudson.model.Job;
+import hudson.model.ModifiableItemGroup;
+import hudson.model.TopLevelItem;
+import hudson.model.ViewDescriptor;
+import hudson.util.RunList;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import jenkins.model.Jenkins;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+
+import javax.annotation.Nullable;
+import javax.servlet.ServletException;
 
 public class MyBuildsView extends AuthenticatedView {
 	@DataBoundConstructor

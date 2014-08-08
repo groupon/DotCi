@@ -20,32 +20,53 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.testhelpers;
+ */
+package com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.configvalue;
 
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfiguration;
+import com.google.inject.TypeLiteral;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+//@formatter:off 
+/**
+ * Abstraction over value of section in .ci.yml . this could be a list or a map
+ * or a string 
+ * eg: a) run:echo hello
+ *     b) run :
+ *         - echo hello 
+ *         - echo world 
+ *      c) run:
+ *          unit: spec unit 
+ *          integration: spec unit
+ */
+//@formatter:on 
 
-public class BuildConfigurationFactory {
+public abstract class ConfigValue<T> extends TypeLiteral<T> {
+	private Object value;
 
-	private final BuildConfiguration buildConfiguration;
-
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
+	public ConfigValue(Object value) {
+		this.value = value;
 	}
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
+	public void replace(ConfigValue<?> otherConfig) {
+		this.value = otherConfig.getValue();
 	}
 
-	public BuildConfiguration get() {
-		return buildConfiguration;
+	public boolean isEmpty() {
+		return value == null;
 	}
 
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
+	public boolean isValid() {
+		return isEmpty() ? true : getRawType().isAssignableFrom(value.getClass());
 	}
+
+	public abstract void append(ConfigValue<?> config);
+
+	@SuppressWarnings("unchecked")
+	public T getValue() {
+		return (T) value;
+	}
+
+	protected void setValue(T newValue) {
+		this.value = newValue;
+	}
+
 }

@@ -21,31 +21,27 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package com.groupon.jenkins.testhelpers;
+package com.groupon.jenkins.buildexecution.install_packages.buildconfiguration;
 
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfiguration;
+import hudson.matrix.Combination;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.configvalue.StringValue;
 
-public class BuildConfigurationFactory {
+public class LanguageSection extends ConfigSection<StringValue> {
 
-	private final BuildConfiguration buildConfiguration;
+	public static final String NAME = "language";
 
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
+	public LanguageSection(StringValue config) {
+		super(NAME, config, MergeStrategy.REPLACE);
 	}
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
+	public String getLanguage() {
+		return getConfigValue().getValue();
 	}
 
-	public BuildConfiguration get() {
-		return buildConfiguration;
+	@Override
+	public ShellCommands toScript(Combination combination) {
+		return ShellCommands.NOOP;
 	}
 
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
-	}
 }

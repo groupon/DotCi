@@ -3,7 +3,7 @@ The MIT License (MIT)
 
 Copyright (c) 2014, Groupon, Inc.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+P ermission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -20,32 +20,25 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.testhelpers;
+ */
+package com.groupon.jenkins.buildexecution.install_packages.buildconfiguration;
 
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfiguration;
+import com.groupon.jenkins.dynamic.buildtype.dockerimage.DockerCommandBuilder;
+import org.junit.Assert;
+import org.junit.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+public class DockerComandBuilderTest {
+    @Test
+    public void should_use_single_dash_for_single_letter_option(){
+        String dockerCommand = new DockerCommandBuilder("run").flag("d").args("java").get();
+        Assert.assertEquals("docker run -d java",dockerCommand);
+    }
 
-public class BuildConfigurationFactory {
-
-	private final BuildConfiguration buildConfiguration;
-
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
-	}
-
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
-	}
-
-	public BuildConfiguration get() {
-		return buildConfiguration;
-	}
-
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
-	}
+    @Test
+    public void should_use_double_dash_for_multiple_letter_option(){
+        String dockerCommand = new DockerCommandBuilder("run").flag("rm").args("java").get();
+        Assert.assertEquals("docker run --rm java",dockerCommand);
+        dockerCommand = new DockerCommandBuilder("run").flag("name","meow").args("java").get();
+        Assert.assertEquals("docker run --name meow java",dockerCommand);
+    }
 }

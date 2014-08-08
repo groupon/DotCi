@@ -41,7 +41,7 @@ import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import com.groupon.jenkins.dynamic.build.DynamicSubProject;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
-import com.groupon.jenkins.dynamic.buildtype.installpackages.buildconfiguration.BuildConfiguration;
+import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfiguration;
 
 import static com.groupon.jenkins.testhelpers.TestHelpers.map;
 
