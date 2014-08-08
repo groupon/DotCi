@@ -27,17 +27,16 @@ package com.groupon.jenkins.buildexecution.install_packages;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfiguration;
+import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfigurationCalculator;
+import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.InvalidDotCiYmlException;
+import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicBuildLayouter;
 import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildEnvironment;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.build.execution.DotCiPluginRunner;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildScheduler;
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfiguration;
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.BuildConfigurationCalculator;
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.InvalidDotCiYmlException;
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.Launcher;
 import hudson.matrix.Axis;
@@ -70,7 +69,6 @@ public class InstallPackagesBuildType extends BuildType {
     @Override
     public Result runBuild(BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
         BuildEnvironment buildEnvironment = new BuildEnvironment(dynamicBuild, launcher, listener);
-        DotCiPluginRunner dotCiPluginRunner = new DotCiPluginRunner(dynamicBuild, launcher);
         this.buildConfiguration = calculateBuildConfiguration(dynamicBuild, listener);
         try {
             if (!buildEnvironment.initialize()) {
@@ -85,9 +83,9 @@ public class InstallPackagesBuildType extends BuildType {
             setLayouter(buildConfiguration);
             dynamicBuild.setDescription(dynamicBuild.getCause().getBuildDescription());
             if(buildConfiguration.isParallized()){
-                return runMultiConfigbuildRunner(buildConfiguration,buildExecutionContext,listener, dotCiPluginRunner) ;
+                return runMultiConfigbuildRunner(buildConfiguration,buildExecutionContext,listener,launcher) ;
             }else{
-                return runSingleConfigBuild(new Combination(ImmutableMap.of("script", "main")),buildConfiguration,buildExecutionContext,listener ,dotCiPluginRunner) ;
+                return runSingleConfigBuild(new Combination(ImmutableMap.of("script", "main")),buildConfiguration,buildExecutionContext,listener,launcher) ;
             }
 
         } catch (InterruptedException e) {
@@ -111,7 +109,7 @@ public class InstallPackagesBuildType extends BuildType {
         }
     }
 
-    private Result runMultiConfigbuildRunner(final BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, final BuildListener listener, DotCiPluginRunner dotCiPluginRunner)throws InterruptedException, IOException {
+    private Result runMultiConfigbuildRunner(final BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, final BuildListener listener, Launcher launcher)throws InterruptedException, IOException {
         SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, this, new SubBuildScheduler.SubBuildFinishListener() {
             @Override
             public void runFinished(DynamicSubBuild subBuild) throws IOException {
@@ -129,7 +127,7 @@ public class InstallPackagesBuildType extends BuildType {
                 combinedResult = combinedResult.combine(runSubBuildResults);
             }
             dynamicBuild.setResult(combinedResult);
-            dotCiPluginRunner.runPlugins(listener);
+            runPlugins(buildConfiguration.getPlugins(), listener,launcher);
             return combinedResult;
         } finally {
             try {
@@ -156,17 +154,27 @@ public class InstallPackagesBuildType extends BuildType {
 		return r;
 	}
 
-    private Result runSingleConfigBuild(Combination combination, BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, BuildListener listener, DotCiPluginRunner dotCiPluginRunner) throws IOException, InterruptedException {
-        String mainBuildScript = buildConfiguration.toScript(combination).toShellScript();
-        Result result = runShellScript(buildExecutionContext, listener, mainBuildScript);
-        dotCiPluginRunner.runPlugins(listener);
+    private Result runSingleConfigBuild(Combination combination, BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
+        Result result = runBuildCombination(combination, buildExecutionContext, listener);
+        runPlugins(buildConfiguration.getPlugins(), listener, launcher);
         return result;
+    }
+
+    private void runPlugins( List<DotCiPluginAdapter> plugins, BuildListener listener, Launcher launcher) {
+        for(DotCiPluginAdapter plugin : plugins){
+            plugin.perform(dynamicBuild, launcher, listener);
+        }
+    }
+
+    private Result runBuildCombination(Combination combination,BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
+        String mainBuildScript = buildConfiguration.toScript(combination).toShellScript();
+       return runShellScript(buildExecutionContext, listener, mainBuildScript);
     }
 
 
     @Override
     public Result runSubBuild(Combination combination, BuildExecutionContext dynamicSubBuildExecution, BuildListener listener) throws IOException, InterruptedException {
-      return runSingleConfigBuild(combination, buildConfiguration,dynamicSubBuildExecution,listener,DotCiPluginRunner.NOOP);
+      return runBuildCombination(combination,dynamicSubBuildExecution,listener);
     }
 
     private BuildConfiguration calculateBuildConfiguration(DynamicBuild build, BuildListener listener) throws IOException, InterruptedException, InvalidDotCiYmlException {
