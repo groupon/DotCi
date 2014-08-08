@@ -173,10 +173,10 @@ public class InstallPackagesBuildType extends BuildType {
         return new BuildConfigurationCalculator().calculateBuildConfiguration(build.getGithubRepoUrl(), build.getSha(), build.getEnvironment(listener));
     }
 
-    public void setLayouter(BuildConfiguration buildConfiguration) {
+    private void setLayouter(BuildConfiguration buildConfiguration) {
         AxisList axisList = getAxisList(buildConfiguration);
         DynamicBuildLayouter dynamicBuildLayouter = new DynamicBuildLayouter(axisList, dynamicBuild);
-        dynamicBuild.setDyanamicBuildLayouter(dynamicBuildLayouter);
+        dynamicBuild.setDynamicBuildLayouter(dynamicBuildLayouter);
     }
 
     private AxisList getAxisList(BuildConfiguration buildConfiguration) {

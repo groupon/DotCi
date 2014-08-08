@@ -145,7 +145,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 		return vars;
 	}
 
-    public void setDyanamicBuildLayouter(DynamicBuildLayouter dyanamicBuildLayouter) {
+    public void setDynamicBuildLayouter(DynamicBuildLayouter dyanamicBuildLayouter) {
         this.dynamicBuildLayouter = dyanamicBuildLayouter;
         try {
             save();
