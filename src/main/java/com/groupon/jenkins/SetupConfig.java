@@ -23,13 +23,12 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins;
 
+import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.Extension;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.StringUtils;
-import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 @Extension
@@ -41,6 +40,7 @@ public class SetupConfig extends GlobalConfiguration {
 	private String githubCallbackUrl;
 	private String label;
 	private String fromEmailAddress;
+    private String buildType;
 
 	private String deployKey;
 
@@ -66,12 +66,16 @@ public class SetupConfig extends GlobalConfiguration {
 		return true;
 	}
 
+    public Iterable<BuildType> getBuildTypes(){
+        return BuildType.all();
+    }
 	public String getDbName() {
 		if (StringUtils.isEmpty(dbName)) {
 			return "dotci";
 		}
 		return dbName;
 	}
+
 
 	public void setDbName(String dbName) {
 		this.dbName = dbName;
@@ -157,4 +161,11 @@ public class SetupConfig extends GlobalConfiguration {
 		this.deployKey = deployKey;
 	}
 
+    public String getBuildType() {
+        return buildType;
+    }
+
+    public void setBuildType(String buildType) {
+        this.buildType = buildType;
+    }
 }

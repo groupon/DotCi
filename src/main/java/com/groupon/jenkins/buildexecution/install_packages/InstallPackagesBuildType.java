@@ -38,6 +38,7 @@ import com.groupon.jenkins.dynamic.build.execution.BuildEnvironment;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildScheduler;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.matrix.Axis;
 import hudson.matrix.AxisList;
@@ -55,16 +56,22 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
+@Extension
 public class InstallPackagesBuildType extends BuildType {
     private DynamicBuild dynamicBuild;
     private static final Logger LOGGER = Logger.getLogger(InstallPackagesBuildType.class.getName());
     private BuildConfiguration buildConfiguration;
 
 
-    public InstallPackagesBuildType(DynamicBuild dynamicBuild) {
-        this.dynamicBuild = dynamicBuild;
+    public InstallPackagesBuildType(){
     }
 
+
+
+    @Override
+    public String getDescription() {
+        return "Install Packages";
+    }
 
     @Override
     public Result runBuild(BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
@@ -127,7 +134,7 @@ public class InstallPackagesBuildType extends BuildType {
                 combinedResult = combinedResult.combine(runSubBuildResults);
             }
             dynamicBuild.setResult(combinedResult);
-            runPlugins(buildConfiguration.getPlugins(), listener,launcher);
+            runPlugins(buildConfiguration.getPlugins(), listener, launcher);
             return combinedResult;
         } finally {
             try {

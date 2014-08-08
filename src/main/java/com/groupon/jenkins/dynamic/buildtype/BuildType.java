@@ -23,18 +23,37 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.buildtype;
 
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.buildexecution.install_packages.InstallPackagesBuildType;
+import hudson.ExtensionList;
+import hudson.ExtensionPoint;
 import hudson.Launcher;
 import hudson.matrix.Combination;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import java.io.IOException;
+import jenkins.model.Jenkins;
 
-public abstract class BuildType {
+public abstract class BuildType implements ExtensionPoint{
     public static BuildType getBuildType(DynamicBuild dynamicBuild) {
-        return   new InstallPackagesBuildType(dynamicBuild);
+        for(BuildType buildType: all() ){
+            if(buildType.getId().equals(SetupConfig.get().getBuildType())){
+                return buildType;
+            }
+
+        }
+      throw new IllegalStateException("Build Type not found for the build");
+    }
+
+    public static ExtensionList<BuildType> all() {
+        return Jenkins.getInstance().getExtensionList(BuildType.class);
+    }
+
+    public abstract String getDescription();
+
+    public String getId(){
+       return getClass().getName();
     }
 
 
