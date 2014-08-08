@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.dynamic.buildtype.installpackages;
+package com.groupon.jenkins.buildexecution.install_packages;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;

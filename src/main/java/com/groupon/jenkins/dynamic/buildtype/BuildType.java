@@ -25,7 +25,7 @@ package com.groupon.jenkins.dynamic.buildtype;
 
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.buildtype.installpackages.InstallPackagesBuildType;
+import com.groupon.jenkins.buildexecution.install_packages.InstallPackagesBuildType;
 import hudson.Launcher;
 import hudson.matrix.Combination;
 import hudson.model.BuildListener;
@@ -34,7 +34,7 @@ import java.io.IOException;
 
 public abstract class BuildType {
     public static BuildType getBuildType(DynamicBuild dynamicBuild) {
-        return  new InstallPackagesBuildType(dynamicBuild);
+        return   new InstallPackagesBuildType(dynamicBuild);
     }
 
 
