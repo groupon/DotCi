@@ -39,12 +39,19 @@ public abstract class BuildType implements ExtensionPoint{
     public static BuildType getBuildType() {
         for(BuildType buildType: all() ){
             if(buildType.getId().equals(SetupConfig.get().getBuildType())){
-                return buildType;
+                try {
+                    return buildType.getClass().newInstance();
+                } catch (InstantiationException e) {
+                   throw new RuntimeException(e);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
         }
       throw new IllegalStateException("Build Type not found for the build");
     }
+
 
     public static ExtensionList<BuildType> all() {
         return Jenkins.getInstance().getExtensionList(BuildType.class);
