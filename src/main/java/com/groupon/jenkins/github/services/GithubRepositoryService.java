@@ -114,10 +114,6 @@ public class GithubRepositoryService {
 		return getGithubRepository().getFileContent(fileName, sha);
 	}
 
-	public String getRepoLanguage() {
-		return getRepository().getLanguage().toLowerCase();
-	}
-
 	public String getShaForBranch(String branch) {
 		GitBranch gitBranch = new GitBranch(branch);
 		if (gitBranch.isPullRequest()) {
