@@ -58,7 +58,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 
 @Extension
 public class InstallPackagesBuildType extends BuildType {
-    private DynamicBuild dynamicBuild;
+   // private DynamicBuild dynamicBuild;
     private static final Logger LOGGER = Logger.getLogger(InstallPackagesBuildType.class.getName());
     private BuildConfiguration buildConfiguration;
 
@@ -74,7 +74,7 @@ public class InstallPackagesBuildType extends BuildType {
     }
 
     @Override
-    public Result runBuild(BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+    public Result runBuild(DynamicBuild dynamicBuild, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
         BuildEnvironment buildEnvironment = new BuildEnvironment(dynamicBuild, launcher, listener);
         this.buildConfiguration = calculateBuildConfiguration(dynamicBuild, listener);
         try {
@@ -87,12 +87,12 @@ public class InstallPackagesBuildType extends BuildType {
                 return Result.SUCCESS;
             }
 
-            setLayouter(buildConfiguration);
+            setLayouter(dynamicBuild, buildConfiguration);
             dynamicBuild.setDescription(dynamicBuild.getCause().getBuildDescription());
             if(buildConfiguration.isParallized()){
-                return runMultiConfigbuildRunner(buildConfiguration,buildExecutionContext,listener,launcher) ;
+                return runMultiConfigbuildRunner(dynamicBuild, buildConfiguration,buildExecutionContext,listener,launcher) ;
             }else{
-                return runSingleConfigBuild(new Combination(ImmutableMap.of("script", "main")),buildConfiguration,buildExecutionContext,listener,launcher) ;
+                return runSingleConfigBuild(dynamicBuild, new Combination(ImmutableMap.of("script", "main")),buildConfiguration,buildExecutionContext,listener,launcher) ;
             }
 
         } catch (InterruptedException e) {
@@ -116,7 +116,12 @@ public class InstallPackagesBuildType extends BuildType {
         }
     }
 
-    private Result runMultiConfigbuildRunner(final BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, final BuildListener listener, Launcher launcher)throws InterruptedException, IOException {
+    @Override
+    public Result runSubBuild(Combination combination, BuildExecutionContext dynamicSubBuildExecution, BuildListener listener) throws IOException, InterruptedException {
+        return runBuildCombination(combination,dynamicSubBuildExecution,listener);
+    }
+
+    private Result runMultiConfigbuildRunner(final DynamicBuild dynamicBuild, final BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, final BuildListener listener, Launcher launcher)throws InterruptedException, IOException {
         SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, this, new SubBuildScheduler.SubBuildFinishListener() {
             @Override
             public void runFinished(DynamicSubBuild subBuild) throws IOException {
@@ -134,7 +139,7 @@ public class InstallPackagesBuildType extends BuildType {
                 combinedResult = combinedResult.combine(runSubBuildResults);
             }
             dynamicBuild.setResult(combinedResult);
-            runPlugins(buildConfiguration.getPlugins(), listener, launcher);
+            runPlugins(dynamicBuild, buildConfiguration.getPlugins(), listener, launcher);
             return combinedResult;
         } finally {
             try {
@@ -161,13 +166,13 @@ public class InstallPackagesBuildType extends BuildType {
 		return r;
 	}
 
-    private Result runSingleConfigBuild(Combination combination, BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
+    private Result runSingleConfigBuild(DynamicBuild dynamicBuild, Combination combination, BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
         Result result = runBuildCombination(combination, buildExecutionContext, listener);
-        runPlugins(buildConfiguration.getPlugins(), listener, launcher);
+        runPlugins(dynamicBuild, buildConfiguration.getPlugins(), listener, launcher);
         return result;
     }
 
-    private void runPlugins( List<DotCiPluginAdapter> plugins, BuildListener listener, Launcher launcher) {
+    private void runPlugins(DynamicBuild dynamicBuild, List<DotCiPluginAdapter> plugins, BuildListener listener, Launcher launcher) {
         for(DotCiPluginAdapter plugin : plugins){
             plugin.perform(dynamicBuild, launcher, listener);
         }
@@ -179,16 +184,13 @@ public class InstallPackagesBuildType extends BuildType {
     }
 
 
-    @Override
-    public Result runSubBuild(Combination combination, BuildExecutionContext dynamicSubBuildExecution, BuildListener listener) throws IOException, InterruptedException {
-      return runBuildCombination(combination,dynamicSubBuildExecution,listener);
-    }
+
 
     private BuildConfiguration calculateBuildConfiguration(DynamicBuild build, BuildListener listener) throws IOException, InterruptedException, InvalidDotCiYmlException {
         return new BuildConfigurationCalculator().calculateBuildConfiguration(build.getGithubRepoUrl(), build.getSha(), build.getEnvironment(listener));
     }
 
-    private void setLayouter(BuildConfiguration buildConfiguration) {
+    private void setLayouter(DynamicBuild dynamicBuild, BuildConfiguration buildConfiguration) {
         AxisList axisList = getAxisList(buildConfiguration);
         DynamicBuildLayouter dynamicBuildLayouter = new DynamicBuildLayouter(axisList, dynamicBuild);
         dynamicBuild.setDynamicBuildLayouter(dynamicBuildLayouter);

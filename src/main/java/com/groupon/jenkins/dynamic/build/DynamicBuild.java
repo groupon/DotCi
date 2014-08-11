@@ -176,8 +176,8 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 		@Override
 		protected Result doRun(BuildListener listener) throws Exception, hudson.model.Run.RunnerAbortedException {
 			try {
-                BuildType buildType = BuildType.getBuildType(DynamicBuild.this);
-                Result buildRunResult =   buildType.runBuild(this, launcher, listener);
+                BuildType buildType = BuildType.getBuildType();
+                Result buildRunResult =   buildType.runBuild(DynamicBuild.this, this, launcher, listener);
 				setResult(buildRunResult);
 				return buildRunResult;
 			} catch (InvalidDotCiYmlException invalidDotCiYmlException) {

@@ -36,7 +36,7 @@ import java.io.IOException;
 import jenkins.model.Jenkins;
 
 public abstract class BuildType implements ExtensionPoint{
-    public static BuildType getBuildType(DynamicBuild dynamicBuild) {
+    public static BuildType getBuildType() {
         for(BuildType buildType: all() ){
             if(buildType.getId().equals(SetupConfig.get().getBuildType())){
                 return buildType;
@@ -57,7 +57,7 @@ public abstract class BuildType implements ExtensionPoint{
     }
 
 
-    public abstract Result runBuild(BuildExecutionContext  buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
+    public abstract Result runBuild(DynamicBuild build, BuildExecutionContext  buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
 
     public abstract Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException;
 }
