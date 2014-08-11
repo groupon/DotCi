@@ -20,32 +20,22 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.testhelpers;
+ */
+package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfiguration;
+import org.junit.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static com.groupon.jenkins.testhelpers.TestHelpers.configListOrSingleValue;
+import static org.junit.Assert.assertTrue;
 
-public class BuildConfigurationFactory {
+public class SerialExecutionSectionTest {
 
-	private final BuildConfiguration buildConfiguration;
+	@Test
+	public void should_execute_commands_listed() {
+		SerialExecutionSection checkoutSection = new SerialExecutionSection("checkout", configListOrSingleValue("git checkout $git_url", "git submodule init"));
+		ShellCommands checkoutCommands = checkoutSection.toScript(null);
+		assertTrue(checkoutCommands.toShellScript().contains("git checkout $git_url"));
+		assertTrue(checkoutCommands.toShellScript().contains("git checkout $git_url"));
 
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
-	}
-
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
-	}
-
-	public BuildConfiguration get() {
-		return buildConfiguration;
-	}
-
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
 	}
 }

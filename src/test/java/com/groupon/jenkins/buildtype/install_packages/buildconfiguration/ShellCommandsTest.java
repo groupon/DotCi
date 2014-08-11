@@ -21,31 +21,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package com.groupon.jenkins.testhelpers;
+package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfiguration;
+import junit.framework.Assert;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Test;
 
-public class BuildConfigurationFactory {
-
-	private final BuildConfiguration buildConfiguration;
-
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
-	}
-
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
-	}
-
-	public BuildConfiguration get() {
-		return buildConfiguration;
-	}
-
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
+public class ShellCommandsTest {
+	@Test
+	public void should_escape_quotes_in_echo() {
+		ShellCommands executionPhase = new ShellCommands("echo \"hello\"", "echo world");
+		String[] commands = executionPhase.toShellScript().split("\\r?\\n");
+		Assert.assertEquals("echo $ \" echo \\\"hello\\\"\"", commands[0]);
 	}
 }

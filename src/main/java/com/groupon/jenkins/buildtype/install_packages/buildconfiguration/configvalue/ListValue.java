@@ -20,32 +20,30 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.testhelpers;
+ */
+package com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue;
 
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfiguration;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+public class ListValue<T> extends ConfigValue<List<T>> {
 
-public class BuildConfigurationFactory {
-
-	private final BuildConfiguration buildConfiguration;
-
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
+	public ListValue(Object config) {
+		super(config == null ? Collections.emptyList() : config);
 	}
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
+	@Override
+	public void append(ConfigValue<?> otherConfig) {
+		ArrayList<T> mergedList = new ArrayList<T>();
+		mergedList.addAll(getValue());
+		mergedList.addAll((Collection<? extends T>) otherConfig.getValue());
+		setValue(mergedList);
 	}
 
-	public BuildConfiguration get() {
-		return buildConfiguration;
-	}
-
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
+	@Override
+	public boolean isEmpty() {
+		return getValue().isEmpty();
 	}
 }

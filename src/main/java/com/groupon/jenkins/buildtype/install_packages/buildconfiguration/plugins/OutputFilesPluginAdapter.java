@@ -21,31 +21,30 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package com.groupon.jenkins.testhelpers;
+package com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins;
 
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfiguration;
+import hudson.Extension;
+import hudson.Launcher;
+import hudson.model.BuildListener;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.io.IOException;
 
-public class BuildConfigurationFactory {
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 
-	private final BuildConfiguration buildConfiguration;
+@Extension
+public class OutputFilesPluginAdapter extends DotCiPluginAdapter {
 
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
+	public OutputFilesPluginAdapter() {
+		super("output_files", "");
 	}
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
+	@Override
+	public boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener) {
+		return true;
 	}
 
-	public BuildConfiguration get() {
-		return buildConfiguration;
-	}
-
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
+	public void runFinished(DynamicSubBuild run, DynamicBuild parent, BuildListener listener) throws IOException {
+		copyFiles(run, parent, (String) options, listener);
 	}
 }

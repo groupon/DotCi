@@ -20,32 +20,49 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.testhelpers;
+ */
+package com.groupon.jenkins.buildtype.dockerimage;
 
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfiguration;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.google.common.base.Joiner;
 
-public class BuildConfigurationFactory {
+public class DockerCommandBuilder {
+	private final String dockerCommand;
 
-	private final BuildConfiguration buildConfiguration;
+	private final Joiner spaceJoiner = Joiner.on(" ");
+	private String args;
+	private final List<String> flags = new ArrayList<String>();
 
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
+	public DockerCommandBuilder(String command) {
+		dockerCommand = "docker " + command;
 	}
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
+	public static DockerCommandBuilder dockerCommand(String command) {
+		return new DockerCommandBuilder(command);
+	}
+
+	public DockerCommandBuilder args(String... args) {
+		this.args = spaceJoiner.join(args);
 		return this;
 	}
 
-	public BuildConfiguration get() {
-		return buildConfiguration;
+	public String get() {
+		return spaceJoiner.join(dockerCommand, spaceJoiner.join(flags), args);
 	}
 
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
+	public DockerCommandBuilder flag(String flag) {
+        flags.add(getOption(flag));
+		return this;
+	}
+
+    private String getOption(String option){
+        return option.length() > 1? "--" + option: "-" + option;
+    }
+
+	public DockerCommandBuilder flag(String flag, String value) {
+		flags.add(spaceJoiner.join(getOption(flag), value));
+		return this;
 	}
 }

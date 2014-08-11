@@ -21,31 +21,29 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package com.groupon.jenkins.testhelpers;
+package com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue;
 
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfiguration;
+import org.junit.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-public class BuildConfigurationFactory {
+public class ConfigValueTest {
 
-	private final BuildConfiguration buildConfiguration;
-
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
+	@Test
+	public void should_replace_value_on_replace() {
+		StringValue configValue = new StringValue("intial");
+		configValue.replace(new StringValue("replacement"));
+		assertEquals("replacement", configValue.getValue());
 	}
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
+	@Test
+	public void should_be_invalid_if_intialized_with_wrong_type() {
+		StringValue configValue = new StringValue(24);
+		assertFalse(configValue.isValid());
+		StringValue validConfigValue = new StringValue("hello");
+		assertTrue(validConfigValue.isValid());
 	}
 
-	public BuildConfiguration get() {
-		return buildConfiguration;
-	}
-
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
-	}
 }

@@ -31,7 +31,7 @@ import hudson.model.Run;
 import jenkins.model.Jenkins;
 
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.buildexecution.install_packages.buildconfiguration.InvalidDotCiYmlException;
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.InvalidDotCiYmlException;
 
 public abstract class PostBuildNotifier implements ExtensionPoint {
 	public enum Type {

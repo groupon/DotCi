@@ -20,32 +20,31 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.testhelpers;
+ */
+package com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue;
 
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfiguration;
+import java.util.Arrays;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Test;
 
-public class BuildConfigurationFactory {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-	private final BuildConfiguration buildConfiguration;
+public class ListValueTest {
 
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
+	@Test
+	public void should_append_to_existing_values() {
+		ListValue<String> configValue = new ListValue<String>(Arrays.asList("one", "two"));
+		ListValue<String> configValueToBeAppended = new ListValue<String>(Arrays.asList("three"));
+		configValue.append(configValueToBeAppended);
+		assertEquals(3, configValue.getValue().size());
+		assertEquals("one", configValue.getValue().get(0));
+		assertEquals("two", configValue.getValue().get(1));
+		assertEquals("three", configValue.getValue().get(2));
 	}
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
-	}
-
-	public BuildConfiguration get() {
-		return buildConfiguration;
-	}
-
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
+	@Test
+	public void null_value_should_be_empty() {
+		assertTrue(new ListValue<Object>(null).isEmpty());
 	}
 }

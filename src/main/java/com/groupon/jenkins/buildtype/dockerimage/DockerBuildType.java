@@ -22,36 +22,33 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.dynamic.buildconfiguration.plugins;
+package com.groupon.jenkins.buildtype.dockerimage;
 
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins.DotCiPluginAdapter;
+import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
+import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import hudson.Extension;
 import hudson.Launcher;
+import hudson.matrix.Combination;
 import hudson.model.BuildListener;
+import hudson.model.Result;
 import java.io.IOException;
-import org.junit.Test;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-public class DotCiPluginAdapterTest {
-
-
-    @Test
-    public void should_copy_files_only_when_specified() throws IOException {
-        DotCiPluginAdapter plugin =spy( new DotCiPluginAdapter("myplugin", "") {
-
-            @Override
-            public boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener) {
-                return true;
-            }
-        });
-
-        plugin.runFinished(null,null,null);
-        verify(plugin,never()).copyFiles(any(DynamicSubBuild.class),any(DynamicBuild.class),anyString(),any(BuildListener.class));
+@Extension
+public class DockerBuildType extends BuildType {
+    @Override
+    public String getDescription() {
+        return "Docker Build";
     }
 
+    @Override
+    public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+
+        return Result.SUCCESS;
+    }
+
+    @Override
+    public Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
+        return null;
+    }
 }

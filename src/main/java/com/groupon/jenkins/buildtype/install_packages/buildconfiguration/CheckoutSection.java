@@ -20,32 +20,27 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.testhelpers;
+ */
+package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfiguration;
+import hudson.matrix.Combination;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
 
-public class BuildConfigurationFactory {
+public class CheckoutSection extends ConfigSection<ListValue<String>> {
 
-	private final BuildConfiguration buildConfiguration;
+	public static final String NAME = "checkout";
 
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
+	protected CheckoutSection(ListValue listValue) {
+		super(NAME, listValue, MergeStrategy.REPLACE);
 	}
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
+	@Override
+	public ShellCommands toScript(Combination combination) {
+		return getCheckoutCommands();
 	}
 
-	public BuildConfiguration get() {
-		return buildConfiguration;
-	}
-
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
+	public ShellCommands getCheckoutCommands() {
+		return new ShellCommands(getConfigValue().getValue());
 	}
 }
