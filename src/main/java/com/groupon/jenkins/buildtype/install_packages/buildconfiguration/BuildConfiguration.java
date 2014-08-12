@@ -28,6 +28,7 @@ import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configv
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.StringValue;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
+import com.groupon.jenkins.util.GroovyTemplateProcessor;
 import hudson.EnvVars;
 import java.util.List;
 

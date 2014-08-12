@@ -43,7 +43,6 @@ public class DockerBuildType extends BuildType {
 
     @Override
     public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
-
         return Result.SUCCESS;
     }
 
