@@ -25,10 +25,12 @@ package com.groupon.jenkins.dynamic.build;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
-import com.groupon.jenkins.dynamic.build.cause.BuildCause;
-import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.InvalidDotCiYmlException;
+import com.groupon.jenkins.dynamic.build.cause.BuildCause;
+import com.groupon.jenkins.dynamic.build.execution.BuildEnvironment;
+import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import com.groupon.jenkins.github.services.GithubRepositoryService;
 import hudson.EnvVars;
 import hudson.Functions;
 import hudson.matrix.Combination;
@@ -44,9 +46,11 @@ import hudson.util.HttpResponses;
 import hudson.util.VersionNumber;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Map;
 import jenkins.model.Jenkins;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -162,6 +166,10 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         return Iterables.getOnlyElement(getSubProjects(Arrays.asList(subBuildCombination)));
     }
 
+    public GithubRepositoryService getGithubRepositoryService() {
+        return new GithubRepositoryService(getGithubRepoUrl());
+    }
+
     protected class DynamicRunExecution extends BuildExecution implements BuildExecutionContext {
 		@Override
 		public boolean performStep(BuildStep execution, BuildListener listener) throws IOException, InterruptedException {
@@ -175,7 +183,11 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 
 		@Override
 		protected Result doRun(BuildListener listener) throws Exception, hudson.model.Run.RunnerAbortedException {
+            BuildEnvironment buildEnvironment = new BuildEnvironment(DynamicBuild.this, launcher, listener);
 			try {
+                if (!buildEnvironment.initialize()) {
+                    return Result.FAILURE;
+                }
                 BuildType buildType = BuildType.getBuildType();
                 Result buildRunResult =   buildType.runBuild(DynamicBuild.this, this, launcher, listener);
 				setResult(buildRunResult);
@@ -185,7 +197,23 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 					listener.error(error);
 				}
 				return Result.FAILURE;
-			}
+			}catch (InterruptedException e) {
+                Executor x = Executor.currentExecutor();
+                x.recordCauseOfInterruption(DynamicBuild.this, listener);
+                return x.abortResult();
+            }catch (Exception e) {
+                PrintStream logger = listener.getLogger();
+                logger.println(e.getMessage());
+                logger.println(ExceptionUtils.getStackTrace(e));
+                Executor x = Executor.currentExecutor();
+                x.recordCauseOfInterruption(DynamicBuild.this, listener);
+                x.doStop();
+                return Result.FAILURE;
+            } finally {
+                if (buildEnvironment.tearDownBuildEnvironments(listener)) {
+                    return Result.FAILURE;
+                }
+            }
 
 		}
 

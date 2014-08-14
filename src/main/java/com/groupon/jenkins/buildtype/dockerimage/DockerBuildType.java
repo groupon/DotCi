@@ -33,6 +33,7 @@ import hudson.matrix.Combination;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import java.io.IOException;
+import org.kohsuke.github.GHContent;
 
 @Extension
 public class DockerBuildType extends BuildType {
@@ -43,6 +44,7 @@ public class DockerBuildType extends BuildType {
 
     @Override
     public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+        GHContent dotCiyml = build.getGithubRepositoryService().getGHFile(".ci.yml", build.getSha());
         return Result.SUCCESS;
     }
 

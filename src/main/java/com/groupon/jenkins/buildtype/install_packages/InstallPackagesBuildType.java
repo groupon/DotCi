@@ -34,7 +34,6 @@ import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicBuildLayouter;
 import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
-import com.groupon.jenkins.dynamic.build.execution.BuildEnvironment;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildScheduler;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
@@ -48,13 +47,11 @@ import hudson.model.Executor;
 import hudson.model.Result;
 import hudson.tasks.Shell;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang.exception.ExceptionUtils;
 
 @Extension
 public class InstallPackagesBuildType extends BuildType {
@@ -68,44 +65,18 @@ public class InstallPackagesBuildType extends BuildType {
 
     @Override
     public Result runBuild(DynamicBuild dynamicBuild, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
-        BuildEnvironment buildEnvironment = new BuildEnvironment(dynamicBuild, launcher, listener);
         this.buildConfiguration = calculateBuildConfiguration(dynamicBuild, listener);
-        try {
-            if (!buildEnvironment.initialize()) {
-                return Result.FAILURE;
-            }
+        if (buildConfiguration.isSkipped()) {
+            dynamicBuild.skip();
+            return Result.SUCCESS;
+        }
 
-            if (buildConfiguration.isSkipped()) {
-                dynamicBuild.skip();
-                return Result.SUCCESS;
-            }
-
-            setLayouter(dynamicBuild, buildConfiguration);
-            dynamicBuild.setDescription(dynamicBuild.getCause().getBuildDescription());
-            if(buildConfiguration.isParallized()){
-                return runMultiConfigbuildRunner(dynamicBuild, buildConfiguration, listener,launcher) ;
-            }else{
-                return runSingleConfigBuild(dynamicBuild, new Combination(ImmutableMap.of("script", "main")),buildConfiguration,buildExecutionContext,listener,launcher) ;
-            }
-
-        } catch (InterruptedException e) {
-            Executor x = Executor.currentExecutor();
-            x.recordCauseOfInterruption(dynamicBuild, listener);
-            return x.abortResult();
-        } catch (InvalidDotCiYmlException e) {
-            throw e;
-        } catch (Exception e) {
-            PrintStream logger = listener.getLogger();
-            logger.println(e.getMessage());
-            logger.println(ExceptionUtils.getStackTrace(e));
-            Executor x = Executor.currentExecutor();
-            x.recordCauseOfInterruption(dynamicBuild, listener);
-            x.doStop();
-            return Result.FAILURE;
-        } finally {
-            if (buildEnvironment.tearDownBuildEnvironments(listener)) {
-                return Result.FAILURE;
-            }
+        setLayouter(dynamicBuild, buildConfiguration);
+        dynamicBuild.setDescription(dynamicBuild.getCause().getBuildDescription());
+        if(buildConfiguration.isParallized()){
+            return runMultiConfigbuildRunner(dynamicBuild, buildConfiguration, listener,launcher) ;
+        }else{
+            return runSingleConfigBuild(dynamicBuild, new Combination(ImmutableMap.of("script", "main")),buildConfiguration,buildExecutionContext,listener,launcher) ;
         }
     }
 
@@ -143,21 +114,21 @@ public class InstallPackagesBuildType extends BuildType {
             }
         }
     }
-	public Result runShellScript(BuildExecutionContext dynamicBuildRun, BuildListener listener, String script) throws IOException, InterruptedException {
-		Result r = Result.FAILURE;
-		try {
-			Shell execution = new Shell("#!/bin/bash -le \n" + script);
-			if (dynamicBuildRun.performStep(execution, listener)) {
-				r = Result.SUCCESS;
-			}
-		} catch (InterruptedException e) {
-			r = Executor.currentExecutor().abortResult();
-			throw e;
-		} finally {
-			dynamicBuildRun.setResult(r);
-		}
-		return r;
-	}
+    public Result runShellScript(BuildExecutionContext dynamicBuildRun, BuildListener listener, String script) throws IOException, InterruptedException {
+        Result r = Result.FAILURE;
+        try {
+            Shell execution = new Shell("#!/bin/bash -le \n" + script);
+            if (dynamicBuildRun.performStep(execution, listener)) {
+                r = Result.SUCCESS;
+            }
+        } catch (InterruptedException e) {
+            r = Executor.currentExecutor().abortResult();
+            throw e;
+        } finally {
+            dynamicBuildRun.setResult(r);
+        }
+        return r;
+    }
 
     private Result runSingleConfigBuild(DynamicBuild dynamicBuild, Combination combination, BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
         Result result = runBuildCombination(combination, buildExecutionContext, listener);
@@ -173,7 +144,7 @@ public class InstallPackagesBuildType extends BuildType {
 
     private Result runBuildCombination(Combination combination,BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
         String mainBuildScript = buildConfiguration.toScript(combination).toShellScript();
-       return runShellScript(buildExecutionContext, listener, mainBuildScript);
+        return runShellScript(buildExecutionContext, listener, mainBuildScript);
     }
 
 
