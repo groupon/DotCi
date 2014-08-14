@@ -26,15 +26,13 @@ package com.groupon.jenkins.buildtype.install_packages.template;
 
 import com.google.common.base.CaseFormat;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfiguration;
+import com.groupon.jenkins.util.ResourceUtils;
 import hudson.EnvVars;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import jenkins.model.Jenkins;
-import org.apache.commons.io.IOUtils;
 import org.kohsuke.github.GHRepository;
 
 
@@ -82,32 +80,12 @@ public class DotCiTemplate implements ExtensionPoint {
         }
     }
 
-    private String readFile(String ymlResource) {
-        InputStream base = null;
-        try {
-            base = this.getClass().getResourceAsStream(ymlResource);
-            return IOUtils.toString(base);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            IOUtils.closeQuietly(base);
-        }
-    }
 
     private void load() {
-        this.ymlDefintion = readFile(getTemplateFile());
+        this.ymlDefintion = ResourceUtils.readResource(getClass(),".ci.yml");
     }
 
-    private String getTemplateFile() {
-        Class<?> clazz = getClass();
-        while (clazz != Object.class && clazz != null) {
-            String name = clazz.getName().replace('.', '/').replace('$', '/') + "/" + ".ci.yml";
-            if (clazz.getClassLoader().getResource(name) != null)
-                return '/' + name;
-            clazz = clazz.getSuperclass();
-        }
-        return null;
-    }
+
 
     public  DotCiTemplate getDefaultFor(GHRepository githubRepository) {
         for(DotCiTemplate template : getTemplates().values()){
