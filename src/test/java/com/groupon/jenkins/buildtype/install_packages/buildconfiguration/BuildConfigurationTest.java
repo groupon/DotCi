@@ -23,18 +23,17 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
+import com.groupon.jenkins.util.ResourceUtils;
 import hudson.EnvVars;
-
 import org.junit.Test;
 
-import static com.groupon.jenkins.testhelpers.TestHelpers.loadFile;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class BuildConfigurationTest {
 
 	@Test
 	public void should_skip_build_if_build_is_skipped() {
-		String dotCiYml = loadFile("/com/groupon/jenkins/dynamic/buildconfiguration/BuildConfigurationTest/ci_skip_build.yml");
+		String dotCiYml = ResourceUtils.readResource(getClass(),"ci_skip_build.yml");
 		BuildConfiguration config = new BuildConfiguration(dotCiYml, new EnvVars());
 		assertTrue(config.isSkipped());
 	}

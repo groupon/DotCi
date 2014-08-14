@@ -23,18 +23,13 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.testhelpers;
 
-import java.io.IOException;
-import java.io.InputStream;
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListOrSingleValue;
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.MapValue;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.io.IOUtils;
-
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListOrSingleValue;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.MapValue;
 
 public class TestHelpers {
 	public static Map map(Object... keyValues) {
@@ -61,18 +56,6 @@ public class TestHelpers {
 
 	public static MapValue<String, Object> configMap(Object... keyValues) {
 		return new MapValue<String, Object>(map(keyValues));
-	}
-
-	public static String loadFile(String fileName) {
-		InputStream stream = TestHelpers.class.getResourceAsStream(fileName);
-
-		String payloadReq = null;
-		try {
-			payloadReq = IOUtils.toString(stream);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		return payloadReq;
 	}
 
 }
