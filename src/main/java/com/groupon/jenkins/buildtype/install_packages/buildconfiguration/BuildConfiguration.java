@@ -28,7 +28,7 @@ import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configv
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.StringValue;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
-import com.groupon.jenkins.util.GroovyTemplateProcessor;
+import com.groupon.jenkins.util.GroovyYamlTemplateProcessor;
 import hudson.EnvVars;
 import java.util.List;
 
@@ -41,7 +41,7 @@ public class BuildConfiguration extends CompositeConfigSection {
     private ParentTemplateSection parentTemplateSection;
 
 	public BuildConfiguration(String ymlDefintion, EnvVars envVars) {
-		this( new MapValue<String,Object> (new GroovyTemplateProcessor(ymlDefintion, envVars).getConfig()));
+		this( new MapValue<String,Object> (new GroovyYamlTemplateProcessor(ymlDefintion, envVars).getConfig()));
 	}
 
 	public BuildConfiguration(MapValue<String, ?> config) {

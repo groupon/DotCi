@@ -23,23 +23,20 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.util;
 
+import com.google.common.collect.ForwardingMap;
 import groovy.text.GStringTemplateEngine;
-import hudson.EnvVars;
-
+import java.util.HashMap;
 import java.util.Map;
-
 import org.yaml.snakeyaml.Yaml;
 
-import com.google.common.collect.ForwardingMap;
-
-public class GroovyTemplateProcessor {
+public class GroovyYamlTemplateProcessor {
 
 	private final String config;
-	private final EnvVars envVars;
+	private final Map envVars;
 
-	public GroovyTemplateProcessor(String config, EnvVars envVars) {
+	public GroovyYamlTemplateProcessor(String config, Map envVars) {
 		this.config = config;
-		this.envVars = new EnvVars(envVars);
+		this.envVars = new HashMap(envVars);
 		this.envVars.remove("PATH");
 	}
 
@@ -56,9 +53,9 @@ public class GroovyTemplateProcessor {
 
 	private static class MissingPropForwardingMap extends ForwardingMap<String, String> {
 
-		private final EnvVars delegate;
+		private final Map delegate;
 
-		public MissingPropForwardingMap(EnvVars envVars) {
+		public MissingPropForwardingMap(Map envVars) {
 			this.delegate = envVars;
 		}
 
