@@ -21,20 +21,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
+package com.groupon.jenkins.buildtype;
 
 import java.util.Arrays;
 
 @SuppressWarnings("serial")
-public class InvalidDotCiYmlException extends RuntimeException {
+public class InvalidBuildConfigurationException extends RuntimeException {
 
 	private final Iterable<String> validationErrors;
 
-	public InvalidDotCiYmlException(Iterable<String> validationErrors) {
+	public InvalidBuildConfigurationException(Iterable<String> validationErrors) {
 		this.validationErrors = validationErrors;
 	}
 
-	public InvalidDotCiYmlException(String validationError) {
+	public InvalidBuildConfigurationException(String validationError) {
 		this(Arrays.asList(validationError));
 	}
 

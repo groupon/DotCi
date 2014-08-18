@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins;
 
+import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import hudson.FilePath;
@@ -36,7 +37,6 @@ import jenkins.model.Jenkins;
 
 import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.InvalidDotCiYmlException;
 import org.apache.commons.lang.StringUtils;
 
 public abstract class DotCiPluginAdapter implements ExtensionPoint {
@@ -70,7 +70,7 @@ public abstract class DotCiPluginAdapter implements ExtensionPoint {
 			}
 
 		}
-		throw new InvalidDotCiYmlException("Plugin " + pluginName + " not supported");
+		throw new InvalidBuildConfigurationException("Plugin " + pluginName + " not supported");
 	}
 
 	private void setOptions(Object options) {

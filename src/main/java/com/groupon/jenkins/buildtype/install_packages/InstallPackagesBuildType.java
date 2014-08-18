@@ -29,7 +29,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfiguration;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfigurationCalculator;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.InvalidDotCiYmlException;
+import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicBuildLayouter;
@@ -150,7 +150,7 @@ public class InstallPackagesBuildType extends BuildType {
 
 
 
-    private BuildConfiguration calculateBuildConfiguration(DynamicBuild build, BuildListener listener) throws IOException, InterruptedException, InvalidDotCiYmlException {
+    private BuildConfiguration calculateBuildConfiguration(DynamicBuild build, BuildListener listener) throws IOException, InterruptedException, InvalidBuildConfigurationException {
         return new BuildConfigurationCalculator().calculateBuildConfiguration(build.getGithubRepoUrl(), build.getSha(), build.getEnvironment(listener));
     }
 

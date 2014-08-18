@@ -25,7 +25,7 @@ package com.groupon.jenkins.dynamic.build;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.InvalidDotCiYmlException;
+import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.BuildEnvironment;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
@@ -192,8 +192,8 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
                 Result buildRunResult =   buildType.runBuild(DynamicBuild.this, this, launcher, listener);
 				setResult(buildRunResult);
 				return buildRunResult;
-			} catch (InvalidDotCiYmlException invalidDotCiYmlException) {
-				for (String error : invalidDotCiYmlException.getValidationErrors()) {
+			} catch (InvalidBuildConfigurationException invalidBuildConfigurationException) {
+				for (String error : invalidBuildConfigurationException.getValidationErrors()) {
 					listener.error(error);
 				}
 				return Result.FAILURE;

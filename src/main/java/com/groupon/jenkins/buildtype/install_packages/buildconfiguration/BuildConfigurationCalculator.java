@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
+import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.buildtype.install_packages.template.DotCiTemplate;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import hudson.EnvVars;
@@ -32,14 +33,14 @@ import org.kohsuke.github.GHContent;
 
 public class BuildConfigurationCalculator {
 
-	public BuildConfiguration calculateBuildConfiguration(String githubRepoUrl, String sha, EnvVars envVars) throws IOException, InterruptedException, InvalidDotCiYmlException {
+	public BuildConfiguration calculateBuildConfiguration(String githubRepoUrl, String sha, EnvVars envVars) throws IOException, InterruptedException, InvalidBuildConfigurationException {
 		GithubRepositoryService githubRepositoryService = getGithubRepositoryService(githubRepoUrl);
         DotCiTemplate dotCiTemplate = new DotCiTemplate();
 		try {
 			GHContent file = githubRepositoryService.getGHFile(".ci.yml", sha);
 			BuildConfiguration configuration = new BuildConfiguration(file.getContent(), envVars);
 			if (!configuration.isValid()) {
-				throw new InvalidDotCiYmlException(configuration.getValidationErrors());
+				throw new InvalidBuildConfigurationException(configuration.getValidationErrors());
 			}
 		  if(configuration.getLanguage() == null){
               return dotCiTemplate.getDefaultFor(githubRepositoryService.getGithubRepository()).getBuildConfiguration(envVars);

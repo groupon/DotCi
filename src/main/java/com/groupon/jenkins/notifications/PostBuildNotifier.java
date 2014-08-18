@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.notifications;
 
+import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.BuildListener;
@@ -31,7 +32,6 @@ import hudson.model.Run;
 import jenkins.model.Jenkins;
 
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.InvalidDotCiYmlException;
 
 public abstract class PostBuildNotifier implements ExtensionPoint {
 	public enum Type {
@@ -94,7 +94,7 @@ public abstract class PostBuildNotifier implements ExtensionPoint {
 			}
 
 		}
-		throw new InvalidDotCiYmlException("Notification " + pluginName + " not supported");
+		throw new InvalidBuildConfigurationException("Notification " + pluginName + " not supported");
 	}
 
 	public void setOptions(Object options) {
