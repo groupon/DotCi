@@ -23,41 +23,41 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.testhelpers;
 
-import hudson.model.Result;
+import com.google.common.collect.Lists;
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfiguration;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
+import com.groupon.jenkins.dynamic.build.DynamicSubProject;
+import com.groupon.jenkins.dynamic.build.cause.BuildCause;
+import com.groupon.jenkins.github.services.GithubRepositoryService;
 import hudson.model.Cause;
 import hudson.model.Cause.UpstreamCause;
 import hudson.model.Cause.UserIdCause;
-
+import hudson.model.Result;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
 import org.mockito.stubbing.OngoingStubbing;
 
-import com.google.common.collect.Lists;
-import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
-import com.groupon.jenkins.dynamic.build.DynamicSubProject;
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.cause.BuildCause;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfiguration;
-
 import static com.groupon.jenkins.testhelpers.TestHelpers.map;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class DynamicBuildFactory {
 
 	private final DynamicBuild build;
+    private final GithubRepositoryService githubRepositoryService;
 
-	public DynamicBuildFactory() {
+    public DynamicBuildFactory() {
 		this.build = mock(DynamicBuild.class);
 		when(build.getNumber()).thenReturn(new Random().nextInt());
 		when(build.getSha()).thenReturn("sha-1234");
 		when(build.getFullUrl()).thenReturn("http://absolute.url/meow");
 		when(build.getCause()).thenReturn(mock(BuildCause.class));
+        githubRepositoryService = mock(GithubRepositoryService.class);
+        when(build.getGithubRepositoryService()).thenReturn(githubRepositoryService);
 	}
 
 	public static DynamicBuildFactory newBuild() {
