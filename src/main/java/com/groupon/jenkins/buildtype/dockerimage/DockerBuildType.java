@@ -28,6 +28,7 @@ import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import com.groupon.jenkins.util.GroovyYamlTemplateProcessor;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.matrix.Combination;
@@ -35,7 +36,6 @@ import hudson.model.BuildListener;
 import hudson.model.Result;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.kohsuke.github.GHContent;
 
 @Extension
 public class DockerBuildType extends BuildType {
@@ -46,13 +46,17 @@ public class DockerBuildType extends BuildType {
 
     @Override
     public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
-        try {
-            GHContent dotCiyml = build.getGithubRepositoryService().getGHFile(".ci.yml", build.getSha());
-        } catch (FileNotFoundException _){
-        throw new InvalidBuildConfigurationException("No .ci.yml found.");
-    }
+        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration( new GroovyYamlTemplateProcessor( getDotCiYml(build),build.getDotCiEnvVars()).getConfig() );
         return Result.SUCCESS;
     }
+
+   private String getDotCiYml(DynamicBuild build) throws IOException {
+       try {
+           return build.getGithubRepositoryService().getGHFile(".ci.yml", build.getSha()).getContent();
+       } catch (FileNotFoundException _){
+           throw new InvalidBuildConfigurationException("No .ci.yml found.");
+       }
+   }
 
     @Override
     public Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
