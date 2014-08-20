@@ -27,22 +27,39 @@ package com.groupon.jenkins.buildtype.dockerimage;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.testhelpers.DynamicBuildFactory;
+import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import com.groupon.jenkins.util.GroovyYamlTemplateProcessor;
+import hudson.Extension;
 import hudson.Launcher;
+import hudson.matrix.Combination;
 import hudson.model.BuildListener;
+import hudson.model.Result;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.junit.Test;
 
-import static org.mockito.Mockito.*;
+@Extension
+public class DockerImageBuildType extends BuildType {
+    @Override
+    public String getDescription() {
+        return "Docker Build";
+    }
 
-public class DockerBuildTypeTest {
+    @Override
+    public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration( new GroovyYamlTemplateProcessor( getDotCiYml(build),build.getDotCiEnvVars()).getConfig() );
+        return Result.SUCCESS;
+    }
 
-    @Test(expected = InvalidBuildConfigurationException.class)
-    public void should_throw_exception_when_dotciyml_is_not_specified() throws IOException, InterruptedException {
-        DockerBuildType dockerBuildtype = new DockerBuildType();
-        DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().get();
-        when(dynamicBuild.getGithubRepositoryService().getGHFile(".ci.yml",dynamicBuild.getSha())).thenThrow(FileNotFoundException.class);
-        dockerBuildtype.runBuild(dynamicBuild, mock(BuildExecutionContext.class), mock(Launcher.class), mock(BuildListener.class));
+   private String getDotCiYml(DynamicBuild build) throws IOException {
+       try {
+           return build.getGithubRepositoryService().getGHFile(".ci.yml", build.getSha()).getContent();
+       } catch (FileNotFoundException _){
+           throw new InvalidBuildConfigurationException("No .ci.yml found.");
+       }
+   }
+
+    @Override
+    public Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
+        return null;
     }
 }
