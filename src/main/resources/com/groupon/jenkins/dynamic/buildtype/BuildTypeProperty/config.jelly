@@ -25,7 +25,7 @@
     <f:entry  title="Build Type" field="builtType">
         <select name="buildType">
             <j:forEach var="s" items="${it.buildTypes}">
-                <option value="${s.id}">${s.description}</option>
+                <option value="${s.id}" selected="${s.id == it.buildType ?'true':null}">${s.description}</option>
             </j:forEach>
         </select>
     </f:entry>

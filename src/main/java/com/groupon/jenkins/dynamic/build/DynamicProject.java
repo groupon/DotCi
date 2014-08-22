@@ -31,6 +31,7 @@ import com.groupon.jenkins.branchhistory.BranchHistoryWidget;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import com.groupon.jenkins.dynamic.buildtype.BuildTypeProperty;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
 import com.groupon.jenkins.github.GithubRepoProperty;
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
@@ -127,6 +128,10 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
     public Iterable<BuildType> getBuildTypes(){
         return SetupConfig.get().getBuildTypes();
+    }
+
+    public String getBuildType(){
+        return getProperty(BuildTypeProperty.class) == null ? null : getProperty(BuildTypeProperty.class).getBuildType();
     }
 
 	@Override
