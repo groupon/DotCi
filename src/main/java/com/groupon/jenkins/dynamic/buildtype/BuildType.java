@@ -38,7 +38,7 @@ import jenkins.model.Jenkins;
 public abstract class BuildType implements ExtensionPoint{
     public static BuildType getBuildType() {
         for(BuildType buildType: all() ){
-            if(buildType.getId().equals(SetupConfig.get().getBuildType())){
+            if(buildType.getId().equals(SetupConfig.get().getDefaultBuildType())){
                 try {
                     return buildType.getClass().newInstance();
                 } catch (InstantiationException e) {

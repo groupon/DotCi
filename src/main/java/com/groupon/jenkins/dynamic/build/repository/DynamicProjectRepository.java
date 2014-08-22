@@ -146,7 +146,7 @@ public class DynamicProjectRepository extends MongoRepository {
 			}
 			project.addProperty(new ParametersDefinitionProperty(new GithubBranchParameterDefinition("BRANCH", "master",githubRepository.getUrl())));
 			project.addProperty(new GithubRepoProperty(githubRepository.getUrl()));
-            project.addProperty(new BuildTypeProperty(SetupConfig.get().getBuildType()));
+            project.addProperty(new BuildTypeProperty(SetupConfig.get().getDefaultBuildType()));
 
 			project.getPublishersList().add(new DotCiNotifier());
 			project.save();

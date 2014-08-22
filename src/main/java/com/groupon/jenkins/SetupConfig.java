@@ -40,8 +40,7 @@ public class SetupConfig extends GlobalConfiguration {
 	private String githubCallbackUrl;
 	private String label;
 	private String fromEmailAddress;
-    private String buildType;
-
+    private String defaultBuildType;
 	private String deployKey;
 
 	public static SetupConfig get() {
@@ -161,11 +160,11 @@ public class SetupConfig extends GlobalConfiguration {
 		this.deployKey = deployKey;
 	}
 
-    public String getBuildType() {
-        return buildType;
+    public String getDefaultBuildType() {
+        return defaultBuildType;
     }
 
-    public void setBuildType(String buildType) {
-        this.buildType = buildType;
+    public void setDefaultBuildType(String defaultBuildType) {
+        this.defaultBuildType = defaultBuildType;
     }
 }
