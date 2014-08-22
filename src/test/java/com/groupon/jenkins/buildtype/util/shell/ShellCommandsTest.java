@@ -21,10 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
+package com.groupon.jenkins.buildtype.util.shell;
 
 import junit.framework.Assert;
-
 import org.junit.Test;
 
 public class ShellCommandsTest {

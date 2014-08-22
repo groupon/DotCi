@@ -25,6 +25,7 @@ package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ConfigValue;
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import hudson.matrix.Combination;
 import java.util.Arrays;
 import java.util.Collections;

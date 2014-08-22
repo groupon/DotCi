@@ -27,10 +27,12 @@ package com.groupon.jenkins.buildtype.install_packages;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfiguration;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfigurationCalculator;
-import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins.DotCiPluginAdapter;
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import com.groupon.jenkins.buildtype.util.shell.ShellScriptRunner;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicBuildLayouter;
 import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
@@ -43,9 +45,7 @@ import hudson.matrix.Axis;
 import hudson.matrix.AxisList;
 import hudson.matrix.Combination;
 import hudson.model.BuildListener;
-import hudson.model.Executor;
 import hudson.model.Result;
-import hudson.tasks.Shell;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -114,21 +114,6 @@ public class InstallPackagesBuildType extends BuildType {
             }
         }
     }
-    public Result runShellScript(BuildExecutionContext dynamicBuildRun, BuildListener listener, String script) throws IOException, InterruptedException {
-        Result r = Result.FAILURE;
-        try {
-            Shell execution = new Shell("#!/bin/bash -le \n" + script);
-            if (dynamicBuildRun.performStep(execution, listener)) {
-                r = Result.SUCCESS;
-            }
-        } catch (InterruptedException e) {
-            r = Executor.currentExecutor().abortResult();
-            throw e;
-        } finally {
-            dynamicBuildRun.setResult(r);
-        }
-        return r;
-    }
 
     private Result runSingleConfigBuild(DynamicBuild dynamicBuild, Combination combination, BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
         Result result = runBuildCombination(combination, buildExecutionContext, listener);
@@ -143,8 +128,8 @@ public class InstallPackagesBuildType extends BuildType {
     }
 
     private Result runBuildCombination(Combination combination,BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
-        String mainBuildScript = buildConfiguration.toScript(combination).toShellScript();
-        return runShellScript(buildExecutionContext, listener, mainBuildScript);
+        ShellCommands mainBuildScript = buildConfiguration.toScript(combination);
+        return new ShellScriptRunner(buildExecutionContext,listener).runScript(mainBuildScript);
     }
 
 
