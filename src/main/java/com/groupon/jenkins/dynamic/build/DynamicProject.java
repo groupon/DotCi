@@ -26,9 +26,11 @@ package com.groupon.jenkins.dynamic.build;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.branchhistory.BranchHistoryWidget;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
+import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
 import com.groupon.jenkins.github.GithubRepoProperty;
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
@@ -121,6 +123,11 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 		permalinks.add(new LastSuccessfulMasterPermalink());
 		return permalinks;
 	}
+
+
+    public Iterable<BuildType> getBuildTypes(){
+        return SetupConfig.get().getBuildTypes();
+    }
 
 	@Override
 	@WithBridgeMethods(value = Jenkins.class, castRequired = true)

@@ -23,35 +23,35 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.repository;
 
-import com.groupon.jenkins.dynamic.build.*;
-import hudson.model.ItemGroup;
-import hudson.model.Items;
-import hudson.model.ParametersDefinitionProperty;
-import hudson.model.StringParameterDefinition;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import jenkins.model.Jenkins;
-
-import org.apache.commons.lang.StringUtils;
-import org.bson.types.ObjectId;
-import org.kohsuke.github.GHRepository;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainerRepository;
+import com.groupon.jenkins.dynamic.build.DbBackedProject;
+import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.dynamic.build.DynamicSubProject;
+import com.groupon.jenkins.dynamic.build.GithubBranchParameterDefinition;
+import com.groupon.jenkins.dynamic.build.IdentifableItemGroup;
+import com.groupon.jenkins.dynamic.buildtype.BuildTypeProperty;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
+import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainerRepository;
 import com.groupon.jenkins.github.GithubRepoProperty;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import com.groupon.jenkins.mongo.MongoRepository;
 import com.groupon.jenkins.notifications.DotCiNotifier;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import hudson.model.ItemGroup;
+import hudson.model.Items;
+import hudson.model.ParametersDefinitionProperty;
+import java.io.IOException;
+import java.util.List;
+import jenkins.model.Jenkins;
+import org.apache.commons.lang.StringUtils;
+import org.bson.types.ObjectId;
+import org.kohsuke.github.GHRepository;
+
+import javax.annotation.Nonnull;
 
 import static java.lang.String.format;
 
@@ -146,6 +146,7 @@ public class DynamicProjectRepository extends MongoRepository {
 			}
 			project.addProperty(new ParametersDefinitionProperty(new GithubBranchParameterDefinition("BRANCH", "master",githubRepository.getUrl())));
 			project.addProperty(new GithubRepoProperty(githubRepository.getUrl()));
+            project.addProperty(new BuildTypeProperty(SetupConfig.get().getBuildType()));
 
 			project.getPublishersList().add(new DotCiNotifier());
 			project.save();
