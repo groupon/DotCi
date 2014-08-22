@@ -23,16 +23,15 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListOrSingleValue;
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import hudson.matrix.Combination;
-
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Nullable;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListOrSingleValue;
 
 import static com.groupon.jenkins.buildtype.dockerimage.DockerCommandBuilder.dockerCommand;
 

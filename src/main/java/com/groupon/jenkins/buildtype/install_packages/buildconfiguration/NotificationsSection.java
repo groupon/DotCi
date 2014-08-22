@@ -23,16 +23,15 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
+import com.google.common.collect.Iterables;
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import com.groupon.jenkins.notifications.PostBuildNotifier;
 import hudson.matrix.Combination;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Iterables;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
-import com.groupon.jenkins.notifications.PostBuildNotifier;
 
 public class NotificationsSection extends ConfigSection<ListValue<?>> {
 

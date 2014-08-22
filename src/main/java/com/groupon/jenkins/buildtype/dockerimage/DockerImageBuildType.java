@@ -25,6 +25,8 @@
 package com.groupon.jenkins.buildtype.dockerimage;
 
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import com.groupon.jenkins.buildtype.util.shell.ShellScriptRunner;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
@@ -47,7 +49,9 @@ public class DockerImageBuildType extends BuildType {
     @Override
     public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
         DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration( new GroovyYamlTemplateProcessor( getDotCiYml(build),build.getDotCiEnvVars()).getConfig() );
-        return Result.SUCCESS;
+        ShellCommands checkoutCommands = CheckoutCommands.get(build.getDotCiEnvVars());
+        Result checkoutResult = new ShellScriptRunner(buildExecutionContext, listener).runScript(checkoutCommands);
+        return checkoutResult;
     }
 
    private String getDotCiYml(DynamicBuild build) throws IOException {

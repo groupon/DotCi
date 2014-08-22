@@ -23,12 +23,12 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.BooleanValue;
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.BooleanValue;
-
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class SkipSectionTest {
 

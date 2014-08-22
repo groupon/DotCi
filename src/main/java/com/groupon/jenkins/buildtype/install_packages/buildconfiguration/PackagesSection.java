@@ -23,13 +23,12 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
-import hudson.matrix.Combination;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.base.Joiner;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListOrSingleValue;
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import hudson.matrix.Combination;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PackagesSection extends ConfigSection<ListOrSingleValue<String>> {
 

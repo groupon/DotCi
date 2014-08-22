@@ -23,21 +23,18 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins.DotCiPluginAdapter;
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Test;
 
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins.DotCiPluginAdapter;
+import static org.junit.Assert.*;
 
 import static com.groupon.jenkins.testhelpers.TestHelpers.list;
 import static com.groupon.jenkins.testhelpers.TestHelpers.map;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;

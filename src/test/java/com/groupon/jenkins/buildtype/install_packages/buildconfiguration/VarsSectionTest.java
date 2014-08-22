@@ -23,14 +23,14 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.MapValue;
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import hudson.matrix.Combination;
-
 import org.junit.Test;
 
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.MapValue;
+import static org.junit.Assert.*;
 
 import static com.groupon.jenkins.testhelpers.TestHelpers.map;
-import static org.junit.Assert.assertTrue;
 
 public class VarsSectionTest {
 

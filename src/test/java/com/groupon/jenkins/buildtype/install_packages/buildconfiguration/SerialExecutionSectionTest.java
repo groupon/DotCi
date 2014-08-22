@@ -23,10 +23,12 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 import static com.groupon.jenkins.testhelpers.TestHelpers.configListOrSingleValue;
-import static org.junit.Assert.assertTrue;
 
 public class SerialExecutionSectionTest {
 

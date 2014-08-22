@@ -22,20 +22,23 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
+package com.groupon.jenkins.buildtype.dockerimage;
 
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.StringValue;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
-import hudson.matrix.Combination;
+import java.util.Map;
 
-public class ParentTemplateSection extends ConfigSection<StringValue> {
-    public static final String NAME ="parent_template";
-    protected ParentTemplateSection(StringValue configValue) {
-        super(NAME, configValue, MergeStrategy.REPLACE);
-    }
-
-    @Override
-    public ShellCommands toScript(Combination combination) {
-        return ShellCommands.NOOP;
+public class CheckoutCommands {
+    public static ShellCommands get(Map<String, String> dotCiEnvVars) {
+        ShellCommands shellCommands = new ShellCommands();
+        shellCommands.add("find . -delete");
+        if(dotCiEnvVars.get("DOTCI_PULL_REQUEST") != null){
+            shellCommands.add("git init");
+            shellCommands.add(String.format("git fetch origin \"+refs/pull/%s/merge:\"", dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
+            shellCommands.add("git reset --hard FETCH_HEAD");
+        }else {
+            shellCommands.add(String.format("git clone  --branch=%s %s .", dotCiEnvVars.get("DOTCI_BRANCH"), dotCiEnvVars.get("GIT_URL")));
+            shellCommands.add(String.format("git reset --hard  %s", dotCiEnvVars.get("SHA")));
+        }
+        return shellCommands;
     }
 }

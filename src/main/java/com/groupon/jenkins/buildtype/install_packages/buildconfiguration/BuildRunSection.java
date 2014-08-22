@@ -23,13 +23,12 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListOrMapOrString;
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import hudson.matrix.Combination;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListOrMapOrString;
 
 public class BuildRunSection extends ConfigSection<ListOrMapOrString> {
 	public static final String NAME = "run";

@@ -22,20 +22,24 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
+package com.groupon.jenkins.buildtype.dockerimage;
 
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.StringValue;
+import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
-import hudson.matrix.Combination;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class ParentTemplateSection extends ConfigSection<StringValue> {
-    public static final String NAME ="parent_template";
-    protected ParentTemplateSection(StringValue configValue) {
-        super(NAME, configValue, MergeStrategy.REPLACE);
+public class CheckoutCommandsTest {
+
+    @Test
+    public void should_checkout_pr_if_pr(){
+       ShellCommands commands = CheckoutCommands.get(ImmutableMap.of("DOTCI_PULL_REQUEST", "17")) ;
+        Assert.assertEquals("git fetch origin \"+refs/pull/17/merge:\"",commands.get(2));
     }
 
-    @Override
-    public ShellCommands toScript(Combination combination) {
-        return ShellCommands.NOOP;
+    @Test
+    public void should_checkout_branch_if_branch(){
+        ShellCommands commands = CheckoutCommands.get(ImmutableMap.of("GIT_URL", "git_url", "DOTCI_BRANCH","dotci_branch")) ;
+        Assert.assertEquals("git clone  --branch=dotci_branch git_url .",commands.get(1));
     }
 }

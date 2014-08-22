@@ -23,17 +23,14 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
-import hudson.matrix.Combination;
-
-import org.junit.Test;
-
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.ConfigSection.MergeStrategy;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListOrSingleValue;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.MapValue;
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import hudson.matrix.Combination;
+import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ConfigSectionTest {
 	@Test

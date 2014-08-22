@@ -24,12 +24,12 @@ THE SOFTWARE.
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
 import com.groupon.jenkins.buildtype.dockerimage.DockerCommandBuilder;
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListOrSingleValue;
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.MapValue;
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListOrSingleValue;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.MapValue;
 
 import static com.groupon.jenkins.buildtype.dockerimage.DockerCommandBuilder.dockerCommand;
 import static java.lang.String.format;

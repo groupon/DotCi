@@ -23,9 +23,9 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
-import hudson.matrix.Combination;
-
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.BooleanValue;
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import hudson.matrix.Combination;
 
 public class SkipSection extends ConfigSection<BooleanValue> {
 

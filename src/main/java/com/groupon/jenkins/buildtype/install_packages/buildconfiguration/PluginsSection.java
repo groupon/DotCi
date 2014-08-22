@@ -23,17 +23,16 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
+import com.google.common.collect.Iterables;
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins.DotCiPluginAdapter;
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import hudson.matrix.Combination;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Iterables;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins.DotCiPluginAdapter;
 
 public class PluginsSection extends ConfigSection<ListValue<?>> {
 
