@@ -25,6 +25,7 @@ package com.groupon.jenkins.dynamic.buildtype;
 
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
@@ -36,9 +37,10 @@ import java.io.IOException;
 import jenkins.model.Jenkins;
 
 public abstract class BuildType implements ExtensionPoint{
-    public static BuildType getBuildType() {
+    public static BuildType getBuildType(DynamicProject project) {
+        String requestedBuildType = project.getBuildType() == null ? SetupConfig.get().getDefaultBuildType() : project.getBuildType();
         for(BuildType buildType: all() ){
-            if(buildType.getId().equals(SetupConfig.get().getDefaultBuildType())){
+            if(buildType.getId().equals(requestedBuildType)){
                 try {
                     return buildType.getClass().newInstance();
                 } catch (InstantiationException e) {
