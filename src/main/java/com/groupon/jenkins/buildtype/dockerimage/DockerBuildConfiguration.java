@@ -47,7 +47,7 @@ public class DockerBuildConfiguration {
                 .flag("v", "`pwd`:/var/project")
                 .flag("w", "/var/project")
                 .flag("u", "`id -u`")
-                .args(getImageName(), "bash -c \"" +  getRunCommand() + "\"");
+                .args(getImageName(), "sh -c \"" +  getRunCommand() + "\"");
 
         exportEnvVars(runCommand);
         shellCommands.add(runCommand.get());

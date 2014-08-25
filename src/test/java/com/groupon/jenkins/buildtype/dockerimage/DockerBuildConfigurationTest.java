@@ -38,7 +38,7 @@ public class DockerBuildConfigurationTest {
                 "env", of("CI", "true"),
                 "script", "echo success"));
         ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands();
-        Assert.assertEquals("docker run --rm --sig-proxy=true -v `pwd`:/var/project -w /var/project -u `id -u` -e \"CI=true\" ubutu bash -c \"echo success\"",shellCommands.get(0));
+        Assert.assertEquals("docker run --rm --sig-proxy=true -v `pwd`:/var/project -w /var/project -u `id -u` -e \"CI=true\" ubutu sh -c \"echo success\"",shellCommands.get(0));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class DockerBuildConfigurationTest {
         DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
                 "script", "echo success"));
         ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands();
-        Assert.assertEquals("docker run --rm --sig-proxy=true -v `pwd`:/var/project -w /var/project -u `id -u` ubutu bash -c \"echo success\"",shellCommands.get(0));
+        Assert.assertEquals("docker run --rm --sig-proxy=true -v `pwd`:/var/project -w /var/project -u `id -u` ubutu sh -c \"echo success\"",shellCommands.get(0));
     }
 
 }
