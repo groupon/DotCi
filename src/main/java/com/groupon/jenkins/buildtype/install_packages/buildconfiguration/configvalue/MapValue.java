@@ -46,4 +46,9 @@ public class MapValue<K, V> extends ConfigValue<Map<K, V>> {
 		Map<K, V> otherValue = ((MapValue<K, V>) config).getValue();
 		getValue().putAll(otherValue);
 	}
+
+    @Override
+    public <R> R getValue(Class<R> returnType) {
+        return (R) getValue();
+    }
 }

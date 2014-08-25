@@ -50,8 +50,8 @@ public class DockerImageBuildType extends BuildType {
     public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
         DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration( new GroovyYamlTemplateProcessor( getDotCiYml(build),build.getDotCiEnvVars()).getConfig() );
         ShellCommands checkoutCommands = CheckoutCommands.get(build.getDotCiEnvVars());
-        Result checkoutResult = new ShellScriptRunner(buildExecutionContext, listener).runScript(checkoutCommands);
-        return checkoutResult;
+        checkoutCommands.add(dockerBuildConfiguration.toShellCommands());
+        return new ShellScriptRunner(buildExecutionContext, listener).runScript(checkoutCommands);
     }
 
    private String getDotCiYml(DynamicBuild build) throws IOException {

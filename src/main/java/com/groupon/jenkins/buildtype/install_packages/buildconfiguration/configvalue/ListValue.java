@@ -42,7 +42,12 @@ public class ListValue<T> extends ConfigValue<List<T>> {
 		setValue(mergedList);
 	}
 
-	@Override
+    @Override
+    public <R> R getValue(Class<R> returnType) {
+        return (R) getValue();
+    }
+
+    @Override
 	public boolean isEmpty() {
 		return getValue().isEmpty();
 	}

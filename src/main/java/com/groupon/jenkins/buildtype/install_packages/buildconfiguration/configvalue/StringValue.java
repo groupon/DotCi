@@ -33,4 +33,9 @@ public class StringValue extends ConfigValue<String> {
 	public void append(ConfigValue<?> config) {
 		throw new UnsupportedOperationException();
 	}
+
+    @Override
+    public <R> R getValue(Class<R> returnType) {
+        return (R) getValue();
+    }
 }

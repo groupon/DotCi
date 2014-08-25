@@ -50,7 +50,21 @@ public class ListOrMapOrString extends ConfigValue<Object> {
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean isMap() {
+    @Override
+    public <T> T getValue(Class<T> returnType) {
+        if(Map.class.isAssignableFrom(returnType)){
+          return (T) getMap();
+        }
+        if(List.class.isAssignableFrom(returnType)){
+            return (T) getValuesList();
+        }
+        if(String.class.isAssignableFrom(returnType)){
+            return (T) getValue();
+        }
+     throw new IllegalArgumentException("Return Type :" + returnType + " not supported.");
+    }
+
+    public boolean isMap() {
 		return getValue() instanceof Map;
 	}
 

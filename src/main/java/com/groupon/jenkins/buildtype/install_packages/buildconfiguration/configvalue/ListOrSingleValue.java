@@ -71,7 +71,15 @@ public class ListOrSingleValue<T> extends ConfigValue<Object> {
 
 	}
 
-	public int size() {
+    @Override
+    public <R> R getValue(Class<R> returnType) {
+        if(List.class.isAssignableFrom(returnType)){
+            return (R) getValues();
+        }
+        return (R) getValue();
+    }
+
+    public int size() {
 		return getValues().size();
 	}
 

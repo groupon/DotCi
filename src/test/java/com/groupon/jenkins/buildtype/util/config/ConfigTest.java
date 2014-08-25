@@ -22,50 +22,20 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.buildtype.dockerimage;
+package com.groupon.jenkins.buildtype.util.config;
 
+import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListOrSingleValue;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.MapValue;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.StringValue;
-import com.groupon.jenkins.buildtype.util.config.Config;
-import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
-import java.util.Map;
+import  org.junit.Assert;
+import org.junit.Test;
 
-public class DockerBuildConfiguration {
-    private Config config;
-
-    public DockerBuildConfiguration(Map config) {
-        this.config = new Config(config, "image", StringValue.class, "env", MapValue.class, "script", ListOrSingleValue.class);
-    }
-
-    public ShellCommands toShellCommands() {
-        ShellCommands shellCommands = new ShellCommands();
-
-        DockerCommandBuilder runCommand = DockerCommandBuilder.dockerCommand("run")
-                .flag("rm")
-                .flag("sig-proxy=true")
-                .flag("v", "`pwd`:/var/project")
-                .flag("w", "/var/project")
-                .flag("u", "`id -u`")
-                .args(getImageName(), getRunCommand());
-
-        //exportEnvVars(runCommand, getEnvVars());
-
-        return shellCommands;
-    }
-
-    private String getRunCommand() {
-        return config.get("script",String.class);
-    }
-
-    private String getImageName() {
-      return (String) config.get("image",String.class);
-    }
-
-
-    private void exportEnvVars(DockerCommandBuilder runCommand, Map<String, String> envVars) {
-        for (Map.Entry<String, String> var : envVars.entrySet()) {
-            runCommand.flag("e", String.format("\"%s=%s\"", var.getKey(), var.getValue()));
-        }
+public class ConfigTest {
+    @Test
+    public void should_let_you_specify_format(){
+        Config config = new Config(ImmutableMap.of("image", "meow:1.2"), "image", StringValue.class, "env", MapValue.class, "script", ListOrSingleValue.class);
+        String image = config.get("image", String.class);
+        Assert.assertEquals("meow:1.2",image);
     }
 }

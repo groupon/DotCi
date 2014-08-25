@@ -69,4 +69,5 @@ public abstract class ConfigValue<T> extends TypeLiteral<T> {
 		this.value = newValue;
 	}
 
+    public abstract <T> T getValue(Class<T> returnType);
 }

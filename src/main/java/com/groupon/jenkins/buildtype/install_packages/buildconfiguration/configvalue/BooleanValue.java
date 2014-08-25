@@ -39,4 +39,9 @@ public class BooleanValue extends ConfigValue<Boolean> {
 		return super.getValue() == null ? Boolean.FALSE : super.getValue();
 	}
 
+    @Override
+    public <T> T getValue(Class<T> returnType) {
+        return (T) getValue();
+    }
+
 }
