@@ -24,14 +24,29 @@
 
 package com.groupon.jenkins.buildtype.dockerimage;
 
-import java.util.Map;
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import org.junit.Assert;
 import org.junit.Test;
+
+import static com.google.common.collect.ImmutableMap.of;
 
 public class DockerBuildConfigurationTest {
 
     @Test
-    public void should_run_command() throws Exception {
+    public void should_export_env_variables() throws Exception {
+        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
+                "env", of("CI", "true"),
+                "script", "echo success"));
+        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands();
+        Assert.assertEquals("docker run --rm --sig-proxy=true -v `pwd`:/var/project -w /var/project -u `id -u` -e \"CI=true\" ubutu bash -c \"echo success\"",shellCommands.get(0));
+    }
 
+    @Test
+    public void should_run_container_with_script_command() throws Exception {
+        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
+                "script", "echo success"));
+        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands();
+        Assert.assertEquals("docker run --rm --sig-proxy=true -v `pwd`:/var/project -w /var/project -u `id -u` ubutu bash -c \"echo success\"",shellCommands.get(0));
     }
 
 }

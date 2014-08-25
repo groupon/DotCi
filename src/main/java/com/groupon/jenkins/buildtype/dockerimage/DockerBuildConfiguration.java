@@ -47,9 +47,10 @@ public class DockerBuildConfiguration {
                 .flag("v", "`pwd`:/var/project")
                 .flag("w", "/var/project")
                 .flag("u", "`id -u`")
-                .args(getImageName(), getRunCommand());
+                .args(getImageName(), "bash -c \"" +  getRunCommand() + "\"");
 
-        //exportEnvVars(runCommand, getEnvVars());
+        exportEnvVars(runCommand);
+        shellCommands.add(runCommand.get());
 
         return shellCommands;
     }
@@ -59,13 +60,16 @@ public class DockerBuildConfiguration {
     }
 
     private String getImageName() {
-      return (String) config.get("image",String.class);
+      return config.get("image",String.class);
     }
 
 
-    private void exportEnvVars(DockerCommandBuilder runCommand, Map<String, String> envVars) {
-        for (Map.Entry<String, String> var : envVars.entrySet()) {
-            runCommand.flag("e", String.format("\"%s=%s\"", var.getKey(), var.getValue()));
+    private void exportEnvVars(DockerCommandBuilder runCommand) {
+        if(config.containsKey("env")){
+            Map<String, String> envVars = config.get("env",Map.class);
+            for (Map.Entry<String, String> var : envVars.entrySet()) {
+                runCommand.flag("e", String.format("\"%s=%s\"", var.getKey(), var.getValue()));
+            }
         }
     }
 }

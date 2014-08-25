@@ -76,6 +76,9 @@ public class ListOrSingleValue<T> extends ConfigValue<Object> {
         if(List.class.isAssignableFrom(returnType)){
             return (R) getValues();
         }
+        if(String.class.isAssignableFrom(returnType)){
+            return (R)getValues().get(0);
+        }
         return (R) getValue();
     }
 

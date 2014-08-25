@@ -67,4 +67,8 @@ public class Config {
         }
         return null;
     }
+
+    public boolean containsKey(String key) {
+        return config.containsKey(key);
+    }
 }
