@@ -39,6 +39,7 @@ import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildScheduler;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import com.groupon.jenkins.notifications.PostBuildNotifier;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.matrix.Axis;
@@ -73,11 +74,24 @@ public class InstallPackagesBuildType extends BuildType {
 
         setLayouter(dynamicBuild, buildConfiguration);
         dynamicBuild.setDescription(dynamicBuild.getCause().getBuildDescription());
+        Result result ;
         if(buildConfiguration.isParallized()){
-            return runMultiConfigbuildRunner(dynamicBuild, buildConfiguration, listener,launcher) ;
+            result = runMultiConfigbuildRunner(dynamicBuild, buildConfiguration, listener, launcher);;
         }else{
-            return runSingleConfigBuild(dynamicBuild, new Combination(ImmutableMap.of("script", "main")),buildConfiguration,buildExecutionContext,listener,launcher) ;
+            result = runSingleConfigBuild(dynamicBuild, new Combination(ImmutableMap.of("script", "main")),buildConfiguration,buildExecutionContext,listener,launcher) ;
         }
+        runPlugins(dynamicBuild, buildConfiguration.getPlugins(), listener, launcher);
+        runNotifiers(dynamicBuild,buildConfiguration,listener);
+        return result;
+    }
+
+    private boolean runNotifiers(DynamicBuild build, BuildConfiguration buildConfiguration, BuildListener listener) {
+        boolean result = true ;
+        List<PostBuildNotifier> notifiers = buildConfiguration.getNotifiers();
+        for (PostBuildNotifier notifier : notifiers) {
+            result = result & notifier.perform(build, listener);
+        }
+        return result;
     }
 
     @Override
@@ -103,7 +117,6 @@ public class InstallPackagesBuildType extends BuildType {
                 combinedResult = combinedResult.combine(runSubBuildResults);
             }
             dynamicBuild.setResult(combinedResult);
-            runPlugins(dynamicBuild, buildConfiguration.getPlugins(), listener, launcher);
             return combinedResult;
         } finally {
             try {
@@ -116,9 +129,7 @@ public class InstallPackagesBuildType extends BuildType {
     }
 
     private Result runSingleConfigBuild(DynamicBuild dynamicBuild, Combination combination, BuildConfiguration buildConfiguration, BuildExecutionContext buildExecutionContext, BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
-        Result result = runBuildCombination(combination, buildExecutionContext, listener);
-        runPlugins(dynamicBuild, buildConfiguration.getPlugins(), listener, launcher);
-        return result;
+        return runBuildCombination(combination, buildExecutionContext, listener);
     }
 
     private void runPlugins(DynamicBuild dynamicBuild, List<DotCiPluginAdapter> plugins, BuildListener listener, Launcher launcher) {

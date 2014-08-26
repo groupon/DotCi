@@ -38,7 +38,6 @@ import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainerRe
 import com.groupon.jenkins.github.GithubRepoProperty;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import com.groupon.jenkins.mongo.MongoRepository;
-import com.groupon.jenkins.notifications.DotCiNotifier;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import hudson.model.ItemGroup;
@@ -148,7 +147,6 @@ public class DynamicProjectRepository extends MongoRepository {
 			project.addProperty(new GithubRepoProperty(githubRepository.getUrl()));
             project.addProperty(new BuildTypeProperty(SetupConfig.get().getDefaultBuildType()));
 
-			project.getPublishersList().add(new DotCiNotifier());
 			project.save();
 			folder.addItem(project);
 			folder.save();
