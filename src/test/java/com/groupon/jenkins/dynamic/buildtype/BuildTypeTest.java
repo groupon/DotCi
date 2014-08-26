@@ -25,8 +25,8 @@
 package com.groupon.jenkins.dynamic.buildtype;
 
 import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.buildtype.dockerimage.DockerImageBuildType;
-import com.groupon.jenkins.buildtype.install_packages.InstallPackagesBuildType;
+import com.groupon.jenkins.buildtype.dockerimage.DockerImageBuild;
+import com.groupon.jenkins.buildtype.install_packages.InstallPackagesBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -39,8 +39,8 @@ public class BuildTypeTest {
     public JenkinsRule j = new JenkinsRule();
     @Test
     public void should_use_project_buildtype_if_available() throws Exception {
-        String dockerImageBuildType = new DockerImageBuildType().getId();
-        String installPackagesBuildType = new InstallPackagesBuildType().getId();
+        String dockerImageBuildType = new DockerImageBuild().getId();
+        String installPackagesBuildType = new InstallPackagesBuild().getId();
         SetupConfig.get().setDefaultBuildType(dockerImageBuildType);
         DynamicProject dynamicProject = Mockito.mock(DynamicProject.class);
         Mockito.when(dynamicProject.getBuildType()).thenReturn(installPackagesBuildType);

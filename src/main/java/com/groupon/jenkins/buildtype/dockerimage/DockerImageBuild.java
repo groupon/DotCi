@@ -40,7 +40,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @Extension
-public class DockerImageBuildType extends BuildType {
+public class DockerImageBuild extends BuildType {
     @Override
     public String getDescription() {
         return "Docker Build";

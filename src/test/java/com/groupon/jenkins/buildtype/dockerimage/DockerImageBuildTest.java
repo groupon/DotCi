@@ -36,11 +36,11 @@ import org.junit.Test;
 
 import static org.mockito.Mockito.*;
 
-public class DockerImageBuildTypeTest {
+public class DockerImageBuildTest {
 
     @Test(expected = InvalidBuildConfigurationException.class)
     public void should_throw_exception_when_dotciyml_is_not_specified() throws IOException, InterruptedException {
-        DockerImageBuildType dockerImageBuildtype = new DockerImageBuildType();
+        DockerImageBuild dockerImageBuildtype = new DockerImageBuild();
         DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().get();
         when(dynamicBuild.getGithubRepositoryService().getGHFile(".ci.yml",dynamicBuild.getSha())).thenThrow(FileNotFoundException.class);
         dockerImageBuildtype.runBuild(dynamicBuild, mock(BuildExecutionContext.class), mock(Launcher.class), mock(BuildListener.class));

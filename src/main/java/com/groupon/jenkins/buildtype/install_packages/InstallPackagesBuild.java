@@ -55,8 +55,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Extension
-public class InstallPackagesBuildType extends BuildType {
-    private static final Logger LOGGER = Logger.getLogger(InstallPackagesBuildType.class.getName());
+public class InstallPackagesBuild extends BuildType {
+    private static final Logger LOGGER = Logger.getLogger(InstallPackagesBuild.class.getName());
     private BuildConfiguration buildConfiguration;
 
     @Override
