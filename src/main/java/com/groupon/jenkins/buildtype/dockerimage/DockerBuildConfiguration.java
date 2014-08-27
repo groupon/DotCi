@@ -47,9 +47,6 @@ public class DockerBuildConfiguration {
         DockerCommandBuilder dockerRunCommand = DockerCommandBuilder.dockerCommand("run")
                 .flag("rm")
                 .flag("sig-proxy=true")
-                .flag("v", "`pwd`:/var/project")
-                .flag("w", "/var/project")
-                .flag("u", "`id -u`")
                 .args(getImageName(), "sh -c \"" +  getRunCommand() + "\"");
 
         exportEnvVars(dockerRunCommand);
