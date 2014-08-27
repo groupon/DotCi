@@ -25,19 +25,23 @@
 package com.groupon.jenkins.buildtype.dockerimage;
 
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import com.groupon.jenkins.github.GitUrl;
 import java.util.Map;
+import static java.lang.String.format;
 
 public class CheckoutCommands {
     public static ShellCommands get(Map<String, String> dotCiEnvVars) {
+        String gitUrl = new GitUrl(dotCiEnvVars.get("GIT_URL")).getUrl();
         ShellCommands shellCommands = new ShellCommands();
         shellCommands.add("find . -delete");
         if(dotCiEnvVars.get("DOTCI_PULL_REQUEST") != null){
             shellCommands.add("git init");
-            shellCommands.add(String.format("git fetch origin \"+refs/pull/%s/merge:\"", dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
+            shellCommands.add(format("git remote add origin %s",gitUrl));
+            shellCommands.add(format("git fetch origin \"+refs/pull/%s/merge:\"", dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
             shellCommands.add("git reset --hard FETCH_HEAD");
         }else {
-            shellCommands.add(String.format("git clone  --branch=%s %s .", dotCiEnvVars.get("DOTCI_BRANCH"), dotCiEnvVars.get("GIT_URL")));
-            shellCommands.add(String.format("git reset --hard  %s", dotCiEnvVars.get("SHA")));
+            shellCommands.add(format("git clone  --branch=%s %s .", dotCiEnvVars.get("DOTCI_BRANCH"), gitUrl));
+            shellCommands.add(format("git reset --hard  %s", dotCiEnvVars.get("SHA")));
         }
         return shellCommands;
     }

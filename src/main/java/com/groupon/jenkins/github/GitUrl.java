@@ -49,10 +49,6 @@ public class GitUrl {
 		}
 	}
 
-	public String getOrgName() {
-		return orgName;
-	}
-
 	public String getFullRepoName() {
 		return orgName + "/" + name;
 	}
