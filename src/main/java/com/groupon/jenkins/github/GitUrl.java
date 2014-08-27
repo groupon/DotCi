@@ -26,13 +26,13 @@ package com.groupon.jenkins.github;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GitSshUrl {
+public class GitUrl {
 	private static final Pattern GITHUB_HTTP_URL = Pattern.compile("^https?://(.*)/(.*)/(.*)");
 	private final String url;
 	private final String orgName;
 	private final String name;
 
-	public GitSshUrl(String url) {
+	public GitUrl(String url) {
 		Matcher matcher = GITHUB_HTTP_URL.matcher(url);
 		if (matcher.matches()) {
 			this.orgName = matcher.group(2);

@@ -26,7 +26,7 @@ package com.groupon.jenkins.github.services;
 import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.github.GitBranch;
-import com.groupon.jenkins.github.GitSshUrl;
+import com.groupon.jenkins.github.GitUrl;
 import com.groupon.jenkins.github.GithubUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.github.*;
@@ -134,7 +134,7 @@ public class GithubRepositoryService {
 
 	private synchronized GHRepository getRepository() {
 		if (repository == null) {
-			String fullRepoName = new GitSshUrl(repoUrl).getFullRepoName();
+			String fullRepoName = new GitUrl(repoUrl).getFullRepoName();
 			try {
 				repository = getGithub().getRepository(fullRepoName);
 			} catch (IOException e) {

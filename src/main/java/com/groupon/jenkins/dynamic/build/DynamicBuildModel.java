@@ -27,7 +27,7 @@ import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.cause.ManualBuildCause;
 import com.groupon.jenkins.dynamic.build.cause.UnknownBuildCause;
 import com.groupon.jenkins.github.GitBranch;
-import com.groupon.jenkins.github.GitSshUrl;
+import com.groupon.jenkins.github.GitUrl;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import hudson.model.Cause.UserIdCause;
 import java.io.IOException;
@@ -99,7 +99,7 @@ public class DynamicBuildModel {
 	public Map<String, String> getDotCiEnvVars() {
 		Map<String, String> vars = new HashMap<String, String>();
 		vars.put("SHA", build.getSha());
-		vars.put("GIT_URL", new GitSshUrl(build.getParent().getGithubRepoUrl()).getUrl());
+		vars.put("GIT_URL", new GitUrl(build.getParent().getGithubRepoUrl()).getUrl());
 		return vars;
 	}
 }

@@ -27,7 +27,7 @@ package com.groupon.jenkins.github.security;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DynamicSubProject;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
-import com.groupon.jenkins.github.GitSshUrl;
+import com.groupon.jenkins.github.GitUrl;
 import hudson.model.AbstractItem;
 import hudson.model.Job;
 import hudson.security.ACL;
@@ -103,7 +103,7 @@ public class DotCiACL extends ACL {
     }
 
     private boolean isRepoMember(GithubAuthenticationToken authentication) {
-        String repoName = new GitSshUrl(project.getGithubRepoUrl()).getFullRepoName();
+        String repoName = new GitUrl(project.getGithubRepoUrl()).getFullRepoName();
         return authentication.hasRepositoryPermission(repoName);
     }
 

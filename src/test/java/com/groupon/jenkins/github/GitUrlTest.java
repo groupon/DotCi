@@ -27,29 +27,29 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class GitSshUrlTest {
+public class GitUrlTest {
 
 	@Test
 	public void should_get_full_name_from_url() {
-		String fullName = new GitSshUrl("git@github.com:suryagaddipati/cancan.git").getFullRepoName();
+		String fullName = new GitUrl("git@github.com:suryagaddipati/cancan.git").getFullRepoName();
 		assertEquals("suryagaddipati/cancan", fullName);
 	}
 
 	@Test
 	public void should_accept_dots_in_the_url() {
-		String project = new GitSshUrl("git@github.acme.com:foo/bar.rb.git").getFullRepoName();
+		String project = new GitUrl("git@github.acme.com:foo/bar.rb.git").getFullRepoName();
 		assertEquals("foo/bar.rb", project);
 	}
 
 	@Test
 	public void should_normalize_http_url() {
-		String project = new GitSshUrl("https://github.acme.com/foo/bar.rb").getFullRepoName();
+		String project = new GitUrl("https://github.acme.com/foo/bar.rb").getFullRepoName();
 		assertEquals("foo/bar.rb", project);
 	}
 
 	@Test
 	public void should_convert_http_url_int_git_url() {
-		String projectUrl = new GitSshUrl("https://github.acme.com/foo/bar.rb").getUrl();
+		String projectUrl = new GitUrl("https://github.acme.com/foo/bar.rb").getUrl();
 		assertEquals("git@github.acme.com:foo/bar.rb.git", projectUrl);
 	}
 }
