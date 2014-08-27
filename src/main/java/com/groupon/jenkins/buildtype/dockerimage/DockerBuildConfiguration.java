@@ -29,6 +29,7 @@ import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configv
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.StringValue;
 import com.groupon.jenkins.buildtype.util.config.Config;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import java.util.List;
 import java.util.Map;
 
 public class DockerBuildConfiguration {
@@ -41,7 +42,7 @@ public class DockerBuildConfiguration {
     public ShellCommands toShellCommands() {
         ShellCommands shellCommands = new ShellCommands();
 
-        DockerCommandBuilder runCommand = DockerCommandBuilder.dockerCommand("run")
+        DockerCommandBuilder dockerRunCommand = DockerCommandBuilder.dockerCommand("run")
                 .flag("rm")
                 .flag("sig-proxy=true")
                 .flag("v", "`pwd`:/var/project")
@@ -49,14 +50,15 @@ public class DockerBuildConfiguration {
                 .flag("u", "`id -u`")
                 .args(getImageName(), "sh -c \"" +  getRunCommand() + "\"");
 
-        exportEnvVars(runCommand);
-        shellCommands.add(runCommand.get());
+        exportEnvVars(dockerRunCommand);
+        shellCommands.add(dockerRunCommand.get());
 
         return shellCommands;
     }
 
     private String getRunCommand() {
-        return config.get("script",String.class);
+        List commands = config.get("script", List.class);
+        return new ShellCommands(commands).toSingleShellCommand();
     }
 
     private String getImageName() {

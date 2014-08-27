@@ -25,6 +25,7 @@
 package com.groupon.jenkins.buildtype.dockerimage;
 
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -44,9 +45,9 @@ public class DockerBuildConfigurationTest {
     @Test
     public void should_run_container_with_script_command() throws Exception {
         DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
-                "script", "echo success"));
+                "script", Arrays.asList("echo step1", "echo step2")));
         ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands();
-        Assert.assertEquals("docker run --rm --sig-proxy=true -v `pwd`:/var/project -w /var/project -u `id -u` ubutu sh -c \"echo success\"",shellCommands.get(0));
+        Assert.assertEquals("docker run --rm --sig-proxy=true -v `pwd`:/var/project -w /var/project -u `id -u` ubutu sh -c \"echo step1 && echo step2\"",shellCommands.get(0));
     }
 
 }

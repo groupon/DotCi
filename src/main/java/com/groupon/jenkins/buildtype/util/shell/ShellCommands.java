@@ -104,7 +104,7 @@ public class ShellCommands {
 		return commands;
 	}
 
-	public String toShellCommand() {
+	public String toSingleShellCommand() {
 		return Joiner.on(" && ").join(commands);
 	}
 
