@@ -34,8 +34,10 @@ import java.util.Map;
 
 public class DockerBuildConfiguration {
     private Config config;
+    private ShellCommands checkoutCommands;
 
-    public DockerBuildConfiguration(Map config) {
+    public DockerBuildConfiguration(Map config, ShellCommands checkoutCommands) {
+        this.checkoutCommands = checkoutCommands;
         this.config = new Config(config, "image", StringValue.class, "env", MapValue.class, "script", ListOrSingleValue.class);
     }
 
@@ -58,7 +60,7 @@ public class DockerBuildConfiguration {
 
     private String getRunCommand() {
         List commands = config.get("script", List.class);
-        return new ShellCommands(commands).toSingleShellCommand();
+        return checkoutCommands.add(new ShellCommands(commands)).toSingleShellCommand();
     }
 
     private String getImageName() {

@@ -30,6 +30,7 @@ import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.util.GroovyYamlTemplateProcessor;
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.matrix.Combination;
@@ -37,6 +38,7 @@ import hudson.model.BuildListener;
 import hudson.model.Result;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Map;
 
 @Extension
 public class DockerImageBuild extends BuildType {
@@ -47,7 +49,9 @@ public class DockerImageBuild extends BuildType {
 
     @Override
     public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
-        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration( new GroovyYamlTemplateProcessor( getDotCiYml(build),build.getEnvironment(listener)).getConfig() );
+        EnvVars buildEnvironment = build.getEnvironment(listener);
+        Map config = new GroovyYamlTemplateProcessor(getDotCiYml(build), buildEnvironment).getConfig();
+        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(config,CheckoutCommands.get(buildEnvironment));
         return new ShellScriptRunner(buildExecutionContext, listener).runScript(dockerBuildConfiguration.toShellCommands());
     }
 

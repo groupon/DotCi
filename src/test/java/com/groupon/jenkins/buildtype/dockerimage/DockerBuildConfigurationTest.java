@@ -37,7 +37,7 @@ public class DockerBuildConfigurationTest {
     public void should_export_env_variables() throws Exception {
         DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
                 "env", of("CI", "true"),
-                "script", "echo success"));
+                "script", "echo success"),new ShellCommands());
         ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands();
         Assert.assertEquals("docker run --rm --sig-proxy=true -v `pwd`:/var/project -w /var/project -u `id -u` -e \"CI=true\" ubutu sh -c \"echo success\"",shellCommands.get(0));
     }
@@ -45,9 +45,19 @@ public class DockerBuildConfigurationTest {
     @Test
     public void should_run_container_with_script_command() throws Exception {
         DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
-                "script", Arrays.asList("echo step1", "echo step2")));
+                "script", Arrays.asList("echo step1", "echo step2")),new ShellCommands());
         ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands();
         Assert.assertEquals("docker run --rm --sig-proxy=true -v `pwd`:/var/project -w /var/project -u `id -u` ubutu sh -c \"echo step1 && echo step2\"",shellCommands.get(0));
     }
+
+
+    @Test
+    public void should_run_checkout_commands_before_script_commands() throws Exception {
+        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
+                "script", Arrays.asList("echo step1", "echo step2")),new ShellCommands("checkout command1"));
+        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands();
+        Assert.assertEquals("docker run --rm --sig-proxy=true -v `pwd`:/var/project -w /var/project -u `id -u` ubutu sh -c \"checkout command1 && echo step1 && echo step2\"",shellCommands.get(0));
+    }
+
 
 }
