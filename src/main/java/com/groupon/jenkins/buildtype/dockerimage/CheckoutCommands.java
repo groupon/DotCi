@@ -31,16 +31,18 @@ import static java.lang.String.format;
 
 public class CheckoutCommands {
     public static ShellCommands get(Map<String, String> dotCiEnvVars) {
-        String gitUrl = new GitUrl(dotCiEnvVars.get("GIT_URL")).getUrl();
+        GitUrl gitRepoUrl = new GitUrl(dotCiEnvVars.get("GIT_URL"));
+        String gitUrl = gitRepoUrl.getGitUrl();
+        String checkoutLocation = format("/var/%s",gitRepoUrl.getFullRepoName());
         ShellCommands shellCommands = new ShellCommands();
-        shellCommands.add("find . -delete");
         if(dotCiEnvVars.get("DOTCI_PULL_REQUEST") != null){
-            shellCommands.add("git init");
-            shellCommands.add(format("git remote add origin %s",gitUrl));
+            shellCommands.add(format("git clone  --depth=50 %s %s",gitUrl,checkoutLocation));
+            shellCommands.add("cd " + checkoutLocation);
             shellCommands.add(format("git fetch origin \"+refs/pull/%s/merge:\"", dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
             shellCommands.add("git reset --hard FETCH_HEAD");
         }else {
-            shellCommands.add(format("git clone  --branch=%s %s .", dotCiEnvVars.get("DOTCI_BRANCH"), gitUrl));
+            shellCommands.add(format("git clone  --branch=%s %s %s", dotCiEnvVars.get("DOTCI_BRANCH"), gitUrl,checkoutLocation));
+            shellCommands.add("cd " + checkoutLocation);
             shellCommands.add(format("git reset --hard  %s", dotCiEnvVars.get("SHA")));
         }
         return shellCommands;

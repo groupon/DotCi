@@ -28,24 +28,30 @@ import java.util.regex.Pattern;
 
 public class GitUrl {
 	private static final Pattern GITHUB_HTTP_URL = Pattern.compile("^https?://(.*)/(.*)/(.*)");
+    private static final Pattern GITHUB_SSH_URL = Pattern.compile("^git@(.*):(.*)/(.*).git");
 	private final String url;
 	private final String orgName;
 	private final String name;
+    private final String domain;
 
-	public GitUrl(String url) {
+    public GitUrl(String url) {
 		Matcher matcher = GITHUB_HTTP_URL.matcher(url);
 		if (matcher.matches()) {
 			this.orgName = matcher.group(2);
 			this.name = matcher.group(3);
-			this.url = "git@" + matcher.group(1) + ":" + this.orgName + "/" + this.name + ".git";
+            this.domain = matcher.group(1);
+			this.url = "git@" + this.domain + ":" + this.orgName + "/" + this.name + ".git";
 		} else {
 			this.url = url;
-			if (url.split(":").length < 2) {
-				throw new IllegalArgumentException("URL: " + url + " is not valid");
-			}
-			String[] view_name = url.split(":")[1].split("/");
-			this.name = view_name[1].replace(".git", "");
-			this.orgName = view_name[0];
+            Matcher sshMatcher = GITHUB_SSH_URL.matcher(url);
+            if(sshMatcher.matches()){
+                this.orgName = sshMatcher.group(2);
+                this.name = sshMatcher.group(3);
+                this.domain = sshMatcher.group(1);
+            }else{
+                throw new IllegalArgumentException("Invalid git url " + url);
+            }
+
 		}
 	}
 
@@ -57,4 +63,12 @@ public class GitUrl {
 		return url;
 	}
 
+    public String getGitUrl(){
+       return String.format("git://%s/%s/%s.git",domain,orgName,name);
+    }
+
+
+    public String getName() {
+        return name;
+    }
 }

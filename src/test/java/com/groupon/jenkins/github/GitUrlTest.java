@@ -48,8 +48,13 @@ public class GitUrlTest {
 	}
 
 	@Test
-	public void should_convert_http_url_int_git_url() {
+	public void should_convert_http_url_into_ssh_url() {
 		String projectUrl = new GitUrl("https://github.acme.com/foo/bar.rb").getUrl();
 		assertEquals("git@github.acme.com:foo/bar.rb.git", projectUrl);
 	}
+    @Test
+    public void should_convert_http_url_into_git_url() {
+        String projectUrl = new GitUrl("https://github.com/groupon/DotCi").getGitUrl();
+        assertEquals("git://github.com/groupon/DotCi.git", projectUrl);
+    }
 }

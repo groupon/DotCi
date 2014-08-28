@@ -161,6 +161,9 @@ public class SetupConfig extends GlobalConfiguration {
 	}
 
     public String getDefaultBuildType() {
+        if (StringUtils.isEmpty(defaultBuildType)) {
+            return BuildType.all().get(0).getId();
+        }
         return defaultBuildType;
     }
 
