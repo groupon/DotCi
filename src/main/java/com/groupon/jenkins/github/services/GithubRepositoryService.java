@@ -81,13 +81,13 @@ public class GithubRepositoryService {
 		Map<String, String> params = ImmutableMap.of("url", githubCallbackUrl);
 		List<GHEvent> events = Arrays.asList(GHEvent.PUSH, GHEvent.PULL_REQUEST);
 		githubAccessTokenRepository.put(getRepository().getUrl());
-		removeExistingHook();
+		removeExistingHook(githubCallbackUrl);
 		getRepository().createHook("web", params, events, true);
 	}
 
-	private void removeExistingHook() throws IOException {
+	private void removeExistingHook(String callbackUrl) throws IOException {
 		for (GHHook hook : getRepository().getHooks()) {
-			if (hook.isActive() && getSetupConfig().getGithubCallbackUrl().equals(hook.getConfig().get("url"))) {
+			if (hook.isActive() && callbackUrl.equals(hook.getConfig().get("url"))) {
 				hook.delete();
 			}
 		}
