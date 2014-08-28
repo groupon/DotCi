@@ -34,7 +34,6 @@ import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.buildtype.util.shell.ShellScriptRunner;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.DynamicBuildLayouter;
 import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildScheduler;
@@ -72,7 +71,7 @@ public class InstallPackagesBuild extends BuildType {
             return Result.SUCCESS;
         }
 
-        setLayouter(dynamicBuild, buildConfiguration);
+        dynamicBuild.setAxisList(getAxisList(buildConfiguration));
         dynamicBuild.setDescription(dynamicBuild.getCause().getBuildDescription());
         Result result ;
         if(buildConfiguration.isParallized()){
@@ -150,11 +149,7 @@ public class InstallPackagesBuild extends BuildType {
         return new BuildConfigurationCalculator().calculateBuildConfiguration(build.getGithubRepoUrl(), build.getSha(), build.getEnvironment(listener));
     }
 
-    private void setLayouter(DynamicBuild dynamicBuild, BuildConfiguration buildConfiguration) {
-        AxisList axisList = getAxisList(buildConfiguration);
-        DynamicBuildLayouter dynamicBuildLayouter = new DynamicBuildLayouter(axisList, dynamicBuild);
-        dynamicBuild.setDynamicBuildLayouter(dynamicBuildLayouter);
-    }
+
 
     private AxisList getAxisList(BuildConfiguration buildConfiguration) {
         AxisList  axisList = new AxisList(new Axis("script", "main"));
