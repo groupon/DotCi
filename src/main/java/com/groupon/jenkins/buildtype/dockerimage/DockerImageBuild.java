@@ -24,10 +24,13 @@
 
 package com.groupon.jenkins.buildtype.dockerimage;
 
+import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.buildtype.util.shell.ShellScriptRunner;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
+import com.groupon.jenkins.dynamic.build.execution.SubBuildScheduler;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.util.GroovyYamlTemplateProcessor;
 import hudson.EnvVars;
@@ -39,9 +42,14 @@ import hudson.model.Result;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Extension
 public class DockerImageBuild extends BuildType {
+    private static final Logger LOGGER = Logger.getLogger(DockerImageBuild.class.getName());
+    private DockerBuildConfiguration buildConfiguration;
+
     @Override
     public String getDescription() {
         return "Docker Build";
@@ -51,11 +59,41 @@ public class DockerImageBuild extends BuildType {
     public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
         EnvVars buildEnvironment = build.getEnvironment(listener);
         Map config = new GroovyYamlTemplateProcessor(getDotCiYml(build), buildEnvironment).getConfig();
-        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(config,CheckoutCommands.get(buildEnvironment));
-        return new ShellScriptRunner(buildExecutionContext, listener).runScript(dockerBuildConfiguration.toShellCommands());
+        this.buildConfiguration = new DockerBuildConfiguration(config,CheckoutCommands.get(buildEnvironment));
+        build.setAxisList(buildConfiguration.getAxisList());
+        Result result ;
+        if(buildConfiguration.isParallized()){
+            result = runMultiConfigbuildRunner(build, buildConfiguration, listener, launcher);;
+        }else{
+            result = runSubBuild(new Combination(ImmutableMap.of("script", "main")), buildExecutionContext, listener) ;
+        }
+        return result;
     }
 
-   private String getDotCiYml(DynamicBuild build) throws IOException {
+
+    private Result runMultiConfigbuildRunner(DynamicBuild dynamicBuild, DockerBuildConfiguration buildConfiguration, BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
+        SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, this, new SubBuildScheduler.SubBuildFinishListener() {
+            @Override
+            public void runFinished(DynamicSubBuild subBuild) throws IOException {
+            }
+        });
+
+        try {
+            Iterable<Combination> axisList = buildConfiguration.getAxisList().list();
+            Result combinedResult = subBuildScheduler.runSubBuilds(axisList, listener);
+            dynamicBuild.setResult(combinedResult);
+            return combinedResult;
+        } finally {
+            try {
+                subBuildScheduler.cancelSubBuilds(listener.getLogger());
+            } catch (Exception e) {
+                // There is nothing much we can do at this point
+                LOGGER.log(Level.SEVERE, "Failed to cancel subbuilds", e);
+            }
+        }
+    }
+
+    private String getDotCiYml(DynamicBuild build) throws IOException {
        try {
            return build.getGithubRepositoryService().getGHFile(".ci.yml", build.getSha()).getContent();
        } catch (FileNotFoundException _){
@@ -64,7 +102,7 @@ public class DockerImageBuild extends BuildType {
    }
 
     @Override
-    public Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
-        return null;
+    public Result runSubBuild(Combination combination, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
+        return new ShellScriptRunner(buildExecutionContext, listener).runScript(buildConfiguration.toShellCommands(combination));
     }
 }

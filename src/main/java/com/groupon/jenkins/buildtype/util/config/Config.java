@@ -51,7 +51,11 @@ public class Config {
         ConfigValue<?> configValue = getConfigValue(key);
         return configValue.getValue(returnType);
     }
-    public ConfigValue<?> getConfigValue(String key){
+
+    public Object get(String key) {
+        return config.get(key);
+    }
+    private ConfigValue<?> getConfigValue(String key){
         Class<ConfigValue> configType = configSpec.get(key);
         Object configValue = config.get(key);
         try {

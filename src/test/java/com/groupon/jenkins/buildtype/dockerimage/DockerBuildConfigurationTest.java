@@ -25,6 +25,7 @@
 package com.groupon.jenkins.buildtype.dockerimage;
 
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import hudson.matrix.Combination;
 import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
@@ -38,7 +39,7 @@ public class DockerBuildConfigurationTest {
         DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
                 "env", of("CI", "true"),
                 "script", "echo success"),new ShellCommands());
-        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands();
+        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
         Assert.assertEquals("docker run --rm --sig-proxy=true -e \"CI=true\" ubutu sh -c \"echo success\"",shellCommands.get(0));
     }
 
@@ -46,7 +47,7 @@ public class DockerBuildConfigurationTest {
     public void should_run_container_with_script_command() throws Exception {
         DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
                 "script", Arrays.asList("echo step1", "echo step2")),new ShellCommands());
-        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands();
+        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
         Assert.assertEquals("docker run --rm --sig-proxy=true ubutu sh -c \"echo step1 && echo step2\"",shellCommands.get(0));
     }
 
@@ -55,9 +56,33 @@ public class DockerBuildConfigurationTest {
     public void should_run_checkout_commands_before_script_commands() throws Exception {
         DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
                 "script", Arrays.asList("echo step1", "echo step2")),new ShellCommands("checkout command1"));
-        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands();
+        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
         Assert.assertEquals("docker run --rm --sig-proxy=true ubutu sh -c \"checkout command1 && echo step1 && echo step2\"",shellCommands.get(0));
     }
 
+    @Test
+    public void should_run_parallelized_if_script_is_parallized() throws Exception {
+        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
+                "env", of("CI", "true"),
+                "script", of("one","echo one", "two","echo two")),new ShellCommands());
+        Assert.assertTrue(dockerBuildConfiguration.isParallized());
+    }
+
+    @Test
+    public void should_run_parallel_build_of_the_combination_if_script_is_parallized() throws Exception {
+        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
+                "script", of("one","echo one", "two","echo two")),new ShellCommands());
+        Assert.assertTrue(dockerBuildConfiguration.isParallized());
+        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(new Combination(of("script","two")));
+        Assert.assertEquals("docker run --rm --sig-proxy=true ubutu sh -c \"echo two\"",shellCommands.get(0));
+    }
+
+    @Test
+    public void should_calculate_axis_list() throws Exception {
+        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
+                "env", of("CI", "true"),
+                "script", of("one","echo one", "two","echo two")),new ShellCommands());
+        Assert.assertNotNull(dockerBuildConfiguration.getAxisList());
+    }
 
 }

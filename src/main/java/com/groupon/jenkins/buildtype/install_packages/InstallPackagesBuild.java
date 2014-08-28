@@ -73,11 +73,11 @@ public class InstallPackagesBuild extends BuildType {
 
         dynamicBuild.setAxisList(getAxisList(buildConfiguration));
         dynamicBuild.setDescription(dynamicBuild.getCause().getBuildDescription());
-        Result result ;
+       Result result ;
         if(buildConfiguration.isParallized()){
             result = runMultiConfigbuildRunner(dynamicBuild, buildConfiguration, listener, launcher);;
         }else{
-            result = runSingleConfigBuild(dynamicBuild, new Combination(ImmutableMap.of("script", "main")),buildConfiguration,buildExecutionContext,listener,launcher) ;
+             result = runSingleConfigBuild(dynamicBuild, new Combination(ImmutableMap.of("script", "main")),buildConfiguration,buildExecutionContext,listener,launcher) ;
         }
         runPlugins(dynamicBuild, buildConfiguration.getPlugins(), listener, launcher);
         runNotifiers(dynamicBuild,buildConfiguration,listener);
