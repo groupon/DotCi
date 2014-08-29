@@ -26,6 +26,7 @@ package com.groupon.jenkins.buildtype.dockerimage;
 
 import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
+import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.buildtype.util.shell.ShellScriptRunner;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
@@ -57,17 +58,25 @@ public class DockerImageBuild extends BuildType {
 
     @Override
     public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
-        EnvVars buildEnvironment = build.getEnvironment(listener);
-        Map config = new GroovyYamlTemplateProcessor(getDotCiYml(build), buildEnvironment).getConfig();
-        this.buildConfiguration = new DockerBuildConfiguration(config,CheckoutCommands.get(buildEnvironment));
-        build.setAxisList(buildConfiguration.getAxisList());
-        Result result ;
-        if(buildConfiguration.isParallized()){
-            result = runMultiConfigbuildRunner(build, buildConfiguration, listener, launcher);;
-        }else{
-            result = runSubBuild(new Combination(ImmutableMap.of("script", "main")), buildExecutionContext, listener) ;
+        try{
+            EnvVars buildEnvironment = build.getEnvironment(listener);
+            Map config = new GroovyYamlTemplateProcessor(getDotCiYml(build), buildEnvironment).getConfig();
+            this.buildConfiguration = new DockerBuildConfiguration(config,build.getBuildId(), CheckoutCommands.get(buildEnvironment));
+            build.setAxisList(buildConfiguration.getAxisList());
+            Result result ;
+            if(buildConfiguration.isParallized()){
+                result = runMultiConfigbuildRunner(build, buildConfiguration, listener, launcher);;
+            }else{
+                result = runSubBuild(new Combination(ImmutableMap.of("script", "main")), buildExecutionContext, listener) ;
+            }
+            return result;
+
+        }catch (InterruptedException e){
+            if(buildConfiguration !=null && buildConfiguration.hasServices()){
+                new ShellScriptRunner(buildExecutionContext, listener).runScript( new ShellCommands(buildConfiguration.getCleanupCommands()));
+            }
+           throw e;
         }
-        return result;
     }
 
 

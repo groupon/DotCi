@@ -73,6 +73,6 @@ public class Config {
     }
 
     public boolean containsKey(String key) {
-        return config.containsKey(key);
+        return config.containsKey(key) && config.get(key) != null;
     }
 }
