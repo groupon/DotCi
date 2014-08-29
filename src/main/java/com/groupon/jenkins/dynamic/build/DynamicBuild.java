@@ -195,6 +195,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
                 if (!buildEnvironment.initialize()) {
                     return Result.FAILURE;
                 }
+                setDescription(getCause().getBuildDescription());
                 BuildType buildType = BuildType.getBuildType(getParent());
                 Result buildRunResult =   buildType.runBuild(DynamicBuild.this, this, launcher, listener);
                 setResult(buildRunResult);

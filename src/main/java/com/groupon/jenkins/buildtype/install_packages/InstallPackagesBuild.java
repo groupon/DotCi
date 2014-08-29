@@ -72,7 +72,6 @@ public class InstallPackagesBuild extends BuildType {
         }
 
         dynamicBuild.setAxisList(getAxisList(buildConfiguration));
-        dynamicBuild.setDescription(dynamicBuild.getCause().getBuildDescription());
        Result result ;
         if(buildConfiguration.isParallized()){
             result = runMultiConfigbuildRunner(dynamicBuild, buildConfiguration, listener, launcher);;
