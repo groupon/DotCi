@@ -36,7 +36,6 @@ import hudson.matrix.AxisList;
 import hudson.matrix.Combination;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,8 +60,8 @@ public class DockerBuildConfiguration {
         DockerCommandBuilder dockerRunCommand = dockerCommand("run")
                 .flag("rm")
                 .flag("sig-proxy=true")
-               .bulkOptions(config.get("run_options",String.class))
-                .args(getImageName(), "sh -cx \"" +  getRunCommand(combination) + "\"");
+               .bulkOptions(config.get("run_options", String.class))
+                .args(getImageName(), "sh -cx \"" + getRunCommand(combination) + "\"");
 
 
         linkServices(dockerRunCommand);
@@ -82,11 +81,13 @@ public class DockerBuildConfiguration {
 
     private void startServices(ShellCommands shellCommands) {
         if(hasServices()){
-            List<String> services = config.get("services", List.class);
-            for (String serviceImageName: services){
+            List<Map> services = config.get("services", List.class);
+            for (Map<String,String> service: services){
+                String serviceImageName = service.get("image");
                 String runCommand = DockerCommandBuilder.dockerCommand("run")
                         .flag("d")
                         .flag("name",getContainerId(serviceImageName))
+                        .bulkOptions(service.get("run_options"))
                         .args(serviceImageName)
                         .get();
                 shellCommands.add(runCommand);
@@ -132,14 +133,14 @@ public class DockerBuildConfiguration {
     }
     public Iterable<String> getContainerLinkCommands() {
 
-        return hasServices()? Iterables.transform(config.get("services", List.class), new Function<String, String>() {
+        return hasServices()? Iterables.transform(getServiceImages(), new Function<String, String>() {
             @Override
             public String apply(String serviceImageName) {
                 String serviceId = getServiceRuntimeId(serviceImageName);
                 String runningImageId = getContainerId(serviceImageName);
                 return runningImageId + ":" + serviceId;
             }
-        }): Collections.emptyList();
+        }): new ArrayList<String>();
 
     }
 
@@ -150,14 +151,23 @@ public class DockerBuildConfiguration {
 
     public List<String> getCleanupCommands() {
         List<String> cleanUpCommands = new ArrayList<String>();
-        List<String> services = config.get("services",List.class);
-        for (String serviceImageName : services) {
+        for (String serviceImageName : getServiceImages()) {
             String killCommand = dockerCommand("kill").args(getContainerId(serviceImageName)).get();
             String removeCommand = dockerCommand("rm").args(getContainerId(serviceImageName)).get();
             cleanUpCommands.add(killCommand);
             cleanUpCommands.add(removeCommand);
         }
         return cleanUpCommands;
+    }
+
+    private Iterable<String> getServiceImages() {
+        List<Map<String,String>> services = config.get("services",List.class);
+        return Iterables.transform(services,new Function<Map<String, String>, String>() {
+            @Override
+            public String apply(Map<String, String> service) {
+                return service.get("image");
+            }
+        });
     }
 
     public boolean isParallized() {

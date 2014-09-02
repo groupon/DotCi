@@ -31,6 +31,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static com.google.common.collect.ImmutableMap.of;
+import static java.util.Arrays.asList;
 
 public class DockerBuildConfigurationTest {
 
@@ -38,10 +39,23 @@ public class DockerBuildConfigurationTest {
     public void should_start_and_link_containers_when_services_are_specified(){
 
         DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
-                "services", Arrays.asList("mysql"),
+                "services",  asList(of("image","mysql")),
                 "script", "echo success"),"buildId", new ShellCommands());
         ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
         Assert.assertEquals("docker run -d --name mysql_buildId mysql",shellCommands.get(0));
+        Assert.assertEquals("docker run --rm --sig-proxy=true --link mysql_buildId:mysql ubutu sh -cx \"echo success\"",shellCommands.get(1));
+        Assert.assertEquals("docker kill  mysql_buildId",shellCommands.get(2));
+    }
+
+    @Test
+    public void should_start_and_linked_containers_with_run_options_if_specified(){
+
+        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
+                "services",  asList(of("image","mysql",
+                                        "run_options","-v /var/test=/var/test"  )),
+                "script", "echo success"),"buildId", new ShellCommands());
+        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
+        Assert.assertEquals("docker run -d --name mysql_buildId -v /var/test=/var/test mysql",shellCommands.get(0));
         Assert.assertEquals("docker run --rm --sig-proxy=true --link mysql_buildId:mysql ubutu sh -cx \"echo success\"",shellCommands.get(1));
         Assert.assertEquals("docker kill  mysql_buildId",shellCommands.get(2));
     }
