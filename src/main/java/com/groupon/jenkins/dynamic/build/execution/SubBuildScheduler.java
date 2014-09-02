@@ -28,7 +28,6 @@ import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import com.groupon.jenkins.dynamic.build.DynamicSubProject;
 import com.groupon.jenkins.dynamic.build.DynamicSubProject.ParentBuildAction;
-import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.Util;
 import hudson.console.ModelHyperlinkNote;
 import hudson.matrix.Combination;
@@ -55,12 +54,12 @@ public class SubBuildScheduler {
 
 	private final DynamicBuild dynamicBuild;
 
-    private BuildType buildType;
+    private SubBuildRunner subBuildRunner;
     private SubBuildFinishListener subBuildFinishListener;
 
-	public SubBuildScheduler(DynamicBuild build, BuildType buildType, SubBuildFinishListener subBuildFinishListener) {
+	public SubBuildScheduler(DynamicBuild build, SubBuildRunner subBuildRunner, SubBuildFinishListener subBuildFinishListener) {
 		this.dynamicBuild = build;
-        this.buildType = buildType;
+        this.subBuildRunner = subBuildRunner;
         this.subBuildFinishListener = subBuildFinishListener;
 	}
 
@@ -89,7 +88,7 @@ public class SubBuildScheduler {
 			listener.getLogger().println(Messages.MatrixBuild_Triggering(ModelHyperlinkNote.encodeTo(c)));
 			List<Action> childActions = new ArrayList<Action>();
 			childActions.addAll(Util.filter(dynamicBuild.getActions(), ParametersAction.class));
-			childActions.add(new SubBuildExecutionAction(buildType));
+			childActions.add(new SubBuildExecutionAction(subBuildRunner));
 			c.scheduleBuild(childActions, dynamicBuild.getCause());
 		}
 	}

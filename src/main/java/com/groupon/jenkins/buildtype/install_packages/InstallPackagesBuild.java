@@ -36,6 +36,7 @@ import com.groupon.jenkins.buildtype.util.shell.ShellScriptRunner;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
+import com.groupon.jenkins.dynamic.build.execution.SubBuildRunner;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildScheduler;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
@@ -54,7 +55,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Extension
-public class InstallPackagesBuild extends BuildType {
+public class InstallPackagesBuild extends BuildType implements SubBuildRunner{
     private static final Logger LOGGER = Logger.getLogger(InstallPackagesBuild.class.getName());
     private BuildConfiguration buildConfiguration;
 

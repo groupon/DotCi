@@ -22,24 +22,13 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.buildtype.dockerimage;
+package com.groupon.jenkins.dynamic.build.execution;
 
-import com.google.common.collect.ImmutableMap;
-import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
-import org.junit.Assert;
-import org.junit.Test;
+import hudson.matrix.Combination;
+import hudson.model.BuildListener;
+import hudson.model.Result;
+import java.io.IOException;
 
-public class CheckoutCommandsTest {
-
-    @Test
-    public void should_checkout_pr_if_pr(){
-       ShellCommands commands = CheckoutCommands.get(ImmutableMap.of("DOTCI_PULL_REQUEST", "17", "GIT_URL","git@github.com:groupon/DotCi.git")) ;
-        Assert.assertEquals("git fetch origin \"+refs/pull/17/merge:\"",commands.get(2));
-    }
-
-    @Test
-    public void should_checkout_branch_if_branch(){
-        ShellCommands commands = CheckoutCommands.get(ImmutableMap.of("GIT_URL", "git@github.com:groupon/DotCi.git", "DOTCI_BRANCH","dotci_branch")) ;
-        Assert.assertEquals("git clone  --branch=dotci_branch git://github.com/groupon/DotCi.git /var/groupon/dotci",commands.get(0));
-    }
+public interface SubBuildRunner {
+    public Result runSubBuild(Combination combination, BuildExecutionContext dynamicSubBuildExecution, BuildListener listener)throws IOException, InterruptedException;
 }

@@ -31,6 +31,7 @@ import com.groupon.jenkins.buildtype.util.shell.ShellScriptRunner;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
+import com.groupon.jenkins.dynamic.build.execution.SubBuildRunner;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildScheduler;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.util.GroovyYamlTemplateProcessor;
@@ -47,7 +48,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Extension
-public class DockerImageBuild extends BuildType {
+public class DockerImageBuild extends BuildType implements SubBuildRunner {
     private static final Logger LOGGER = Logger.getLogger(DockerImageBuild.class.getName());
     private DockerBuildConfiguration buildConfiguration;
 

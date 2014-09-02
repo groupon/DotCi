@@ -32,13 +32,13 @@ import hudson.model.Result;
 import java.io.IOException;
 
 public class SubBuildExecutionAction extends InvisibleAction {
-    private transient BuildType buildType;
+    private transient SubBuildRunner subBuildRunner;
 
-    public SubBuildExecutionAction(BuildType buildType) {
-        this.buildType = buildType;
+    public SubBuildExecutionAction(SubBuildRunner subBuildRunner) {
+        this.subBuildRunner = subBuildRunner;
     }
 
     public Result run(Combination combination, BuildExecutionContext dynamicSubBuildExecution, BuildListener listener) throws IOException, InterruptedException {
-        return buildType.runSubBuild(combination,dynamicSubBuildExecution,listener);
+        return subBuildRunner.runSubBuild(combination,dynamicSubBuildExecution,listener);
     }
 }

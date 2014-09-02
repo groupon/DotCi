@@ -30,7 +30,6 @@ import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import hudson.Launcher;
-import hudson.matrix.Combination;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import java.io.IOException;
@@ -68,5 +67,4 @@ public abstract class BuildType implements ExtensionPoint{
 
     public abstract Result runBuild(DynamicBuild build, BuildExecutionContext  buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
 
-    public abstract Result runSubBuild(Combination combination, BuildExecutionContext subBuildExecutionContext, BuildListener listener) throws IOException, InterruptedException;
 }
