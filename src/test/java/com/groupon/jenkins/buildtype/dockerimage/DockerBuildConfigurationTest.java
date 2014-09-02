@@ -46,14 +46,17 @@ public class DockerBuildConfigurationTest {
         Assert.assertEquals("docker kill  mysql_buildId",shellCommands.get(2));
     }
 
+
     @Test
-    public void should_export_env_variables() throws Exception {
-        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
-                "env", of("CI", "true"),
-                "script", "echo success"),"buildId",new ShellCommands());
+    public void should_run_container_with_specified_options() throws Exception {
+        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(
+                  of("image", "ubutu",
+                     "run_options","-v /var/tmp=/var/tmp",
+                     "script", "echo meow"),"buildId",new ShellCommands());
         ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
-        Assert.assertEquals("docker run --rm --sig-proxy=true -e \"CI=true\" ubutu sh -cx \"echo success\"",shellCommands.get(0));
+        Assert.assertEquals("docker run --rm --sig-proxy=true -v /var/tmp=/var/tmp ubutu sh -cx \"echo meow\"",shellCommands.get(0));
     }
+
 
     @Test
     public void should_run_container_with_script_command() throws Exception {

@@ -23,10 +23,9 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.dockerimage;
 
+import com.google.common.base.Joiner;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.base.Joiner;
 
 public class DockerCommandBuilder {
 	private final String dockerCommand;
@@ -34,8 +33,9 @@ public class DockerCommandBuilder {
 	private final Joiner spaceJoiner = Joiner.on(" ");
 	private String args;
 	private final List<String> flags = new ArrayList<String>();
+    private String bulkOptions;
 
-	public DockerCommandBuilder(String command) {
+    public DockerCommandBuilder(String command) {
 		dockerCommand = "docker " + command;
 	}
 
@@ -49,7 +49,8 @@ public class DockerCommandBuilder {
 	}
 
 	public String get() {
-		return spaceJoiner.join(dockerCommand, spaceJoiner.join(flags), args);
+		return bulkOptions == null? spaceJoiner.join(dockerCommand, spaceJoiner.join(flags), args):
+                spaceJoiner.join(dockerCommand, spaceJoiner.join(flags), bulkOptions, args);
 	}
 
 	public DockerCommandBuilder flag(String flag) {
@@ -65,4 +66,9 @@ public class DockerCommandBuilder {
 		flags.add(spaceJoiner.join(getOption(flag), value));
 		return this;
 	}
+
+    public DockerCommandBuilder bulkOptions(String bulkOptions) {
+        this.bulkOptions = bulkOptions;
+        return  this;
+    }
 }

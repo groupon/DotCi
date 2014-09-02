@@ -27,8 +27,7 @@ package com.groupon.jenkins.buildtype.dockerimage;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListOrMapOrString;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListOrSingleValue;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.MapValue;
+import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.StringValue;
 import com.groupon.jenkins.buildtype.util.config.Config;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
@@ -41,6 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import static com.groupon.jenkins.buildtype.dockerimage.DockerCommandBuilder.dockerCommand;
 
 public class DockerBuildConfiguration {
@@ -51,7 +51,7 @@ public class DockerBuildConfiguration {
     public DockerBuildConfiguration(Map config, String buildId, ShellCommands checkoutCommands) {
         this.buildId = buildId;
         this.checkoutCommands = checkoutCommands;
-        this.config = new Config(config, "image", StringValue.class, "env", MapValue.class, "services", ListOrSingleValue.class ,"script", ListOrMapOrString.class);
+        this.config = new Config(config, "image", StringValue.class, "run_options", StringValue.class, "services", ListValue.class ,"script", ListOrMapOrString.class);
     }
 
     public ShellCommands toShellCommands(Combination combination) {
@@ -61,9 +61,9 @@ public class DockerBuildConfiguration {
         DockerCommandBuilder dockerRunCommand = dockerCommand("run")
                 .flag("rm")
                 .flag("sig-proxy=true")
+               .bulkOptions(config.get("run_options",String.class))
                 .args(getImageName(), "sh -cx \"" +  getRunCommand(combination) + "\"");
 
-        exportEnvVars(dockerRunCommand);
 
         linkServices(dockerRunCommand);
 
@@ -121,14 +121,6 @@ public class DockerBuildConfiguration {
     }
 
 
-    private void exportEnvVars(DockerCommandBuilder runCommand) {
-        if(config.containsKey("env")){
-            Map<String, String> envVars = config.get("env",Map.class);
-            for (Map.Entry<String, String> var : envVars.entrySet()) {
-                runCommand.flag("e", String.format("\"%s=%s\"", var.getKey(), var.getValue()));
-            }
-        }
-    }
 
     public AxisList getAxisList() {
         AxisList  axisList = new AxisList(new Axis("script", "main"));
