@@ -50,17 +50,17 @@ public class DockerBuildConfiguration {
     public DockerBuildConfiguration(Map config, String buildId, ShellCommands checkoutCommands) {
         this.buildId = buildId;
         this.checkoutCommands = checkoutCommands;
-        this.config = new Config(config, "image", StringValue.class, "run_options", StringValue.class, "services", ListValue.class ,"script", ListOrMapOrString.class);
+        this.config = new Config(config, "image", StringValue.class, "run_params", StringValue.class, "links", ListValue.class ,"script", ListOrMapOrString.class);
     }
 
     public ShellCommands toShellCommands(Combination combination) {
         ShellCommands shellCommands = new ShellCommands();
-        startServices(shellCommands);
+        startLinks(shellCommands);
 
         DockerCommandBuilder dockerRunCommand = dockerCommand("run")
                 .flag("rm")
                 .flag("sig-proxy=true")
-               .bulkOptions(config.get("run_options", String.class))
+               .bulkOptions(config.get("run_params", String.class))
                 .args(getImageName(), "sh -cx \"" + getRunCommand(combination) + "\"");
 
 
@@ -68,7 +68,7 @@ public class DockerBuildConfiguration {
 
         shellCommands.add(dockerRunCommand.get());
 
-        if(hasServices()) shellCommands.addAll(getCleanupCommands());
+        if(hasLinks()) shellCommands.addAll(getCleanupCommands());
 
         return shellCommands;
     }
@@ -79,15 +79,15 @@ public class DockerBuildConfiguration {
         }
     }
 
-    private void startServices(ShellCommands shellCommands) {
-        if(hasServices()){
-            List<Map> services = config.get("services", List.class);
-            for (Map<String,String> service: services){
+    private void startLinks(ShellCommands shellCommands) {
+        if(hasLinks()){
+            List<Map> links = config.get("links", List.class);
+            for (Map<String,String> service: links){
                 String serviceImageName = service.get("image");
                 String runCommand = DockerCommandBuilder.dockerCommand("run")
                         .flag("d")
                         .flag("name",getContainerId(serviceImageName))
-                        .bulkOptions(service.get("run_options"))
+                        .bulkOptions(service.get("run_params"))
                         .args(serviceImageName)
                         .get();
                 shellCommands.add(runCommand);
@@ -95,8 +95,8 @@ public class DockerBuildConfiguration {
         }
     }
 
-    boolean hasServices() {
-        return config.containsKey("services");
+    boolean hasLinks() {
+        return config.containsKey("links");
     }
 
     protected String getContainerId(String serviceImageName) {
@@ -133,7 +133,7 @@ public class DockerBuildConfiguration {
     }
     public Iterable<String> getContainerLinkCommands() {
 
-        return hasServices()? Iterables.transform(getServiceImages(), new Function<String, String>() {
+        return hasLinks()? Iterables.transform(getServiceImages(), new Function<String, String>() {
             @Override
             public String apply(String serviceImageName) {
                 String serviceId = getServiceRuntimeId(serviceImageName);
@@ -161,8 +161,8 @@ public class DockerBuildConfiguration {
     }
 
     private Iterable<String> getServiceImages() {
-        List<Map<String,String>> services = config.get("services",List.class);
-        return Iterables.transform(services,new Function<Map<String, String>, String>() {
+        List<Map<String,String>> links = config.get("links",List.class);
+        return Iterables.transform(links,new Function<Map<String, String>, String>() {
             @Override
             public String apply(Map<String, String> service) {
                 return service.get("image");

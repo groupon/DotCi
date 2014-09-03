@@ -73,7 +73,7 @@ public class DockerImageBuild extends BuildType implements SubBuildRunner {
             return result;
 
         }catch (InterruptedException e){
-            if(buildConfiguration !=null && buildConfiguration.hasServices()){
+            if(buildConfiguration !=null && buildConfiguration.hasLinks()){
                 new ShellScriptRunner(buildExecutionContext, listener).runScript( new ShellCommands(buildConfiguration.getCleanupCommands()));
             }
            throw e;

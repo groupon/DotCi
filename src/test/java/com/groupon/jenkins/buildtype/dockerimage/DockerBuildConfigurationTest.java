@@ -36,10 +36,10 @@ import static java.util.Arrays.asList;
 public class DockerBuildConfigurationTest {
 
     @Test
-    public void should_start_and_link_containers_when_services_are_specified(){
+    public void should_start_and_link_containers_when_links_are_specified(){
 
         DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
-                "services",  asList(of("image","mysql")),
+                "links",  asList(of("image","mysql")),
                 "script", "echo success"),"buildId", new ShellCommands());
         ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
         Assert.assertEquals("docker run -d --name mysql_buildId mysql",shellCommands.get(0));
@@ -48,11 +48,11 @@ public class DockerBuildConfigurationTest {
     }
 
     @Test
-    public void should_start_and_linked_containers_with_run_options_if_specified(){
+    public void should_start_and_linked_containers_with_run_params_if_specified(){
 
         DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
-                "services",  asList(of("image","mysql",
-                                        "run_options","-v /var/test=/var/test"  )),
+                "links",  asList(of("image","mysql",
+                                        "run_params","-v /var/test=/var/test"  )),
                 "script", "echo success"),"buildId", new ShellCommands());
         ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
         Assert.assertEquals("docker run -d --name mysql_buildId -v /var/test=/var/test mysql",shellCommands.get(0));
@@ -62,10 +62,10 @@ public class DockerBuildConfigurationTest {
 
 
     @Test
-    public void should_run_container_with_specified_options() throws Exception {
+    public void should_run_container_with_specified_params() throws Exception {
         DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(
                   of("image", "ubutu",
-                     "run_options","-v /var/tmp=/var/tmp",
+                     "run_params","-v /var/tmp=/var/tmp",
                      "script", "echo meow"),"buildId",new ShellCommands());
         ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
         Assert.assertEquals("docker run --rm --sig-proxy=true -v /var/tmp=/var/tmp ubutu sh -cx \"echo meow\"",shellCommands.get(0));
