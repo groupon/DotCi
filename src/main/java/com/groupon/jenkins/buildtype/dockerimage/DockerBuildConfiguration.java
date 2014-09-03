@@ -51,7 +51,7 @@ public class DockerBuildConfiguration {
     public DockerBuildConfiguration(Map config, String buildId, ShellCommands checkoutCommands) {
         this.buildId = buildId;
         this.checkoutCommands = checkoutCommands;
-        this.config = new Config(config, "image", StringValue.class, "run_params", StringValue.class, "links", ListValue.class ,"script", ListOrMapOrString.class);
+        this.config = new Config(config, "image", StringValue.class, "run_params", StringValue.class, "links", ListValue.class ,"command", ListOrMapOrString.class);
     }
 
     public ShellCommands toShellCommands(Combination combination) {
@@ -90,12 +90,12 @@ public class DockerBuildConfiguration {
     private List<String> getStartLinkedImageCommands(List<Map<String, Object>> links) {
         List<String> startLinkCommands = new ArrayList<String>();
             for (Map<String,Object> link: links){
-                String serviceImageName = (String) link.get("image");
+                String linkImageName = (String) link.get("image");
                  DockerCommandBuilder runCommand = DockerCommandBuilder.dockerCommand("run")
                         .flag("d")
-                        .flag("name",getContainerId(serviceImageName))
-                        .bulkOptions((String) link.get("run_params"))
-                        .args(serviceImageName) ;
+                        .flag("name", getContainerId(linkImageName))
+                        .bulkOptions((String) link.get("run_params"));
+                runCommand =  link.containsKey("command")? runCommand.args(linkImageName, "sh -cx \"" + link.get("command")+ "\""): runCommand.args(linkImageName);
                 List<String> runCommands = getDockerRunCommands(runCommand, (List<Map<String, Object>>) link.get("links"));
                 startLinkCommands.addAll(runCommands);
             }
@@ -111,11 +111,11 @@ public class DockerBuildConfiguration {
     private String getRunCommand(Combination combination) {
         List commands;
         if(isParallized()){
-            Map script = config.get("script", Map.class);
-            Object scriptCommands= script.get(combination.get("script"));
+            Map command = config.get("command", Map.class);
+            Object scriptCommands= command.get(combination.get("command"));
             commands = scriptCommands instanceof List? (List)scriptCommands: Arrays.asList(scriptCommands);
         }else{
-            commands = config.get("script", List.class);
+            commands = config.get("command", List.class);
         }
 
         return checkoutCommands.add(new ShellCommands(commands)).toSingleShellCommand();
@@ -128,10 +128,10 @@ public class DockerBuildConfiguration {
 
 
     public AxisList getAxisList() {
-        AxisList  axisList = new AxisList(new Axis("script", "main"));
+        AxisList  axisList = new AxisList(new Axis("command", "main"));
         if (isParallized()) {
-            Set scriptKeys =  ((Map) config.get("script")).keySet();
-            axisList = new AxisList(new Axis("script", new ArrayList<String>(scriptKeys)));
+            Set commandKeys =  ((Map) config.get("command")).keySet();
+            axisList = new AxisList(new Axis("command", new ArrayList<String>(commandKeys)));
         }
         return axisList;
     }
@@ -178,6 +178,6 @@ public class DockerBuildConfiguration {
     }
 
     public boolean isParallized() {
-        return config.get("script") instanceof Map;
+        return config.get("command") instanceof Map;
     }
 }
