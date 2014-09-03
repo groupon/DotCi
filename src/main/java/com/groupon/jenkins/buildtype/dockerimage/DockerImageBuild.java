@@ -25,6 +25,7 @@
 package com.groupon.jenkins.buildtype.dockerimage;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.buildtype.util.shell.ShellScriptRunner;
@@ -73,8 +74,10 @@ public class DockerImageBuild extends BuildType implements SubBuildRunner {
             return result;
 
         }catch (InterruptedException e){
-            if(buildConfiguration !=null && buildConfiguration.hasLinks()){
-                new ShellScriptRunner(buildExecutionContext, listener).runScript( new ShellCommands(buildConfiguration.getCleanupCommands()));
+            if(buildConfiguration !=null && Iterables.isEmpty(buildConfiguration.getLinkCleanupCommands())){
+                ShellCommands cleanupCommands = new ShellCommands();
+                cleanupCommands.addAll(buildConfiguration.getLinkCleanupCommands());
+                new ShellScriptRunner(buildExecutionContext, listener).runScript(cleanupCommands);
             }
            throw e;
         }

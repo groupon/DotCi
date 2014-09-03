@@ -35,6 +35,25 @@ import static java.util.Arrays.asList;
 
 public class DockerBuildConfigurationTest {
 
+
+    @Test
+    public void should_support_nested_links(){
+        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
+                "links",  asList(of("image","mysql",
+                                     "links", asList(of("image","redis"))
+                                 )),
+                "script", "echo success"),"buildId", new ShellCommands());
+        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
+        Assert.assertEquals("docker run -d --name redis_buildId redis",shellCommands.get(0));
+        Assert.assertEquals("docker run -d --name mysql_buildId --link redis_buildId:redis mysql",shellCommands.get(1));
+        Assert.assertEquals("docker run --rm --sig-proxy=true --link mysql_buildId:mysql ubutu sh -cx \"echo success\"",shellCommands.get(2));
+        Assert.assertEquals("docker kill  mysql_buildId",shellCommands.get(3));
+        Assert.assertEquals("docker rm  mysql_buildId",shellCommands.get(4));
+        Assert.assertEquals("docker kill  redis_buildId",shellCommands.get(5));
+        Assert.assertEquals("docker rm  redis_buildId",shellCommands.get(6));
+
+    }
+
     @Test
     public void should_start_and_link_containers_when_links_are_specified(){
 

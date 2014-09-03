@@ -23,16 +23,15 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.util.shell;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang.StringUtils;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 
 public class ShellCommands {
 	private final List<String> commands;
@@ -89,6 +88,13 @@ public class ShellCommands {
 		}
 		return Pattern.compile(re, flags);
 	}
+
+    public ShellCommands addAll(Stack<String> commands) {
+        while (!commands.empty()){
+           this.commands.add(commands.pop()) ;
+        }
+        return this;
+    }
 
 	public ShellCommands addAll(List<String> commands) {
 		this.commands.addAll(commands);
