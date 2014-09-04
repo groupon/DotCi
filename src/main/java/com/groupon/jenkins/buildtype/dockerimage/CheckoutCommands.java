@@ -32,7 +32,7 @@ import static java.lang.String.format;
 public class CheckoutCommands {
     public static ShellCommands get(Map<String, String> dotCiEnvVars) {
         GitUrl gitRepoUrl = new GitUrl(dotCiEnvVars.get("GIT_URL"));
-        String gitUrl = gitRepoUrl.getGitUrl();
+        String gitUrl = gitRepoUrl.getHttpsUrl();
         String checkoutLocation = format("/var/%s",gitRepoUrl.getFullRepoName());
         ShellCommands shellCommands = new ShellCommands();
         if(dotCiEnvVars.get("DOTCI_PULL_REQUEST") != null){

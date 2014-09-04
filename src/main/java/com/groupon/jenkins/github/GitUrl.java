@@ -71,4 +71,8 @@ public class GitUrl {
     public String getName() {
         return name;
     }
+
+    public String getHttpsUrl() {
+        return String.format("https://%s/%s/%s",domain,orgName,name);
+    }
 }
