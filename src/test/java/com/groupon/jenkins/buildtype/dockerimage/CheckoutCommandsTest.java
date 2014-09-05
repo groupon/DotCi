@@ -40,6 +40,6 @@ public class CheckoutCommandsTest {
     @Test
     public void should_checkout_branch_if_branch(){
         ShellCommands commands = CheckoutCommands.get(ImmutableMap.of("GIT_URL", "git@github.com:groupon/DotCi.git", "DOTCI_BRANCH","dotci_branch")) ;
-        Assert.assertEquals("git clone  --branch=dotci_branch git://github.com/groupon/DotCi.git /var/groupon/dotci",commands.get(0));
+        Assert.assertEquals("git clone  --branch=dotci_branch https://github.com/groupon/DotCi /var/groupon/DotCi",commands.get(0));
     }
 }
