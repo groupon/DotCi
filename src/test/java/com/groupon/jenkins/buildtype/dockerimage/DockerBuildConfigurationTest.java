@@ -58,11 +58,13 @@ public class DockerBuildConfigurationTest {
     public void should_start_and_link_containers_when_links_are_specified(){
 
         DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
-                "links",  asList(of("image","mysql","command","meow")),
+                "links",  asList(of("image","mysql",
+                                     "name", "custom_mysql_name",
+                                    "command","meow")),
                 "command", "echo success"),"buildId", new ShellCommands());
         ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
         Assert.assertEquals("docker run -d --name mysql_buildId mysql sh -cx \"meow\"",shellCommands.get(0));
-        Assert.assertEquals("docker run --rm --sig-proxy=true --link mysql_buildId:mysql ubutu sh -cx \"echo success\"",shellCommands.get(1));
+        Assert.assertEquals("docker run --rm --sig-proxy=true --link mysql_buildId:custom_mysql_name ubutu sh -cx \"echo success\"",shellCommands.get(1));
         Assert.assertEquals("docker kill  mysql_buildId",shellCommands.get(2));
     }
 

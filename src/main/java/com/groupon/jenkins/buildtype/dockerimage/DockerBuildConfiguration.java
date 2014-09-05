@@ -137,10 +137,11 @@ public class DockerBuildConfiguration {
     }
     public Iterable<String> getContainerLinkCommands( List<Map<String,Object>> links) {
 
-        return Iterables.transform(getServiceImageNames(links), new Function<String, String>() {
+        return Iterables.transform(links, new Function<Map<String,Object>,String>() {
             @Override
-            public String apply(String serviceImageName) {
-                String serviceId = getServiceRuntimeId(serviceImageName);
+            public String apply(Map<String,Object> link) {
+                String serviceImageName  = (String) link.get("image");
+                String serviceId = link.containsKey("name")? (String)link.get("name"):getServiceRuntimeId(serviceImageName);
                 String runningImageId = getContainerId(serviceImageName);
                 return runningImageId + ":" + serviceId;
             }
