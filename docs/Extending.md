@@ -1,6 +1,24 @@
-DotCi defines two new [extension points] ( https://wiki.jenkins-ci.org/display/JENKINS/Extension+points)
+DotCi defines three new [extension points] ( https://wiki.jenkins-ci.org/display/JENKINS/Extension+points)
 
-- Add new notifications is done by extending `PostBuildNotifier` 
+#### Add **new build type**, this would be populated in the build type dropdown.
+Eg:
+
+```java
+
+@Extension
+public class DockerImageBuild extends BuildType implements SubBuildRunner {
+   @Override
+    public String getDescription() {
+        return "Docker Build";
+    }
+
+    @Override
+    public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+    }
+}
+```
+
+#### Add **new notifications** is done by extending `PostBuildNotifier`
 
 Eg: Adding a hipchat notifier in notifications section of `.ci.yml`
 
@@ -17,9 +35,9 @@ public class HipchatNotifier extends PostBuildNotifier {
 ```
 
 
-- Adding a Jenkins plugin for use through plugins section of `.ci.yml` is done by extending `DotCiPluginAdapter`
+#### Adding a **new plugin** for use through plugins section of `.ci.yml` is done by extending `DotCiPluginAdapter`
 
-Eg: Adding cobertura to plugins section 
+Eg: Adding cobertura to plugins section
 
 ```java
 @Extension

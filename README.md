@@ -6,10 +6,8 @@ Brings ease of build configuration of cloud ci systems like travisci and ease of
  - [Features](#features)
  - [Installation](docs/Installation.md)
  - [Usage](docs/Usage.md)
- - [.ci.yml examples](docs/Examples.md)
  - [Extending DotCi](docs/Extending.md)
  - [Developer Setup](docs/DevelopmentSetup.md)
- - [Extras](#extras)
  - [License](#license)
 
 ###Features
@@ -18,46 +16,43 @@ Brings ease of build configuration of cloud ci systems like travisci and ease of
     - Automatically sets up Github webhooks for pull requests and github pushes when a new job is setup.
     - Sets [commit status](https://github.com/blog/1227-commit-status-api) during and after build run.
       ![Commit status](docs/screenshots/commit-status.png)
-    - Projects are name-spaced under organization which allows creation of multiple projects with same names under different organizations.
+
+    - Jobs follow name-spacing structure of github, jobs are nested under organization folder
+      allowing for multiple jobs with same name under different org.
+      ![Org](docs/screenshots/org-view.png)
+
+ * Job **authorization** mapped to corresponding github repo permissions.
+
+   ![branch history](docs/screenshots/authorization.png)
+
+ * **Job Enhancements**
+    - Build Changeset from github payload.
+    - Builds on master branch get special treatment
+        * LastBuild permalink points to last build for master.
+        * Master tab in buildhistory widget
+
+         ![branch history](docs/screenshots/branch-view.png)
+        *  `lastSuccessfulMaster` permalink.
+
+    - Fetch builds by git sha (`job/meow/sha?value=<sha>`)
+    - Fetch last build for a branch (`job/meow?branch=<branch-name>`)
 
 
- * **Build configuration through .ci.yml**  
-    * Speed up builds by running builds in parallel.([Example](docs/Examples.md#parallelization))
-    * Configure build environment (language/version/dbs etc). ([Example](docs/Examples.md#build-environment-configuration))
-    * Branch/pusher specific build customization through groovy templating.([Example](docs/Examples.md#build-templating))
-    * Plugin configuration.([Example](docs/Examples.md#plugin-configuration))
-    * Notification configuration.
-    * Skip Builds based on sha/branch/pusher/pull request etc.([Example](docs/Examples.md#build-skipping))
-
-
- * **Docker Support**
-    * Having a Dockerfile in the repo will build an image and run tests against the image.
-    * Or specify a docker image to run build against in .ci.yml. ([Example](docs/Examples.md#docker))
-    * Link against services like mysql, redis ect. ([Example](docs/Examples.md#docker))
-
- * **Defaults** for each language type (eg: ``mvn install`` for java), language is auto detected.
-
- * **Scaling Jenkins**.
-   * Backed by a mongodb database
-   * No need to purge builds to improve startup time/performance.
+* **Scaling Jenkins**.
+   * Backed by a mongodb database.
+   * Store unlimited number of builds without performance degradation.
    * Query build statistics by querying database.
- * **Build shortcuts for deploy/command line tools**
-   * Fetch builds by git sha (`job/meow/23/sha?value=<sha>`)
-   * Or branch specific permalinks (`lastSuccessfulMaster`) .
 
- * **Extensible**
-   * Add new types of notifications/plugins supported in .ci.yml by writing plugins for DotCi.
+* **User builds view** (This is the default view in our jenkins installation)
 
- * **UI enhancements**
-   * Organization View
+  ![branch history](docs/screenshots/user-view.png)
 
-     ![Org](docs/screenshots/org-view.png)
-   * User builds view (This is the default view in our jenkins installation)
+* **Build setup through .ci.yml**
 
-     ![User Builds](docs/screenshots/user-view.png)
-   * Build history by branch
+  Two supported build types
+     * [Docker Build](docs/DockerBuild.md)
+     * [Install_Packages Build](docs/InstallPackages.md)
 
-     ![branch history](docs/screenshots/branch-view.png)
 
 ###Setup
    See:  [Installation](docs/Installation.md)
@@ -69,11 +64,6 @@ Brings ease of build configuration of cloud ci systems like travisci and ease of
  See: [Extending DotCi](docs/Extending.md)
 ###Developer Setup
   See: [Developer Setup](docs/DevelopmentSetup.md)
-###Extras  
-  * Branch Specific build status badges using [Embeddable Build Status Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Embeddable+Build+Status+Plugin).
-     Add `branch=<branch-name>` param to build status url,  eg `https://ci.example.com/job/myorg/job/railsapp/badge/icon?branch=master`
-
-  * [Quick setup guide for digitalocean](https://github.com/groupon/DotCi/wiki/Setup-Cloud-CI-in-15-minutes-with-Jenkins,-DotCi,-Docker-and-DigitalOcean).   
 
 ###License
 ```
