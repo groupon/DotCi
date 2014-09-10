@@ -22,13 +22,11 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.buildtype.dockerimage;
+package com.groupon.jenkins.buildtype.docker;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListOrMapOrString;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.StringValue;
+import com.groupon.jenkins.buildtype.dockerimage.DockerCommandBuilder;
 import com.groupon.jenkins.buildtype.util.config.Config;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import hudson.matrix.Axis;
@@ -43,33 +41,36 @@ import java.util.Stack;
 
 import static com.groupon.jenkins.buildtype.dockerimage.DockerCommandBuilder.dockerCommand;
 
-public class DockerBuildConfiguration {
-    private Config config;
-    private String buildId;
-    private ShellCommands checkoutCommands;
-    private Stack<String> linkCleanupCommands = new Stack<String>();
-    public DockerBuildConfiguration(Map config, String buildId, ShellCommands checkoutCommands) {
+public abstract class DockerBuildConfiguration {
+    protected Config config;
+    protected String buildId;
+    protected ShellCommands checkoutCommands;
+    protected Stack<String> linkCleanupCommands = new Stack<String>();
+
+    public DockerBuildConfiguration(Config config, String buildId, ShellCommands checkoutCommands) {
+        this.config = config;
         this.buildId = buildId;
         this.checkoutCommands = checkoutCommands;
-        this.config = new Config(config, "image", StringValue.class, "run_params", StringValue.class, "links", ListValue.class ,"command", ListOrMapOrString.class);
+    }
+    public AxisList getAxisList() {
+        AxisList  axisList = new AxisList(new Axis("command", "main"));
+        if (isParallized()) {
+            Set commandKeys =  ((Map) config.get("command")).keySet();
+            axisList = new AxisList(new Axis("command", new ArrayList<String>(commandKeys)));
+        }
+        return axisList;
     }
 
-    public ShellCommands toShellCommands(Combination combination) {
-        ShellCommands shellCommands = new ShellCommands();
-        DockerCommandBuilder dockerRunCommand = dockerCommand("run")
-                .flag("rm")
-                .flag("sig-proxy=true")
-               .bulkOptions(config.get("run_params", String.class))
-                .args(getImageName(), "sh -cx \"" + getRunCommand(combination) + "\"");
-
-         shellCommands.addAll(getDockerRunCommands(dockerRunCommand, config.get("links", List.class)));
-
-         shellCommands.addAll(linkCleanupCommands);
-
-        return shellCommands;
+    public boolean isParallized() {
+        return config.get("command") instanceof Map;
+    }
+    public Stack<String> getLinkCleanupCommands() {
+        return linkCleanupCommands;
     }
 
-    private List<String> getDockerRunCommands(DockerCommandBuilder dockerRunCommand, List<Map<String, Object>> links) {
+    public abstract ShellCommands toShellCommands(Combination combination);
+
+    protected List<String> linkServicesToRunCommand(DockerCommandBuilder dockerRunCommand, List<Map<String, Object>> links) {
         List<String> commands = new ArrayList<String>();
         if(links != null){
             commands.addAll(getStartLinkedImageCommands(links));
@@ -96,52 +97,24 @@ public class DockerBuildConfiguration {
                         .flag("name", getContainerId(linkImageName))
                         .bulkOptions((String) link.get("run_params"));
                 runCommand =  link.containsKey("command")? runCommand.args(linkImageName, "sh -cx \"" + link.get("command")+ "\""): runCommand.args(linkImageName);
-                List<String> runCommands = getDockerRunCommands(runCommand, (List<Map<String, Object>>) link.get("links"));
+                List<String> runCommands = linkServicesToRunCommand(runCommand, (List<Map<String, Object>>) link.get("links"));
                 startLinkCommands.addAll(runCommands);
             }
         return startLinkCommands;
     }
-
 
     protected String getContainerId(String serviceImageName) {
         String serviceId = serviceImageName.replaceAll("/", "_").replaceAll(":", "_").replaceAll("\\.", "_");
         return serviceId + "_" + buildId;
     }
 
-    private String getRunCommand(Combination combination) {
-        List commands;
-        if(isParallized()){
-            Map command = config.get("command", Map.class);
-            Object scriptCommands= command.get(combination.get("command"));
-            commands = scriptCommands instanceof List? (List)scriptCommands: Arrays.asList(scriptCommands);
-        }else{
-            commands = config.get("command", List.class);
-        }
-
-        return checkoutCommands.add(new ShellCommands(commands)).toSingleShellCommand();
-    }
-
-    private String getImageName() {
-        return config.get("image",String.class);
-    }
-
-
-
-    public AxisList getAxisList() {
-        AxisList  axisList = new AxisList(new Axis("command", "main"));
-        if (isParallized()) {
-            Set commandKeys =  ((Map) config.get("command")).keySet();
-            axisList = new AxisList(new Axis("command", new ArrayList<String>(commandKeys)));
-        }
-        return axisList;
-    }
     public Iterable<String> getContainerLinkCommands( List<Map<String,Object>> links) {
 
-        return Iterables.transform(links, new Function<Map<String,Object>,String>() {
+        return Iterables.transform(links, new Function<Map<String, Object>, String>() {
             @Override
-            public String apply(Map<String,Object> link) {
-                String serviceImageName  = (String) link.get("image");
-                String serviceId = link.containsKey("name")? (String)link.get("name"):getServiceRuntimeId(serviceImageName);
+            public String apply(Map<String, Object> link) {
+                String serviceImageName = (String) link.get("image");
+                String serviceId = link.containsKey("name") ? (String) link.get("name") : getServiceRuntimeId(serviceImageName);
                 String runningImageId = getContainerId(serviceImageName);
                 return runningImageId + ":" + serviceId;
             }
@@ -174,11 +147,16 @@ public class DockerBuildConfiguration {
         });
     }
 
-    public Stack<String> getLinkCleanupCommands() {
-        return linkCleanupCommands;
-    }
+    protected String getRunCommand(Combination combination) {
+        List commands;
+        if(isParallized()){
+            Map command = config.get("command", Map.class);
+            Object scriptCommands= command.get(combination.get("command"));
+            commands = scriptCommands instanceof List? (List)scriptCommands: Arrays.asList(scriptCommands);
+        }else{
+            commands = config.get("command", List.class);
+        }
 
-    public boolean isParallized() {
-        return config.get("command") instanceof Map;
+        return checkoutCommands.add(new ShellCommands(commands)).toSingleShellCommand();
     }
 }

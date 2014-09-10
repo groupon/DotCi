@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.buildtype.dockerimage;
+package com.groupon.jenkins.buildtype.docker;
 
 import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;

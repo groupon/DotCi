@@ -24,98 +24,24 @@
 
 package com.groupon.jenkins.buildtype.dockerimage;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
-import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
-import com.groupon.jenkins.buildtype.util.shell.ShellScriptRunner;
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
-import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.build.execution.SubBuildRunner;
-import com.groupon.jenkins.dynamic.build.execution.SubBuildScheduler;
-import com.groupon.jenkins.dynamic.buildtype.BuildType;
-import com.groupon.jenkins.util.GroovyYamlTemplateProcessor;
+import com.groupon.jenkins.buildtype.docker.CheckoutCommands;
+import com.groupon.jenkins.buildtype.docker.DockerBuild;
+import com.groupon.jenkins.buildtype.docker.DockerBuildConfiguration;
 import hudson.EnvVars;
 import hudson.Extension;
-import hudson.Launcher;
-import hudson.matrix.Combination;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Extension
-public class DockerImageBuild extends BuildType implements SubBuildRunner {
-    private static final Logger LOGGER = Logger.getLogger(DockerImageBuild.class.getName());
-    private DockerBuildConfiguration buildConfiguration;
+public class DockerImageBuild extends DockerBuild  {
 
     @Override
     public String getDescription() {
         return "Docker Build";
     }
 
-    @Override
-    public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
-        try{
-            EnvVars buildEnvironment = build.getEnvironment(listener);
-            Map config = new GroovyYamlTemplateProcessor(getDotCiYml(build), buildEnvironment).getConfig();
-            this.buildConfiguration = new DockerBuildConfiguration(config,build.getBuildId(), CheckoutCommands.get(buildEnvironment));
-            build.setAxisList(buildConfiguration.getAxisList());
-            Result result ;
-            if(buildConfiguration.isParallized()){
-                result = runMultiConfigbuildRunner(build, buildConfiguration, listener, launcher);;
-            }else{
-                result = runSubBuild(new Combination(ImmutableMap.of("script", "main")), buildExecutionContext, listener) ;
-            }
-            return result;
-
-        }catch (InterruptedException e){
-            if(buildConfiguration !=null && Iterables.isEmpty(buildConfiguration.getLinkCleanupCommands())){
-                ShellCommands cleanupCommands = new ShellCommands();
-                cleanupCommands.addAll(buildConfiguration.getLinkCleanupCommands());
-                new ShellScriptRunner(buildExecutionContext, listener).runScript(cleanupCommands);
-            }
-           throw e;
-        }
-    }
-
-
-    private Result runMultiConfigbuildRunner(DynamicBuild dynamicBuild, DockerBuildConfiguration buildConfiguration, BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
-        SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, this, new SubBuildScheduler.SubBuildFinishListener() {
-            @Override
-            public void runFinished(DynamicSubBuild subBuild) throws IOException {
-            }
-        });
-
-        try {
-            Iterable<Combination> axisList = buildConfiguration.getAxisList().list();
-            Result combinedResult = subBuildScheduler.runSubBuilds(axisList, listener);
-            dynamicBuild.setResult(combinedResult);
-            return combinedResult;
-        } finally {
-            try {
-                subBuildScheduler.cancelSubBuilds(listener.getLogger());
-            } catch (Exception e) {
-                // There is nothing much we can do at this point
-                LOGGER.log(Level.SEVERE, "Failed to cancel subbuilds", e);
-            }
-        }
-    }
-
-    private String getDotCiYml(DynamicBuild build) throws IOException {
-       try {
-           return build.getGithubRepositoryService().getGHFile(".ci.yml", build.getSha()).getContent();
-       } catch (FileNotFoundException _){
-           throw new InvalidBuildConfigurationException("No .ci.yml found.");
-       }
-   }
 
     @Override
-    public Result runSubBuild(Combination combination, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
-        return new ShellScriptRunner(buildExecutionContext, listener).runScript(buildConfiguration.toShellCommands(combination));
+    public DockerBuildConfiguration getBuildConfiguration(Map config, String buildId, EnvVars buildEnvironment) {
+        return new DockerImageBuildConfiguration(config,buildId, CheckoutCommands.get(buildEnvironment));
     }
 }
