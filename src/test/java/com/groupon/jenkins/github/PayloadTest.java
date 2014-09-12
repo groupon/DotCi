@@ -54,7 +54,7 @@ public class PayloadTest {
 	public void testProjectPullRequestCause() throws IOException {
 		String payloadReq = readFile("pull_request.json");
 		Payload payload = new Payload(payloadReq);
-		assertEquals("Started by Github pull request  release-engineering:pull3( Number : 4)", payload.getCause().getShortDescription());
+		assertEquals("Started by Github pull request  suryagroupon:master( Number : 4)", payload.getCause().getShortDescription());
 	}
 
 	@Test
@@ -118,7 +118,7 @@ public class PayloadTest {
 	@Test
 	public void diffUrlForPullRequest() throws IOException {
 		Payload payload = new Payload(readFile("pull_request.json"));
-		assertEquals("https://github.acme.com/surya/mycoolapp/pull/4", payload.getDiffUrl());
+		assertEquals("https://github.com/suryagaddipati/cancan/pull/4", payload.getDiffUrl());
 	}
 
 	@Test
@@ -130,7 +130,7 @@ public class PayloadTest {
 	@Test
 	public void pusherPullRequest() throws IOException {
 		Payload payload = new Payload(readFile("pull_request.json"));
-		assertEquals("surya", payload.getPusher());
+		assertEquals("suryagroupon", payload.getPusher());
 	}
 
 	@Test
@@ -166,6 +166,15 @@ public class PayloadTest {
 		Payload payload = new Payload(readFile("pull_request.json"));
 		assertTrue(Iterables.isEmpty(payload.getLogEntries()));
 	}
+
+    @Test
+    public void should_get_project_url_from_payload() throws IOException {
+        Payload payload = new Payload(readFile("pull_request.json"));
+        assertEquals("https://github.com/suryagaddipati/cancan", payload.getProjectUrl());
+
+        payload = new Payload(readFile("push.json"));
+        assertEquals("https://github.acme.com/surya/mycoolapp", payload.getProjectUrl());
+    }
 
 	private String readFile(String fileName) throws IOException {
 		InputStream stream = getClass().getResourceAsStream("/" + fileName);

@@ -26,33 +26,19 @@ package com.groupon.jenkins.github;
 import com.groupon.jenkins.dynamic.build.cause.GitHubPullRequestCause;
 import com.groupon.jenkins.dynamic.build.cause.GitHubPushCause;
 import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
-import com.groupon.jenkins.github.services.GithubRepositoryService;
 import hudson.model.Cause;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import org.kohsuke.github.GHRepository;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 public class Payload {
 
-	private final JSONObject repository;
 	private final JSONObject payloadJson;
 
 	public Payload(String payload) {
 		this.payloadJson = JSONObject.fromObject(payload);
-		this.repository = payloadJson.getJSONObject("repository");
-	}
-
-	public GHRepository getProject() {
-		String url = repository.getString("url").replace("/api/v3/repos", "");
-		return getGithubRepository(url);
-	}
-
-	protected GHRepository getGithubRepository(String url) {
-		return new GithubRepositoryService(url).getGithubRepository();
 	}
 
 	public boolean isPullRequest() {
@@ -76,9 +62,8 @@ public class Payload {
 	public String getSha() {
 		if (isPullRequest()) {
 			return getPullRequest().getJSONObject("head").getString("sha");
-		} else {
-			return payloadJson.getString("after");
 		}
+        return payloadJson.getString("after");
 	}
 
 	private JSONObject getPullRequest() {
@@ -88,9 +73,8 @@ public class Payload {
 	public String getBranch() {
 		if (isPullRequest()) {
 			return "Pull Request: " + getPullRequestNumber();
-		} else {
-			return payloadJson.getString("ref").replaceAll("refs/heads/", "");
 		}
+	    return payloadJson.getString("ref").replaceAll("refs/heads/", "");
 	}
 
 	public boolean needsBuild() {
@@ -99,9 +83,8 @@ public class Payload {
 		}
 		if (isPullRequest()) {
 			return !isPullRequestClosed() && !isPullRequestFromWithinSameRepo();
-		} else {
-			return !payloadJson.getBoolean("deleted");
 		}
+        return !payloadJson.getBoolean("deleted");
 	}
 
 	private boolean isPullRequestClosed() {
@@ -122,9 +105,8 @@ public class Payload {
 	public String getBranchDescription() {
 		if (isPullRequest()) {
 			return "Pull Request " + getPullRequestNumber();
-		} else {
-			return getBranch().replace("origin/", "");
 		}
+		return getBranch().replace("origin/", "");
 	}
 
 	public String getPullRequestNumber() {
@@ -134,9 +116,8 @@ public class Payload {
 	public String getPusher() {
 		if (isPullRequest()) {
 			return payloadJson.getJSONObject("sender").getString("login");
-		} else {
-			return payloadJson.getJSONObject("pusher").getString("name");
 		}
+		return payloadJson.getJSONObject("pusher").getString("name");
 	}
 
 	public String getDiffUrl() {
@@ -148,7 +129,10 @@ public class Payload {
 	}
 
 	public String getProjectUrl() {
-		return getProject().getUrl();
+        if(isPullRequest()){
+            return getPullRequest().getJSONObject("base").getJSONObject("repo").getString("html_url");
+        }
+		return  payloadJson.getJSONObject("repository").getString("url");
 	}
 
 	public Iterable<GithubLogEntry> getLogEntries() {
