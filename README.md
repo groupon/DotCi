@@ -58,8 +58,6 @@ Brings ease of build configuration of cloud ci systems like travisci and ease of
    See:  [Installation](docs/Installation.md)
 ###Usage
    See: [Usage](docs/Usage.md)
-###.ci.yml examples
-   See: [.ci.yml examples](docs/Examples.md)
 ###Extending DotCi
  See: [Extending DotCi](docs/Extending.md)
 ###Developer Setup
