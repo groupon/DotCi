@@ -46,19 +46,36 @@ public class DockerfileBuildConfiguration extends DockerBuildConfiguration {
 
     public ShellCommands toShellCommands(Combination combination) {
         ShellCommands shellCommands = new ShellCommands();
-        String buildImageCommand = dockerCommand("build").flag("t").args(buildId, ".").get();
-        shellCommands.add(buildImageCommand);
         DockerCommandBuilder dockerRunCommand = dockerCommand("run")
                 .flag("rm")
                 .flag("sig-proxy=true")
-                .bulkOptions(config.get("run_params", String.class))
-                .args(buildId, "sh -cx \"" + getRunCommand(combination) + "\"");
+                .flag("v", "/usr/bin/docker:/bin/docker")
+                .flag("v","/var/run/docker.sock:/docker.sock")
+                .flag("e", "DOCKER_HOST=\"unix:///docker.sock\"")
+                .args(getImageName(), "sh -cx \"" + getRunCommand(combination) + "\"");
 
-        shellCommands.addAll(linkServicesToRunCommand(dockerRunCommand, config.get("links", List.class)));
+        //shellCommands.addAll(linkServicesToRunCommand(dockerRunCommand, config.get("links", List.class)));
 
-        shellCommands.addAll(linkCleanupCommands);
+        //shellCommands.addAll(linkCleanupCommands);
+        shellCommands.add(dockerRunCommand.get());
 
         return shellCommands;
     }
 
+    @Override
+    protected String getRunCommand(Combination combination) {
+        String buildImageCommand = dockerCommand("build").flag("t","dockerfile" ).args( ".").get();
+        ShellCommands buildCommands = new ShellCommands();
+        buildCommands.add(buildImageCommand);
+        String buildCommand =  new ShellCommands(getCommandForCombination(combination)).toSingleShellCommand();
+        String buildShellCommand = "sh -cx '" +  buildCommand+ "'";
+        DockerCommandBuilder dockerRunCommand = dockerCommand("run")
+                .flag("rm")
+                .flag("sig-proxy=true")
+                .bulkOptions(config.get("run_params", String.class))
+                .args("dockerfile", buildShellCommand);
+        //buildCommands.add(dockerRunCommand.get());
+        buildCommands.addAll(linkServicesToRunCommand(dockerRunCommand, config.get("links", List.class)));
+        return checkoutCommands.add(buildCommands).toSingleShellCommand();
+    }
 }

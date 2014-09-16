@@ -148,6 +148,12 @@ public abstract class DockerBuildConfiguration {
     }
 
     protected String getRunCommand(Combination combination) {
+        List commands = getCommandForCombination(combination);
+
+        return checkoutCommands.add(new ShellCommands(commands)).toSingleShellCommand();
+    }
+
+    protected List getCommandForCombination(Combination combination) {
         List commands;
         if(isParallized()){
             Map command = config.get("command", Map.class);
@@ -156,7 +162,10 @@ public abstract class DockerBuildConfiguration {
         }else{
             commands = config.get("command", List.class);
         }
+        return commands;
+    }
 
-        return checkoutCommands.add(new ShellCommands(commands)).toSingleShellCommand();
+    protected String getImageName() {
+        return config.get("image",String.class);
     }
 }

@@ -60,9 +60,4 @@ public class DockerImageBuildConfiguration extends DockerBuildConfiguration {
     }
 
 
-    private String getImageName() {
-        return config.get("image",String.class);
-    }
-
-
 }

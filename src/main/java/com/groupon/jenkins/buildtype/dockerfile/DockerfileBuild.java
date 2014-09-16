@@ -24,22 +24,11 @@
 
 package com.groupon.jenkins.buildtype.dockerfile;
 
-import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.buildtype.docker.CheckoutCommands;
 import com.groupon.jenkins.buildtype.docker.DockerBuild;
 import com.groupon.jenkins.buildtype.docker.DockerBuildConfiguration;
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.build.execution.WorkspaceFileExporter;
 import hudson.EnvVars;
 import hudson.Extension;
-import hudson.Launcher;
-import hudson.matrix.Combination;
-import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Map;
 
 @Extension
@@ -50,28 +39,6 @@ public class DockerfileBuild extends DockerBuild{
         return "Dockerfile Build";
     }
 
-    @Override
-    public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
-        exportDockerFileIntoWorkspace(build,launcher,listener);
-        return super.runBuild(build, buildExecutionContext, launcher, listener);
-    }
-
-    private void exportDockerFileIntoWorkspace(DynamicBuild build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
-        new WorkspaceFileExporter("Dockerfile",fetchDockerFile(build)).perform((AbstractBuild)build,launcher,listener);
-    }
-
-    private String fetchDockerFile(DynamicBuild build) throws IOException {
-        try{
-            return build.getGithubRepositoryService().getGHFile("Dockerfile", build.getSha()).getContent();
-        } catch (FileNotFoundException _){
-            throw new InvalidBuildConfigurationException("No Dockerfile found.");
-        }
-    }
-
-    @Override
-    public Result runSubBuild(Combination combination, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
-        return super.runSubBuild(combination, buildExecutionContext, listener);
-    }
 
     @Override
     public DockerBuildConfiguration getBuildConfiguration(Map config, String buildId, EnvVars buildEnvironment) {
