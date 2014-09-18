@@ -7,6 +7,8 @@
   * [Install_Packages Build](InstallPackages.md)
 
 ## Setup a new DotCi Job
+   - Visit https://ci.groupondev.com/
+
    - Click new DotCi job on side-panel
 
       ![New Job](screenshots/new-job-link.png)  
