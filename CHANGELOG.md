@@ -2,6 +2,7 @@
  - Introduced BuildType extension with two currently supported buildtypes
     * Install Packages
     * Docker Image
+
 ## 1.3.0(07/15/2014)
  Bugfixes: 
    - Call `onLoad` on build load. Not calling this was causing junit action to fail.
