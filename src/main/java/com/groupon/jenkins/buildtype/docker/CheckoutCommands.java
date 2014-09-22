@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.buildtype.dockerimage;
+package com.groupon.jenkins.buildtype.docker;
 
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.github.GitUrl;

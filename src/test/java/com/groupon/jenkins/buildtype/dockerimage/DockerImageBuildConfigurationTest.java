@@ -33,17 +33,19 @@ import org.junit.Test;
 import static com.google.common.collect.ImmutableMap.of;
 import static java.util.Arrays.asList;
 
-public class DockerBuildConfigurationTest {
+public class DockerImageBuildConfigurationTest {
 
 
     @Test
     public void should_support_nested_links(){
-        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
+        String buildCommand = "buildCommand";
+       Assert.assertEquals("","sh -cx \\\"" +  buildCommand+ "\\\"");
+        DockerImageBuildConfiguration dockerImageBuildConfiguration = new DockerImageBuildConfiguration(of("image", "ubutu",
                 "links",  asList(of("image","mysql",
                                      "links", asList(of("image","redis"))
                                  )),
                 "command", "echo success"),"buildId", new ShellCommands());
-        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
+        ShellCommands shellCommands = dockerImageBuildConfiguration.toShellCommands(null);
         Assert.assertEquals("docker run -d --name redis_buildId redis",shellCommands.get(0));
         Assert.assertEquals("docker run -d --name mysql_buildId --link redis_buildId:redis mysql",shellCommands.get(1));
         Assert.assertEquals("docker run --rm --sig-proxy=true --link mysql_buildId:mysql ubutu sh -cx \"echo success\"",shellCommands.get(2));
@@ -57,12 +59,12 @@ public class DockerBuildConfigurationTest {
     @Test
     public void should_start_and_link_containers_when_links_are_specified(){
 
-        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
+        DockerImageBuildConfiguration dockerImageBuildConfiguration = new DockerImageBuildConfiguration(of("image", "ubutu",
                 "links",  asList(of("image","mysql",
                                      "name", "custom_mysql_name",
                                     "command","meow")),
                 "command", "echo success"),"buildId", new ShellCommands());
-        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
+        ShellCommands shellCommands = dockerImageBuildConfiguration.toShellCommands(null);
         Assert.assertEquals("docker run -d --name mysql_buildId mysql sh -cx \"meow\"",shellCommands.get(0));
         Assert.assertEquals("docker run --rm --sig-proxy=true --link mysql_buildId:custom_mysql_name ubutu sh -cx \"echo success\"",shellCommands.get(1));
         Assert.assertEquals("docker kill  mysql_buildId",shellCommands.get(2));
@@ -71,11 +73,11 @@ public class DockerBuildConfigurationTest {
     @Test
     public void should_start_and_linked_containers_with_run_params_if_specified(){
 
-        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
+        DockerImageBuildConfiguration dockerImageBuildConfiguration = new DockerImageBuildConfiguration(of("image", "ubutu",
                 "links",  asList(of("image","mysql",
                                         "run_params","-v /var/test=/var/test"  )),
                 "command", "echo success"),"buildId", new ShellCommands());
-        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
+        ShellCommands shellCommands = dockerImageBuildConfiguration.toShellCommands(null);
         Assert.assertEquals("docker run -d --name mysql_buildId -v /var/test=/var/test mysql",shellCommands.get(0));
         Assert.assertEquals("docker run --rm --sig-proxy=true --link mysql_buildId:mysql ubutu sh -cx \"echo success\"",shellCommands.get(1));
         Assert.assertEquals("docker kill  mysql_buildId",shellCommands.get(2));
@@ -84,55 +86,55 @@ public class DockerBuildConfigurationTest {
 
     @Test
     public void should_run_container_with_specified_params() throws Exception {
-        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(
+        DockerImageBuildConfiguration dockerImageBuildConfiguration = new DockerImageBuildConfiguration(
                   of("image", "ubutu",
                      "run_params","-v /var/tmp=/var/tmp",
                      "command", "echo meow"),"buildId",new ShellCommands());
-        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
+        ShellCommands shellCommands = dockerImageBuildConfiguration.toShellCommands(null);
         Assert.assertEquals("docker run --rm --sig-proxy=true -v /var/tmp=/var/tmp ubutu sh -cx \"echo meow\"",shellCommands.get(0));
     }
 
 
     @Test
     public void should_run_container_with_command() throws Exception {
-        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
+        DockerImageBuildConfiguration dockerImageBuildConfiguration = new DockerImageBuildConfiguration(of("image", "ubutu",
                 "command", Arrays.asList("echo step1", "echo step2")),"buildId",new ShellCommands());
-        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
+        ShellCommands shellCommands = dockerImageBuildConfiguration.toShellCommands(null);
         Assert.assertEquals("docker run --rm --sig-proxy=true ubutu sh -cx \"echo step1 && echo step2\"",shellCommands.get(0));
     }
 
 
     @Test
     public void should_run_checkout_commands_before_commands() throws Exception {
-        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
+        DockerImageBuildConfiguration dockerImageBuildConfiguration = new DockerImageBuildConfiguration(of("image", "ubutu",
                 "command", Arrays.asList("echo step1", "echo step2")),"buildId",new ShellCommands("checkout command1"));
-        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(null);
+        ShellCommands shellCommands = dockerImageBuildConfiguration.toShellCommands(null);
         Assert.assertEquals("docker run --rm --sig-proxy=true ubutu sh -cx \"checkout command1 && echo step1 && echo step2\"",shellCommands.get(0));
     }
 
     @Test
     public void should_run_parallelized_if_command_is_parallized() throws Exception {
-        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
+        DockerImageBuildConfiguration dockerImageBuildConfiguration = new DockerImageBuildConfiguration(of("image", "ubutu",
                 "env", of("CI", "true"),
                 "command", of("one","echo one", "two","echo two")),"buildId",new ShellCommands());
-        Assert.assertTrue(dockerBuildConfiguration.isParallized());
+        Assert.assertTrue(dockerImageBuildConfiguration.isParallized());
     }
 
     @Test
     public void should_run_parallel_build_of_the_combination_if_command_is_parallized() throws Exception {
-        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
+        DockerImageBuildConfiguration dockerImageBuildConfiguration = new DockerImageBuildConfiguration(of("image", "ubutu",
                 "command", of("one","echo one", "two","echo two")),"buildId",new ShellCommands());
-        Assert.assertTrue(dockerBuildConfiguration.isParallized());
-        ShellCommands shellCommands = dockerBuildConfiguration.toShellCommands(new Combination(of("command","two")));
+        Assert.assertTrue(dockerImageBuildConfiguration.isParallized());
+        ShellCommands shellCommands = dockerImageBuildConfiguration.toShellCommands(new Combination(of("command","two")));
         Assert.assertEquals("docker run --rm --sig-proxy=true ubutu sh -cx \"echo two\"",shellCommands.get(0));
     }
 
     @Test
     public void should_calculate_axis_list() throws Exception {
-        DockerBuildConfiguration dockerBuildConfiguration = new DockerBuildConfiguration(of("image", "ubutu",
+        DockerImageBuildConfiguration dockerImageBuildConfiguration = new DockerImageBuildConfiguration(of("image", "ubutu",
                 "env", of("CI", "true"),
                 "command", of("one","echo one", "two","echo two")),"buildId", new ShellCommands());
-        Assert.assertNotNull(dockerBuildConfiguration.getAxisList());
+        Assert.assertNotNull(dockerImageBuildConfiguration.getAxisList());
     }
 
 }

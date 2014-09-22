@@ -22,24 +22,26 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.buildtype.dockerimage;
+package com.groupon.jenkins.buildtype.dockerfile;
 
-import com.google.common.collect.ImmutableMap;
-import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
-import org.junit.Assert;
-import org.junit.Test;
+import com.groupon.jenkins.buildtype.docker.CheckoutCommands;
+import com.groupon.jenkins.buildtype.docker.DockerBuild;
+import com.groupon.jenkins.buildtype.docker.DockerBuildConfiguration;
+import hudson.EnvVars;
+import hudson.Extension;
+import java.util.Map;
 
-public class CheckoutCommandsTest {
+@Extension
+public class DockerfileBuild extends DockerBuild{
 
-    @Test
-    public void should_checkout_pr_if_pr(){
-       ShellCommands commands = CheckoutCommands.get(ImmutableMap.of("DOTCI_PULL_REQUEST", "17", "GIT_URL","git@github.com:groupon/DotCi.git")) ;
-        Assert.assertEquals("git fetch origin \"+refs/pull/17/merge:\"",commands.get(2));
+    @Override
+    public String getDescription() {
+        return "Dockerfile Build";
     }
 
-    @Test
-    public void should_checkout_branch_if_branch(){
-        ShellCommands commands = CheckoutCommands.get(ImmutableMap.of("GIT_URL", "git@github.com:groupon/DotCi.git", "DOTCI_BRANCH","dotci_branch")) ;
-        Assert.assertEquals("git clone  --branch=dotci_branch https://github.com/groupon/DotCi /var/groupon/DotCi",commands.get(0));
+
+    @Override
+    public DockerBuildConfiguration getBuildConfiguration(Map config, String buildId, EnvVars buildEnvironment) {
+        return new DockerfileBuildConfiguration(config,buildId, CheckoutCommands.get(buildEnvironment));
     }
 }
