@@ -51,7 +51,10 @@ public class DotCiTemplate implements ExtensionPoint {
     }
 
     public  BuildConfiguration getMergedTemplate(BuildConfiguration configuration, String parentTemplate, EnvVars envVars) {
-        BuildConfiguration parentBuildConfiguration = getTemplates().get(parentTemplate).getBuildConfiguration(envVars);
+         return getMergedTemplate(configuration,getTemplates().get(parentTemplate),envVars);
+    }
+    public  BuildConfiguration getMergedTemplate(BuildConfiguration configuration, DotCiTemplate parentTemplate, EnvVars envVars) {
+        BuildConfiguration parentBuildConfiguration = parentTemplate.getBuildConfiguration(envVars);
         parentBuildConfiguration.merge(configuration);
         return parentBuildConfiguration;
     }

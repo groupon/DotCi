@@ -43,7 +43,8 @@ public class BuildConfigurationCalculator {
 				throw new InvalidBuildConfigurationException(configuration.getValidationErrors());
 			}
 		  if(configuration.getLanguage() == null){
-              return dotCiTemplate.getDefaultFor(githubRepositoryService.getGithubRepository()).getBuildConfiguration(envVars);
+              DotCiTemplate defaultParentTemplate = dotCiTemplate.getDefaultFor(githubRepositoryService.getGithubRepository()); //.getBuildConfiguration(envVars);
+              return dotCiTemplate.getMergedTemplate(configuration,defaultParentTemplate,envVars);
           }
 			return dotCiTemplate.getMergedTemplate(configuration, configuration.getLanguage(), envVars);
 		} catch (FileNotFoundException e) {
