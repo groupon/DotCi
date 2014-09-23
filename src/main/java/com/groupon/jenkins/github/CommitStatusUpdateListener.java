@@ -23,19 +23,20 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.github;
 
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.github.services.GithubRepositoryService;
 import hudson.Extension;
+import hudson.model.Result;
 import hudson.model.TaskListener;
 import hudson.model.listeners.RunListener;
-
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.kohsuke.github.GHCommitState;
 import org.kohsuke.github.GHRepository;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.github.services.GithubRepositoryService;
+import static hudson.model.Result.SUCCESS;
+import static hudson.model.Result.UNSTABLE;
 
 @Extension
 public class CommitStatusUpdateListener extends RunListener<DynamicBuild> {
@@ -53,7 +54,37 @@ public class CommitStatusUpdateListener extends RunListener<DynamicBuild> {
 		}
 	}
 
-	protected GHRepository getGithubRepository(DynamicBuild build) {
+    @Override
+    public void onCompleted(DynamicBuild build, TaskListener listener) {
+        String sha1 = build.getSha();
+        if (sha1 == null) {
+            return ;
+        }
+
+        GHRepository repository = getGithubRepository(build);
+        GHCommitState state;
+        String msg;
+        Result result = build.getResult();
+        if (result.isBetterOrEqualTo(SUCCESS)) {
+            state = GHCommitState.SUCCESS;
+            msg = "Success";
+        } else if (result.isBetterOrEqualTo(UNSTABLE)) {
+            state = GHCommitState.FAILURE;
+            msg = "Unstable";
+        } else {
+            state = GHCommitState.FAILURE;
+            msg = "Failed";
+        }
+        try {
+            repository.createCommitStatus(sha1, state, build.getFullUrl(), msg);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        listener.getLogger().println("setting commit status on Github for " + repository.getUrl() + "/commit/" + sha1);
+
+    }
+
+    protected GHRepository getGithubRepository(DynamicBuild build) {
 		return new GithubRepositoryService(build.getGithubRepoUrl()).getGithubRepository();
 	}
 

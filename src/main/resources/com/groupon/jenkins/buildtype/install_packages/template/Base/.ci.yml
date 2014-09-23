@@ -48,4 +48,3 @@ build:
   
 notifications:
   - pusher_email
-  - github_commit_status
