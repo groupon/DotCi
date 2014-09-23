@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins;
+package com.groupon.jenkins.buildtype.plugins;
 
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import hudson.ExtensionList;

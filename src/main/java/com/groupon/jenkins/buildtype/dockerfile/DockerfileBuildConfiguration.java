@@ -74,7 +74,6 @@ public class DockerfileBuildConfiguration extends DockerBuildConfiguration {
                 .flag("sig-proxy=true")
                 .bulkOptions(config.get("run_params", String.class))
                 .args("dockerfile", buildShellCommand);
-        //buildCommands.add(dockerRunCommand.get());
         buildCommands.addAll(linkServicesToRunCommand(dockerRunCommand, config.get("links", List.class)));
         return checkoutCommands.add(buildCommands).toSingleShellCommand();
     }

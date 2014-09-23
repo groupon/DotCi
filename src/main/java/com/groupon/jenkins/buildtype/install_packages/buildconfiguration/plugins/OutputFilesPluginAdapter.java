@@ -23,14 +23,13 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins;
 
+import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.BuildListener;
-
 import java.io.IOException;
-
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 
 @Extension
 public class OutputFilesPluginAdapter extends DotCiPluginAdapter {
