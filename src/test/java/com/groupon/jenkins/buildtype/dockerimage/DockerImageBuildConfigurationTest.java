@@ -38,8 +38,6 @@ public class DockerImageBuildConfigurationTest {
 
     @Test
     public void should_support_nested_links(){
-        String buildCommand = "buildCommand";
-       Assert.assertEquals("","sh -cx \\\"" +  buildCommand+ "\\\"");
         DockerImageBuildConfiguration dockerImageBuildConfiguration = new DockerImageBuildConfiguration(of("image", "ubutu",
                 "links",  asList(of("image","mysql",
                                      "links", asList(of("image","redis"))
