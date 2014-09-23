@@ -30,7 +30,7 @@ import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfiguration;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfigurationCalculator;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins.DotCiPluginAdapter;
+import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.buildtype.util.shell.ShellScriptRunner;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;

@@ -26,7 +26,7 @@ package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.MapValue;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.StringValue;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins.DotCiPluginAdapter;
+import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
 import com.groupon.jenkins.util.GroovyYamlTemplateProcessor;
 import hudson.EnvVars;

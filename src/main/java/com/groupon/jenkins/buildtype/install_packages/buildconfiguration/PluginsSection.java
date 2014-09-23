@@ -25,7 +25,7 @@ package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.plugins.DotCiPluginAdapter;
+import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import hudson.matrix.Combination;
 import java.util.ArrayList;
