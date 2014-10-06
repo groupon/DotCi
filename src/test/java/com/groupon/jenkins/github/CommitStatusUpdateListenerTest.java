@@ -65,7 +65,7 @@ public class CommitStatusUpdateListenerTest {
         DynamicBuild build = newBuild().success().get();
 
         commitStatusUpdateListener.onCompleted(build, BuildListenerFactory.newBuildListener().get());
-        verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.SUCCESS, build.getFullUrl(), "Success");
+        verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.SUCCESS, build.getFullUrl(), "Success", "DotCi");
 
 
     }
@@ -74,14 +74,14 @@ public class CommitStatusUpdateListenerTest {
     public void should_set_failure_status_on_commit_if_build_fails() throws IOException {
         DynamicBuild build = newBuild().fail().get();
         commitStatusUpdateListener.onCompleted(build, BuildListenerFactory.newBuildListener().get());
-        verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.FAILURE, build.getFullUrl(), "Failed");
+        verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.FAILURE, build.getFullUrl(), "Failed", "DotCi");
     }
 
     @Test
     public void should_set_failure_status_on_commit_if_build_is_unstable() throws IOException {
         DynamicBuild build = newBuild().unstable().get();
         commitStatusUpdateListener.onCompleted(build,  BuildListenerFactory.newBuildListener().get());
-        verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.FAILURE, build.getFullUrl(), "Unstable");
+        verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.FAILURE, build.getFullUrl(), "Unstable", "DotCi");
     }
 
 

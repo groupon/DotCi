@@ -84,7 +84,7 @@ public class CommitStatusUpdateListener extends RunListener<DynamicBuild> {
             msg = "Failed";
         }
         try {
-            repository.createCommitStatus(sha1, state, build.getFullUrl(), msg,"DotCI");
+            repository.createCommitStatus(sha1, state, build.getFullUrl(), msg,"DotCi");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
