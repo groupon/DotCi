@@ -46,8 +46,16 @@ public class CommitStatusUpdateListener extends RunListener<DynamicBuild> {
 	@Override
 	public void onStarted(DynamicBuild build, TaskListener listener) {
 		GHRepository repository = getGithubRepository(build);
+
 		try {
-			repository.createCommitStatus(build.getSha(), GHCommitState.PENDING, build.getFullUrl(), "Build in progress");
+            String url = "";
+            try {
+                url = build.getFullUrl();
+            } catch (Exception e) {
+                // do nothing
+                // TODO DO SOMETHING
+            }
+			repository.createCommitStatus(build.getSha(), GHCommitState.PENDING, url, "Build in progress");
 		} catch (IOException e) {
 			// Ignore if cannot create a pending status
 			LOGGER.log(Level.WARNING, "Failed to Update commit status", e);
@@ -76,7 +84,7 @@ public class CommitStatusUpdateListener extends RunListener<DynamicBuild> {
             msg = "Failed";
         }
         try {
-            repository.createCommitStatus(sha1, state, build.getFullUrl(), msg,"DotCI");
+            repository.createCommitStatus(sha1, state, build.getFullUrl(), msg,"DotCi");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -23,176 +23,57 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.mongo;
 
-import com.google.common.base.Function;
 import com.groupon.jenkins.SetupConfig;
 import com.mongodb.*;
-import org.bson.types.ObjectId;
 
 import java.net.UnknownHostException;
-import java.util.LinkedList;
-import java.util.List;
+
+import jenkins.model.Jenkins;
+
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.Morphia;
+import org.mongodb.morphia.mapping.Mapper;
 
 public abstract class MongoRepository {
-	/**
-	 * System.setProperty("DEBUG.MONGO", "true"); Enable DB operation tracing
-	 * System.setProperty("DB.TRACE", "true");
-	 * 
-	 * @return {@link MongoClient}
-	 */
-	protected static MongoClient getClient() {
-		try {
-			return new MongoClient(SetupConfig.get().getDbHost(), SetupConfig.get().getDbPort());
-		} catch (UnknownHostException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    private static final transient Object lock = new Object();
+    private static Datastore datastore;
 
-	protected final String collectionName;
-
-	public MongoRepository(String collectionName) {
-		this.collectionName = collectionName;
-	}
-
-	protected void save(DBObject doc) {
-		MongoClient client = getClient();
-		try {
-			getCollection(client).insert(doc);
-		} finally {
-			client.close();
-		}
-	}
-
-	protected void update(DBObject query, DBObject object) {
-		MongoClient client = getClient();
-		try {
-			getCollection(client).update(query, object);
-		} finally {
-			client.close();
-		}
-	}
-    protected void update(DBObject query, DBObject object,boolean upsert , boolean multi ) {
-        MongoClient client = getClient();
-        try {
-            getCollection(client).update(query, object,upsert,multi);
-        } finally {
-            client.close();
+    public Datastore getDatastore() {
+        if(datastore == null) {
+            synchronized (lock) {
+                if(datastore == null) { // confirm we got the lock in time
+                    datastore = configureDatastore();
+                }
+            }
         }
+
+        return datastore;
     }
 
-	protected ObjectId saveOrUpdate(BasicDBObject query, BasicDBObject doc) {
-		DBObject exisistingObject = findOne(query);
-		if (exisistingObject == null) {
-			save(doc);
-			return (ObjectId) doc.get("_id");
-		} else {
-			update(query, doc);
-			return (ObjectId) exisistingObject.get("_id");
-		}
-	}
+    private Datastore configureDatastore() {
+        Morphia morphia = new Morphia();
+        Mapper mapper = morphia.getMapper();
+        mapper.getConverters().addConverter(new CopyOnWriteListConverter());
+        mapper.getConverters().addConverter(new DescribableListConverter());
+        mapper.getConverters().addConverter(new ParametersDefinitionPropertyCoverter());
+        mapper.getConverters().addConverter(new CombinationConverter());
+        mapper.getConverters().addConverter(new AxisListConverter());
+        mapper.getConverters().addConverter(new ResultConverter());
 
-	private DB getDB(MongoClient client) {
-		return client.getDB(SetupConfig.get().getDbName());
-	}
 
-	protected <T> Iterable<T> findAll(Function<DBObject, T> transformer) {
-		return find(null, transformer);
-	}
+        mapper.getOptions().setActLikeSerializer(true);
+        mapper.getOptions().objectFactory = new CustomMorphiaObjectFactory(Jenkins.getInstance().getPluginManager().uberClassLoader);
 
-	protected <T> Iterable<T> find(DBObject query, DBObject sort, Integer limit, Function<DBObject, T> transformer) {
-		return find(query, null, sort, limit, transformer);
-	}
+        Mongo mongo;
 
-	protected <T> Iterable<T> find(DBObject query, DBObject fields, DBObject sort, Integer limit, Function<DBObject, T> transformer) {
-		MongoClient client = getClient();
-		try {
-			DBCursor cursor = fields == null ? getCollection(client).find(query) : getCollection(client).find(query, fields);
-			if (sort != null) {
-				cursor = cursor.sort(sort);
-			}
-			if (limit != null) {
-				cursor = cursor.limit(limit);
-			}
-			List<T> result = new LinkedList<T>();
+        try {
+            mongo = new MongoClient(SetupConfig.get().getDbHost(), SetupConfig.get().getDbPort());
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        String databaseName = SetupConfig.get().getDbName();
 
-			try {
-				while (cursor.hasNext()) {
-					result.add(transformer.apply(cursor.next()));
-				}
-			} finally {
-				cursor.close();
-			}
-
-			return result;
-		} finally {
-			client.close();
-		}
-	}
-
-	protected <T> Iterable<T> find(DBObject query, Function<DBObject, T> transformer) {
-		return find(query, null, null, transformer);
-	}
-
-	protected <T> T findOne(BasicDBObject query, Function<DBObject, T> transformer) {
-		return findOne(query, null, null, transformer);
-	}
-
-	protected <T> T findOne(BasicDBObject query, DBObject fields, DBObject orderBy, Function<DBObject, T> transformer) {
-		return findOne(query, fields, orderBy, transformer, null);
-	}
-
-	protected <T> T findOne(BasicDBObject query, DBObject fields, DBObject orderBy, Function<DBObject, T> transformer, ReadPreference readPreference) {
-		DBObject object = findOne(query, fields, orderBy, readPreference);
-		return object == null ? null : transformer.apply(object);
-	}
-
-	protected <T> T findOne(BasicDBObject query, DBObject orderBy, Function<DBObject, T> transformer) {
-		return findOne(query, null, orderBy, transformer);
-	}
-
-	protected <T> T findOne(BasicDBObject query, DBObject orderBy, Function<DBObject, T> transformer, ReadPreference readPreference) {
-		return findOne(query, null, orderBy, transformer, readPreference);
-	}
-
-	protected DBObject findOne(BasicDBObject query) {
-		MongoClient client = getClient();
-		try {
-			DBCollection collection = getCollection(client);
-			return collection.findOne(query);
-		} finally {
-			client.close();
-		}
-	}
-
-	protected DBCollection getCollection(MongoClient client) {
-		return getDB(client).getCollection(this.collectionName);
-	}
-
-	protected DBObject findOne(BasicDBObject query, DBObject fields, DBObject orderBy, ReadPreference readPreference) {
-		MongoClient client = getClient();
-		try {
-			DBCollection collection = getCollection(client);
-			return readPreference == null ? collection.findOne(query, fields, orderBy) : collection.findOne(query, fields, orderBy, readPreference);
-		} finally {
-			client.close();
-		}
-	}
-
-	protected int size(BasicDBObject query) {
-		MongoClient client = getClient();
-		try {
-			return getCollection(client).find(query).count();
-		} finally {
-			client.close();
-		}
-	}
-
-	protected void delete(DBObject token) {
-		MongoClient client = getClient();
-		try {
-			getCollection(client).remove(token);
-		} finally {
-			client.close();
-		}
-	}
+        return morphia.createDatastore(mongo, databaseName);
+    }
 
 }

@@ -1,4 +1,5 @@
-/*
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
 The MIT License (MIT)
 
 Copyright (c) 2014, Groupon, Inc.
@@ -20,30 +21,22 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
- */
-package com.groupon.jenkins.dynamic.build;
+-->
 
-import hudson.matrix.AxisList;
-import hudson.matrix.Combination;
-import hudson.matrix.Layouter;
-
-public class DynamicBuildLayouter extends Layouter<DynamicRunPtr> {
-    private  AxisList axisList;
-    private  DynamicBuild dynamicBuild;
-
-    public DynamicBuildLayouter(AxisList axisList, DynamicBuild dynamicBuild) {
-		super(axisList);
-        this.axisList = axisList;
-        this.dynamicBuild = dynamicBuild;
-    }
-
-	@Override
-	protected DynamicRunPtr getT(Combination c) {
-		return new DynamicRunPtr(c, dynamicBuild);
-	}
-
-
-    public Iterable<Combination> list() {
-        return axisList.list() ;
-    }
-}
+<hudson>
+  <version>1.502</version>
+  <numExecutors>1</numExecutors>
+  <mode>EXCLUSIVE</mode>
+  <useSecurity>true</useSecurity>
+  <projectNamingStrategy class="jenkins.model.ProjectNamingStrategy$DefaultProjectNamingStrategy"/>
+  <workspaceDir>${ITEM_ROOTDIR}/workspace</workspaceDir>
+  <buildsDir>${ITEM_ROOTDIR}/builds</buildsDir>
+  <markupFormatter class="hudson.markup.RawHtmlMarkupFormatter">
+    <disableSyntaxHighlighting>false</disableSyntaxHighlighting>
+  </markupFormatter>
+  <quietPeriod>5</quietPeriod>
+  <label></label>
+  <nodeProperties/>
+  <globalNodeProperties/>
+  <noUsageStatistics>true</noUsageStatistics>
+</hudson>

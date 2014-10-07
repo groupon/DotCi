@@ -135,7 +135,7 @@ public class Payload {
 		return  payloadJson.getJSONObject("repository").getString("url");
 	}
 
-	public Iterable<GithubLogEntry> getLogEntries() {
+	public List<GithubLogEntry> getLogEntries() {
 		List<GithubLogEntry> logEntries = new ArrayList<GithubLogEntry>();
 		if (!isPullRequest()) {
 			JSONArray commits = payloadJson.getJSONArray("commits");

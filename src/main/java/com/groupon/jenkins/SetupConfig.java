@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins;
 
+import com.groupon.jenkins.buildtype.install_packages.InstallPackagesBuild;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.Extension;
 import jenkins.model.GlobalConfiguration;
@@ -30,6 +31,8 @@ import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
+
+import java.util.List;
 
 @Extension
 public class SetupConfig extends GlobalConfiguration {
@@ -162,7 +165,8 @@ public class SetupConfig extends GlobalConfiguration {
 
     public String getDefaultBuildType() {
         if (StringUtils.isEmpty(defaultBuildType)) {
-            return BuildType.all().get(0).getId();
+            InstallPackagesBuild type = new InstallPackagesBuild();
+            return type.getId();
         }
         return defaultBuildType;
     }

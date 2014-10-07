@@ -57,6 +57,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.servlet.ServletException;
 
+import org.bson.types.ObjectId;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerFallback;
 import org.kohsuke.stapler.StaplerOverridable;
@@ -70,7 +71,7 @@ import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.github.services.AuthenticationService;
 
 public class OrganizationContainer extends AbstractItem implements IdentifableItemGroup<DynamicProject>, ViewGroup, TopLevelItem, StaplerOverridable, StaplerFallback, StaplerProxy {
-
+    private ObjectId id;
 	private transient Map<String, DynamicProject> items = new CopyOnWriteMap.Tree<String, DynamicProject>(CaseInsensitiveComparator.INSTANCE);
 	private transient ItemGroupMixIn mixin;
 
@@ -85,6 +86,9 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
 	protected OrganizationContainer(ItemGroup parent, String name) {
 		super(parent, name);
 		init(name);
+        if(id == null) {
+            id = new ObjectId();
+        }
 	}
 
 	private void init(String name) {
@@ -131,6 +135,11 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
 		Tree<String, DynamicProject> itemMap = new CopyOnWriteMap.Tree<String, DynamicProject>(CaseInsensitiveComparator.INSTANCE);
 		for (DynamicProject dbBackedProject : projects) {
 			itemMap.put(dbBackedProject.getName(), dbBackedProject);
+            try {
+                dbBackedProject.onLoad(this, dbBackedProject.getName());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 		}
 
 		return itemMap;
