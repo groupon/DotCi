@@ -28,6 +28,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.groupon.jenkins.dynamic.build.DbBackedBuild;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
 import com.groupon.jenkins.github.services.GithubCurrentUserService;
@@ -77,7 +78,7 @@ public class MyBuildsView extends AuthenticatedView {
 
 	@Override
 	public RunList getBuilds() {
-		Iterable<DbBackedBuild> builds = makeDynamicBuildRepository().getLastBuildsForUser(getUser().getCurrentLogin(), 20);
+		Iterable<DynamicBuild> builds = makeDynamicBuildRepository().getLastBuildsForUser(getUser().getCurrentLogin(), 20);
 		return RunList.fromRuns(Lists.newArrayList(builds));
 	}
 

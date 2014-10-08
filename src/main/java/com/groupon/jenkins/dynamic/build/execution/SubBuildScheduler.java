@@ -89,6 +89,7 @@ public class SubBuildScheduler {
 			List<Action> childActions = new ArrayList<Action>();
 			childActions.addAll(Util.filter(dynamicBuild.getActions(), ParametersAction.class));
 			childActions.add(new SubBuildExecutionAction(subBuildRunner));
+      childActions.add(new ParentBuildAction(dynamicBuild));
 			c.scheduleBuild(childActions, dynamicBuild.getCause());
 		}
 	}
@@ -120,7 +121,7 @@ public class SubBuildScheduler {
 
 				if (appearsCancelledCount >= 5) {
 					listener.getLogger().println(Messages.MatrixBuild_AppearsCancelled(ModelHyperlinkNote.encodeTo(c)));
-					return new CurrentBuildState("COMPLETED", Result.ABORTED.toString());
+					return new CurrentBuildState("COMPLETED", Result.ABORTED);
 				}
 			}
 
@@ -133,7 +134,7 @@ public class SubBuildScheduler {
 			final int n = dynamicBuild.getNumber();
 			for (Item i : q.getItems()) {
 				ParentBuildAction parentBuildAction = i.getAction(ParentBuildAction.class);
-				if (parentBuildAction != null && dynamicBuild.equals(parentBuildAction.parent)) {
+				if (parentBuildAction != null && dynamicBuild.equals(parentBuildAction.getParent())) {
 					q.cancel(i);
 				}
 			}

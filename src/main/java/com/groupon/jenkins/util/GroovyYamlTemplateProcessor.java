@@ -42,13 +42,14 @@ public class GroovyYamlTemplateProcessor {
 
 	public Map getConfig() {
 		GStringTemplateEngine engine = new GStringTemplateEngine();
-		Object template = null;
+        String yaml = null;
+
 		try {
-			template = engine.createTemplate(config).make(new MissingPropForwardingMap(envVars));
+			yaml = engine.createTemplate(config).make(new MissingPropForwardingMap(envVars)).toString();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		return (Map) new Yaml().load(template.toString());
+		return (Map) new Yaml().load(yaml);
 	}
 
 	private static class MissingPropForwardingMap extends ForwardingMap<String, String> {

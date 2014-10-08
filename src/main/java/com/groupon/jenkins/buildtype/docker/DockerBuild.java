@@ -62,9 +62,9 @@ public abstract class DockerBuild extends BuildType implements SubBuildRunner {
             build.setAxisList(buildConfiguration.getAxisList());
             Result result ;
             if(buildConfiguration.isParallized()){
-                result = runMultiConfigbuildRunner(build, buildConfiguration, listener, launcher);;
+                result = runMultiConfigbuildRunner(build, buildConfiguration, listener, launcher);
             }else{
-                result = runSubBuild(new Combination(ImmutableMap.of("script", "main")), buildExecutionContext, listener) ;
+                result = runSubBuild(new Combination(ImmutableMap.of("script", "main")), buildExecutionContext, listener);
             }
             return result;
 

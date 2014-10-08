@@ -23,23 +23,24 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
+import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import hudson.matrix.Combination;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractItem;
 import hudson.model.Action;
+import hudson.model.Cause;
+import hudson.model.CauseAction;
 import hudson.model.DependencyGraph;
+import hudson.model.Descriptor;
+import hudson.model.Executor;
 import hudson.model.InvisibleAction;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
-import hudson.model.SCMedItem;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractItem;
-import hudson.model.Cause;
-import hudson.model.CauseAction;
-import hudson.model.Descriptor;
-import hudson.model.Executor;
 import hudson.model.Label;
 import hudson.model.ParametersAction;
 import hudson.model.Queue.NonBlockingTask;
 import hudson.model.Queue.QueueAction;
+import hudson.model.SCMedItem;
 import hudson.scm.SCM;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.Builder;
@@ -55,13 +56,26 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import jenkins.model.Jenkins;
 import jenkins.scm.SCMCheckoutStrategy;
 
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.annotations.PostLoad;
+import org.mongodb.morphia.annotations.PrePersist;
 import org.springframework.util.ReflectionUtils;
 
 public class DynamicSubProject extends DbBackedProject<DynamicSubProject, DynamicSubBuild> implements SCMedItem, NonBlockingTask {
+    private ObjectId parentId;
+
+    @PrePersist
+    void saveProjectId() {
+        parentId =  getParent().getId();
+    }
+
+    private static final Logger LOGGER = Logger.getLogger(DbBackedProject.class.getName());
 
 	private Combination combination;
 
@@ -152,7 +166,7 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
 		CauseAction causeAction = null;
 		for (Action a : actions) {
 			if (a instanceof ParentBuildAction) {
-				parentBuild = ((ParentBuildAction) a).parent;
+				parentBuild = ((ParentBuildAction) a).getParent();
 			}
 			if (a instanceof CauseAction) {
 				causeAction = (CauseAction) a;
@@ -224,19 +238,28 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
 		if (actions != null) {
 			allActions.addAll(actions);
 		}
-		allActions.add(new ParentBuildAction());
+
 		allActions.add(new CauseAction(c));
 
 		return Jenkins.getInstance().getQueue().schedule(this, getQuietPeriod(), allActions) != null;
 	}
 
 	public static class ParentBuildAction extends InvisibleAction implements QueueAction {
-		public transient DynamicBuild parent = (DynamicBuild) Executor.currentExecutor().getCurrentExecutable();
+        private transient DynamicBuild parentBuild;
+
+        public ParentBuildAction(DynamicBuild parentBuild) {
+            super();
+            this.parentBuild = parentBuild;
+        }
 
 		@Override
 		public boolean shouldSchedule(List<Action> actions) {
 			return true;
 		}
+
+        public DynamicBuild getParent() {
+            return parentBuild;
+        }
 	}
 
 	public Combination getCombination() {
@@ -266,6 +289,7 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
 		getPublishersList().setOwner(this);
 		getBuildWrappersList().setOwner(this);
 
+        initRepos();
 	}
 
 	public CurrentBuildState getCurrentStateByNumber(int number) {

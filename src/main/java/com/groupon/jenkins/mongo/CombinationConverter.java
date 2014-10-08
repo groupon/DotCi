@@ -21,29 +21,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.dynamic.build;
+package com.groupon.jenkins.mongo;
 
-import hudson.matrix.AxisList;
+import com.mongodb.DBObject;
 import hudson.matrix.Combination;
-import hudson.matrix.Layouter;
+import org.mongodb.morphia.converters.SimpleValueConverter;
+import org.mongodb.morphia.converters.TypeConverter;
+import org.mongodb.morphia.mapping.MappedField;
 
-public class DynamicBuildLayouter extends Layouter<DynamicRunPtr> {
-    private  AxisList axisList;
-    private  DynamicBuild dynamicBuild;
+import java.util.Map;
 
-    public DynamicBuildLayouter(AxisList axisList, DynamicBuild dynamicBuild) {
-		super(axisList);
-        this.axisList = axisList;
-        this.dynamicBuild = dynamicBuild;
+public class CombinationConverter extends TypeConverter implements SimpleValueConverter {
+    public CombinationConverter() {
+        super(Combination.class);
     }
 
-	@Override
-	protected DynamicRunPtr getT(Combination c) {
-		return new DynamicRunPtr(c, dynamicBuild);
-	}
-
-
-    public Iterable<Combination> list() {
-        return axisList.list() ;
+    @Override
+    public Object decode(Class targetClass, Object fromDBObject, MappedField optionalExtraInfo) {
+        return new Combination((Map<String, String>) fromDBObject);
     }
 }

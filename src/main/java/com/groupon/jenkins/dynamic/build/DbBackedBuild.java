@@ -23,24 +23,20 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
+import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
+import com.groupon.jenkins.util.GReflectionUtils;
+import com.mongodb.DBObject;
 import hudson.EnvVars;
 import hudson.Util;
-import hudson.model.Build;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import hudson.model.TaskListener;
-import hudson.model.AbstractProject;
-import hudson.model.Computer;
-import hudson.model.Executor;
+import hudson.model.*;
 import hudson.model.Queue.Executable;
-import hudson.model.Run;
-import hudson.model.User;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.ChangeLogSet.Entry;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.security.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,17 +44,66 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import jenkins.model.Jenkins;
 
+import org.bson.types.ObjectId;
 import org.kohsuke.stapler.export.Exported;
+import org.mongodb.morphia.annotations.*;
 import org.springframework.util.ReflectionUtils;
 
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.github.GitBranch;
 
+@Entity("run")
 public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> extends Build<P, B> {
+    @Id
+    private ObjectId id;
+
+    private ObjectId projectId; //TODO replace with Reference
+
+    public ObjectId getProjectId() {
+        return projectId;
+    }
+
+    @PrePersist
+    void saveState(final DBObject dbObj) {
+        dbObj.put("state", getState().toString());
+        hudson.model.Items.XSTREAM.ignoreUnknownElements();
+    }
+
+    @PostLoad
+    void restoreState(final DBObject dbObj) {
+        Object state = getState((String) dbObj.get("state"));
+        setField(state, "state");
+    }
+
+    @PrePersist
+    private void saveTimestamp(final DBObject dbObj) {
+        dbObj.put("timestamp", getTime());
+    }
+
+    @PostLoad
+    private void restoreTimestamp(final DBObject dbObj) {
+        Date time = (Date) dbObj.get("timestamp");
+        if(time != null) {
+            setField(time.getTime(), "timestamp");
+        }
+    }
+
+    @PrePersist
+    void saveProjectId() {
+        projectId =  project.getId();
+    }
+
+
+    public void postMorphiaLoad() {
+        super.onLoad();
+    }
+
+
 	private static final Logger LOGGER = Logger.getLogger(DbBackedBuild.class.getName());
 
 	protected DbBackedBuild(P project) throws IOException {
@@ -76,8 +121,7 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
 	@Override
 	public synchronized void save() throws IOException {
 		LOGGER.info("saving build:" + getName() + ": " + getNumber());
-		Map<String, Object> attributes = getBuildAttributesForDb();
-		new DynamicBuildRepository().save(this.getProject(), getNumber(), attributes);
+		new DynamicBuildRepository().save(this);
 	}
 
 	@Override
@@ -90,33 +134,8 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
 		}
 	}
 
-	protected Map<String, Object> getBuildAttributesForDb() {
-		String buildXml = Run.XSTREAM.toXML(this);
-
-		Object state = null;
-		try {
-			Field field = Run.class.getDeclaredField("state");
-			field.setAccessible(true);
-			state = ReflectionUtils.getField(field, this);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
-		Result buildResult = getResult() == null ? Result.NOT_BUILT : getResult();
-		Map<String, Object> attributes = new HashMap<String, Object>();
-		attributes.put("xml", buildXml);
-		attributes.put("parent", project.getId());
-		attributes.put("state", state.toString());
-		attributes.put("result", buildResult.toString());
-		attributes.put("number", getNumber());
-		attributes.put("branch", getCurrentBranch().toString());
-		attributes.put("pusher", getPusher());
-		attributes.put("sha", getSha());
-		attributes.put("built_on", getBuiltOnStr());
-		attributes.put("last_updated", getTime());
-		return attributes;
-	}
-
+    @Deprecated
+    // Keeping this so we can more easily migrate from existing systems
 	public void restoreFromDb(AbstractProject project, Map<String, Object> input) {
 		String state = ((String) input.get("state"));
 		Date date = ((Date) input.get("last_updated"));
@@ -126,6 +145,18 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
         super.onLoad();
 	}
 
+    public String getState() {
+        String stateName = null;
+        try {
+            Field field = Run.class.getDeclaredField("state");
+            field.setAccessible(true);
+            stateName = ReflectionUtils.getField(field, this).toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return stateName;
+    }
 	public Object getState(String state) {
 		try {
 			return Enum.valueOf((Class<Enum>) Class.forName("hudson.model.Run$State"), state);

@@ -23,6 +23,8 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
+import com.groupon.jenkins.util.GReflectionUtils;
+import com.mongodb.DBObject;
 import hudson.model.*;
 import hudson.model.Queue.Item;
 import hudson.scm.PollingResult;
@@ -33,6 +35,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.logging.Logger;
 
 import jenkins.model.Jenkins;
 
@@ -46,19 +49,46 @@ import com.google.common.base.Objects;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.PostLoad;
+import org.mongodb.morphia.annotations.PrePersist;
+import org.mongodb.morphia.mapping.Mapper;
 
+@Entity("job")
 public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> extends Project<P, B> {
 
-	private transient ObjectId id;
-	protected DynamicProjectRepository dynamicProjectRepository;
-	protected DynamicBuildRepository dynamicBuildRepository;
+    @Id
+	private ObjectId id;
+
+    @PrePersist
+    private void saveName(final DBObject dbObj) {
+        dbObj.put("name", getName());
+    }
+
+    @PostLoad
+    private void restoreName(final DBObject dbObj) {
+        GReflectionUtils.setField(AbstractItem.class, "name", this, dbObj.get("name"));
+    }
+
+    protected transient DynamicProjectRepository dynamicProjectRepository;
+	protected transient DynamicBuildRepository dynamicBuildRepository;
+
+    private static final Logger LOGGER = Logger.getLogger(DbBackedProject.class.getName());
 
 	public DbBackedProject(ItemGroup parent, String name) {
 		super(parent, name);
 		initRepos();
 	}
 
-	private void initRepos() {
+    @Override
+    public void onLoad(ItemGroup<? extends hudson.model.Item> parent, String name) throws IOException {
+        initRepos();
+        super.onLoad(parent, name);
+    }
+
+    @PostLoad
+	protected void initRepos() {
 		this.dynamicProjectRepository = new DynamicProjectRepository();
 		this.dynamicBuildRepository = new DynamicBuildRepository();
 	}
@@ -91,12 +121,6 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
 	@Override
 	public boolean isBuildable() {
 		return !isDisabled();
-	}
-
-	@Override
-	public void onLoad(ItemGroup<? extends hudson.model.Item> parent, String name) throws IOException {
-		initRepos();
-		super.onLoad(parent, name);
 	}
 
 	// Store builds in Db

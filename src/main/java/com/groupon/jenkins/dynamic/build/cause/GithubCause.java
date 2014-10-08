@@ -26,6 +26,8 @@ package com.groupon.jenkins.dynamic.build.cause;
 import com.groupon.jenkins.github.GitBranch;
 import com.groupon.jenkins.github.Payload;
 
+import java.util.List;
+
 public class GithubCause extends BuildCause {
 	private final String sha;
 	private final String pullRequestNumber;
@@ -34,7 +36,7 @@ public class GithubCause extends BuildCause {
 	@SuppressWarnings("unused")
 	private transient Payload payload; // For backward compatibility
 	private final GitBranch branch;
-	private final Iterable<GithubLogEntry> logEntries;
+	private final List<GithubLogEntry> logEntries;
 
 	public GithubCause(Payload payload, String sha) {
 		this.buildDescription = payload.getBuildDescription();
@@ -76,7 +78,7 @@ public class GithubCause extends BuildCause {
 	}
 
 	@Override
-	public Iterable<GithubLogEntry> getChangeLogEntries() {
+	public List<GithubLogEntry> getChangeLogEntries() {
 		return logEntries;
 	}
 }

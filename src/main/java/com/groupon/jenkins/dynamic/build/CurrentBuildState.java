@@ -28,15 +28,15 @@ import hudson.model.Result;
 public class CurrentBuildState {
 
 	private final Result result;
-	private final Object state;
+	private final String state;
 
-	public CurrentBuildState(Object state, Object resultStr) {
+	public CurrentBuildState(String state, Result result) {
 		this.state = state;
-		this.result = resultStr == null ? null : Result.fromString((String) resultStr);
+		this.result = result;
 	}
 
 	public boolean isBuilding() {
-		return state == null ? false : State.valueOf((String) state).compareTo(State.POST_PRODUCTION) < 0;
+		return state == null ? false : State.valueOf(state).compareTo(State.POST_PRODUCTION) < 0;
 	}
 
 	public Result getResult() {

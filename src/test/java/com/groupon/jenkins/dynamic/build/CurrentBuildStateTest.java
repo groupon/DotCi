@@ -33,7 +33,7 @@ public class CurrentBuildStateTest {
 
 	@Test
 	public void should_be_building_before_post_production_state() {
-		CurrentBuildState currentBuildState = new CurrentBuildState("NOT_STARTED", Result.NOT_BUILT.toString());
+		CurrentBuildState currentBuildState = new CurrentBuildState("NOT_STARTED", Result.NOT_BUILT);
 		assertTrue(currentBuildState.isBuilding());
 	}
 

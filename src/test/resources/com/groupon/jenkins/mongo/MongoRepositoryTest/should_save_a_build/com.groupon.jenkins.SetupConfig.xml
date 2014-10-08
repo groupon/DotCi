@@ -1,4 +1,5 @@
-/*
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
 The MIT License (MIT)
 
 Copyright (c) 2014, Groupon, Inc.
@@ -20,30 +21,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
- */
-package com.groupon.jenkins.dynamic.build;
-
-import hudson.matrix.AxisList;
-import hudson.matrix.Combination;
-import hudson.matrix.Layouter;
-
-public class DynamicBuildLayouter extends Layouter<DynamicRunPtr> {
-    private  AxisList axisList;
-    private  DynamicBuild dynamicBuild;
-
-    public DynamicBuildLayouter(AxisList axisList, DynamicBuild dynamicBuild) {
-		super(axisList);
-        this.axisList = axisList;
-        this.dynamicBuild = dynamicBuild;
-    }
-
-	@Override
-	protected DynamicRunPtr getT(Combination c) {
-		return new DynamicRunPtr(c, dynamicBuild);
-	}
-
-
-    public Iterable<Combination> list() {
-        return axisList.list() ;
-    }
-}
+-->
+<com.groupon.jenkins.SetupConfig plugin="DotCi@3.0.2">
+  <dbHost>localhost</dbHost>
+  <dbPort>27017</dbPort>
+  <dbName>test</dbName>
+  <githubApiUrl>https://localhost/api/v3</githubApiUrl>
+  <githubCallbackUrl>http://localhost/githook/</githubCallbackUrl>
+</com.groupon.jenkins.SetupConfig>

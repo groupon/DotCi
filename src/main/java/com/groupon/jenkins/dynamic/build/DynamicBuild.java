@@ -20,7 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
- */
+*/
 package com.groupon.jenkins.dynamic.build;
 
 import com.google.common.base.Objects;
@@ -48,7 +48,9 @@ import hudson.util.VersionNumber;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -57,13 +59,16 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.interceptor.RequirePOST;
+import org.mongodb.morphia.annotations.Property;
 
 import javax.servlet.ServletException;
 
 public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 
     private transient DynamicBuildModel model;
-    private DynamicBuildLayouter dynamicBuildLayouter;
+
+    @Property(concreteClass = AxisList.class)
+    private AxisList axisList;
 
     public DynamicBuild(DynamicProject project) throws IOException {
         super(project);
@@ -72,6 +77,11 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 
     public DynamicBuild(DynamicProject project, File buildDir) throws IOException {
         super(project, buildDir);
+        this.model = new DynamicBuildModel(this);
+    }
+
+    public void postMorphiaLoad() {
+        super.postMorphiaLoad();
         this.model = new DynamicBuildModel(this);
     }
 
@@ -88,8 +98,9 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     }
 
     public DynamicBuildLayouter getLayouter() {
-        return  dynamicBuildLayouter;
-    }
+
+        return new DynamicBuildLayouter(axisList, this);
+   }
 
     // This needs to be overriden here to override @RequirePOST annotation,
     // which seems like a bug in the version were are using.
@@ -102,13 +113,6 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     public void restoreFromDb(AbstractProject project, Map<String, Object> input) {
         super.restoreFromDb(project, input);
         this.model = new DynamicBuildModel(this);
-    }
-
-    @Override
-    protected Map<String, Object> getBuildAttributesForDb() {
-        Map<String, Object> buildAttributes = super.getBuildAttributesForDb();
-        buildAttributes.put("main_build", true);
-        return buildAttributes;
     }
 
     @Override
@@ -150,15 +154,6 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         return vars;
     }
 
-    public void setDynamicBuildLayouter(DynamicBuildLayouter dyanamicBuildLayouter) {
-        this.dynamicBuildLayouter = dyanamicBuildLayouter;
-        try {
-            save();
-        } catch (IOException e) {
-            throw  new RuntimeException(e);
-        }
-    }
-
     public Iterable<DynamicSubProject> getAllSubProjects() {
         return getConductor().getItems();
     }
@@ -172,9 +167,12 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     }
 
     public void setAxisList(AxisList axisList) {
-        DynamicBuildLayouter dynamicBuildLayouter = new DynamicBuildLayouter(axisList, this);
-        setDynamicBuildLayouter(dynamicBuildLayouter);
-
+        this.axisList = axisList;
+        try {
+            save();
+        } catch (IOException e) {
+            throw  new RuntimeException(e);
+        }
     }
 
     protected class DynamicRunExecution extends Build.BuildExecution implements BuildExecutionContext {
@@ -224,7 +222,6 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
             }
 
         }
-
     }
 
     @Override
@@ -237,11 +234,9 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         return this.getParent();
     }
 
-
     public Iterable<DynamicSubProject> getSubProjects(Iterable<Combination> mainRunCombinations) {
         return getConductor().getSubProjects(mainRunCombinations);
     }
-
 
     public Build getRun(Combination combination) {
         for (DynamicSubProject subProject : getAllSubProjects()) {
@@ -262,7 +257,6 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         DynamicSubBuild r = c.getBuildByNumber(getNumber());
         return r != null ? r : null;
     }
-
 
     @Override
     public boolean equals(Object other) {
@@ -285,7 +279,6 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         return this.getCause() == null ? "" : getCause().getSha();
     }
 
-
     @Override
     public BuildCause getCause() {
         return model.getBuildCause();
@@ -303,6 +296,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
      * Jenkins method is final cannot be mocked. Work around to make this
      * mockable without powermock
      */
+
     public String getFullUrl() {
         return this.getAbsoluteUrl();
     }
