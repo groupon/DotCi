@@ -32,9 +32,9 @@ import com.groupon.jenkins.github.services.AuthenticationService;
 
 public abstract class AuthenticatedRootAction extends Actionable implements RootAction, StaplerProxy {
 
-	@Override
-	public Object getTarget() {
-		AuthenticationService.authenticate();
-		return this;
-	}
+    @Override
+    public Object getTarget() {
+        AuthenticationService.authenticate();
+        return this;
+    }
 }

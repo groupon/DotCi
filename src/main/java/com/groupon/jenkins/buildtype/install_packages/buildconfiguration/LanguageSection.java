@@ -29,19 +29,19 @@ import hudson.matrix.Combination;
 
 public class LanguageSection extends ConfigSection<StringValue> {
 
-	public static final String NAME = "language";
+    public static final String NAME = "language";
 
-	public LanguageSection(StringValue config) {
-		super(NAME, config, MergeStrategy.REPLACE);
-	}
+    public LanguageSection(StringValue config) {
+        super(NAME, config, MergeStrategy.REPLACE);
+    }
 
-	public String getLanguage() {
-		return getConfigValue().getValue();
-	}
+    public String getLanguage() {
+        return getConfigValue().getValue();
+    }
 
-	@Override
-	public ShellCommands toScript(Combination combination) {
-		return ShellCommands.NOOP;
-	}
+    @Override
+    public ShellCommands toScript(Combination combination) {
+        return ShellCommands.NOOP;
+    }
 
 }

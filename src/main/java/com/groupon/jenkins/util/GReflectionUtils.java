@@ -26,13 +26,13 @@ package com.groupon.jenkins.util;
 import java.lang.reflect.Field;
 
 public class GReflectionUtils {
-	public static void setField(Class clazz, String fieldName, Object target, Object value) {
-		try {
-			Field field = clazz.getDeclaredField(fieldName);
-			field.setAccessible(true);
-			field.set(target, value);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public static void setField(Class clazz, String fieldName, Object target, Object value) {
+        try {
+            Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(target, value);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

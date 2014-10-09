@@ -28,18 +28,18 @@ import java.util.Arrays;
 @SuppressWarnings("serial")
 public class InvalidBuildConfigurationException extends RuntimeException {
 
-	private final Iterable<String> validationErrors;
+    private final Iterable<String> validationErrors;
 
-	public InvalidBuildConfigurationException(Iterable<String> validationErrors) {
-		this.validationErrors = validationErrors;
-	}
+    public InvalidBuildConfigurationException(Iterable<String> validationErrors) {
+        this.validationErrors = validationErrors;
+    }
 
-	public InvalidBuildConfigurationException(String validationError) {
-		this(Arrays.asList(validationError));
-	}
+    public InvalidBuildConfigurationException(String validationError) {
+        this(Arrays.asList(validationError));
+    }
 
-	public Iterable<String> getValidationErrors() {
-		return validationErrors;
-	}
+    public Iterable<String> getValidationErrors() {
+        return validationErrors;
+    }
 
 }

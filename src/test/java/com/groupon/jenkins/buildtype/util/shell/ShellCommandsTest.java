@@ -27,10 +27,10 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 public class ShellCommandsTest {
-	@Test
-	public void should_escape_quotes_in_echo() {
-		ShellCommands executionPhase = new ShellCommands("echo \"hello\"", "echo world");
-		String[] commands = executionPhase.toShellScript().split("\\r?\\n");
-		Assert.assertEquals("echo $ \" echo \\\"hello\\\"\"", commands[0]);
-	}
+    @Test
+    public void should_escape_quotes_in_echo() {
+        ShellCommands executionPhase = new ShellCommands("echo \"hello\"", "echo world");
+        String[] commands = executionPhase.toShellScript().split("\\r?\\n");
+        Assert.assertEquals("echo $ \" echo \\\"hello\\\"\"", commands[0]);
+    }
 }

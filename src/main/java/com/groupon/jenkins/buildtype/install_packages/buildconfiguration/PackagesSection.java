@@ -32,32 +32,32 @@ import java.util.List;
 
 public class PackagesSection extends ConfigSection<ListOrSingleValue<String>> {
 
-	public static final String NAME = "packages";
-	private final LanguageVersionsSection languageVersionsSection;
-	private final LanguageSection languageSection;
+    public static final String NAME = "packages";
+    private final LanguageVersionsSection languageVersionsSection;
+    private final LanguageSection languageSection;
 
-	protected PackagesSection(ListOrSingleValue<String> configValue, LanguageSection languageSection, LanguageVersionsSection languageVersionsSection) {
-		super(NAME, configValue, MergeStrategy.APPEND);
-		this.languageSection = languageSection;
-		this.languageVersionsSection = languageVersionsSection;
-	}
+    protected PackagesSection(ListOrSingleValue<String> configValue, LanguageSection languageSection, LanguageVersionsSection languageVersionsSection) {
+        super(NAME, configValue, MergeStrategy.APPEND);
+        this.languageSection = languageSection;
+        this.languageVersionsSection = languageVersionsSection;
+    }
 
-	@Override
-	public ShellCommands toScript(Combination combination) {
-		return  new ShellCommands(getInstallPackagesScript(combination)) ;
-	}
+    @Override
+    public ShellCommands toScript(Combination combination) {
+        return  new ShellCommands(getInstallPackagesScript(combination)) ;
+    }
 
-	protected String getInstallPackagesScript(Combination combination) {
-		List<String> allPackages = new ArrayList<String>();
-		if (!"unknown".equalsIgnoreCase(languageSection.getLanguage())) {
-			String languageVersion = combination.get("language_version");
-			if (languageVersion == null) {
-				languageVersion = languageVersionsSection.getConfigValue().getValues().get(0);
-			}
-			allPackages.add(languageSection.getLanguage() + "-" + languageVersion);
-		}
-		allPackages.addAll(getConfigValue().getValues());
-		return "install_packages " + Joiner.on(" ").join(allPackages);
-	}
+    protected String getInstallPackagesScript(Combination combination) {
+        List<String> allPackages = new ArrayList<String>();
+        if (!"unknown".equalsIgnoreCase(languageSection.getLanguage())) {
+            String languageVersion = combination.get("language_version");
+            if (languageVersion == null) {
+                languageVersion = languageVersionsSection.getConfigValue().getValues().get(0);
+            }
+            allPackages.add(languageSection.getLanguage() + "-" + languageVersion);
+        }
+        allPackages.addAll(getConfigValue().getValues());
+        return "install_packages " + Joiner.on(" ").join(allPackages);
+    }
 
 }

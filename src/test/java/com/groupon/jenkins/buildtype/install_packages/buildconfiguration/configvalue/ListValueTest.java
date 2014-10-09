@@ -32,19 +32,19 @@ import static org.junit.Assert.assertTrue;
 
 public class ListValueTest {
 
-	@Test
-	public void should_append_to_existing_values() {
-		ListValue<String> configValue = new ListValue<String>(Arrays.asList("one", "two"));
-		ListValue<String> configValueToBeAppended = new ListValue<String>(Arrays.asList("three"));
-		configValue.append(configValueToBeAppended);
-		assertEquals(3, configValue.getValue().size());
-		assertEquals("one", configValue.getValue().get(0));
-		assertEquals("two", configValue.getValue().get(1));
-		assertEquals("three", configValue.getValue().get(2));
-	}
+    @Test
+    public void should_append_to_existing_values() {
+        ListValue<String> configValue = new ListValue<String>(Arrays.asList("one", "two"));
+        ListValue<String> configValueToBeAppended = new ListValue<String>(Arrays.asList("three"));
+        configValue.append(configValueToBeAppended);
+        assertEquals(3, configValue.getValue().size());
+        assertEquals("one", configValue.getValue().get(0));
+        assertEquals("two", configValue.getValue().get(1));
+        assertEquals("three", configValue.getValue().get(2));
+    }
 
-	@Test
-	public void null_value_should_be_empty() {
-		assertTrue(new ListValue<Object>(null).isEmpty());
-	}
+    @Test
+    public void null_value_should_be_empty() {
+        assertTrue(new ListValue<Object>(null).isEmpty());
+    }
 }

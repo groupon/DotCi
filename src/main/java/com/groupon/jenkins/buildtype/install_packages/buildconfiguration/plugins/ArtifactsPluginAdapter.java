@@ -36,24 +36,24 @@ import java.io.IOException;
 @Extension
 public class ArtifactsPluginAdapter extends DotCiPluginAdapter {
 
-	public ArtifactsPluginAdapter() {
-		super("artifacts", "");
-	}
+    public ArtifactsPluginAdapter() {
+        super("artifacts", "");
+    }
 
-	@Override
-	public boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener) {
-		ArtifactArchiver archiver = new ArtifactArchiver((String) options, null, true);
-		try {
-			return archiver.perform((AbstractBuild) dynamicBuild, launcher, listener);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			e.printStackTrace(listener.getLogger());
-		}
-		return false;
-	}
+    @Override
+    public boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener) {
+        ArtifactArchiver archiver = new ArtifactArchiver((String) options, null, true);
+        try {
+            return archiver.perform((AbstractBuild) dynamicBuild, launcher, listener);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace(listener.getLogger());
+        }
+        return false;
+    }
 
-	@Override
-	public void runFinished(DynamicSubBuild run, DynamicBuild parent, BuildListener listener) throws IOException {
-		copyFiles(run, parent, (String) options, listener);
-	}
+    @Override
+    public void runFinished(DynamicSubBuild run, DynamicBuild parent, BuildListener listener) throws IOException {
+        copyFiles(run, parent, (String) options, listener);
+    }
 }

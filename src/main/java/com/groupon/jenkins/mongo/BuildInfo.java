@@ -29,36 +29,36 @@ import hudson.model.Run;
 import java.util.Calendar;
 
 public class BuildInfo {
-	private final Calendar timestamp;
-	private final String url;
-	private final String name;
-	private final String result;
+    private final Calendar timestamp;
+    private final String url;
+    private final String name;
+    private final String result;
 
-	public BuildInfo(Run run) {
-		this.timestamp = run.getTimestamp();
-		this.url = "/" + run.getUrl();
-		this.name = run.getFullDisplayName();
-		this.result = run.isBuilding() ? "Building" : run.getResult().toString();
-	}
+    public BuildInfo(Run run) {
+        this.timestamp = run.getTimestamp();
+        this.url = "/" + run.getUrl();
+        this.name = run.getFullDisplayName();
+        this.result = run.isBuilding() ? "Building" : run.getResult().toString();
+    }
 
-	public String getDisplayTime() {
-		return Util.getPastTimeString(System.currentTimeMillis() - getTimestamp().getTimeInMillis()) + " ago";
-	}
+    public String getDisplayTime() {
+        return Util.getPastTimeString(System.currentTimeMillis() - getTimestamp().getTimeInMillis()) + " ago";
+    }
 
-	public Calendar getTimestamp() {
-		return timestamp;
-	}
+    public Calendar getTimestamp() {
+        return timestamp;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getResult() {
-		return result;
-	}
+    public String getResult() {
+        return result;
+    }
 
 }

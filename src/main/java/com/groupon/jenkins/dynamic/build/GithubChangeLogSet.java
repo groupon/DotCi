@@ -33,24 +33,24 @@ import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
 
 public class GithubChangeLogSet extends ChangeLogSet<GithubLogEntry> {
 
-	private final Iterable<GithubLogEntry> logEntries;
+    private final Iterable<GithubLogEntry> logEntries;
 
-	protected GithubChangeLogSet(AbstractBuild<?, ?> build, Iterable<GithubLogEntry> logEntries) {
-		super(build);
-		this.logEntries = logEntries;
-	}
+    protected GithubChangeLogSet(AbstractBuild<?, ?> build, Iterable<GithubLogEntry> logEntries) {
+        super(build);
+        this.logEntries = logEntries;
+    }
 
-	public Iterator<GithubLogEntry> iterator() {
-		return logEntries.iterator();
-	}
+    public Iterator<GithubLogEntry> iterator() {
+        return logEntries.iterator();
+    }
 
-	@Override
-	public boolean isEmptySet() {
-		return logEntries == null || Iterables.isEmpty(logEntries);
-	}
+    @Override
+    public boolean isEmptySet() {
+        return logEntries == null || Iterables.isEmpty(logEntries);
+    }
 
-	public Iterable<GithubLogEntry> getLogs() {
-		return logEntries;
-	}
+    public Iterable<GithubLogEntry> getLogs() {
+        return logEntries;
+    }
 
 }

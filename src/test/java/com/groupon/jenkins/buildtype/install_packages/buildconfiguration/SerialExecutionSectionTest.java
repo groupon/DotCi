@@ -32,12 +32,12 @@ import static com.groupon.jenkins.testhelpers.TestHelpers.configListOrSingleValu
 
 public class SerialExecutionSectionTest {
 
-	@Test
-	public void should_execute_commands_listed() {
-		SerialExecutionSection checkoutSection = new SerialExecutionSection("checkout", configListOrSingleValue("git checkout $git_url", "git submodule init"));
-		ShellCommands checkoutCommands = checkoutSection.toScript(null);
-		assertTrue(checkoutCommands.toShellScript().contains("git checkout $git_url"));
-		assertTrue(checkoutCommands.toShellScript().contains("git checkout $git_url"));
+    @Test
+    public void should_execute_commands_listed() {
+        SerialExecutionSection checkoutSection = new SerialExecutionSection("checkout", configListOrSingleValue("git checkout $git_url", "git submodule init"));
+        ShellCommands checkoutCommands = checkoutSection.toScript(null);
+        assertTrue(checkoutCommands.toShellScript().contains("git checkout $git_url"));
+        assertTrue(checkoutCommands.toShellScript().contains("git checkout $git_url"));
 
-	}
+    }
 }

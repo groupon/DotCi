@@ -35,34 +35,34 @@ import static com.groupon.jenkins.testhelpers.TestHelpers.map;
 
 public class EnvironmentSectionTest {
 
-	private ShellCommands commands;
+    private ShellCommands commands;
 
-	@Before
-	public void setUp() {
-		MapValue<String, Object> config = configMap("image", "surya/cool_docker_image");
-		EnvironmentSection envSection = new EnvironmentSection(config);
-		this.commands = envSection.getDockerBuildRunScriptForImage("buildId", map("meow", "purr"));
-	}
+    @Before
+    public void setUp() {
+        MapValue<String, Object> config = configMap("image", "surya/cool_docker_image");
+        EnvironmentSection envSection = new EnvironmentSection(config);
+        this.commands = envSection.getDockerBuildRunScriptForImage("buildId", map("meow", "purr"));
+    }
 
-	@Test
-	public void should_pull_docker_container_before_building() {
-		assertEquals("docker pull  surya/cool_docker_image", commands.get(0));
-	}
+    @Test
+    public void should_pull_docker_container_before_building() {
+        assertEquals("docker pull  surya/cool_docker_image", commands.get(0));
+    }
 
-	@Test
-	public void should_export_env_vars_to_running_container() {
-		assertTrue(commands.get(1).contains("-e \"meow=purr\""));
-	}
+    @Test
+    public void should_export_env_vars_to_running_container() {
+        assertTrue(commands.get(1).contains("-e \"meow=purr\""));
+    }
 
-	@Test
-	public void should_start_and_link_services_if_services_are_specified() {
-		MapValue<String, Object> config = configMap("image", "surya/cool_docker_image", "services", "mongodb");
-		EnvironmentSection envSection = new EnvironmentSection(config);
-		this.commands = envSection.getDockerBuildRunScriptForImage("buildId", map("meow", "purr"));
-		assertEquals("docker pull  mongodb", commands.get(1));
-		assertEquals("docker run -d --name mongodb_buildId mongodb", commands.get(2));
-		assertTrue(commands.get(3).contains("-link mongodb_buildId:mongodb"));
-	}
+    @Test
+    public void should_start_and_link_services_if_services_are_specified() {
+        MapValue<String, Object> config = configMap("image", "surya/cool_docker_image", "services", "mongodb");
+        EnvironmentSection envSection = new EnvironmentSection(config);
+        this.commands = envSection.getDockerBuildRunScriptForImage("buildId", map("meow", "purr"));
+        assertEquals("docker pull  mongodb", commands.get(1));
+        assertEquals("docker run -d --name mongodb_buildId mongodb", commands.get(2));
+        assertTrue(commands.get(3).contains("-link mongodb_buildId:mongodb"));
+    }
 
     @Test
     public void should_inject_default_socat_if_services_are_specified() {

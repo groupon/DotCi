@@ -36,33 +36,33 @@ import com.groupon.jenkins.dynamic.build.DynamicSubProject;
 
 public class GithubRepoProperty extends JobProperty<Job<?, ?>> {
 
-	private final String repoUrl;
+    private final String repoUrl;
 
-	public GithubRepoProperty(String repoUrl) {
-		this.repoUrl = repoUrl;
-	}
+    public GithubRepoProperty(String repoUrl) {
+        this.repoUrl = repoUrl;
+    }
 
-	public String getRepoUrl() {
-		return repoUrl;
-	}
+    public String getRepoUrl() {
+        return repoUrl;
+    }
 
-	@Extension
-	public static final class GithubRepoPropertyDescriptor extends JobPropertyDescriptor {
+    @Extension
+    public static final class GithubRepoPropertyDescriptor extends JobPropertyDescriptor {
 
-		@Override
-		public String getDisplayName() {
-			return "Associated Github Repository";
-		}
+        @Override
+        public String getDisplayName() {
+            return "Associated Github Repository";
+        }
 
-		@Override
-		public boolean isApplicable(Class<? extends Job> jobType) {
-			return DynamicProject.class.equals(jobType) || DynamicSubProject.class.equals(jobType);
-		}
+        @Override
+        public boolean isApplicable(Class<? extends Job> jobType) {
+            return DynamicProject.class.equals(jobType) || DynamicSubProject.class.equals(jobType);
+        }
 
-		@Override
-		public GithubRepoProperty newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-			return new GithubRepoProperty(formData.getString("repoUrl"));
-		}
-	}
+        @Override
+        public GithubRepoProperty newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+            return new GithubRepoProperty(formData.getString("repoUrl"));
+        }
+    }
 
 }

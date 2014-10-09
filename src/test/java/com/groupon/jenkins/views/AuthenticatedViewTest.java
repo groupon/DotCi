@@ -45,38 +45,38 @@ import static org.mockito.Mockito.verify;
 
 public class AuthenticatedViewTest {
 
-	@Spy
-	AuthenticatedView myBuildsView = new AuthenticatedView("mybuilds") {
+    @Spy
+    AuthenticatedView myBuildsView = new AuthenticatedView("mybuilds") {
 
-		@Override
-		protected void submit(StaplerRequest req) throws IOException, ServletException, FormException {
+        @Override
+        protected void submit(StaplerRequest req) throws IOException, ServletException, FormException {
 
-		}
+        }
 
-		@Override
-		public void onJobRenamed(Item item, String oldName, String newName) {
-		}
-	};
+        @Override
+        public void onJobRenamed(Item item, String oldName, String newName) {
+        }
+    };
 
-	@Before
-	public void init() {
-		MockitoAnnotations.initMocks(this);
-	}
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@Test
-	public void should_create_item_iff_owner_is_modifiable() throws IOException, ServletException {
-		ModifiableItemGroup<?> parentView = mock(ModifiableItemGroup.class);
-		doReturn(parentView).when(myBuildsView).getOwnerItemGroup();
-		myBuildsView.doCreateItem(null, null);
-		verify(parentView).doCreateItem(null, null);
-	}
+    @Test
+    public void should_create_item_iff_owner_is_modifiable() throws IOException, ServletException {
+        ModifiableItemGroup<?> parentView = mock(ModifiableItemGroup.class);
+        doReturn(parentView).when(myBuildsView).getOwnerItemGroup();
+        myBuildsView.doCreateItem(null, null);
+        verify(parentView).doCreateItem(null, null);
+    }
 
-	@Test
-	public void should_automatically_log_user_in_when_accessed() throws IOException, ServletException {
-		AuthenticationMixin authMixin = mock(AuthenticationMixin.class);
-		doReturn(authMixin).when(myBuildsView).makeAuthenticationMixin();
-		myBuildsView.getTarget();
-		verify(authMixin).authenticate();
-	}
+    @Test
+    public void should_automatically_log_user_in_when_accessed() throws IOException, ServletException {
+        AuthenticationMixin authMixin = mock(AuthenticationMixin.class);
+        doReturn(authMixin).when(myBuildsView).makeAuthenticationMixin();
+        myBuildsView.getTarget();
+        verify(authMixin).authenticate();
+    }
 
 }

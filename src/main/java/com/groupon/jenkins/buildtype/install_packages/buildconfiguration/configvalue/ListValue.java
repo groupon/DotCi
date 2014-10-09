@@ -30,17 +30,17 @@ import java.util.List;
 
 public class ListValue<T> extends ConfigValue<List<T>> {
 
-	public ListValue(Object config) {
-		super(config == null ? Collections.emptyList() : config);
-	}
+    public ListValue(Object config) {
+        super(config == null ? Collections.emptyList() : config);
+    }
 
-	@Override
-	public void append(ConfigValue<?> otherConfig) {
-		ArrayList<T> mergedList = new ArrayList<T>();
-		mergedList.addAll(getValue());
-		mergedList.addAll((Collection<? extends T>) otherConfig.getValue());
-		setValue(mergedList);
-	}
+    @Override
+    public void append(ConfigValue<?> otherConfig) {
+        ArrayList<T> mergedList = new ArrayList<T>();
+        mergedList.addAll(getValue());
+        mergedList.addAll((Collection<? extends T>) otherConfig.getValue());
+        setValue(mergedList);
+    }
 
     @Override
     public <R> R getValue(Class<R> returnType) {
@@ -48,7 +48,7 @@ public class ListValue<T> extends ConfigValue<List<T>> {
     }
 
     @Override
-	public boolean isEmpty() {
-		return getValue().isEmpty();
-	}
+    public boolean isEmpty() {
+        return getValue().isEmpty();
+    }
 }

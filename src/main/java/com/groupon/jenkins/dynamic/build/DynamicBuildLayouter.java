@@ -32,15 +32,15 @@ public class DynamicBuildLayouter extends Layouter<DynamicRunPtr> {
     private  DynamicBuild dynamicBuild;
 
     public DynamicBuildLayouter(AxisList axisList, DynamicBuild dynamicBuild) {
-		super(axisList);
+        super(axisList);
         this.axisList = axisList;
         this.dynamicBuild = dynamicBuild;
     }
 
-	@Override
-	protected DynamicRunPtr getT(Combination c) {
-		return new DynamicRunPtr(c, dynamicBuild);
-	}
+    @Override
+    protected DynamicRunPtr getT(Combination c) {
+        return new DynamicRunPtr(c, dynamicBuild);
+    }
 
 
     public Iterable<Combination> list() {

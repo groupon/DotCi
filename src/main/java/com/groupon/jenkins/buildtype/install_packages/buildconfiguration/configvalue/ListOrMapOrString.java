@@ -31,24 +31,24 @@ import java.util.Set;
 
 public class ListOrMapOrString extends ConfigValue<Object> {
 
-	public ListOrMapOrString(Object configValue) {
-		super(convertMapWithSingleValueIntoValue(configValue));
-	}
+    public ListOrMapOrString(Object configValue) {
+        super(convertMapWithSingleValueIntoValue(configValue));
+    }
 
-	private static Object convertMapWithSingleValueIntoValue(Object configValue) {
-		if (configValue instanceof Map) {
-			Map<String, String> valueAsMap = (Map<String, String>) configValue;
-			if (valueAsMap.size() == 1) {
-				return valueAsMap.values().iterator().next();
-			}
-		}
-		return configValue;
-	}
+    private static Object convertMapWithSingleValueIntoValue(Object configValue) {
+        if (configValue instanceof Map) {
+            Map<String, String> valueAsMap = (Map<String, String>) configValue;
+            if (valueAsMap.size() == 1) {
+                return valueAsMap.values().iterator().next();
+            }
+        }
+        return configValue;
+    }
 
-	@Override
-	public void append(ConfigValue<?> config) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void append(ConfigValue<?> config) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public <T> T getValue(Class<T> returnType) {
@@ -65,35 +65,35 @@ public class ListOrMapOrString extends ConfigValue<Object> {
     }
 
     public boolean isMap() {
-		return getValue() instanceof Map;
-	}
+        return getValue() instanceof Map;
+    }
 
-	@SuppressWarnings("unchecked")
-	public Map<String, ?> getMap() {
-		return (Map<String, ?>) getValue();
-	}
+    @SuppressWarnings("unchecked")
+    public Map<String, ?> getMap() {
+        return (Map<String, ?>) getValue();
+    }
 
-	public List<String> getValues(String key) {
-		return toList(getMap().get(key));
-	}
+    public List<String> getValues(String key) {
+        return toList(getMap().get(key));
+    }
 
-	@SuppressWarnings("unchecked")
-	private List<String> toList(Object keyValue) {
-		if (keyValue instanceof List) {
-			return (List<String>) keyValue;
-		} else if (keyValue == null) {
-			return Collections.emptyList();
-		} else {
-			return Arrays.asList(keyValue.toString());
-		}
-	}
+    @SuppressWarnings("unchecked")
+    private List<String> toList(Object keyValue) {
+        if (keyValue instanceof List) {
+            return (List<String>) keyValue;
+        } else if (keyValue == null) {
+            return Collections.emptyList();
+        } else {
+            return Arrays.asList(keyValue.toString());
+        }
+    }
 
-	public List<String> getValuesList() {
-		return toList(getValue());
-	}
+    public List<String> getValuesList() {
+        return toList(getValue());
+    }
 
-	public Set<String> getKeys() {
-		return getMap().keySet();
-	}
+    public Set<String> getKeys() {
+        return getMap().keySet();
+    }
 
 }

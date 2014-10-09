@@ -31,19 +31,19 @@ import static org.junit.Assert.assertTrue;
 
 public class ConfigValueTest {
 
-	@Test
-	public void should_replace_value_on_replace() {
-		StringValue configValue = new StringValue("intial");
-		configValue.replace(new StringValue("replacement"));
-		assertEquals("replacement", configValue.getValue());
-	}
+    @Test
+    public void should_replace_value_on_replace() {
+        StringValue configValue = new StringValue("intial");
+        configValue.replace(new StringValue("replacement"));
+        assertEquals("replacement", configValue.getValue());
+    }
 
-	@Test
-	public void should_be_invalid_if_intialized_with_wrong_type() {
-		StringValue configValue = new StringValue(24);
-		assertFalse(configValue.isValid());
-		StringValue validConfigValue = new StringValue("hello");
-		assertTrue(validConfigValue.isValid());
-	}
+    @Test
+    public void should_be_invalid_if_intialized_with_wrong_type() {
+        StringValue configValue = new StringValue(24);
+        assertFalse(configValue.isValid());
+        StringValue validConfigValue = new StringValue("hello");
+        assertTrue(validConfigValue.isValid());
+    }
 
 }

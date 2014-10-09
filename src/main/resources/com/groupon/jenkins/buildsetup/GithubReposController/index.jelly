@@ -42,9 +42,9 @@ THE SOFTWARE.
               <legend><b>${j.name}</b></legend>
                 <st:include page="repo_actions.jelly" />
             </fieldset>
-		</p>
+        </p>
      </j:forEach>
     </div>
-		</l:main-panel>
-	</l:layout>
+        </l:main-panel>
+    </l:layout>
 </j:jelly>

@@ -47,99 +47,99 @@ import static org.mockito.Mockito.when;
 
 public class DynamicBuildFactory {
 
-	private final DynamicBuild build;
+    private final DynamicBuild build;
     private final GithubRepositoryService githubRepositoryService;
 
     public DynamicBuildFactory() {
-		this.build = mock(DynamicBuild.class);
-		when(build.getNumber()).thenReturn(new Random().nextInt());
-		when(build.getSha()).thenReturn("sha-1234");
-		when(build.getFullUrl()).thenReturn("http://absolute.url/meow");
-		when(build.getCause()).thenReturn(mock(BuildCause.class));
+        this.build = mock(DynamicBuild.class);
+        when(build.getNumber()).thenReturn(new Random().nextInt());
+        when(build.getSha()).thenReturn("sha-1234");
+        when(build.getFullUrl()).thenReturn("http://absolute.url/meow");
+        when(build.getCause()).thenReturn(mock(BuildCause.class));
         githubRepositoryService = mock(GithubRepositoryService.class);
         when(build.getGithubRepositoryService()).thenReturn(githubRepositoryService);
-	}
+    }
 
-	public static DynamicBuildFactory newBuild() {
-		return new DynamicBuildFactory();
-	}
+    public static DynamicBuildFactory newBuild() {
+        return new DynamicBuildFactory();
+    }
 
-	public DynamicBuild get() {
-		return build;
-	}
+    public DynamicBuild get() {
+        return build;
+    }
 
-	public DynamicBuildFactory skipped() {
-		when(build.isSkipped()).thenReturn(true);
-		return this;
-	}
+    public DynamicBuildFactory skipped() {
+        when(build.isSkipped()).thenReturn(true);
+        return this;
+    }
 
-	public DynamicBuildFactory building() {
-		when(build.isBuilding()).thenReturn(true);
-		return this;
-	}
+    public DynamicBuildFactory building() {
+        when(build.isBuilding()).thenReturn(true);
+        return this;
+    }
 
-	public DynamicBuildFactory manualStart(String userId, String branch) {
-		UserIdCause userIdCause = mock(UserIdCause.class);
-		when(userIdCause.getUserId()).thenReturn(userId);
-		when(build.getCause(UserIdCause.class)).thenReturn(userIdCause);
-		addBranchParam(branch);
-		return this;
-	}
+    public DynamicBuildFactory manualStart(String userId, String branch) {
+        UserIdCause userIdCause = mock(UserIdCause.class);
+        when(userIdCause.getUserId()).thenReturn(userId);
+        when(build.getCause(UserIdCause.class)).thenReturn(userIdCause);
+        addBranchParam(branch);
+        return this;
+    }
 
-	private OngoingStubbing<Map<String, String>> addBranchParam(String branch) {
-		return when(build.getEnvVars()).thenReturn(map("BRANCH", branch));
-	}
+    private OngoingStubbing<Map<String, String>> addBranchParam(String branch) {
+        return when(build.getEnvVars()).thenReturn(map("BRANCH", branch));
+    }
 
-	public DynamicBuildFactory withSubBuilds(DynamicSubBuild... subBuilds) {
-		DynamicProject dynamicProject = mock(DynamicProject.class);
-		List<DynamicSubProject> subProjects = new ArrayList<DynamicSubProject>(subBuilds.length);
-		for (DynamicSubBuild subBuild : subBuilds) {
-			DynamicSubProject subProject = mock(DynamicSubProject.class);
-			when(subProject.getBuildByNumber(build.getNumber())).thenReturn(subBuild);
-			subProjects.add(subProject);
-		}
-		when(dynamicProject.getItems()).thenReturn(subProjects);
-		when(build.getParent()).thenReturn(dynamicProject);
-		return this;
-	}
+    public DynamicBuildFactory withSubBuilds(DynamicSubBuild... subBuilds) {
+        DynamicProject dynamicProject = mock(DynamicProject.class);
+        List<DynamicSubProject> subProjects = new ArrayList<DynamicSubProject>(subBuilds.length);
+        for (DynamicSubBuild subBuild : subBuilds) {
+            DynamicSubProject subProject = mock(DynamicSubProject.class);
+            when(subProject.getBuildByNumber(build.getNumber())).thenReturn(subBuild);
+            subProjects.add(subProject);
+        }
+        when(dynamicProject.getItems()).thenReturn(subProjects);
+        when(build.getParent()).thenReturn(dynamicProject);
+        return this;
+    }
 
-	public DynamicBuildFactory fail() {
-		when(build.getResult()).thenReturn(Result.FAILURE);
-		return this;
-	}
+    public DynamicBuildFactory fail() {
+        when(build.getResult()).thenReturn(Result.FAILURE);
+        return this;
+    }
 
-	public DynamicBuildFactory recovery() {
-		DynamicBuild failedPrevBuild = newBuild().fail().get();
-		when(build.getPreviousFinishedBuildOfSameBranch(null)).thenReturn(failedPrevBuild);
-		return this;
-	}
+    public DynamicBuildFactory recovery() {
+        DynamicBuild failedPrevBuild = newBuild().fail().get();
+        when(build.getPreviousFinishedBuildOfSameBranch(null)).thenReturn(failedPrevBuild);
+        return this;
+    }
 
-	public DynamicBuildFactory success() {
-		when(build.getResult()).thenReturn(Result.SUCCESS);
-		return this;
-	}
+    public DynamicBuildFactory success() {
+        when(build.getResult()).thenReturn(Result.SUCCESS);
+        return this;
+    }
 
-	public DynamicBuildFactory notRecovery() {
-		DynamicBuild successPrevBuild = newBuild().success().get();
-		when(build.getPreviousFinishedBuildOfSameBranch(null)).thenReturn(successPrevBuild);
-		return this;
-	}
+    public DynamicBuildFactory notRecovery() {
+        DynamicBuild successPrevBuild = newBuild().success().get();
+        when(build.getPreviousFinishedBuildOfSameBranch(null)).thenReturn(successPrevBuild);
+        return this;
+    }
 
-	public DynamicBuildFactory unstable() {
-		when(build.getResult()).thenReturn(Result.UNSTABLE);
-		return this;
-	}
+    public DynamicBuildFactory unstable() {
+        when(build.getResult()).thenReturn(Result.UNSTABLE);
+        return this;
+    }
 
-	public DynamicBuildFactory upstreamStart(String branch) {
-		Cause cause = mock(UpstreamCause.class);
-		when(build.getCauses()).thenReturn(Lists.newArrayList(cause));
-		addBranchParam(branch);
-		return this;
-	}
+    public DynamicBuildFactory upstreamStart(String branch) {
+        Cause cause = mock(UpstreamCause.class);
+        when(build.getCauses()).thenReturn(Lists.newArrayList(cause));
+        addBranchParam(branch);
+        return this;
+    }
 
-	public DynamicBuildFactory buildConfiguration(BuildConfiguration buildConfiguration) {
-	//	when(build.getBuildConfiguration()).thenReturn(buildConfiguration);
-		return this;
-	}
+    public DynamicBuildFactory buildConfiguration(BuildConfiguration buildConfiguration) {
+    //    when(build.getBuildConfiguration()).thenReturn(buildConfiguration);
+        return this;
+    }
 
 }

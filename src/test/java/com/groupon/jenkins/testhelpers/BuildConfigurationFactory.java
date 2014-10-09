@@ -30,22 +30,22 @@ import static org.mockito.Mockito.when;
 
 public class BuildConfigurationFactory {
 
-	private final BuildConfiguration buildConfiguration;
+    private final BuildConfiguration buildConfiguration;
 
-	public BuildConfigurationFactory() {
-		this.buildConfiguration = mock(BuildConfiguration.class);
-	}
+    public BuildConfigurationFactory() {
+        this.buildConfiguration = mock(BuildConfiguration.class);
+    }
 
-	public BuildConfigurationFactory skipped() {
-		when(buildConfiguration.isSkipped()).thenReturn(true);
-		return this;
-	}
+    public BuildConfigurationFactory skipped() {
+        when(buildConfiguration.isSkipped()).thenReturn(true);
+        return this;
+    }
 
-	public BuildConfiguration get() {
-		return buildConfiguration;
-	}
+    public BuildConfiguration get() {
+        return buildConfiguration;
+    }
 
-	public static BuildConfigurationFactory buildConfiguration() {
-		return new BuildConfigurationFactory();
-	}
+    public static BuildConfigurationFactory buildConfiguration() {
+        return new BuildConfigurationFactory();
+    }
 }

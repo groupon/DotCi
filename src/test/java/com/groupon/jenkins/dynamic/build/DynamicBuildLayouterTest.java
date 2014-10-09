@@ -25,55 +25,55 @@ package com.groupon.jenkins.dynamic.build;
 
 public class DynamicBuildLayouterTest {
 
-	private DynamicBuild dynamicBuild;
-//	private BuildConfiguration buildConfiguration;
+    private DynamicBuild dynamicBuild;
+//    private BuildConfiguration buildConfiguration;
 //
-//	@Before
-//	public void setUpMocks() {
-//		dynamicBuild = mock(DynamicBuild.class);
-//		buildConfiguration = mock(BuildConfiguration.class);
-//		//when(dynamicBuild.getBuildConfiguration()).thenReturn(buildConfiguration);
+//    @Before
+//    public void setUpMocks() {
+//        dynamicBuild = mock(DynamicBuild.class);
+//        buildConfiguration = mock(BuildConfiguration.class);
+//        //when(dynamicBuild.getBuildConfiguration()).thenReturn(buildConfiguration);
 //
-//	}
+//    }
 //
-//	@Test
-//	public void shouldHaveScriptAxisIfParallizingOnScripts() throws IOException {
-//		when(buildConfiguration.isMultiScript()).thenReturn(true);
-//		when(buildConfiguration.getScriptKeys()).thenReturn(Lists.newArrayList("a", "b"));
+//    @Test
+//    public void shouldHaveScriptAxisIfParallizingOnScripts() throws IOException {
+//        when(buildConfiguration.isMultiScript()).thenReturn(true);
+//        when(buildConfiguration.getScriptKeys()).thenReturn(Lists.newArrayList("a", "b"));
 //
-//		AxisList axisList = DynamicBuildLayouter.calculateAxisList(dynamicBuild);
+//        AxisList axisList = DynamicBuildLayouter.calculateAxisList(dynamicBuild);
 //
-//		assertEquals(1, axisList.size());
-//		Axis scriptAxis = axisList.get(0);
-//		assertEquals(scriptAxis.getName(), "script");
-//		assertEquals(2, scriptAxis.size());
-//	}
+//        assertEquals(1, axisList.size());
+//        Axis scriptAxis = axisList.get(0);
+//        assertEquals(scriptAxis.getName(), "script");
+//        assertEquals(2, scriptAxis.size());
+//    }
 //
-//	@Test
-//	public void shouldHaveRubyAxisIfParallizingOnRubyVersions() throws IOException {
-//		when(buildConfiguration.isMultiLanguageVersions()).thenReturn(true);
-//		when(buildConfiguration.getLanguageVersions()).thenReturn(Lists.newArrayList("a", "b"));
+//    @Test
+//    public void shouldHaveRubyAxisIfParallizingOnRubyVersions() throws IOException {
+//        when(buildConfiguration.isMultiLanguageVersions()).thenReturn(true);
+//        when(buildConfiguration.getLanguageVersions()).thenReturn(Lists.newArrayList("a", "b"));
 //
-//		AxisList axisList = DynamicBuildLayouter.calculateAxisList(dynamicBuild);
-//		assertEquals(1, axisList.size());
-//		Axis scriptAxis = axisList.get(0);
-//		assertEquals(scriptAxis.getName(), "language_version");
-//		assertEquals(2, scriptAxis.size());
-//	}
+//        AxisList axisList = DynamicBuildLayouter.calculateAxisList(dynamicBuild);
+//        assertEquals(1, axisList.size());
+//        Axis scriptAxis = axisList.get(0);
+//        assertEquals(scriptAxis.getName(), "language_version");
+//        assertEquals(2, scriptAxis.size());
+//    }
 //
-//	@Test
-//	public void shouldHaveBothScriptAndRubyAxisIfParallizingOnRubyVersionsAndScripts() throws IOException {
-//		when(buildConfiguration.isMultiScript()).thenReturn(true);
-//		when(buildConfiguration.getScriptKeys()).thenReturn(Lists.newArrayList("a", "b"));
-//		when(buildConfiguration.isMultiLanguageVersions()).thenReturn(true);
-//		when(buildConfiguration.getLanguageVersions()).thenReturn(Lists.newArrayList("a", "b"));
+//    @Test
+//    public void shouldHaveBothScriptAndRubyAxisIfParallizingOnRubyVersionsAndScripts() throws IOException {
+//        when(buildConfiguration.isMultiScript()).thenReturn(true);
+//        when(buildConfiguration.getScriptKeys()).thenReturn(Lists.newArrayList("a", "b"));
+//        when(buildConfiguration.isMultiLanguageVersions()).thenReturn(true);
+//        when(buildConfiguration.getLanguageVersions()).thenReturn(Lists.newArrayList("a", "b"));
 //
-//		AxisList axisList = DynamicBuildLayouter.calculateAxisList(dynamicBuild);
+//        AxisList axisList = DynamicBuildLayouter.calculateAxisList(dynamicBuild);
 //
-//		assertEquals(2, axisList.size());
-//		assertEquals(axisList.get(0).getName(), "language_version");
-//		assertEquals(axisList.get(1).getName(), "script");
+//        assertEquals(2, axisList.size());
+//        assertEquals(axisList.get(0).getName(), "language_version");
+//        assertEquals(axisList.get(1).getName(), "script");
 //
-//	}
+//    }
 
 }

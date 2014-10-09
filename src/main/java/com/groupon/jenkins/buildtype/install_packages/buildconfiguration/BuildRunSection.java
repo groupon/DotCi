@@ -31,36 +31,36 @@ import java.util.List;
 import java.util.Set;
 
 public class BuildRunSection extends ConfigSection<ListOrMapOrString> {
-	public static final String NAME = "run";
+    public static final String NAME = "run";
 
-	public BuildRunSection(ListOrMapOrString configValue) {
-		super(NAME, configValue, MergeStrategy.REPLACE);
-	}
+    public BuildRunSection(ListOrMapOrString configValue) {
+        super(NAME, configValue, MergeStrategy.REPLACE);
+    }
 
-	public boolean isMultiConfig() {
-		return getConfigValue().isMap();
-	}
+    public boolean isMultiConfig() {
+        return getConfigValue().isMap();
+    }
 
-	@Override
-	public ShellCommands toScript(Combination combination) {
-		return new ShellCommands(getShellCommands(combination));
-	}
+    @Override
+    public ShellCommands toScript(Combination combination) {
+        return new ShellCommands(getShellCommands(combination));
+    }
 
-	private List<String> getShellCommands(Combination combination) {
-		if ("post_build".equals(combination.get("script"))) {
-			return Collections.emptyList();
-		}
-		List<String> commands = null;
-		if (isMultiConfig()) {
-			commands = getConfigValue().getValues(combination.get("script"));
-		} else {
-			commands = getConfigValue().getValuesList();
-		}
-		return commands;
-	}
+    private List<String> getShellCommands(Combination combination) {
+        if ("post_build".equals(combination.get("script"))) {
+            return Collections.emptyList();
+        }
+        List<String> commands = null;
+        if (isMultiConfig()) {
+            commands = getConfigValue().getValues(combination.get("script"));
+        } else {
+            commands = getConfigValue().getValuesList();
+        }
+        return commands;
+    }
 
-	public Set<String> getKeys() {
-		return getConfigValue().getKeys();
-	}
+    public Set<String> getKeys() {
+        return getConfigValue().getKeys();
+    }
 
 }

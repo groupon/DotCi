@@ -49,51 +49,51 @@ import static org.mockito.Mockito.when;
 
 public class GithubWebhookTest {
 
-	@Spy
-	GithubWebhook githubWebhook = new GithubWebhook();
+    @Spy
+    GithubWebhook githubWebhook = new GithubWebhook();
 
-	@Before
-	public void init() {
-		MockitoAnnotations.initMocks(this);
-	}
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void should_not_be_called_with_payload() throws IOException {
-		githubWebhook.doIndex(mock(StaplerRequest.class), null);
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void should_not_be_called_with_payload() throws IOException {
+        githubWebhook.doIndex(mock(StaplerRequest.class), null);
+    }
 
-	@Test
-	public void should_get_payload_from_post_if_post() throws IOException, InterruptedException {
-		StaplerRequest request = mock(StaplerRequest.class);
-		when(request.getParameter("payload")).thenReturn(null);
-		when(request.getMethod()).thenReturn("POST");
-		doReturn("payload").when(githubWebhook).getRequestPayload(request);
-		verifyBuildTrigger(request);
-	}
+    @Test
+    public void should_get_payload_from_post_if_post() throws IOException, InterruptedException {
+        StaplerRequest request = mock(StaplerRequest.class);
+        when(request.getParameter("payload")).thenReturn(null);
+        when(request.getMethod()).thenReturn("POST");
+        doReturn("payload").when(githubWebhook).getRequestPayload(request);
+        verifyBuildTrigger(request);
+    }
 
-	@Test
-	public void should_trigger_builds_for_payload() throws IOException, InterruptedException {
-		StaplerRequest request = mock(StaplerRequest.class);
-		when(request.getParameter("payload")).thenReturn("payload");
-		verifyBuildTrigger(request);
-	}
+    @Test
+    public void should_trigger_builds_for_payload() throws IOException, InterruptedException {
+        StaplerRequest request = mock(StaplerRequest.class);
+        when(request.getParameter("payload")).thenReturn("payload");
+        verifyBuildTrigger(request);
+    }
 
-	protected void verifyBuildTrigger(StaplerRequest request) throws IOException, InterruptedException {
-		Payload payload = mock(Payload.class);
+    protected void verifyBuildTrigger(StaplerRequest request) throws IOException, InterruptedException {
+        Payload payload = mock(Payload.class);
 
-		DynamicProject projectForRepo = mock(DynamicProject.class);
-		DynamicProjectRepository projectRepo = mock(DynamicProjectRepository.class);
+        DynamicProject projectForRepo = mock(DynamicProject.class);
+        DynamicProjectRepository projectRepo = mock(DynamicProjectRepository.class);
 
-		when(payload.needsBuild()).thenReturn(true);
-		when(payload.getProjectUrl()).thenReturn("git@repo");
-		when(projectRepo.getJobsFor("git@repo")).thenReturn(newArrayList(projectForRepo));
+        when(payload.needsBuild()).thenReturn(true);
+        when(payload.getProjectUrl()).thenReturn("git@repo");
+        when(projectRepo.getJobsFor("git@repo")).thenReturn(newArrayList(projectForRepo));
 
-		doReturn(payload).when(githubWebhook).makePayload("payload");
-		doReturn(projectRepo).when(githubWebhook).makeDynamicProjectRepo();
+        doReturn(payload).when(githubWebhook).makePayload("payload");
+        doReturn(projectRepo).when(githubWebhook).makeDynamicProjectRepo();
 
-		githubWebhook.doIndex(request, null);
-		Thread.sleep(2000);
-		verify(projectForRepo).scheduleBuild(eq(0), any(GithubCause.class), any(ParametersAction.class));
-	}
+        githubWebhook.doIndex(request, null);
+        Thread.sleep(2000);
+        verify(projectForRepo).scheduleBuild(eq(0), any(GithubCause.class), any(ParametersAction.class));
+    }
 
 }

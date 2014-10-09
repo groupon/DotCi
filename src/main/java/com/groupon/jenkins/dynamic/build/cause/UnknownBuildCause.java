@@ -31,48 +31,48 @@ import com.groupon.jenkins.github.GitBranch;
 
 public class UnknownBuildCause extends BuildCause {
 
-	private final String sha;
-	private final GitBranch branch;
+    private final String sha;
+    private final GitBranch branch;
 
-	public UnknownBuildCause(GitBranch branch, String sha) {
-		this.branch = branch;
-		this.sha = sha;
-	}
+    public UnknownBuildCause(GitBranch branch, String sha) {
+        this.branch = branch;
+        this.sha = sha;
+    }
 
-	@Override
-	public String getSha() {
-		return sha;
-	}
+    @Override
+    public String getSha() {
+        return sha;
+    }
 
-	@Override
-	public String getBuildDescription() {
-		return branch.toString();
-	}
+    @Override
+    public String getBuildDescription() {
+        return branch.toString();
+    }
 
-	@Override
-	public String getPusher() {
-		return "unknown";
-	}
+    @Override
+    public String getPusher() {
+        return "unknown";
+    }
 
-	@Override
-	public String getPullRequestNumber() {
-		return branch.isPullRequest() ? branch.pullRequestNumber() + "" : null;
-	}
+    @Override
+    public String getPullRequestNumber() {
+        return branch.isPullRequest() ? branch.pullRequestNumber() + "" : null;
+    }
 
-	@Override
-	public GitBranch getBranch() {
-		return branch;
-	}
+    @Override
+    public GitBranch getBranch() {
+        return branch;
+    }
 
-	@Override
-	public Iterable<GithubLogEntry> getChangeLogEntries() {
-		return Collections.emptyList();
-	}
+    @Override
+    public Iterable<GithubLogEntry> getChangeLogEntries() {
+        return Collections.emptyList();
+    }
 
-	@Override
-	@Exported(visibility = 3)
-	public String getShortDescription() {
-		return "";
-	}
+    @Override
+    @Exported(visibility = 3)
+    public String getShortDescription() {
+        return "";
+    }
 
 }

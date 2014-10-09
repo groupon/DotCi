@@ -36,132 +36,132 @@ import java.util.List;
 
 @Extension
 public class SetupConfig extends GlobalConfiguration {
-	private String dbHost;
-	private int dbPort;
-	private String dbName;
-	private String githubApiUrl;
-	private String githubCallbackUrl;
-	private String label;
-	private String fromEmailAddress;
+    private String dbHost;
+    private int dbPort;
+    private String dbName;
+    private String githubApiUrl;
+    private String githubCallbackUrl;
+    private String label;
+    private String fromEmailAddress;
     private String defaultBuildType;
-	private String deployKey;
+    private String deployKey;
 
-	public static SetupConfig get() {
-		return GlobalConfiguration.all().get(SetupConfig.class);
-	}
+    public static SetupConfig get() {
+        return GlobalConfiguration.all().get(SetupConfig.class);
+    }
 
-	public SetupConfig() {
-		load();
-	}
+    public SetupConfig() {
+        load();
+    }
 
-	@Override
-	public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
-		JSONObject privateRepoSupportJson = (JSONObject) json.get("privateRepoSupport");
-		if (privateRepoSupportJson != null) {
-			deployKey = privateRepoSupportJson.getString("deployKey");
-			json.remove("privateRepoSupport");
-		} else {
-			deployKey = null;
-		}
-		req.bindJSON(this, json);
-		save();
-		return true;
-	}
+    @Override
+    public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
+        JSONObject privateRepoSupportJson = (JSONObject) json.get("privateRepoSupport");
+        if (privateRepoSupportJson != null) {
+            deployKey = privateRepoSupportJson.getString("deployKey");
+            json.remove("privateRepoSupport");
+        } else {
+            deployKey = null;
+        }
+        req.bindJSON(this, json);
+        save();
+        return true;
+    }
 
     public Iterable<BuildType> getBuildTypes(){
         return BuildType.all();
     }
-	public String getDbName() {
-		if (StringUtils.isEmpty(dbName)) {
-			return "dotci";
-		}
-		return dbName;
-	}
+    public String getDbName() {
+        if (StringUtils.isEmpty(dbName)) {
+            return "dotci";
+        }
+        return dbName;
+    }
 
 
-	public void setDbName(String dbName) {
-		this.dbName = dbName;
-	}
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
 
-	public String getDbHost() {
-		if (StringUtils.isEmpty(dbHost)) {
-			return "localhost";
-		}
-		return dbHost;
-	}
+    public String getDbHost() {
+        if (StringUtils.isEmpty(dbHost)) {
+            return "localhost";
+        }
+        return dbHost;
+    }
 
-	public void setDbHost(String dbHost) {
-		this.dbHost = dbHost;
-	}
+    public void setDbHost(String dbHost) {
+        this.dbHost = dbHost;
+    }
 
-	public int getDbPort() {
-		if (dbPort == 0) {
-			return 27017;
-		}
-		return dbPort;
-	}
+    public int getDbPort() {
+        if (dbPort == 0) {
+            return 27017;
+        }
+        return dbPort;
+    }
 
-	public void setDbPort(int dbPort) {
-		this.dbPort = dbPort;
-	}
+    public void setDbPort(int dbPort) {
+        this.dbPort = dbPort;
+    }
 
-	public String getGithubApiUrl() {
-		if (StringUtils.isEmpty(githubApiUrl)) {
-			return "https://api.github.com/";
-		}
-		return githubApiUrl;
-	}
+    public String getGithubApiUrl() {
+        if (StringUtils.isEmpty(githubApiUrl)) {
+            return "https://api.github.com/";
+        }
+        return githubApiUrl;
+    }
 
-	public void setGithubApiUrl(String githubApiUrl) {
-		this.githubApiUrl = githubApiUrl;
-	}
+    public void setGithubApiUrl(String githubApiUrl) {
+        this.githubApiUrl = githubApiUrl;
+    }
 
-	public String getLabel() {
-		return StringUtils.trimToEmpty(this.label);
-	}
+    public String getLabel() {
+        return StringUtils.trimToEmpty(this.label);
+    }
 
-	public String getGithubCallbackUrl() {
-		if (StringUtils.isEmpty(githubCallbackUrl)) {
-			return Jenkins.getInstance().getRootUrl() + "/githook/";
-		}
-		return this.githubCallbackUrl;
-	}
+    public String getGithubCallbackUrl() {
+        if (StringUtils.isEmpty(githubCallbackUrl)) {
+            return Jenkins.getInstance().getRootUrl() + "/githook/";
+        }
+        return this.githubCallbackUrl;
+    }
 
-	public void setGithubCallbackUrl(String githubCallbackUrl) {
-		this.githubCallbackUrl = githubCallbackUrl;
-	}
+    public void setGithubCallbackUrl(String githubCallbackUrl) {
+        this.githubCallbackUrl = githubCallbackUrl;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public String getFromEmailAddress() {
-		if (StringUtils.isEmpty(fromEmailAddress)) {
-			return "ci@example.com";
-		}
-		return fromEmailAddress;
-	}
+    public String getFromEmailAddress() {
+        if (StringUtils.isEmpty(fromEmailAddress)) {
+            return "ci@example.com";
+        }
+        return fromEmailAddress;
+    }
 
-	public void setFromEmailAddress(String fromEmailAddress) {
-		this.fromEmailAddress = fromEmailAddress;
-	}
+    public void setFromEmailAddress(String fromEmailAddress) {
+        this.fromEmailAddress = fromEmailAddress;
+    }
 
-	// for EL
-	public boolean getPrivateRepoSupport() {
-		return deployKey != null;
-	}
+    // for EL
+    public boolean getPrivateRepoSupport() {
+        return deployKey != null;
+    }
 
-	public boolean hasPrivateRepoSupport() {
-		return getPrivateRepoSupport();
-	}
+    public boolean hasPrivateRepoSupport() {
+        return getPrivateRepoSupport();
+    }
 
-	public String getDeployKey() {
-		return deployKey;
-	}
+    public String getDeployKey() {
+        return deployKey;
+    }
 
-	public void setDeployKey(String deployKey) {
-		this.deployKey = deployKey;
-	}
+    public void setDeployKey(String deployKey) {
+        this.deployKey = deployKey;
+    }
 
     public String getDefaultBuildType() {
         if (StringUtils.isEmpty(defaultBuildType)) {

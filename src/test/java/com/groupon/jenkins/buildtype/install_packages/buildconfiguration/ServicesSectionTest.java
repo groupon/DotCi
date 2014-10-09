@@ -34,36 +34,36 @@ import static com.groupon.jenkins.testhelpers.TestHelpers.configListOrSingleValu
 import static org.junit.Assert.assertEquals;
 
 public class ServicesSectionTest {
-	private List<String> startCommands;
-	private List<String> cleanupCommands;
-	private Iterable<String> linkCommands;
+    private List<String> startCommands;
+    private List<String> cleanupCommands;
+    private Iterable<String> linkCommands;
 
-	@Before
-	public void setupSection() {
-		ServicesSection section = new ServicesSection(configListOrSingleValue("chairman/mongodb"));
-		this.startCommands = section.getServiceStartCommands("buildId");
-		this.cleanupCommands = section.getCleanupCommands("buildId");
-		this.linkCommands = section.getContainerLinkCommands("buildId");
-	}
+    @Before
+    public void setupSection() {
+        ServicesSection section = new ServicesSection(configListOrSingleValue("chairman/mongodb"));
+        this.startCommands = section.getServiceStartCommands("buildId");
+        this.cleanupCommands = section.getCleanupCommands("buildId");
+        this.linkCommands = section.getContainerLinkCommands("buildId");
+    }
 
-	@Test
-	public void should_pull_down_images() {
-		assertEquals("docker pull  chairman/mongodb", startCommands.get(0));
-	}
+    @Test
+    public void should_pull_down_images() {
+        assertEquals("docker pull  chairman/mongodb", startCommands.get(0));
+    }
 
-	@Test
-	public void should_start_containers_in_deamon_mode() {
-		assertEquals("docker run -d --name chairman_mongodb_buildId chairman/mongodb", startCommands.get(1));
-	}
+    @Test
+    public void should_start_containers_in_deamon_mode() {
+        assertEquals("docker run -d --name chairman_mongodb_buildId chairman/mongodb", startCommands.get(1));
+    }
 
-	@Test
-	public void should_stop_containers_at_cleanup() {
-		assertEquals("docker kill  chairman_mongodb_buildId", cleanupCommands.get(0));
-	}
+    @Test
+    public void should_stop_containers_at_cleanup() {
+        assertEquals("docker kill  chairman_mongodb_buildId", cleanupCommands.get(0));
+    }
 
-	@Test
-	public void should_link_running_containers() {
-		assertEquals("chairman_mongodb_buildId:mongodb", Iterables.get(linkCommands, 0));
-	}
+    @Test
+    public void should_link_running_containers() {
+        assertEquals("chairman_mongodb_buildId:mongodb", Iterables.get(linkCommands, 0));
+    }
 
 }

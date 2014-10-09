@@ -27,27 +27,27 @@ import com.groupon.jenkins.github.Payload;
 
 public class GitHubPushCause extends GithubCause {
 
-	private final String pushedBy;
-	private final String pusherEmailAddress;
+    private final String pushedBy;
+    private final String pusherEmailAddress;
 
-	public GitHubPushCause(Payload payload, String sha, String pusher, String pusherEmailAddress) {
-		super(payload, sha);
-		this.pushedBy = pusher;
-		this.pusherEmailAddress = pusherEmailAddress;
-	}
+    public GitHubPushCause(Payload payload, String sha, String pusher, String pusherEmailAddress) {
+        super(payload, sha);
+        this.pushedBy = pusher;
+        this.pusherEmailAddress = pusherEmailAddress;
+    }
 
-	@Override
-	public String getShortDescription() {
-		String pusher = getPushedBy() != null ? getPushedBy() : "<unknown>";
-		return "Started by GitHub push by " + pusher;
-	}
+    @Override
+    public String getShortDescription() {
+        String pusher = getPushedBy() != null ? getPushedBy() : "<unknown>";
+        return "Started by GitHub push by " + pusher;
+    }
 
-	public String getPusherEmailAddress() {
-		return pusherEmailAddress;
-	}
+    public String getPusherEmailAddress() {
+        return pusherEmailAddress;
+    }
 
-	public String getPushedBy() {
-		return pushedBy;
-	}
+    public String getPushedBy() {
+        return pushedBy;
+    }
 
 }

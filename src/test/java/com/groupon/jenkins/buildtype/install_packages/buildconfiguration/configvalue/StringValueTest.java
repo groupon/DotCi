@@ -29,13 +29,13 @@ import static org.junit.Assert.assertEquals;
 
 public class StringValueTest {
 
-	@Test(expected = UnsupportedOperationException.class)
-	public void should_not_support_append() {
-		new StringValue("blah").append(new StringValue("blah"));
-	}
+    @Test(expected = UnsupportedOperationException.class)
+    public void should_not_support_append() {
+        new StringValue("blah").append(new StringValue("blah"));
+    }
 
-	@Test
-	public void should_preserve_string_value() {
-		assertEquals("blah", new StringValue("blah").getValue());
-	}
+    @Test
+    public void should_preserve_string_value() {
+        assertEquals("blah", new StringValue("blah").getValue());
+    }
 }

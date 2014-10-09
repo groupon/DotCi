@@ -59,7 +59,7 @@ import org.mongodb.morphia.mapping.Mapper;
 public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> extends Project<P, B> {
 
     @Id
-	private ObjectId id;
+    private ObjectId id;
 
     @PrePersist
     private void saveName(final DBObject dbObj) {
@@ -72,14 +72,14 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
     }
 
     protected transient DynamicProjectRepository dynamicProjectRepository;
-	protected transient DynamicBuildRepository dynamicBuildRepository;
+    protected transient DynamicBuildRepository dynamicBuildRepository;
 
     private static final Logger LOGGER = Logger.getLogger(DbBackedProject.class.getName());
 
-	public DbBackedProject(ItemGroup parent, String name) {
-		super(parent, name);
-		initRepos();
-	}
+    public DbBackedProject(ItemGroup parent, String name) {
+        super(parent, name);
+        initRepos();
+    }
 
     @Override
     public void onLoad(ItemGroup<? extends hudson.model.Item> parent, String name) throws IOException {
@@ -88,155 +88,155 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
     }
 
     @PostLoad
-	protected void initRepos() {
-		this.dynamicProjectRepository = new DynamicProjectRepository();
-		this.dynamicBuildRepository = new DynamicBuildRepository();
-	}
+    protected void initRepos() {
+        this.dynamicProjectRepository = new DynamicProjectRepository();
+        this.dynamicBuildRepository = new DynamicBuildRepository();
+    }
 
-	@Override
-	public HealthReport getBuildHealth() {
-		return new HealthReport();
-	}
+    @Override
+    public HealthReport getBuildHealth() {
+        return new HealthReport();
+    }
 
-	@Override
-	@Exported(name = "healthReport")
-	public List<HealthReport> getBuildHealthReports() {
-		return new ArrayList<HealthReport>();
-	}
+    @Override
+    @Exported(name = "healthReport")
+    public List<HealthReport> getBuildHealthReports() {
+        return new ArrayList<HealthReport>();
+    }
 
-	@Override
-	public synchronized void save() throws IOException {
-		this.id = dynamicProjectRepository.saveOrUpdate(this);
-	}
+    @Override
+    public synchronized void save() throws IOException {
+        this.id = dynamicProjectRepository.saveOrUpdate(this);
+    }
 
-	public IdentifableItemGroup getIdentifableParent() {
-		return (IdentifableItemGroup) getParent();
-	}
+    public IdentifableItemGroup getIdentifableParent() {
+        return (IdentifableItemGroup) getParent();
+    }
 
-	@Override
-	public PollingResult poll(TaskListener listener) {
-		return PollingResult.NO_CHANGES;
-	}
+    @Override
+    public PollingResult poll(TaskListener listener) {
+        return PollingResult.NO_CHANGES;
+    }
 
-	@Override
-	public boolean isBuildable() {
-		return !isDisabled();
-	}
+    @Override
+    public boolean isBuildable() {
+        return !isDisabled();
+    }
 
-	// Store builds in Db
+    // Store builds in Db
 
-	@Override
-	protected synchronized B newBuild() throws IOException {
-		B build = super.newBuild();
-		build.save();
-		return build;
-	}
+    @Override
+    protected synchronized B newBuild() throws IOException {
+        B build = super.newBuild();
+        build.save();
+        return build;
+    }
 
-	@Override
-	public B getBuild(String id) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public B getBuild(String id) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public B getBuildByNumber(int n) {
-		return dynamicBuildRepository.<B> getBuild(this, n);
-	}
+    @Override
+    public B getBuildByNumber(int n) {
+        return dynamicBuildRepository.<B> getBuild(this, n);
+    }
 
-	@Override
-	@Exported
-	@QuickSilver
-	public B getLastSuccessfulBuild() {
-		return dynamicBuildRepository.<B> getLastSuccessfulBuild(this);
-	}
+    @Override
+    @Exported
+    @QuickSilver
+    public B getLastSuccessfulBuild() {
+        return dynamicBuildRepository.<B> getLastSuccessfulBuild(this);
+    }
 
-	@Override
-	@Exported
-	@QuickSilver
-	public B getLastFailedBuild() {
-		return dynamicBuildRepository.<B> getLastFailedBuild(this);
-	}
+    @Override
+    @Exported
+    @QuickSilver
+    public B getLastFailedBuild() {
+        return dynamicBuildRepository.<B> getLastFailedBuild(this);
+    }
 
-	@Override
-	@Exported(name = "allBuilds", visibility = -2)
-	@WithBridgeMethods(List.class)
-	public RunList<B> getBuilds() {
-		return dynamicBuildRepository.<B> getBuilds(this);
-	}
+    @Override
+    @Exported(name = "allBuilds", visibility = -2)
+    @WithBridgeMethods(List.class)
+    public RunList<B> getBuilds() {
+        return dynamicBuildRepository.<B> getBuilds(this);
+    }
 
-	@Override
-	public SortedMap<Integer, B> getBuildsAsMap() {
-		return dynamicBuildRepository.<P, B> getBuildsAsMap(this);
-	}
+    @Override
+    public SortedMap<Integer, B> getBuildsAsMap() {
+        return dynamicBuildRepository.<P, B> getBuildsAsMap(this);
+    }
 
-	@Override
-	public B getFirstBuild() {
-		return dynamicBuildRepository.<B> getFirstBuild(this);
-	}
+    @Override
+    public B getFirstBuild() {
+        return dynamicBuildRepository.<B> getFirstBuild(this);
+    }
 
     public B getLastBuildAnyBranch() {
         return dynamicBuildRepository.<B> getLastBuild(this);
     }
-	@Override
-	public B getLastBuild() {
+    @Override
+    public B getLastBuild() {
         String branch = "master";
         StaplerRequest currentRequest = Stapler.getCurrentRequest();
         if (currentRequest != null && StringUtils.isNotEmpty(currentRequest.getParameter("branch"))) {
             branch = currentRequest.getParameter("branch");
         }
-		return dynamicBuildRepository.<B> getLastBuild(this,branch);
-	}
+        return dynamicBuildRepository.<B> getLastBuild(this,branch);
+    }
 
-	@Override
-	public B getNearestBuild(int n) {
-		return null;
-	}
+    @Override
+    public B getNearestBuild(int n) {
+        return null;
+    }
 
-	@Override
-	public B getNearestOldBuild(int n) {
-		return null;
-	}
+    @Override
+    public B getNearestOldBuild(int n) {
+        return null;
+    }
 
-	@Override
-	public synchronized Item getQueueItem() {
-		Queue queue = Jenkins.getInstance().getQueue();
-		Item[] items = queue.getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (items[i].task != null && items[i].task.equals(this)) {
-				return items[i];
-			}
-		}
-		return super.getQueueItem();
-	}
+    @Override
+    public synchronized Item getQueueItem() {
+        Queue queue = Jenkins.getInstance().getQueue();
+        Item[] items = queue.getItems();
+        for (int i = 0; i < items.length; i++) {
+            if (items[i].task != null && items[i].task.equals(this)) {
+                return items[i];
+            }
+        }
+        return super.getQueueItem();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		DbBackedProject other = (DbBackedProject) obj;
-		return Objects.equal(getFullName(), other.getFullName());
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        DbBackedProject other = (DbBackedProject) obj;
+        return Objects.equal(getFullName(), other.getFullName());
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(getFullName());
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getFullName());
+    }
 
-	@Override
-	public void removeRun(B run) {
-		dynamicBuildRepository.deleteBuild(run);
-	}
+    @Override
+    public void removeRun(B run) {
+        dynamicBuildRepository.deleteBuild(run);
+    }
 
-	public String getOrgName() {
-		return getParent().getFullDisplayName();
-	}
+    public String getOrgName() {
+        return getParent().getFullDisplayName();
+    }
 
-	public ObjectId getId() {
-		return id;
-	}
+    public ObjectId getId() {
+        return id;
+    }
 
-	public void setId(ObjectId id) {
-		this.id = id;
-	}
+    public void setId(ObjectId id) {
+        this.id = id;
+    }
 
 }

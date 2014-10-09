@@ -40,28 +40,28 @@ public class BuildTypeProperty extends JobProperty<Job<?, ?>> {
 
     private final String buildType;
 
-	public BuildTypeProperty(String buildType) {
-		this.buildType = buildType;
-	}
+    public BuildTypeProperty(String buildType) {
+        this.buildType = buildType;
+    }
 
 
-	@Extension
-	public static final class BuildTypePropertyDescriptor extends JobPropertyDescriptor {
+    @Extension
+    public static final class BuildTypePropertyDescriptor extends JobPropertyDescriptor {
 
-		@Override
-		public String getDisplayName() {
-			return "Build Type";
-		}
+        @Override
+        public String getDisplayName() {
+            return "Build Type";
+        }
 
-		@Override
-		public boolean isApplicable(Class<? extends Job> jobType) {
-			return DynamicProject.class.equals(jobType) || DynamicSubProject.class.equals(jobType);
-		}
+        @Override
+        public boolean isApplicable(Class<? extends Job> jobType) {
+            return DynamicProject.class.equals(jobType) || DynamicSubProject.class.equals(jobType);
+        }
 
-		@Override
-		public BuildTypeProperty newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-			return new BuildTypeProperty(formData.getString("buildType"));
-		}
-	}
+        @Override
+        public BuildTypeProperty newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+            return new BuildTypeProperty(formData.getString("buildType"));
+        }
+    }
 
 }

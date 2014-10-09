@@ -48,139 +48,139 @@ import org.kohsuke.stapler.StaplerRequest;
 
 public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSubBuild> {
 
-	private final BuildCause cause;
+    private final BuildCause cause;
 
-	public DynamicSubBuild(DynamicSubProject project, Calendar calendar, Cause cause) throws IOException {
-		super(project);
-		this.cause = (BuildCause) cause;
-	}
+    public DynamicSubBuild(DynamicSubProject project, Calendar calendar, Cause cause) throws IOException {
+        super(project);
+        this.cause = (BuildCause) cause;
+    }
 
-	public DynamicSubBuild(DynamicSubProject job, Calendar timestamp) {
-		super(job, timestamp);
-		this.cause = null;
-	}
+    public DynamicSubBuild(DynamicSubProject job, Calendar timestamp) {
+        super(job, timestamp);
+        this.cause = null;
+    }
 
-	public DynamicSubBuild(DynamicSubProject job, File buildDir) throws IOException {
-		super(job, buildDir);
-		this.cause = null;
-	}
+    public DynamicSubBuild(DynamicSubProject job, File buildDir) throws IOException {
+        super(job, buildDir);
+        this.cause = null;
+    }
 
-	@Override
-	public DynamicSubProject getParent() {
-		return super.getParent();
-	}
+    @Override
+    public DynamicSubProject getParent() {
+        return super.getParent();
+    }
 
-	@Override
-	protected void onStartBuilding() {
-		super.onStartBuilding();
-		try {
-			save();
-		} catch (IOException e) {
-			throw new RuntimeException();
-		}
-	}
+    @Override
+    protected void onStartBuilding() {
+        super.onStartBuilding();
+        try {
+            save();
+        } catch (IOException e) {
+            throw new RuntimeException();
+        }
+    }
 
-	@Override
-	public String getUpUrl() {
-		StaplerRequest req = Stapler.getCurrentRequest();
-		if (req != null) {
-			List<Ancestor> ancs = req.getAncestors();
-			for (int i = 1; i < ancs.size(); i++) {
-				if (ancs.get(i).getObject() == this) {
-					Object parentObj = ancs.get(i - 1).getObject();
-					if (parentObj instanceof DynamicBuild || parentObj instanceof DynamicSubProject) {
-						return ancs.get(i - 1).getUrl() + '/';
-					}
-				}
-			}
-		}
-		return super.getDisplayName();
-	}
+    @Override
+    public String getUpUrl() {
+        StaplerRequest req = Stapler.getCurrentRequest();
+        if (req != null) {
+            List<Ancestor> ancs = req.getAncestors();
+            for (int i = 1; i < ancs.size(); i++) {
+                if (ancs.get(i).getObject() == this) {
+                    Object parentObj = ancs.get(i - 1).getObject();
+                    if (parentObj instanceof DynamicBuild || parentObj instanceof DynamicSubProject) {
+                        return ancs.get(i - 1).getUrl() + '/';
+                    }
+                }
+            }
+        }
+        return super.getDisplayName();
+    }
 
-	public DynamicBuild getParentBuild() {
-		return getParent().getParent().getBuildByNumber(getNumber());
-	}
+    public DynamicBuild getParentBuild() {
+        return getParent().getParent().getBuildByNumber(getNumber());
+    }
 
-	@Override
-	public AbstractBuild<?, ?> getRootBuild() {
-		return getParentBuild();
-	}
+    @Override
+    public AbstractBuild<?, ?> getRootBuild() {
+        return getParentBuild();
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void run() {
-		execute(new DynamicSubBuildExecution());
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public void run() {
+        execute(new DynamicSubBuildExecution());
+    }
 
-	protected class DynamicSubBuildExecution extends BuildExecution implements BuildExecutionContext {
-		protected Lease getParentWorkspaceLease(Node n, WorkspaceList wsl) throws InterruptedException, IOException {
-			DynamicProject mp = getParent().getParent();
+    protected class DynamicSubBuildExecution extends BuildExecution implements BuildExecutionContext {
+        protected Lease getParentWorkspaceLease(Node n, WorkspaceList wsl) throws InterruptedException, IOException {
+            DynamicProject mp = getParent().getParent();
 
-			String customWorkspace = mp.getCustomWorkspace();
-			if (customWorkspace != null) {
-				// we allow custom workspaces to be concurrently used between
-				// jobs.
-				return Lease.createDummyLease(n.getRootPath().child(getEnvironment(listener).expand(customWorkspace)));
-			}
-			return wsl.allocate(n.getWorkspaceFor(mp), getParentBuild());
-		}
+            String customWorkspace = mp.getCustomWorkspace();
+            if (customWorkspace != null) {
+                // we allow custom workspaces to be concurrently used between
+                // jobs.
+                return Lease.createDummyLease(n.getRootPath().child(getEnvironment(listener).expand(customWorkspace)));
+            }
+            return wsl.allocate(n.getWorkspaceFor(mp), getParentBuild());
+        }
 
-		@Override
-		protected Lease decideWorkspace(Node n, WorkspaceList wsl) throws InterruptedException, IOException {
-			Lease baseLease = getParentWorkspaceLease(n, wsl);
-			FilePath baseDir = baseLease.path;
-			EnvVars env = getEnvironment(listener);
-			env.putAll(getBuildVariables());
-			String childWs = getParent().getName();
-			return Lease.createLinkedDummyLease(baseDir.child(env.expand(childWs)), baseLease);
-		}
+        @Override
+        protected Lease decideWorkspace(Node n, WorkspaceList wsl) throws InterruptedException, IOException {
+            Lease baseLease = getParentWorkspaceLease(n, wsl);
+            FilePath baseDir = baseLease.path;
+            EnvVars env = getEnvironment(listener);
+            env.putAll(getBuildVariables());
+            String childWs = getParent().getName();
+            return Lease.createLinkedDummyLease(baseDir.child(env.expand(childWs)), baseLease);
+        }
 
-		@Override
-		protected Result doRun(BuildListener listener) throws Exception {
+        @Override
+        protected Result doRun(BuildListener listener) throws Exception {
             SubBuildExecutionAction subBuildExecutionAction = getAction(SubBuildExecutionAction.class);
             return subBuildExecutionAction.run(DynamicSubBuild.this.getCombination(), this, listener) ;
 
-		}
+        }
 
 
-		@Override
-		public boolean performStep(BuildStep buildStep, BuildListener listener) throws InterruptedException, IOException {
-			return perform(buildStep, listener);
-		}
+        @Override
+        public boolean performStep(BuildStep buildStep, BuildListener listener) throws InterruptedException, IOException {
+            return perform(buildStep, listener);
+        }
 
-		@Override
-		public void setResult(Result r) {
-			DynamicSubBuild.this.setResult(r);
-		}
+        @Override
+        public void setResult(Result r) {
+            DynamicSubBuild.this.setResult(r);
+        }
 
 
-	}
+    }
 
-	@Override
-	public boolean equals(Object other) {
-		if (other instanceof DynamicSubBuild) {
-			return Objects.equal(getBuildId(), ((DynamicSubBuild) other).getBuildId());
-		}
-		return false;
-	}
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof DynamicSubBuild) {
+            return Objects.equal(getBuildId(), ((DynamicSubBuild) other).getBuildId());
+        }
+        return false;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(getBuildId());
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getBuildId());
+    }
 
-	public Combination getCombination() {
-		return getParent().getCombination();
-	}
+    public Combination getCombination() {
+        return getParent().getCombination();
+    }
 
-	@Override
-	public BuildCause getCause() {
-		return cause;
-	}
+    @Override
+    public BuildCause getCause() {
+        return cause;
+    }
 
-	@Override
-	public String getSha() {
-		return getParentBuild().getSha();
-	}
+    @Override
+    public String getSha() {
+        return getParentBuild().getSha();
+    }
 
 }

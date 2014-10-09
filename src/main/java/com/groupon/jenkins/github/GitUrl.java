@@ -27,22 +27,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GitUrl {
-	private static final Pattern GITHUB_HTTP_URL = Pattern.compile("^https?://(.*)/(.*)/(.*)");
+    private static final Pattern GITHUB_HTTP_URL = Pattern.compile("^https?://(.*)/(.*)/(.*)");
     private static final Pattern GITHUB_SSH_URL = Pattern.compile("^git@(.*):(.*)/(.*).git");
-	private final String url;
-	private final String orgName;
-	private final String name;
+    private final String url;
+    private final String orgName;
+    private final String name;
     private final String domain;
 
     public GitUrl(String url) {
-		Matcher matcher = GITHUB_HTTP_URL.matcher(url);
-		if (matcher.matches()) {
-			this.orgName = matcher.group(2);
-			this.name = matcher.group(3);
+        Matcher matcher = GITHUB_HTTP_URL.matcher(url);
+        if (matcher.matches()) {
+            this.orgName = matcher.group(2);
+            this.name = matcher.group(3);
             this.domain = matcher.group(1);
-			this.url = "git@" + this.domain + ":" + this.orgName + "/" + this.name + ".git";
-		} else {
-			this.url = url;
+            this.url = "git@" + this.domain + ":" + this.orgName + "/" + this.name + ".git";
+        } else {
+            this.url = url;
             Matcher sshMatcher = GITHUB_SSH_URL.matcher(url);
             if(sshMatcher.matches()){
                 this.orgName = sshMatcher.group(2);
@@ -52,16 +52,16 @@ public class GitUrl {
                 throw new IllegalArgumentException("Invalid git url " + url);
             }
 
-		}
-	}
+        }
+    }
 
-	public String getFullRepoName() {
-		return orgName + "/" + name;
-	}
+    public String getFullRepoName() {
+        return orgName + "/" + name;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
     public String getGitUrl(){
        return String.format("git://%s/%s/%s.git",domain,orgName,name);

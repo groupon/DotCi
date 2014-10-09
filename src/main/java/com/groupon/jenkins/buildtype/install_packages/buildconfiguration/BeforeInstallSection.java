@@ -26,11 +26,11 @@ package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListOrSingleValue;
 
 public class BeforeInstallSection extends SerialExecutionSection {
-	public static final String NAME = "before_install";
+    public static final String NAME = "before_install";
 
-	public BeforeInstallSection(ListOrSingleValue<String> configValue) {
-		super(NAME, configValue);
-	}
+    public BeforeInstallSection(ListOrSingleValue<String> configValue) {
+        super(NAME, configValue);
+    }
 
 
 

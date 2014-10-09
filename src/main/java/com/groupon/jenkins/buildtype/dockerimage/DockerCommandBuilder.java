@@ -28,44 +28,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DockerCommandBuilder {
-	private final String dockerCommand;
+    private final String dockerCommand;
 
-	private final Joiner spaceJoiner = Joiner.on(" ");
-	private String args;
-	private final List<String> flags = new ArrayList<String>();
+    private final Joiner spaceJoiner = Joiner.on(" ");
+    private String args;
+    private final List<String> flags = new ArrayList<String>();
     private String bulkOptions;
 
     public DockerCommandBuilder(String command) {
-		dockerCommand = "docker " + command;
-	}
+        dockerCommand = "docker " + command;
+    }
 
-	public static DockerCommandBuilder dockerCommand(String command) {
-		return new DockerCommandBuilder(command);
-	}
+    public static DockerCommandBuilder dockerCommand(String command) {
+        return new DockerCommandBuilder(command);
+    }
 
-	public DockerCommandBuilder args(String... args) {
-		this.args = spaceJoiner.join(args);
-		return this;
-	}
+    public DockerCommandBuilder args(String... args) {
+        this.args = spaceJoiner.join(args);
+        return this;
+    }
 
-	public String get() {
-		return bulkOptions == null? spaceJoiner.join(dockerCommand, spaceJoiner.join(flags), args):
+    public String get() {
+        return bulkOptions == null? spaceJoiner.join(dockerCommand, spaceJoiner.join(flags), args):
                 spaceJoiner.join(dockerCommand, spaceJoiner.join(flags), bulkOptions, args);
-	}
+    }
 
-	public DockerCommandBuilder flag(String flag) {
+    public DockerCommandBuilder flag(String flag) {
         flags.add(getOption(flag));
-		return this;
-	}
+        return this;
+    }
 
     private String getOption(String option){
         return option.length() > 1? "--" + option: "-" + option;
     }
 
-	public DockerCommandBuilder flag(String flag, String value) {
-		flags.add(spaceJoiner.join(getOption(flag), value));
-		return this;
-	}
+    public DockerCommandBuilder flag(String flag, String value) {
+        flags.add(spaceJoiner.join(getOption(flag), value));
+        return this;
+    }
 
     public DockerCommandBuilder bulkOptions(String bulkOptions) {
         this.bulkOptions = bulkOptions;

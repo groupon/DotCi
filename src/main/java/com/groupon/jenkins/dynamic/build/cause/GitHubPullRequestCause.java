@@ -26,18 +26,18 @@ package com.groupon.jenkins.dynamic.build.cause;
 import com.groupon.jenkins.github.Payload;
 
 public class GitHubPullRequestCause extends GithubCause {
-	private final String label;
-	private final String number;
+    private final String label;
+    private final String number;
 
-	public GitHubPullRequestCause(Payload payload, String sha, String label, String number) {
-		super(payload, sha);
-		this.label = label;
-		this.number = number;
+    public GitHubPullRequestCause(Payload payload, String sha, String label, String number) {
+        super(payload, sha);
+        this.label = label;
+        this.number = number;
 
-	}
+    }
 
-	@Override
-	public String getShortDescription() {
-		return "Started by Github pull request  " + label + "( Number : " + number + ")";
-	}
+    @Override
+    public String getShortDescription() {
+        return "Started by Github pull request  " + label + "( Number : " + number + ")";
+    }
 }

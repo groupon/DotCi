@@ -33,43 +33,43 @@ public class ListOrSingleValue<T> extends ConfigValue<Object> {
        super(null);
     }
 
-	public ListOrSingleValue(Object value) {
-		super(toList(value));
-	}
+    public ListOrSingleValue(Object value) {
+        super(toList(value));
+    }
 
-	private static List<?> toList(Object value) {
-		if (value instanceof List) {
-			return (List<?>) value;
-		} else if (value == null) {
-			return Collections.emptyList();
-		} else {
-			return Arrays.asList(value);
-		}
+    private static List<?> toList(Object value) {
+        if (value instanceof List) {
+            return (List<?>) value;
+        } else if (value == null) {
+            return Collections.emptyList();
+        } else {
+            return Arrays.asList(value);
+        }
 
-	}
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<T> getValues() {
-		return (List<T>) getValue();
-	}
+    @SuppressWarnings("unchecked")
+    public List<T> getValues() {
+        return (List<T>) getValue();
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return super.isEmpty() || size() == 0;
-	}
+    @Override
+    public boolean isEmpty() {
+        return super.isEmpty() || size() == 0;
+    }
 
-	@Override
-	public void append(ConfigValue<?> otherConfig) {
-		ArrayList<T> newValue = new ArrayList<T>();
-		if (!isEmpty()) {
-			newValue.addAll(getValues());
-		}
-		if (!otherConfig.isEmpty()) {
-			newValue.addAll(((ListOrSingleValue) otherConfig).getValues());
-		}
-		setValue(newValue);
+    @Override
+    public void append(ConfigValue<?> otherConfig) {
+        ArrayList<T> newValue = new ArrayList<T>();
+        if (!isEmpty()) {
+            newValue.addAll(getValues());
+        }
+        if (!otherConfig.isEmpty()) {
+            newValue.addAll(((ListOrSingleValue) otherConfig).getValues());
+        }
+        setValue(newValue);
 
-	}
+    }
 
     @Override
     public <R> R getValue(Class<R> returnType) {
@@ -83,7 +83,7 @@ public class ListOrSingleValue<T> extends ConfigValue<Object> {
     }
 
     public int size() {
-		return getValues().size();
-	}
+        return getValues().size();
+    }
 
 }

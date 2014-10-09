@@ -30,24 +30,24 @@ import static org.junit.Assert.assertTrue;
 
 public class BooleanValueTest {
 
-	@Test(expected = UnsupportedOperationException.class)
-	public void should_not_support_append() {
-		new BooleanValue("true").append(null);
-	}
+    @Test(expected = UnsupportedOperationException.class)
+    public void should_not_support_append() {
+        new BooleanValue("true").append(null);
+    }
 
-	@Test
-	public void should_reject_invalid_values() {
-		assertTrue(new BooleanValue(true).isValid());
-	}
+    @Test
+    public void should_reject_invalid_values() {
+        assertTrue(new BooleanValue(true).isValid());
+    }
 
-	@Test
-	public void should_convert_to_bool_values() {
-		assertTrue(new BooleanValue(true).getValue());
-	}
+    @Test
+    public void should_convert_to_bool_values() {
+        assertTrue(new BooleanValue(true).getValue());
+    }
 
-	@Test
-	public void empty_value_should_be_false() {
-		assertFalse(new BooleanValue(null).getValue());
-	}
+    @Test
+    public void empty_value_should_be_false() {
+        assertFalse(new BooleanValue(null).getValue());
+    }
 
 }

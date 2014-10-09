@@ -55,20 +55,20 @@ public class GithubAccessTokenRepository extends MongoRepository {
         return getCollection().findOne(query);
     }
 
-  	public void put(String url) throws IOException {
+      public void put(String url) throws IOException {
         DBObject token = getToken(url);
 
         GithubAuthenticationToken auth = getAuthentication();
         GitHub gh = auth.getGitHub();
         String accessToken = getEncryptedToken(auth);
 
-		    if (token != null) {
-			     getCollection().remove(token);
-		    }
+            if (token != null) {
+                 getCollection().remove(token);
+            }
 
-		    BasicDBObject doc = new BasicDBObject("user", gh.getMyself().getLogin()).append("access_token", accessToken).append("repo_url", url);
-		    getCollection().insert(doc);
-	  }
+            BasicDBObject doc = new BasicDBObject("user", gh.getMyself().getLogin()).append("access_token", accessToken).append("repo_url", url);
+            getCollection().insert(doc);
+      }
 
     private GithubAuthenticationToken getAuthentication() {
         return (GithubAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();

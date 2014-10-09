@@ -36,48 +36,48 @@ import org.kohsuke.github.GitHub;
 
 public class GithubCurrentUserService {
 
-	private final GHMyself user;
-	private final GitHub gh;
+    private final GHMyself user;
+    private final GitHub gh;
 
-	public GithubCurrentUserService(GitHub gh) {
-		this.gh = gh;
-		try {
-			this.user = gh.getMyself();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public GithubCurrentUserService(GitHub gh) {
+        this.gh = gh;
+        try {
+            this.user = gh.getMyself();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public static GithubCurrentUserService current() {
-		GithubAuthenticationToken auth = (GithubAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-		GitHub gh = auth.getGitHub();
-		return new GithubCurrentUserService(gh);
-	}
+    public static GithubCurrentUserService current() {
+        GithubAuthenticationToken auth = (GithubAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        GitHub gh = auth.getGitHub();
+        return new GithubCurrentUserService(gh);
+    }
 
-	public Map<String, GHRepository> getRepositories(String orgName) {
-		try {
-			if (orgName.equals(user.getLogin())) {
-				return user.getRepositories();
-			} else {
-				return gh.getOrganization(orgName).getRepositories();
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public Map<String, GHRepository> getRepositories(String orgName) {
+        try {
+            if (orgName.equals(user.getLogin())) {
+                return user.getRepositories();
+            } else {
+                return gh.getOrganization(orgName).getRepositories();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public String getCurrentLogin() {
-		return user.getLogin();
-	}
+    public String getCurrentLogin() {
+        return user.getLogin();
+    }
 
-	public Iterable<String> getOrgs() {
-		try {
-			List<String> allOrgs = new ArrayList<String>();
-			allOrgs.add(getCurrentLogin());
-			allOrgs.addAll(gh.getMyOrganizations().keySet());
-			return allOrgs;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public Iterable<String> getOrgs() {
+        try {
+            List<String> allOrgs = new ArrayList<String>();
+            allOrgs.add(getCurrentLogin());
+            allOrgs.addAll(gh.getMyOrganizations().keySet());
+            return allOrgs;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

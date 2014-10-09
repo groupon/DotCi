@@ -42,37 +42,37 @@ import static org.mockito.Mockito.when;
 
 public class PusherEmailNotifierTest {
 
-	private BuildListener listener;
-	private DynamicBuild build;
+    private BuildListener listener;
+    private DynamicBuild build;
 
-	@Before
-	public void setupMocks() throws IOException, InterruptedException {
-		build = mock(DynamicBuild.class);
-		listener = mock(BuildListener.class);
-	}
+    @Before
+    public void setupMocks() throws IOException, InterruptedException {
+        build = mock(DynamicBuild.class);
+        listener = mock(BuildListener.class);
+    }
 
-	@Test
-	public void should_attempt_sending_an_email_only_if_github_push() {
-		PusherEmailNotifier pusherEmailNotifier = new PusherEmailNotifier();
-		when(build.getCause(GithubCause.class)).thenReturn(null);
-		assertFalse(pusherEmailNotifier.needsEmail(build, listener));
-	}
+    @Test
+    public void should_attempt_sending_an_email_only_if_github_push() {
+        PusherEmailNotifier pusherEmailNotifier = new PusherEmailNotifier();
+        when(build.getCause(GithubCause.class)).thenReturn(null);
+        assertFalse(pusherEmailNotifier.needsEmail(build, listener));
+    }
 
-	@Test
-	public void should_not_attempt_sending_an_email_only_if_github_push_and_email_not_configured() {
-		PusherEmailNotifier pusherEmailNotifier = new PusherEmailNotifier();
-		GitHubPushCause githubCause = mock(GitHubPushCause.class);
-		when(githubCause.getPusherEmailAddress()).thenReturn(null);
-		when(build.getCause(GitHubPushCause.class)).thenReturn(githubCause);
-		assertFalse(pusherEmailNotifier.needsEmail(build, listener));
-	}
+    @Test
+    public void should_not_attempt_sending_an_email_only_if_github_push_and_email_not_configured() {
+        PusherEmailNotifier pusherEmailNotifier = new PusherEmailNotifier();
+        GitHubPushCause githubCause = mock(GitHubPushCause.class);
+        when(githubCause.getPusherEmailAddress()).thenReturn(null);
+        when(build.getCause(GitHubPushCause.class)).thenReturn(githubCause);
+        assertFalse(pusherEmailNotifier.needsEmail(build, listener));
+    }
 
-	@Test
-	public void should_attempt_sending_an_email_only_if_github_push_and_email_configured() {
-		PusherEmailNotifier pusherEmailNotifier = new PusherEmailNotifier();
-		GitHubPushCause githubCause = mock(GitHubPushCause.class);
-		when(githubCause.getPusherEmailAddress()).thenReturn("surya@groupon.com");
-		when(build.getCause(GitHubPushCause.class)).thenReturn(githubCause);
-		assertTrue(pusherEmailNotifier.needsEmail(build, listener));
-	}
+    @Test
+    public void should_attempt_sending_an_email_only_if_github_push_and_email_configured() {
+        PusherEmailNotifier pusherEmailNotifier = new PusherEmailNotifier();
+        GitHubPushCause githubCause = mock(GitHubPushCause.class);
+        when(githubCause.getPusherEmailAddress()).thenReturn("surya@groupon.com");
+        when(build.getCause(GitHubPushCause.class)).thenReturn(githubCause);
+        assertTrue(pusherEmailNotifier.needsEmail(build, listener));
+    }
 }

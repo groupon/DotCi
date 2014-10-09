@@ -35,39 +35,39 @@ public class GitBranch {
     private final String branch;
 
 
-	public GitBranch(String branch) {
-		this.branch = branch;
-	}
+    public GitBranch(String branch) {
+        this.branch = branch;
+    }
 
-	public int pullRequestNumber() {
-		String number = branch.replace(PULL_REQUEST_PREFIX,"").trim();
-		return Integer.parseInt(number);
-	}
+    public int pullRequestNumber() {
+        String number = branch.replace(PULL_REQUEST_PREFIX,"").trim();
+        return Integer.parseInt(number);
+    }
 
-	public boolean isPullRequest() {
+    public boolean isPullRequest() {
         return branch.startsWith(PULL_REQUEST_PREFIX);
     }
 
-	@Override
-	public String toString() {
-		return this.branch;
-	}
+    @Override
+    public String toString() {
+        return this.branch;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(branch);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(branch);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		GitBranch other = (GitBranch) obj;
-		return Objects.equal(this.branch, other.branch);
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        GitBranch other = (GitBranch) obj;
+        return Objects.equal(this.branch, other.branch);
+    }
 
 }

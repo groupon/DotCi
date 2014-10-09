@@ -30,9 +30,9 @@ import org.acegisecurity.context.SecurityContextHolder;
 
 public class AuthenticationService {
 
-	public static void authenticate() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Jenkins.getInstance().getSecurityRealm().createSecurityComponents().manager.authenticate(authentication);
-	}
+    public static void authenticate() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Jenkins.getInstance().getSecurityRealm().createSecurityComponents().manager.authenticate(authentication);
+    }
 
 }

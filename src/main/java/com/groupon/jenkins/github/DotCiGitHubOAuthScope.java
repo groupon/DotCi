@@ -35,15 +35,15 @@ import com.groupon.jenkins.SetupConfig;
 @Extension
 public class DotCiGitHubOAuthScope extends GitHubOAuthScope {
 
-	@Override
-	public Collection<String> getScopesToRequest() {
-		if (getSetupConfig().hasPrivateRepoSupport()) {
-			return Arrays.asList("repo", "user:email");
-		}
-		return Arrays.asList("public_repo", "repo:status", "user:email", "read:org");
-	}
+    @Override
+    public Collection<String> getScopesToRequest() {
+        if (getSetupConfig().hasPrivateRepoSupport()) {
+            return Arrays.asList("repo", "user:email");
+        }
+        return Arrays.asList("public_repo", "repo:status", "user:email", "read:org");
+    }
 
-	protected SetupConfig getSetupConfig() {
-		return SetupConfig.get();
-	}
+    protected SetupConfig getSetupConfig() {
+        return SetupConfig.get();
+    }
 }

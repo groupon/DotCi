@@ -32,19 +32,19 @@ import static org.mockito.Mockito.when;
 
 public class BuildListenerFactory {
 
-	private final BuildListener listener;
+    private final BuildListener listener;
 
-	public BuildListenerFactory() {
-		this.listener = mock(BuildListener.class);
-		PrintStream logger = mock(PrintStream.class);
-		when(listener.getLogger()).thenReturn(logger);
-	}
+    public BuildListenerFactory() {
+        this.listener = mock(BuildListener.class);
+        PrintStream logger = mock(PrintStream.class);
+        when(listener.getLogger()).thenReturn(logger);
+    }
 
-	public static BuildListenerFactory newBuildListener() {
-		return new BuildListenerFactory();
-	}
+    public static BuildListenerFactory newBuildListener() {
+        return new BuildListenerFactory();
+    }
 
-	public BuildListener get() {
-		return listener;
-	}
+    public BuildListener get() {
+        return listener;
+    }
 }

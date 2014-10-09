@@ -41,54 +41,54 @@ import org.kohsuke.stapler.Stapler;
 
 public class OrganizationGravatarIcon extends AbstractStatusIcon implements Describable<OrganizationGravatarIcon>, ExtensionPoint {
 
-	private final transient String orgName;
+    private final transient String orgName;
 
-	public OrganizationGravatarIcon(String orgName) {
-		this.orgName = orgName;
+    public OrganizationGravatarIcon(String orgName) {
+        this.orgName = orgName;
 
-	}
+    }
 
-	private String getGravatarUrl() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth instanceof GithubAuthenticationToken) {
-			GitHub gh = ((GithubAuthenticationToken) auth).getGitHub();
-			try {
-				return gh.getOrganization(orgName).getAvatarUrl();
-			} catch (IOException e) {
-				// try user
-				try {
-					return gh.getUser(orgName).getAvatarUrl();
-				} catch (IOException e1) {
-					// give up
-				}
-			}
-		}
-		return null;
-	}
+    private String getGravatarUrl() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth instanceof GithubAuthenticationToken) {
+            GitHub gh = ((GithubAuthenticationToken) auth).getGitHub();
+            try {
+                return gh.getOrganization(orgName).getAvatarUrl();
+            } catch (IOException e) {
+                // try user
+                try {
+                    return gh.getUser(orgName).getAvatarUrl();
+                } catch (IOException e1) {
+                    // give up
+                }
+            }
+        }
+        return null;
+    }
 
-	public String getImageOf(String size) {
-		String gravatarUrl = getGravatarUrl();
-		return gravatarUrl == null ? Stapler.getCurrentRequest().getContextPath() + Hudson.RESOURCE_PATH + "/images/" + size + "/folder.png" : gravatarUrl;
-	}
+    public String getImageOf(String size) {
+        String gravatarUrl = getGravatarUrl();
+        return gravatarUrl == null ? Stapler.getCurrentRequest().getContextPath() + Hudson.RESOURCE_PATH + "/images/" + size + "/folder.png" : gravatarUrl;
+    }
 
-	public String getDescription() {
-		return orgName;
-	}
+    public String getDescription() {
+        return orgName;
+    }
 
-	@Extension(ordinal = 100)
-	public static class DescriptorImpl extends Descriptor<OrganizationGravatarIcon> {
-		@Override
-		public String getDisplayName() {
-			return "Default Icon";
-		}
+    @Extension(ordinal = 100)
+    public static class DescriptorImpl extends Descriptor<OrganizationGravatarIcon> {
+        @Override
+        public String getDisplayName() {
+            return "Default Icon";
+        }
 
-		public static DescriptorExtensionList<OrganizationGravatarIcon, DescriptorImpl> all() {
-			return Hudson.getInstance().<OrganizationGravatarIcon, DescriptorImpl> getDescriptorList(OrganizationGravatarIcon.class);
-		}
-	}
+        public static DescriptorExtensionList<OrganizationGravatarIcon, DescriptorImpl> all() {
+            return Hudson.getInstance().<OrganizationGravatarIcon, DescriptorImpl> getDescriptorList(OrganizationGravatarIcon.class);
+        }
+    }
 
-	public Descriptor<OrganizationGravatarIcon> getDescriptor() {
-		return Hudson.getInstance().getDescriptorOrDie(getClass());
-	}
+    public Descriptor<OrganizationGravatarIcon> getDescriptor() {
+        return Hudson.getInstance().getDescriptorOrDie(getClass());
+    }
 
 }

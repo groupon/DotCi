@@ -35,38 +35,38 @@ import java.util.Map;
 
 public class NotificationsSection extends ConfigSection<ListValue<?>> {
 
-	public static final String NAME = "notifications";
+    public static final String NAME = "notifications";
 
-	public NotificationsSection(ListValue<?> configValue) {
-		super(NAME, configValue, MergeStrategy.APPEND);
-	}
+    public NotificationsSection(ListValue<?> configValue) {
+        super(NAME, configValue, MergeStrategy.APPEND);
+    }
 
-	@Override
-	public ShellCommands toScript(Combination combination) {
-		return ShellCommands.NOOP;
-	}
+    @Override
+    public ShellCommands toScript(Combination combination) {
+        return ShellCommands.NOOP;
+    }
 
-	public List<PostBuildNotifier> getNotifiers() {
-		List<?> notifierSpecs = getConfigValue().getValue();
-		List<PostBuildNotifier> notifiers = new ArrayList<PostBuildNotifier>(notifierSpecs.size());
-		for (Object pluginSpec : notifierSpecs) {
-			String pluginName;
-			Object options;
-			if (pluginSpec instanceof String) {
-				pluginName = (String) pluginSpec;
-				options = new HashMap<String, String>();
-			} else { // has to be a Map
-				Map<String, Object> pluginSpecMap = (Map<String, Object>) pluginSpec;
-				pluginName = Iterables.getOnlyElement(pluginSpecMap.keySet());
-				options = pluginSpecMap.get(pluginName);
-			}
-			notifiers.add(createNotifier(pluginName, options));
-		}
-		return notifiers;
-	}
+    public List<PostBuildNotifier> getNotifiers() {
+        List<?> notifierSpecs = getConfigValue().getValue();
+        List<PostBuildNotifier> notifiers = new ArrayList<PostBuildNotifier>(notifierSpecs.size());
+        for (Object pluginSpec : notifierSpecs) {
+            String pluginName;
+            Object options;
+            if (pluginSpec instanceof String) {
+                pluginName = (String) pluginSpec;
+                options = new HashMap<String, String>();
+            } else { // has to be a Map
+                Map<String, Object> pluginSpecMap = (Map<String, Object>) pluginSpec;
+                pluginName = Iterables.getOnlyElement(pluginSpecMap.keySet());
+                options = pluginSpecMap.get(pluginName);
+            }
+            notifiers.add(createNotifier(pluginName, options));
+        }
+        return notifiers;
+    }
 
-	protected PostBuildNotifier createNotifier(String name, Object options) {
-		return PostBuildNotifier.create(name, options);
-	}
+    protected PostBuildNotifier createNotifier(String name, Object options) {
+        return PostBuildNotifier.create(name, options);
+    }
 
 }

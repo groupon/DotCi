@@ -31,62 +31,62 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public abstract class ConfigSection<T extends ConfigValue<?>> {
-	protected T configValue;
-	private final String name;
-	private final MergeStrategy mergeStrategy;
+    protected T configValue;
+    private final String name;
+    private final MergeStrategy mergeStrategy;
 
-	protected enum MergeStrategy {
-		REPLACE, APPEND
-	}
+    protected enum MergeStrategy {
+        REPLACE, APPEND
+    }
 
-	protected ConfigSection(String name, T configValue, MergeStrategy mergeStrategy) {
-		this.name = name;
-		this.mergeStrategy = mergeStrategy;
-		this.configValue = configValue;
-	}
+    protected ConfigSection(String name, T configValue, MergeStrategy mergeStrategy) {
+        this.name = name;
+        this.mergeStrategy = mergeStrategy;
+        this.configValue = configValue;
+    }
 
-	public abstract ShellCommands toScript(Combination combination);
+    public abstract ShellCommands toScript(Combination combination);
 
-	protected void merge(ConfigSection<T> otherConfigSection) {
-		if (!otherConfigSection.getConfigValue().isEmpty()) {
-			if (mergeStrategy.equals(MergeStrategy.REPLACE)) {
-				configValue.replace(otherConfigSection.configValue);
-			} else {
-				configValue.append(otherConfigSection.configValue);
-			}
-		}
-	}
+    protected void merge(ConfigSection<T> otherConfigSection) {
+        if (!otherConfigSection.getConfigValue().isEmpty()) {
+            if (mergeStrategy.equals(MergeStrategy.REPLACE)) {
+                configValue.replace(otherConfigSection.configValue);
+            } else {
+                configValue.append(otherConfigSection.configValue);
+            }
+        }
+    }
 
-	protected T getConfigValue() {
-		return configValue;
-	}
+    protected T getConfigValue() {
+        return configValue;
+    }
 
-	protected void setConfigValue(T config) {
-		this.configValue = config;
-	}
+    protected void setConfigValue(T config) {
+        this.configValue = config;
+    }
 
-	protected String getName() {
-		return name;
+    protected String getName() {
+        return name;
 
-	}
+    }
 
-	public boolean isValid() {
-		return Iterables.isEmpty(getValidationErrors());
-	}
+    public boolean isValid() {
+        return Iterables.isEmpty(getValidationErrors());
+    }
 
-	public Iterable<String> getValidationErrors() {
-		if (getConfigValue().isValid()) {
-			return Collections.emptyList();
-		} else {
-			return Arrays.asList(String.format("Invalid format for: %s", getName()));
-		}
-	}
+    public Iterable<String> getValidationErrors() {
+        if (getConfigValue().isValid()) {
+            return Collections.emptyList();
+        } else {
+            return Arrays.asList(String.format("Invalid format for: %s", getName()));
+        }
+    }
 
-	protected Object getFinalConfigValue() {
-		return getConfigValue().getValue();
-	}
+    protected Object getFinalConfigValue() {
+        return getConfigValue().getValue();
+    }
 
-	public boolean isSpecified() {
-		return !getConfigValue().isEmpty();
-	}
+    public boolean isSpecified() {
+        return !getConfigValue().isEmpty();
+    }
 }

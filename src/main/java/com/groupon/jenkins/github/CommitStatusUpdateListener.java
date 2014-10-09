@@ -41,13 +41,13 @@ import static hudson.model.Result.UNSTABLE;
 @Extension
 public class CommitStatusUpdateListener extends RunListener<DynamicBuild> {
 
-	private static final Logger LOGGER = Logger.getLogger(CommitStatusUpdateListener.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CommitStatusUpdateListener.class.getName());
 
-	@Override
-	public void onStarted(DynamicBuild build, TaskListener listener) {
-		GHRepository repository = getGithubRepository(build);
+    @Override
+    public void onStarted(DynamicBuild build, TaskListener listener) {
+        GHRepository repository = getGithubRepository(build);
 
-		try {
+        try {
             String url = "";
             try {
                 url = build.getFullUrl();
@@ -55,12 +55,12 @@ public class CommitStatusUpdateListener extends RunListener<DynamicBuild> {
                 // do nothing
                 // TODO DO SOMETHING
             }
-			repository.createCommitStatus(build.getSha(), GHCommitState.PENDING, url, "Build in progress");
-		} catch (IOException e) {
-			// Ignore if cannot create a pending status
-			LOGGER.log(Level.WARNING, "Failed to Update commit status", e);
-		}
-	}
+            repository.createCommitStatus(build.getSha(), GHCommitState.PENDING, url, "Build in progress");
+        } catch (IOException e) {
+            // Ignore if cannot create a pending status
+            LOGGER.log(Level.WARNING, "Failed to Update commit status", e);
+        }
+    }
 
     @Override
     public void onCompleted(DynamicBuild build, TaskListener listener) {
@@ -93,7 +93,7 @@ public class CommitStatusUpdateListener extends RunListener<DynamicBuild> {
     }
 
     protected GHRepository getGithubRepository(DynamicBuild build) {
-		return new GithubRepositoryService(build.getGithubRepoUrl()).getGithubRepository();
-	}
+        return new GithubRepositoryService(build.getGithubRepoUrl()).getGithubRepository();
+    }
 
 }

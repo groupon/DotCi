@@ -32,14 +32,14 @@ import static org.junit.Assert.*;
 
 public class SkipSectionTest {
 
-	@Test
-	public void should_not_execute_any_shell_commands_during_build_execution() {
-		assertEquals(ShellCommands.NOOP, new SkipSection(null).toScript(null));
-	}
+    @Test
+    public void should_not_execute_any_shell_commands_during_build_execution() {
+        assertEquals(ShellCommands.NOOP, new SkipSection(null).toScript(null));
+    }
 
-	@Test
-	public void should_use_value_specified_as_boolean_value() {
-		Assert.assertFalse(new SkipSection(new BooleanValue(false)).isSkipped());
-	}
+    @Test
+    public void should_use_value_specified_as_boolean_value() {
+        Assert.assertFalse(new SkipSection(new BooleanValue(false)).isSkipped());
+    }
 
 }

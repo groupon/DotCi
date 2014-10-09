@@ -33,18 +33,18 @@ import com.groupon.jenkins.dynamic.build.DynamicBuild;
 @Extension
 public class PostBuildEmailNotifier extends EmailNotifierBase {
 
-	public PostBuildEmailNotifier() {
-		super("email");
-	}
+    public PostBuildEmailNotifier() {
+        super("email");
+    }
 
-	@Override
-	protected List<String> getNotificationEmails(DynamicBuild build) {
-		if (getOptions() == null) {
-			return null;
-		}
-		if (getOptions() instanceof String) {
-			return Arrays.asList(((String) getOptions()));
-		}
-		return (List<String>) getOptions();
-	}
+    @Override
+    protected List<String> getNotificationEmails(DynamicBuild build) {
+        if (getOptions() == null) {
+            return null;
+        }
+        if (getOptions() instanceof String) {
+            return Arrays.asList(((String) getOptions()));
+        }
+        return (List<String>) getOptions();
+    }
 }

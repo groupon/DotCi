@@ -35,19 +35,19 @@ import static org.junit.Assert.assertTrue;
 
 public class AfterRunSectionTest {
 
-	@Test
-	public void should_run_post_build() {
-		ConfigSection afterRunSection = new AfterRunSection(configListOrSingleValue("spec integration1", "spec integration2"));
+    @Test
+    public void should_run_post_build() {
+        ConfigSection afterRunSection = new AfterRunSection(configListOrSingleValue("spec integration1", "spec integration2"));
 
-		Combination combination = new Combination(ImmutableMap.of("script", "post_build"));
-		assertTrue(afterRunSection.toScript(combination).toShellScript().contains("spec integration1"));
-	}
+        Combination combination = new Combination(ImmutableMap.of("script", "post_build"));
+        assertTrue(afterRunSection.toScript(combination).toShellScript().contains("spec integration1"));
+    }
 
-	@Test
-	public void should_not_run_post_build_if_not_post_build() {
-		ConfigSection afterRunSection = new AfterRunSection(configListOrSingleValue("spec integration1", "spec integration2"));
+    @Test
+    public void should_not_run_post_build_if_not_post_build() {
+        ConfigSection afterRunSection = new AfterRunSection(configListOrSingleValue("spec integration1", "spec integration2"));
 
-		Combination combination = new Combination(ImmutableMap.of("script", "main"));
-		assertNull(afterRunSection.toScript(combination));
-	}
+        Combination combination = new Combination(ImmutableMap.of("script", "main"));
+        assertNull(afterRunSection.toScript(combination));
+    }
 }

@@ -56,24 +56,24 @@ import static java.lang.String.format;
 
 public class DynamicProjectRepository extends MongoRepository {
 
-	private final OrganizationContainerRepository organizationRepository;
-	private final DynamicBuildRepository dynamicBuildRepository;
+    private final OrganizationContainerRepository organizationRepository;
+    private final DynamicBuildRepository dynamicBuildRepository;
 
-	public DynamicProjectRepository() {
-		this(new OrganizationContainerRepository(), new DynamicBuildRepository());
-	}
+    public DynamicProjectRepository() {
+        this(new OrganizationContainerRepository(), new DynamicBuildRepository());
+    }
 
-	protected DynamicProjectRepository(OrganizationContainerRepository organizationRepository, DynamicBuildRepository dynamicBuildRepository) {
-		this.organizationRepository = organizationRepository;
-		this.dynamicBuildRepository = dynamicBuildRepository;
-	}
+    protected DynamicProjectRepository(OrganizationContainerRepository organizationRepository, DynamicBuildRepository dynamicBuildRepository) {
+        this.organizationRepository = organizationRepository;
+        this.dynamicBuildRepository = dynamicBuildRepository;
+    }
 
-	public ObjectId saveOrUpdate(DbBackedProject project) {
+    public ObjectId saveOrUpdate(DbBackedProject project) {
         getDatastore().save(project);
         return project.getId();
-	}
+    }
 
-	public DynamicSubProject getChild(IdentifableItemGroup<DynamicSubProject> parent, String name) {
+    public DynamicSubProject getChild(IdentifableItemGroup<DynamicSubProject> parent, String name) {
         DynamicSubProject subProject = getDatastore().createQuery(DynamicSubProject.class).
                 disableValidation().
                 field("name").equal(name).
@@ -91,9 +91,9 @@ public class DynamicProjectRepository extends MongoRepository {
 
 
         return subProject;
-	}
+    }
 
-	public Iterable<DynamicSubProject> getChildren(DynamicProject parent) {
+    public Iterable<DynamicSubProject> getChildren(DynamicProject parent) {
         List<DynamicSubProject> children = getDatastore().createQuery(DynamicSubProject.class).
                 disableValidation().
                 field("parentId").exists().
@@ -109,65 +109,65 @@ public class DynamicProjectRepository extends MongoRepository {
         }
 
         return children;
-	}
+    }
 
-	public void delete(DynamicProject project) {
+    public void delete(DynamicProject project) {
         // TODO do this in a query not iteratively in memory
-		for (DynamicSubProject subProject : getChildren(project)) {
+        for (DynamicSubProject subProject : getChildren(project)) {
             dynamicBuildRepository.delete(subProject);
-			getDatastore().delete(subProject);
-		}
+            getDatastore().delete(subProject);
+        }
         dynamicBuildRepository.delete(project);
-		getDatastore().delete(project);
-	}
+        getDatastore().delete(project);
+    }
 
-	public Iterable<DynamicProject> getJobsFor(final String url) {
-		return Iterables.filter(getAllLoadedDynamicProjects(), new Predicate<DynamicProject>() {
-			@Override
-			public boolean apply(@Nonnull DynamicProject input) {
-				return url.equals(input.getGithubRepoUrl());
-			}
-		});
-	}
+    public Iterable<DynamicProject> getJobsFor(final String url) {
+        return Iterables.filter(getAllLoadedDynamicProjects(), new Predicate<DynamicProject>() {
+            @Override
+            public boolean apply(@Nonnull DynamicProject input) {
+                return url.equals(input.getGithubRepoUrl());
+            }
+        });
+    }
 
-	protected List<DynamicProject> getAllLoadedDynamicProjects() {
-		return Jenkins.getInstance().getAllItems(DynamicProject.class);
-	}
+    protected List<DynamicProject> getAllLoadedDynamicProjects() {
+        return Jenkins.getInstance().getAllItems(DynamicProject.class);
+    }
 
-	public DynamicProject createNewProject(GHRepository githubRepository) {
-		try {
-			new GithubRepositoryService(githubRepository).linkProjectToCi();
+    public DynamicProject createNewProject(GHRepository githubRepository) {
+        try {
+            new GithubRepositoryService(githubRepository).linkProjectToCi();
 
-			OrganizationContainer folder = this.organizationRepository.getOrCreateContainer(githubRepository.getOwner().getLogin());
-			String projectName = githubRepository.getName();
-			DynamicProject project = folder.createProject(DynamicProject.class, projectName);
+            OrganizationContainer folder = this.organizationRepository.getOrCreateContainer(githubRepository.getOwner().getLogin());
+            String projectName = githubRepository.getName();
+            DynamicProject project = folder.createProject(DynamicProject.class, projectName);
 
-			project.setDescription(format("<a href=\"%s\">%s</a>", githubRepository.getUrl(), githubRepository.getUrl()));
-			project.setConcurrentBuild(true);
-			if (StringUtils.isNotEmpty(SetupConfig.get().getLabel())) {
-				project.setAssignedLabel(Jenkins.getInstance().getLabel(SetupConfig.get().getLabel()));
-			}
-			project.addProperty(new ParametersDefinitionProperty(new GithubBranchParameterDefinition("BRANCH", "master",githubRepository.getUrl())));
-			project.addProperty(new GithubRepoProperty(githubRepository.getUrl()));
+            project.setDescription(format("<a href=\"%s\">%s</a>", githubRepository.getUrl(), githubRepository.getUrl()));
+            project.setConcurrentBuild(true);
+            if (StringUtils.isNotEmpty(SetupConfig.get().getLabel())) {
+                project.setAssignedLabel(Jenkins.getInstance().getLabel(SetupConfig.get().getLabel()));
+            }
+            project.addProperty(new ParametersDefinitionProperty(new GithubBranchParameterDefinition("BRANCH", "master",githubRepository.getUrl())));
+            project.addProperty(new GithubRepoProperty(githubRepository.getUrl()));
             project.addProperty(new BuildTypeProperty(SetupConfig.get().getDefaultBuildType()));
 
-			project.save();
-			folder.addItem(project);
-			folder.save();
-			return project;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+            project.save();
+            folder.addItem(project);
+            folder.save();
+            return project;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public boolean projectExists(GHRepository repository) throws IOException {
-		OrganizationContainer folder = this.organizationRepository.getOrganizationContainer(repository.getOwner().getLogin());
-		return folder != null && folder.getItem(repository.getName()) != null;
-	}
+    public boolean projectExists(GHRepository repository) throws IOException {
+        OrganizationContainer folder = this.organizationRepository.getOrganizationContainer(repository.getOwner().getLogin());
+        return folder != null && folder.getItem(repository.getName()) != null;
+    }
 
-	public Iterable<DynamicProject> getProjectsForOrg(final OrganizationContainer organizationContainer) {
+    public Iterable<DynamicProject> getProjectsForOrg(final OrganizationContainer organizationContainer) {
         return getDatastore().createQuery(DynamicProject.class).disableValidation().field("containerName").equal(organizationContainer.getName()).asList();
-	}
+    }
 
     public DynamicProject getProjectById(ObjectId id) {
         return getDatastore()

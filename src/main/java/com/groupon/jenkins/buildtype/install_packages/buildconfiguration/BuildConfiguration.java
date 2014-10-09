@@ -34,69 +34,69 @@ import java.util.List;
 
 public class BuildConfiguration extends CompositeConfigSection {
 
-	private EnvironmentSection environmentSection;
-	protected BuildSection buildSection;
-	private NotificationsSection notificationsSection;
-	private PluginsSection pluginsSection;
+    private EnvironmentSection environmentSection;
+    protected BuildSection buildSection;
+    private NotificationsSection notificationsSection;
+    private PluginsSection pluginsSection;
     private ParentTemplateSection parentTemplateSection;
 
-	public BuildConfiguration(String ymlDefintion, EnvVars envVars) {
-		this( new MapValue<String,Object> (new GroovyYamlTemplateProcessor(ymlDefintion, envVars).getConfig()));
-	}
+    public BuildConfiguration(String ymlDefintion, EnvVars envVars) {
+        this( new MapValue<String,Object> (new GroovyYamlTemplateProcessor(ymlDefintion, envVars).getConfig()));
+    }
 
-	public BuildConfiguration(MapValue<String, ?> config) {
-		super(".ci.yml", config);
-		setSections();
-	}
+    public BuildConfiguration(MapValue<String, ?> config) {
+        super(".ci.yml", config);
+        setSections();
+    }
 
-	private void setSections() {
+    private void setSections() {
         this.parentTemplateSection = new ParentTemplateSection(getSectionConfig(ParentTemplateSection.NAME, StringValue.class));
-		this.environmentSection = new EnvironmentSection(getSectionConfig(EnvironmentSection.NAME, MapValue.class));
-		this.buildSection = new BuildSection(this.getSectionConfig(BuildSection.NAME, MapValue.class));
-		this.notificationsSection = new NotificationsSection(getSectionConfig(NotificationsSection.NAME, ListValue.class));
-		this.pluginsSection = new PluginsSection(getSectionConfig(PluginsSection.NAME, ListValue.class));
-		setSubSections(environmentSection, buildSection, notificationsSection, pluginsSection);
-	}
+        this.environmentSection = new EnvironmentSection(getSectionConfig(EnvironmentSection.NAME, MapValue.class));
+        this.buildSection = new BuildSection(this.getSectionConfig(BuildSection.NAME, MapValue.class));
+        this.notificationsSection = new NotificationsSection(getSectionConfig(NotificationsSection.NAME, ListValue.class));
+        this.pluginsSection = new PluginsSection(getSectionConfig(PluginsSection.NAME, ListValue.class));
+        setSubSections(environmentSection, buildSection, notificationsSection, pluginsSection);
+    }
 
     public String getParentTemplate(){
         return parentTemplateSection.getConfigValue().getValue();
     }
 
-	public boolean isSkipped() {
-		return buildSection.isSkipped();
-	}
+    public boolean isSkipped() {
+        return buildSection.isSkipped();
+    }
 
-	public List<PostBuildNotifier> getNotifiers() {
-		return notificationsSection.getNotifiers();
-	}
+    public List<PostBuildNotifier> getNotifiers() {
+        return notificationsSection.getNotifiers();
+    }
 
-	public boolean isMultiLanguageVersions() {
-		return environmentSection.isMultiLanguageVersions();
-	}
+    public boolean isMultiLanguageVersions() {
+        return environmentSection.isMultiLanguageVersions();
+    }
 
-	public boolean isMultiScript() {
-		return buildSection.isMultiScript();
-	}
+    public boolean isMultiScript() {
+        return buildSection.isMultiScript();
+    }
 
-	public List<String> getLanguageVersions() {
-		return environmentSection.getLanguageVersions();
-	}
+    public List<String> getLanguageVersions() {
+        return environmentSection.getLanguageVersions();
+    }
 
-	public List<DotCiPluginAdapter> getPlugins() {
-		return pluginsSection.getPlugins();
-	}
+    public List<DotCiPluginAdapter> getPlugins() {
+        return pluginsSection.getPlugins();
+    }
 
-	public List<String> getScriptKeys() {
-		return buildSection.getScriptKeys();
-	}
+    public List<String> getScriptKeys() {
+        return buildSection.getScriptKeys();
+    }
 
-	public String getLanguage() {
-		return environmentSection.getLanguage();
-	}
+    public String getLanguage() {
+        return environmentSection.getLanguage();
+    }
 
-	public boolean isParallized() {
-		return isMultiScript() || isMultiLanguageVersions();
-	}
+    public boolean isParallized() {
+        return isMultiScript() || isMultiLanguageVersions();
+    }
 
     public boolean isBaseTemplate() {
         return !parentTemplateSection.isSpecified();

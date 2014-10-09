@@ -29,13 +29,13 @@ import hudson.matrix.Combination;
 
 public class SerialExecutionSection extends ConfigSection<ListOrSingleValue<String>> {
 
-	public SerialExecutionSection(String name, ListOrSingleValue<String> configValue) {
-		super(name, configValue, MergeStrategy.REPLACE);
-	}
+    public SerialExecutionSection(String name, ListOrSingleValue<String> configValue) {
+        super(name, configValue, MergeStrategy.REPLACE);
+    }
 
-	@Override
-	public ShellCommands toScript(Combination combination) {
-		return new ShellCommands(getConfigValue().getValues());
-	}
+    @Override
+    public ShellCommands toScript(Combination combination) {
+        return new ShellCommands(getConfigValue().getValues());
+    }
 
 }

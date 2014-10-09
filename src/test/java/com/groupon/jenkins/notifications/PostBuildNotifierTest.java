@@ -35,59 +35,59 @@ import static org.junit.Assert.assertTrue;
 
 public class PostBuildNotifierTest {
 
-	@Test
-	public void should_notify_on_failure_if_failure_recovery() {
-		PostBuildNotifierExt notifier = new PostBuildNotifierExt(PostBuildNotifier.Type.FAILURE_AND_RECOVERY);
-		notifier.perform(newBuild().fail().get(), null);
-		assertTrue(notifier.wasPerformed());
+    @Test
+    public void should_notify_on_failure_if_failure_recovery() {
+        PostBuildNotifierExt notifier = new PostBuildNotifierExt(PostBuildNotifier.Type.FAILURE_AND_RECOVERY);
+        notifier.perform(newBuild().fail().get(), null);
+        assertTrue(notifier.wasPerformed());
 
-	}
+    }
 
-	@Test
-	public void should_notify_on_recovery_if_failure_recovery() {
-		PostBuildNotifierExt notifier = new PostBuildNotifierExt(PostBuildNotifier.Type.FAILURE_AND_RECOVERY);
-		notifier.perform(newBuild().success().recovery().get(), null);
-		assertTrue(notifier.wasPerformed());
-	}
+    @Test
+    public void should_notify_on_recovery_if_failure_recovery() {
+        PostBuildNotifierExt notifier = new PostBuildNotifierExt(PostBuildNotifier.Type.FAILURE_AND_RECOVERY);
+        notifier.perform(newBuild().success().recovery().get(), null);
+        assertTrue(notifier.wasPerformed());
+    }
 
-	@Test
-	public void should_not_notify_on_recovery_if_failure_recovery_and_previous_build_was_success() {
-		PostBuildNotifierExt notifier = new PostBuildNotifierExt(PostBuildNotifier.Type.FAILURE_AND_RECOVERY);
-		notifier.perform(newBuild().success().notRecovery().get(), null);
-		assertFalse(notifier.wasPerformed());
-	}
+    @Test
+    public void should_not_notify_on_recovery_if_failure_recovery_and_previous_build_was_success() {
+        PostBuildNotifierExt notifier = new PostBuildNotifierExt(PostBuildNotifier.Type.FAILURE_AND_RECOVERY);
+        notifier.perform(newBuild().success().notRecovery().get(), null);
+        assertFalse(notifier.wasPerformed());
+    }
 
-	@Test
-	public void shouldt_notify_on_recovery_if_all_and_even_ifprevious_build_was_success() {
-		PostBuildNotifierExt notifier = new PostBuildNotifierExt(PostBuildNotifier.Type.ALL);
-		notifier.perform(newBuild().success().notRecovery().get(), null);
-		assertTrue(notifier.wasPerformed());
-	}
+    @Test
+    public void shouldt_notify_on_recovery_if_all_and_even_ifprevious_build_was_success() {
+        PostBuildNotifierExt notifier = new PostBuildNotifierExt(PostBuildNotifier.Type.ALL);
+        notifier.perform(newBuild().success().notRecovery().get(), null);
+        assertTrue(notifier.wasPerformed());
+    }
 
-	private static class PostBuildNotifierExt extends PostBuildNotifier {
+    private static class PostBuildNotifierExt extends PostBuildNotifier {
 
-		private boolean wasPerformed;
-		private final Type type;
+        private boolean wasPerformed;
+        private final Type type;
 
-		public PostBuildNotifierExt(Type type) {
-			super("test");
-			this.type = type;
-		}
+        public PostBuildNotifierExt(Type type) {
+            super("test");
+            this.type = type;
+        }
 
-		@Override
-		protected boolean notify(DynamicBuild build, BuildListener listener) {
-			wasPerformed = true;
-			return false;
-		}
+        @Override
+        protected boolean notify(DynamicBuild build, BuildListener listener) {
+            wasPerformed = true;
+            return false;
+        }
 
-		public boolean wasPerformed() {
-			return this.wasPerformed;
-		}
+        public boolean wasPerformed() {
+            return this.wasPerformed;
+        }
 
-		@Override
-		protected Type getType() {
-			return type;
-		}
+        @Override
+        protected Type getType() {
+            return type;
+        }
 
-	}
+    }
 }

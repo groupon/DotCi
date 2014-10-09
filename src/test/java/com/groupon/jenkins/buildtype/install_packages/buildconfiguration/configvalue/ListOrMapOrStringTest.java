@@ -34,39 +34,39 @@ import static com.groupon.jenkins.testhelpers.TestHelpers.map;
 
 public class ListOrMapOrStringTest {
 
-	@Test(expected = UnsupportedOperationException.class)
-	public void shouldnt_support_appending_values() {
-		new ListOrMapOrString(null).append(new ListOrMapOrString(null));
-	}
+    @Test(expected = UnsupportedOperationException.class)
+    public void shouldnt_support_appending_values() {
+        new ListOrMapOrString(null).append(new ListOrMapOrString(null));
+    }
 
-	@Test
-	public void should_return_value_form_map_converted_into_list() {
-		ListOrMapOrString configValue = new ListOrMapOrString(map("unit", "blah", "intergration", "spec intergration"));
-		List<String> keyValues = configValue.getValues("unit");
-		assertEquals(1, keyValues.size());
-		assertTrue(keyValues.contains("blah"));
-	}
+    @Test
+    public void should_return_value_form_map_converted_into_list() {
+        ListOrMapOrString configValue = new ListOrMapOrString(map("unit", "blah", "intergration", "spec intergration"));
+        List<String> keyValues = configValue.getValues("unit");
+        assertEquals(1, keyValues.size());
+        assertTrue(keyValues.contains("blah"));
+    }
 
-	@Test
-	public void should_allow_list_values() {
-		ListOrMapOrString configValue = new ListOrMapOrString(Arrays.asList("echo meow", "echo purr"));
-		assertEquals("echo meow", configValue.getValuesList().get(0));
-		assertEquals("echo purr", configValue.getValuesList().get(1));
-	}
+    @Test
+    public void should_allow_list_values() {
+        ListOrMapOrString configValue = new ListOrMapOrString(Arrays.asList("echo meow", "echo purr"));
+        assertEquals("echo meow", configValue.getValuesList().get(0));
+        assertEquals("echo purr", configValue.getValuesList().get(1));
+    }
 
-	@Test
-	public void should_allow_single_string_value() {
-		ListOrMapOrString configValue = new ListOrMapOrString("echo meow");
-		assertEquals("echo meow", configValue.getValuesList().get(0));
-	}
+    @Test
+    public void should_allow_single_string_value() {
+        ListOrMapOrString configValue = new ListOrMapOrString("echo meow");
+        assertEquals("echo meow", configValue.getValuesList().get(0));
+    }
 
-	@Test
-	public void should_consider_map_with_single_key_value_as_single_value() {
-		ListOrMapOrString configValue = new ListOrMapOrString(map("unit", "blah"));
+    @Test
+    public void should_consider_map_with_single_key_value_as_single_value() {
+        ListOrMapOrString configValue = new ListOrMapOrString(map("unit", "blah"));
 
-		assertFalse(configValue.isMap());
-		assertEquals("blah", configValue.getValuesList().iterator().next());
-	}
+        assertFalse(configValue.isMap());
+        assertEquals("blah", configValue.getValuesList().iterator().next());
+    }
 
     @Test
     public void should_return_requested_type(){

@@ -23,72 +23,72 @@ import static org.mockito.Mockito.when;
 
 public class GithubRepositoryServiceTest {
 
-	private GHRepository githubRepository;
-	private SetupConfig setupConfig;
-	private GithubAccessTokenRepository githubAccessTokenRepository;
-	private GithubRepositoryService githubRepositoryService;
+    private GHRepository githubRepository;
+    private SetupConfig setupConfig;
+    private GithubAccessTokenRepository githubAccessTokenRepository;
+    private GithubRepositoryService githubRepositoryService;
 
-	@Before
-	public void setup() {
-		githubRepository = mock(GHRepository.class);
-		setupConfig = mock(SetupConfig.class);
-		githubAccessTokenRepository = mock(GithubAccessTokenRepository.class);
-		githubRepositoryService = spy(new GithubRepositoryService(githubRepository, githubAccessTokenRepository));
-		doReturn(setupConfig).when(githubRepositoryService).getSetupConfig();
-	}
+    @Before
+    public void setup() {
+        githubRepository = mock(GHRepository.class);
+        setupConfig = mock(SetupConfig.class);
+        githubAccessTokenRepository = mock(GithubAccessTokenRepository.class);
+        githubRepositoryService = spy(new GithubRepositoryService(githubRepository, githubAccessTokenRepository));
+        doReturn(setupConfig).when(githubRepositoryService).getSetupConfig();
+    }
 
-	@Test
-	public void should_add_hook_with_the_url_from_dotci_configuration() throws IOException {
-		when(setupConfig.getGithubCallbackUrl()).thenReturn("http://jenkins/githook/");
+    @Test
+    public void should_add_hook_with_the_url_from_dotci_configuration() throws IOException {
+        when(setupConfig.getGithubCallbackUrl()).thenReturn("http://jenkins/githook/");
 
-		githubRepositoryService.addHook();
+        githubRepositoryService.addHook();
 
-		List<GHEvent> events = Arrays.asList(GHEvent.PUSH, GHEvent.PULL_REQUEST);
-		verify(githubRepository).createHook("web", ImmutableMap.of("url", "http://jenkins/githook/"), events, true);
-	}
+        List<GHEvent> events = Arrays.asList(GHEvent.PUSH, GHEvent.PULL_REQUEST);
+        verify(githubRepository).createHook("web", ImmutableMap.of("url", "http://jenkins/githook/"), events, true);
+    }
 
-	@Test
-	public void should_save_access_tokens_to_database() throws IOException {
-		when(setupConfig.getGithubCallbackUrl()).thenReturn("http://jenkins/githook/");
-		when(githubRepository.getUrl()).thenReturn("http://github.com/kittah/crunchies");
+    @Test
+    public void should_save_access_tokens_to_database() throws IOException {
+        when(setupConfig.getGithubCallbackUrl()).thenReturn("http://jenkins/githook/");
+        when(githubRepository.getUrl()).thenReturn("http://github.com/kittah/crunchies");
 
-		githubRepositoryService.addHook();
+        githubRepositoryService.addHook();
 
-		verify(githubAccessTokenRepository).put("http://github.com/kittah/crunchies");
-	}
+        verify(githubAccessTokenRepository).put("http://github.com/kittah/crunchies");
+    }
 
-	@Test
-	public void should_add_traling_slash_if_missing() throws IOException {
-		when(setupConfig.getGithubCallbackUrl()).thenReturn("http://jenkins/githook");
+    @Test
+    public void should_add_traling_slash_if_missing() throws IOException {
+        when(setupConfig.getGithubCallbackUrl()).thenReturn("http://jenkins/githook");
 
-		githubRepositoryService.addHook();
+        githubRepositoryService.addHook();
 
-		List<GHEvent> events = Arrays.asList(GHEvent.PUSH, GHEvent.PULL_REQUEST);
-		verify(githubRepository).createHook("web", ImmutableMap.of("url", "http://jenkins/githook/"), events, true);
-	}
+        List<GHEvent> events = Arrays.asList(GHEvent.PUSH, GHEvent.PULL_REQUEST);
+        verify(githubRepository).createHook("web", ImmutableMap.of("url", "http://jenkins/githook/"), events, true);
+    }
 
-	@Test
-	public void should_add_deploy_key_from_setup_config_if_private_repo() throws IOException {
-		when(githubRepository.isPrivate()).thenReturn(true);
-		when(setupConfig.getDeployKey()).thenReturn("deploy_key");
+    @Test
+    public void should_add_deploy_key_from_setup_config_if_private_repo() throws IOException {
+        when(githubRepository.isPrivate()).thenReturn(true);
+        when(setupConfig.getDeployKey()).thenReturn("deploy_key");
 
-		githubRepositoryService.addDeployKey();
+        githubRepositoryService.addDeployKey();
 
-		verify(githubRepository).addDeployKey("DotCi", "deploy_key");
+        verify(githubRepository).addDeployKey("DotCi", "deploy_key");
 
-	}
+    }
 
-	@Test
-	public void should_delete_existing_deploy_key_before_adding_new_one() throws IOException {
-		when(githubRepository.isPrivate()).thenReturn(true);
-		when(setupConfig.getDeployKey()).thenReturn("deploy_key");
-		GHDeployKey deployKey = mock(GHDeployKey.class);
-		when(deployKey.getKey()).thenReturn("deploy_key");
-		when(githubRepository.getDeployKeys()).thenReturn(Arrays.asList(deployKey));
+    @Test
+    public void should_delete_existing_deploy_key_before_adding_new_one() throws IOException {
+        when(githubRepository.isPrivate()).thenReturn(true);
+        when(setupConfig.getDeployKey()).thenReturn("deploy_key");
+        GHDeployKey deployKey = mock(GHDeployKey.class);
+        when(deployKey.getKey()).thenReturn("deploy_key");
+        when(githubRepository.getDeployKeys()).thenReturn(Arrays.asList(deployKey));
 
-		githubRepositoryService.addDeployKey();
+        githubRepositoryService.addDeployKey();
 
-		verify(deployKey).delete();
+        verify(deployKey).delete();
 
-	}
+    }
 }

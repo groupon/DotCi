@@ -36,117 +36,117 @@ import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 
 public class MongoRunMap<P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> implements SortedMap<Integer, B> {
 
-	private final DbBackedProject<P, B> project;
-	private Collection<B> values;
-	private final DynamicBuildRepository dynamicBuildRepository;
+    private final DbBackedProject<P, B> project;
+    private Collection<B> values;
+    private final DynamicBuildRepository dynamicBuildRepository;
 
-	public MongoRunMap(DbBackedProject<P, B> project) {
-		this.project = project;
-		this.dynamicBuildRepository = new DynamicBuildRepository();
-	}
+    public MongoRunMap(DbBackedProject<P, B> project) {
+        this.project = project;
+        this.dynamicBuildRepository = new DynamicBuildRepository();
+    }
 
-	@Override
-	public void clear() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void clear() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public boolean containsKey(Object key) {
-		if (!(key instanceof Integer)) {
-			return dynamicBuildRepository.hasBuild(project, (Integer) key);
-		}
-		return false;
-	}
+    @Override
+    public boolean containsKey(Object key) {
+        if (!(key instanceof Integer)) {
+            return dynamicBuildRepository.hasBuild(project, (Integer) key);
+        }
+        return false;
+    }
 
-	@Override
-	public boolean containsValue(Object value) {
-		if (!(value instanceof DbBackedBuild)) {
-			return dynamicBuildRepository.hasBuild((DbBackedBuild) value);
-		}
-		return false;
-	}
+    @Override
+    public boolean containsValue(Object value) {
+        if (!(value instanceof DbBackedBuild)) {
+            return dynamicBuildRepository.hasBuild((DbBackedBuild) value);
+        }
+        return false;
+    }
 
-	@Override
-	public B get(Object key) {
-		return dynamicBuildRepository.<B> getBuild(project, (Integer) key);
-	}
+    @Override
+    public B get(Object key) {
+        return dynamicBuildRepository.<B> getBuild(project, (Integer) key);
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return dynamicBuildRepository.hasBuilds(project);
-	}
+    @Override
+    public boolean isEmpty() {
+        return dynamicBuildRepository.hasBuilds(project);
+    }
 
-	@Override
-	public B put(Integer key, B value) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public B put(Integer key, B value) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void putAll(Map<? extends Integer, ? extends B> m) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void putAll(Map<? extends Integer, ? extends B> m) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public B remove(Object key) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public B remove(Object key) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public int size() {
-		return dynamicBuildRepository.getBuildCount(project);
-	}
+    @Override
+    public int size() {
+        return dynamicBuildRepository.getBuildCount(project);
+    }
 
-	@Override
-	public Comparator<? super Integer> comparator() {
-		return new Comparator<Integer>() {
-			@Override
-			public int compare(Integer o1, Integer o2) {
-				return o1.compareTo(o2);
-			}
-		};
-	}
+    @Override
+    public Comparator<? super Integer> comparator() {
+        return new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o1.compareTo(o2);
+            }
+        };
+    }
 
-	@Override
-	public Set<Entry<Integer, B>> entrySet() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Set<Entry<Integer, B>> entrySet() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public Integer firstKey() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Integer firstKey() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public SortedMap<Integer, B> headMap(Integer toKey) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public SortedMap<Integer, B> headMap(Integer toKey) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public Set<Integer> keySet() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Set<Integer> keySet() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public Integer lastKey() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Integer lastKey() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public SortedMap<Integer, B> subMap(Integer fromKey, Integer toKey) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public SortedMap<Integer, B> subMap(Integer fromKey, Integer toKey) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public SortedMap<Integer, B> tailMap(Integer fromKey) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public SortedMap<Integer, B> tailMap(Integer fromKey) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public Collection<B> values() {
-		if (values == null) {
-			values = Lists.newArrayList(new DynamicBuildRepository().<B> latestBuilds(project, 20));
-		}
-		return values;
-	}
+    @Override
+    public Collection<B> values() {
+        if (values == null) {
+            values = Lists.newArrayList(new DynamicBuildRepository().<B> latestBuilds(project, 20));
+        }
+        return values;
+    }
 
 }

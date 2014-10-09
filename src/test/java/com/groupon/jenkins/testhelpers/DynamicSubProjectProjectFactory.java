@@ -28,18 +28,18 @@ import com.groupon.jenkins.dynamic.build.DynamicSubProject;
 import static org.mockito.Mockito.mock;
 
 public class DynamicSubProjectProjectFactory {
-	private final DynamicSubProject subProject;
+    private final DynamicSubProject subProject;
 
-	public DynamicSubProjectProjectFactory() {
-		this.subProject = mock(DynamicSubProject.class);
-	}
+    public DynamicSubProjectProjectFactory() {
+        this.subProject = mock(DynamicSubProject.class);
+    }
 
-	public static DynamicSubProjectProjectFactory newSubProject() {
-		return new DynamicSubProjectProjectFactory();
-	}
+    public static DynamicSubProjectProjectFactory newSubProject() {
+        return new DynamicSubProjectProjectFactory();
+    }
 
-	public DynamicSubProject get() {
-		return subProject;
-	}
+    public DynamicSubProject get() {
+        return subProject;
+    }
 
 }

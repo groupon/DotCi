@@ -31,31 +31,31 @@ import static com.groupon.jenkins.buildtype.dockerimage.DockerCommandBuilder.doc
 
 public class ImageSection extends ConfigSection<StringValue> {
 
-	public static final String NAME = "image";
+    public static final String NAME = "image";
 
-	protected ImageSection(StringValue configValue) {
-		super(NAME, configValue, MergeStrategy.REPLACE);
-	}
+    protected ImageSection(StringValue configValue) {
+        super(NAME, configValue, MergeStrategy.REPLACE);
+    }
 
-	@Override
-	public ShellCommands toScript(Combination combination) {
-		return ShellCommands.NOOP;
-	}
+    @Override
+    public ShellCommands toScript(Combination combination) {
+        return ShellCommands.NOOP;
+    }
 
-	public boolean isUsingPreBuiltImage() {
-		return this.isSpecified();
-	}
+    public boolean isUsingPreBuiltImage() {
+        return this.isSpecified();
+    }
 
-	public String getImageName(String buildId) {
-		return isUsingPreBuiltImage() ? getConfigValue().getValue() : buildId;
-	}
+    public String getImageName(String buildId) {
+        return isUsingPreBuiltImage() ? getConfigValue().getValue() : buildId;
+    }
 
-	public String getDockerCommand(String buildId) {
-		String imageName = getImageName(buildId);
-		if (isUsingPreBuiltImage()) {
-			return dockerCommand("pull").args(imageName).get();
-		} else {
-			return dockerCommand("build").flag("t").args(imageName, ".").get();
-		}
-	}
+    public String getDockerCommand(String buildId) {
+        String imageName = getImageName(buildId);
+        if (isUsingPreBuiltImage()) {
+            return dockerCommand("pull").args(imageName).get();
+        } else {
+            return dockerCommand("build").flag("t").args(imageName, ".").get();
+        }
+    }
 }

@@ -31,25 +31,25 @@ import static org.junit.Assert.assertNotNull;
 
 public class MapValueTest {
 
-	@Test
-	public void should_find_sub_value() {
-		MapValue<String, String> mapValue = new MapValue<String, String>(map("skip", "true"));
-		StringValue stringValue = mapValue.getConfigValue("skip", StringValue.class);
-		assertEquals("true", stringValue.getValue());
-	}
+    @Test
+    public void should_find_sub_value() {
+        MapValue<String, String> mapValue = new MapValue<String, String>(map("skip", "true"));
+        StringValue stringValue = mapValue.getConfigValue("skip", StringValue.class);
+        assertEquals("true", stringValue.getValue());
+    }
 
-	@Test
-	public void should_create_sub_value_with_null_value_if_curerent_value_is_null() {
-		MapValue<String, String> mapValue = new MapValue<String, String>(null);
-		StringValue stringValue = mapValue.getConfigValue("skip", StringValue.class);
-		assertNotNull(stringValue);
-	}
+    @Test
+    public void should_create_sub_value_with_null_value_if_curerent_value_is_null() {
+        MapValue<String, String> mapValue = new MapValue<String, String>(null);
+        StringValue stringValue = mapValue.getConfigValue("skip", StringValue.class);
+        assertNotNull(stringValue);
+    }
 
-	@Test
-	public void should_append_values_to_existing_values_on_append() {
-		MapValue<String, String> mapValue = new MapValue<String, String>(map("one", "1"));
-		MapValue<String, String> mapValueMergedIn = new MapValue<String, String>(map("two", "2"));
-		mapValue.append(mapValueMergedIn);
-		assertEquals("2", mapValue.getValue().get("two"));
-	}
+    @Test
+    public void should_append_values_to_existing_values_on_append() {
+        MapValue<String, String> mapValue = new MapValue<String, String>(map("one", "1"));
+        MapValue<String, String> mapValueMergedIn = new MapValue<String, String>(map("two", "2"));
+        mapValue.append(mapValueMergedIn);
+        assertEquals("2", mapValue.getValue().get("two"));
+    }
 }

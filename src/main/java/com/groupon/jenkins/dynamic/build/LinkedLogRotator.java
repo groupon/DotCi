@@ -29,21 +29,21 @@ import hudson.tasks.LogRotator;
 import java.io.IOException;
 
 final class LinkedLogRotator extends LogRotator {
-	LinkedLogRotator(int artifactDaysToKeep, int artifactNumToKeep) {
-		super(-1, -1, artifactDaysToKeep, artifactNumToKeep);
-	}
+    LinkedLogRotator(int artifactDaysToKeep, int artifactNumToKeep) {
+        super(-1, -1, artifactDaysToKeep, artifactNumToKeep);
+    }
 
-	@Override
-	public void perform(Job job) throws IOException, InterruptedException {
-		super.perform(job);
-		DynamicSubProject dynamicJob = (DynamicSubProject) job;
-		for (DynamicSubBuild r : dynamicJob.getBuilds()) {
-			if (dynamicJob.getParent().getBuildByNumber(r.getNumber()) == null) {
-				r.delete();
-			}
-		}
-		if (dynamicJob.getLastBuild() == null) {
-			dynamicJob.delete();
-		}
-	}
+    @Override
+    public void perform(Job job) throws IOException, InterruptedException {
+        super.perform(job);
+        DynamicSubProject dynamicJob = (DynamicSubProject) job;
+        for (DynamicSubBuild r : dynamicJob.getBuilds()) {
+            if (dynamicJob.getParent().getBuildByNumber(r.getNumber()) == null) {
+                r.delete();
+            }
+        }
+        if (dynamicJob.getLastBuild() == null) {
+            dynamicJob.delete();
+        }
+    }
 }

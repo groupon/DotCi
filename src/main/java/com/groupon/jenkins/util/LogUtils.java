@@ -27,9 +27,9 @@ import java.io.PrintStream;
 
 public class LogUtils {
 
-	public static void debug(PrintStream logger, String format, Object... args) {
-		logger.format(format, args);
-		logger.println();
-	}
+    public static void debug(PrintStream logger, String format, Object... args) {
+        logger.format(format, args);
+        logger.println();
+    }
 
 }

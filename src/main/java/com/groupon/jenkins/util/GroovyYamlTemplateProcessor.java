@@ -31,53 +31,53 @@ import org.yaml.snakeyaml.Yaml;
 
 public class GroovyYamlTemplateProcessor {
 
-	private final String config;
-	private final Map envVars;
+    private final String config;
+    private final Map envVars;
 
-	public GroovyYamlTemplateProcessor(String config, Map envVars) {
-		this.config = config;
-		this.envVars = new HashMap(envVars);
-		this.envVars.remove("PATH");
-	}
+    public GroovyYamlTemplateProcessor(String config, Map envVars) {
+        this.config = config;
+        this.envVars = new HashMap(envVars);
+        this.envVars.remove("PATH");
+    }
 
-	public Map getConfig() {
-		GStringTemplateEngine engine = new GStringTemplateEngine();
+    public Map getConfig() {
+        GStringTemplateEngine engine = new GStringTemplateEngine();
         String yaml = null;
 
-		try {
-			yaml = engine.createTemplate(config).make(new MissingPropForwardingMap(envVars)).toString();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		return (Map) new Yaml().load(yaml);
-	}
+        try {
+            yaml = engine.createTemplate(config).make(new MissingPropForwardingMap(envVars)).toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return (Map) new Yaml().load(yaml);
+    }
 
-	private static class MissingPropForwardingMap extends ForwardingMap<String, String> {
+    private static class MissingPropForwardingMap extends ForwardingMap<String, String> {
 
-		private final Map delegate;
+        private final Map delegate;
 
-		public MissingPropForwardingMap(Map envVars) {
-			this.delegate = envVars;
-		}
+        public MissingPropForwardingMap(Map envVars) {
+            this.delegate = envVars;
+        }
 
-		@Override
-		public boolean containsKey(Object key) {
-			return true;
-		}
+        @Override
+        public boolean containsKey(Object key) {
+            return true;
+        }
 
-		@Override
-		public String get(Object key) {
-			String value = super.get(key);
-			if(value == null){
+        @Override
+        public String get(Object key) {
+            String value = super.get(key);
+            if(value == null){
               return ((String)key).startsWith("DOTCI")? null : "$" + key;
             }
             return value;
-		}
+        }
 
-		@Override
-		protected Map<String, String> delegate() {
-			return delegate;
-		}
+        @Override
+        protected Map<String, String> delegate() {
+            return delegate;
+        }
 
-	}
+    }
 }

@@ -27,25 +27,25 @@ import java.util.Map;
 
 public class MapValue<K, V> extends ConfigValue<Map<K, V>> {
 
-	public MapValue(Object value) {
-		super(value);
-	}
+    public MapValue(Object value) {
+        super(value);
+    }
 
-	public <T extends ConfigValue<?>> T getConfigValue(K key, Class<T> configValueType) {
-		try {
-			Object subConfigValue = this.isEmpty() || !this.isValid() ? null : getValue().get(key);
-			return configValueType.getConstructor(Object.class).newInstance(subConfigValue);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+    public <T extends ConfigValue<?>> T getConfigValue(K key, Class<T> configValueType) {
+        try {
+            Object subConfigValue = this.isEmpty() || !this.isValid() ? null : getValue().get(key);
+            return configValueType.getConstructor(Object.class).newInstance(subConfigValue);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-	}
+    }
 
-	@Override
-	public void append(ConfigValue<?> config) {
-		Map<K, V> otherValue = ((MapValue<K, V>) config).getValue();
-		getValue().putAll(otherValue);
-	}
+    @Override
+    public void append(ConfigValue<?> config) {
+        Map<K, V> otherValue = ((MapValue<K, V>) config).getValue();
+        getValue().putAll(otherValue);
+    }
 
     @Override
     public <R> R getValue(Class<R> returnType) {

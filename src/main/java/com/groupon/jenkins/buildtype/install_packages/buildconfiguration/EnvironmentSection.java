@@ -36,113 +36,113 @@ import static java.lang.String.format;
 
 public class EnvironmentSection extends CompositeConfigSection {
 
-	public static final String NAME = "environment";
-	private final LanguageVersionsSection languageVersionsSection;
-	private final LanguageSection languageSection;
-	private final ImageSection imageSection;
-	private final VarsSection varsSection;
-	private final PackagesSection packagesSection;
-	private final ServicesSection servicesSection;
+    public static final String NAME = "environment";
+    private final LanguageVersionsSection languageVersionsSection;
+    private final LanguageSection languageSection;
+    private final ImageSection imageSection;
+    private final VarsSection varsSection;
+    private final PackagesSection packagesSection;
+    private final ServicesSection servicesSection;
 
-	public EnvironmentSection(MapValue<String, ?> config) {
-		super(NAME, config);
-		imageSection = new ImageSection(getSectionConfig(ImageSection.NAME, com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.StringValue.class));
-		languageVersionsSection = new LanguageVersionsSection(getSectionConfig(LanguageVersionsSection.NAME, ListOrSingleValue.class));
-		languageSection = new LanguageSection(getSectionConfig(LanguageSection.NAME, com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.StringValue.class));
-		this.varsSection = new VarsSection(getSectionConfig(VarsSection.NAME, MapValue.class));
-		this.servicesSection = new ServicesSection(getSectionConfig(ServicesSection.NAME, ListOrSingleValue.class));
+    public EnvironmentSection(MapValue<String, ?> config) {
+        super(NAME, config);
+        imageSection = new ImageSection(getSectionConfig(ImageSection.NAME, com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.StringValue.class));
+        languageVersionsSection = new LanguageVersionsSection(getSectionConfig(LanguageVersionsSection.NAME, ListOrSingleValue.class));
+        languageSection = new LanguageSection(getSectionConfig(LanguageSection.NAME, com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.StringValue.class));
+        this.varsSection = new VarsSection(getSectionConfig(VarsSection.NAME, MapValue.class));
+        this.servicesSection = new ServicesSection(getSectionConfig(ServicesSection.NAME, ListOrSingleValue.class));
 
-		packagesSection = new PackagesSection(getSectionConfig(PackagesSection.NAME, ListOrSingleValue.class), languageSection, languageVersionsSection);
-		setSubSections(packagesSection, imageSection, varsSection, languageSection, languageVersionsSection, servicesSection);
-	}
+        packagesSection = new PackagesSection(getSectionConfig(PackagesSection.NAME, ListOrSingleValue.class), languageSection, languageVersionsSection);
+        setSubSections(packagesSection, imageSection, varsSection, languageSection, languageVersionsSection, servicesSection);
+    }
 
-	public boolean isMultiLanguageVersions() {
-		return languageVersionsSection.isMultiLanguageVersions();
-	}
+    public boolean isMultiLanguageVersions() {
+        return languageVersionsSection.isMultiLanguageVersions();
+    }
 
-	public List<String> getLanguageVersions() {
-		return languageVersionsSection.getLanguageVersions();
-	}
+    public List<String> getLanguageVersions() {
+        return languageVersionsSection.getLanguageVersions();
+    }
 
-	public String getLanguage() {
-		return languageSection.getLanguage();
-	}
+    public String getLanguage() {
+        return languageSection.getLanguage();
+    }
 
-	public PackagesSection getPackagesSection() {
-		return packagesSection;
-	}
+    public PackagesSection getPackagesSection() {
+        return packagesSection;
+    }
 
-	public ShellCommands getDockerBuildRunScriptForImage(String buildId, Map<String, String> envVars) {
-		ShellCommands commands = new ShellCommands();
-		String dockerImageName = imageSection.getImageName(buildId);
-		commands.add(imageSection.getDockerCommand(buildId));
+    public ShellCommands getDockerBuildRunScriptForImage(String buildId, Map<String, String> envVars) {
+        ShellCommands commands = new ShellCommands();
+        String dockerImageName = imageSection.getImageName(buildId);
+        commands.add(imageSection.getDockerCommand(buildId));
 
-		/* @formatter:off */
-		DockerCommandBuilder runCommand = dockerCommand("run")
-				                          .flag("rm")
-				                          .flag("sig-proxy=true")
-				                          .flag("v", "`pwd`:/var/project")
-				                          .flag("w", "/var/project")
-				                          .flag("u", "`id -u`")
-				                          .args(dockerImageName, "/bin/bash -e dotci_build_script.sh");
-		
-		exportEnvVars(runCommand, envVars);
-		/* @formatter:on */
-		if (servicesSection.isSpecified()) {
-			commands.addAll(servicesSection.getServiceStartCommands(buildId));
-			for (String link : servicesSection.getContainerLinkCommands(buildId)) {
-				runCommand.flag("link", link);
-			}
-		}
-		commands.add(runCommand.get());
-		return commands;
-	}
+        /* @formatter:off */
+        DockerCommandBuilder runCommand = dockerCommand("run")
+                                          .flag("rm")
+                                          .flag("sig-proxy=true")
+                                          .flag("v", "`pwd`:/var/project")
+                                          .flag("w", "/var/project")
+                                          .flag("u", "`id -u`")
+                                          .args(dockerImageName, "/bin/bash -e dotci_build_script.sh");
+        
+        exportEnvVars(runCommand, envVars);
+        /* @formatter:on */
+        if (servicesSection.isSpecified()) {
+            commands.addAll(servicesSection.getServiceStartCommands(buildId));
+            for (String link : servicesSection.getContainerLinkCommands(buildId)) {
+                runCommand.flag("link", link);
+            }
+        }
+        commands.add(runCommand.get());
+        return commands;
+    }
 
-	private void exportEnvVars(DockerCommandBuilder runCommand, Map<String, String> envVars) {
-		for (Entry<String, String> var : envVars.entrySet()) {
-			runCommand.flag("e", format("\"%s=%s\"", var.getKey(), var.getValue()));
-		}
-	}
+    private void exportEnvVars(DockerCommandBuilder runCommand, Map<String, String> envVars) {
+        for (Entry<String, String> var : envVars.entrySet()) {
+            runCommand.flag("e", format("\"%s=%s\"", var.getKey(), var.getValue()));
+        }
+    }
 
-	public String getCleanupScript(String buildId) {
-		if (servicesSection.isSpecified()) {
-			List<String> commands = servicesSection.getCleanupCommands(buildId);
-			return new ShellCommands(commands).toShellScript();
-		}
-		return "true";
-	}
+    public String getCleanupScript(String buildId) {
+        if (servicesSection.isSpecified()) {
+            List<String> commands = servicesSection.getCleanupCommands(buildId);
+            return new ShellCommands(commands).toShellScript();
+        }
+        return "true";
+    }
 
-	public boolean isDocker() {
-		return imageSection.isSpecified();
-	}
+    public boolean isDocker() {
+        return imageSection.isSpecified();
+    }
 
-	public ShellCommands getDockerBuildRunScriptForLocal(String buildId, Map<String, String> envVars, String buildCommand) {
-		ShellCommands commands = new ShellCommands();
-		String buildImageCommand = dockerCommand("build").flag("t").args(buildId, ".").get();
-		commands.add(buildImageCommand);
+    public ShellCommands getDockerBuildRunScriptForLocal(String buildId, Map<String, String> envVars, String buildCommand) {
+        ShellCommands commands = new ShellCommands();
+        String buildImageCommand = dockerCommand("build").flag("t").args(buildId, ".").get();
+        commands.add(buildImageCommand);
 
         // If we are running a command in the container and we have services to link to, try socat
         if (servicesSection.isSpecified()) {
             buildCommand = buildCommandAmbassador(buildCommand);
         }
 
-		/* @formatter:off */
-		DockerCommandBuilder runCommand = dockerCommand("run")
-				                          .flag("rm")
-				                          .flag("sig-proxy=true")
-				                          .args(buildId, buildCommand);
-		
-		exportEnvVars(runCommand, envVars);
-		/* @formatter:on */
-		if (servicesSection.isSpecified()) {
-			commands.addAll(servicesSection.getServiceStartCommands(buildId));
-			for (String link : servicesSection.getContainerLinkCommands(buildId)) {
-				runCommand.flag("link", link);
-			}
-		}
-		commands.add(runCommand.get());
-		return commands;
-	}
+        /* @formatter:off */
+        DockerCommandBuilder runCommand = dockerCommand("run")
+                                          .flag("rm")
+                                          .flag("sig-proxy=true")
+                                          .args(buildId, buildCommand);
+        
+        exportEnvVars(runCommand, envVars);
+        /* @formatter:on */
+        if (servicesSection.isSpecified()) {
+            commands.addAll(servicesSection.getServiceStartCommands(buildId));
+            for (String link : servicesSection.getContainerLinkCommands(buildId)) {
+                runCommand.flag("link", link);
+            }
+        }
+        commands.add(runCommand.get());
+        return commands;
+    }
 
     public String buildCommandAmbassador(String buildCommand) {
         String shellPrefix = "sh -c \"env && ";

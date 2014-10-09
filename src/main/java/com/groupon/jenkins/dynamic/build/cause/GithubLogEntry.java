@@ -32,41 +32,41 @@ import org.kohsuke.stapler.export.Exported;
 
 public class GithubLogEntry extends ChangeLogSet.Entry {
 
-	private final String message;
-	private final String githubUrl;
-	private final String commitId;
+    private final String message;
+    private final String githubUrl;
+    private final String commitId;
 
-	public GithubLogEntry(String message, String githubUrl, String commitId) {
-		this.message = message;
-		this.githubUrl = githubUrl;
-		this.commitId = commitId;
-	}
+    public GithubLogEntry(String message, String githubUrl, String commitId) {
+        this.message = message;
+        this.githubUrl = githubUrl;
+        this.commitId = commitId;
+    }
 
-	@Override
-	@Exported
-	public String getMsg() {
-		return this.message;
-	}
+    @Override
+    @Exported
+    public String getMsg() {
+        return this.message;
+    }
 
-	@Override
-	@Exported
-	public User getAuthor() {
-		return null;
-	}
+    @Override
+    @Exported
+    public User getAuthor() {
+        return null;
+    }
 
-	@Override
-	@Exported
-	public Collection<String> getAffectedPaths() {
-		return null;
-	}
+    @Override
+    @Exported
+    public Collection<String> getAffectedPaths() {
+        return null;
+    }
 
-	public String getGithubUrl() {
-		return githubUrl;
-	}
+    public String getGithubUrl() {
+        return githubUrl;
+    }
 
-	@Override
-	public String getCommitId() {
-		return commitId;
-	}
+    @Override
+    public String getCommitId() {
+        return commitId;
+    }
 
 }

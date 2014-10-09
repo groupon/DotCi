@@ -31,7 +31,7 @@ import org.kohsuke.github.GHRepository;
 public class Node extends  InstallPackages {
     @Override
     protected boolean isDefault(GHRepository githubRepository) {
-     		String repoLanguage = githubRepository.getLanguage();
-		return "javascript".equals(repoLanguage) || "coffeescript".equals(repoLanguage);
+             String repoLanguage = githubRepository.getLanguage();
+        return "javascript".equals(repoLanguage) || "coffeescript".equals(repoLanguage);
     }
 }

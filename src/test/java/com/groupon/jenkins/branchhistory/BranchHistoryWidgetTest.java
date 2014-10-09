@@ -47,86 +47,86 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("unchecked")
 public class BranchHistoryWidgetTest {
 
-	private DynamicBuildRepository buildRepo;
-	private DynamicProject project;
-	private BranchHistoryWidgetModel<DbBackedBuild> historyWidget;
+    private DynamicBuildRepository buildRepo;
+    private DynamicProject project;
+    private BranchHistoryWidgetModel<DbBackedBuild> historyWidget;
 
-	@Before
-	public void setup_mocks() {
-		buildRepo = mock(DynamicBuildRepository.class);
-		project = mock(DynamicProject.class);
-		historyWidget = new BranchHistoryWidgetModel<DbBackedBuild>(project, buildRepo, null);
-	}
+    @Before
+    public void setup_mocks() {
+        buildRepo = mock(DynamicBuildRepository.class);
+        project = mock(DynamicProject.class);
+        historyWidget = new BranchHistoryWidgetModel<DbBackedBuild>(project, buildRepo, null);
+    }
 
-	@Test
-	public void should_not_show_skipped_builds() {
-		DynamicBuild unSkippedBuild = newBuild().get();
-		DynamicBuild skippedBuild = newBuild().skipped().get();
-		when(skippedBuild.isSkipped()).thenReturn(true);
-		List<? extends DbBackedBuild> builds = list(skippedBuild, unSkippedBuild);
-		when(buildRepo.getLast(project, BranchHistoryWidget.BUILD_COUNT, null)).thenReturn((Iterable<DbBackedBuild>) builds);
-		assertEquals(1, Iterables.size(historyWidget.getBaseList()));
-		assertEquals(unSkippedBuild, Iterables.getOnlyElement(historyWidget.getBaseList()));
-	}
+    @Test
+    public void should_not_show_skipped_builds() {
+        DynamicBuild unSkippedBuild = newBuild().get();
+        DynamicBuild skippedBuild = newBuild().skipped().get();
+        when(skippedBuild.isSkipped()).thenReturn(true);
+        List<? extends DbBackedBuild> builds = list(skippedBuild, unSkippedBuild);
+        when(buildRepo.getLast(project, BranchHistoryWidget.BUILD_COUNT, null)).thenReturn((Iterable<DbBackedBuild>) builds);
+        assertEquals(1, Iterables.size(historyWidget.getBaseList()));
+        assertEquals(unSkippedBuild, Iterables.getOnlyElement(historyWidget.getBaseList()));
+    }
 
-	@Test
-	public void should_return_oldest_running_build() {
-		DynamicBuild finishedBuild = newBuild().get();
-		DynamicBuild finishedBuild2 = newBuild().get();
-		DynamicBuild runningBuild = newBuild().building().get();
-		DynamicBuild runningBuild2 = newBuild().building().get();
-		List<? extends DbBackedBuild> builds = list(finishedBuild, runningBuild, finishedBuild2, runningBuild2);
-		String buildId = String.valueOf(runningBuild2.getNumber());
-		when(buildRepo.getLast(project, BranchHistoryWidget.BUILD_COUNT, null)).thenReturn((Iterable<DbBackedBuild>) builds);
+    @Test
+    public void should_return_oldest_running_build() {
+        DynamicBuild finishedBuild = newBuild().get();
+        DynamicBuild finishedBuild2 = newBuild().get();
+        DynamicBuild runningBuild = newBuild().building().get();
+        DynamicBuild runningBuild2 = newBuild().building().get();
+        List<? extends DbBackedBuild> builds = list(finishedBuild, runningBuild, finishedBuild2, runningBuild2);
+        String buildId = String.valueOf(runningBuild2.getNumber());
+        when(buildRepo.getLast(project, BranchHistoryWidget.BUILD_COUNT, null)).thenReturn((Iterable<DbBackedBuild>) builds);
 
-		assertEquals(buildId, historyWidget.getNextBuildToFetch((Iterable<DbBackedBuild>) builds, adapter).getBuildNumber(adapter));
+        assertEquals(buildId, historyWidget.getNextBuildToFetch((Iterable<DbBackedBuild>) builds, adapter).getBuildNumber(adapter));
 
-	}
+    }
 
-	@Test
-	public void should_return_most_recent_build_plus_one() {
-		DynamicBuild finishedBuild = newBuild().get();
-		DynamicBuild finishedBuild2 = newBuild().get();
-		DynamicBuild finishedBuild3 = newBuild().get();
-		List<? extends DbBackedBuild> builds = list(finishedBuild, finishedBuild2, finishedBuild3);
-		String buildId = String.valueOf(finishedBuild.getNumber() + 1);
+    @Test
+    public void should_return_most_recent_build_plus_one() {
+        DynamicBuild finishedBuild = newBuild().get();
+        DynamicBuild finishedBuild2 = newBuild().get();
+        DynamicBuild finishedBuild3 = newBuild().get();
+        List<? extends DbBackedBuild> builds = list(finishedBuild, finishedBuild2, finishedBuild3);
+        String buildId = String.valueOf(finishedBuild.getNumber() + 1);
 
-		when(buildRepo.getLast(project, BranchHistoryWidget.BUILD_COUNT, null)).thenReturn((Iterable<DbBackedBuild>) builds);
+        when(buildRepo.getLast(project, BranchHistoryWidget.BUILD_COUNT, null)).thenReturn((Iterable<DbBackedBuild>) builds);
 
-		assertEquals(buildId, historyWidget.getNextBuildToFetch((Iterable<DbBackedBuild>) builds, adapter).getBuildNumber(adapter));
+        assertEquals(buildId, historyWidget.getNextBuildToFetch((Iterable<DbBackedBuild>) builds, adapter).getBuildNumber(adapter));
 
-	}
+    }
 
-	@Test
-	public void should_return_one_for_empty_build_list() {
-		String buildId = "1";
-		List<? extends DbBackedBuild> builds = Collections.emptyList();
-		when(buildRepo.getLast(project, BranchHistoryWidget.BUILD_COUNT, null)).thenReturn((Iterable<DbBackedBuild>) builds);
+    @Test
+    public void should_return_one_for_empty_build_list() {
+        String buildId = "1";
+        List<? extends DbBackedBuild> builds = Collections.emptyList();
+        when(buildRepo.getLast(project, BranchHistoryWidget.BUILD_COUNT, null)).thenReturn((Iterable<DbBackedBuild>) builds);
 
-		assertEquals(buildId, historyWidget.getNextBuildToFetch((Iterable<DbBackedBuild>) builds, adapter).getBuildNumber(adapter));
+        assertEquals(buildId, historyWidget.getNextBuildToFetch((Iterable<DbBackedBuild>) builds, adapter).getBuildNumber(adapter));
 
-	}
+    }
 
-	private static HistoryWidget.Adapter adapter = new HistoryWidget.Adapter<DbBackedBuild>() {
-		@Override
-		public int compare(DbBackedBuild record, String key) {
-			return 0;
-		}
+    private static HistoryWidget.Adapter adapter = new HistoryWidget.Adapter<DbBackedBuild>() {
+        @Override
+        public int compare(DbBackedBuild record, String key) {
+            return 0;
+        }
 
-		@Override
-		public String getKey(DbBackedBuild record) {
-			return String.valueOf(record.getNumber());
-		}
+        @Override
+        public String getKey(DbBackedBuild record) {
+            return String.valueOf(record.getNumber());
+        }
 
-		@Override
-		public boolean isBuilding(DbBackedBuild record) {
-			return record.isBuilding();
-		}
+        @Override
+        public boolean isBuilding(DbBackedBuild record) {
+            return record.isBuilding();
+        }
 
-		@Override
-		public String getNextKey(String key) {
-			return null;
-		}
-	};
+        @Override
+        public String getNextKey(String key) {
+            return null;
+        }
+    };
 
 }

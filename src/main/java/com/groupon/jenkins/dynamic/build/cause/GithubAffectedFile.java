@@ -28,22 +28,22 @@ import hudson.scm.ChangeLogSet.AffectedFile;
 
 public class GithubAffectedFile implements AffectedFile {
 
-	private final EditType editType;
-	private final String path;
+    private final EditType editType;
+    private final String path;
 
-	public GithubAffectedFile(EditType editType, String path) {
-		this.editType = editType;
-		this.path = path;
-	}
+    public GithubAffectedFile(EditType editType, String path) {
+        this.editType = editType;
+        this.path = path;
+    }
 
-	@Override
-	public String getPath() {
-		return this.path;
-	}
+    @Override
+    public String getPath() {
+        return this.path;
+    }
 
-	@Override
-	public EditType getEditType() {
-		return this.editType;
-	}
+    @Override
+    public EditType getEditType() {
+        return this.editType;
+    }
 
 }

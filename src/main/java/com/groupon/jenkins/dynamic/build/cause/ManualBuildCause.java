@@ -32,66 +32,66 @@ import com.groupon.jenkins.github.GitBranch;
 
 public class ManualBuildCause extends BuildCause {
 
-	private final String user;
-	private final GitBranch branch;
-	private final String sha;
+    private final String user;
+    private final GitBranch branch;
+    private final String sha;
 
-	public ManualBuildCause(GitBranch branch, String sha, String user) {
-		this.branch = branch;
-		this.sha = sha;
-		this.user = user;
-	}
+    public ManualBuildCause(GitBranch branch, String sha, String user) {
+        this.branch = branch;
+        this.sha = sha;
+        this.user = user;
+    }
 
-	@Override
-	@Exported(visibility = 3)
-	public String getShortDescription() {
-		return null;
-	}
+    @Override
+    @Exported(visibility = 3)
+    public String getShortDescription() {
+        return null;
+    }
 
-	@Override
-	public String getSha() {
-		return sha;
-	}
+    @Override
+    public String getSha() {
+        return sha;
+    }
 
-	@Override
-	public String getBuildDescription() {
-		return "<b>" + branch + "</b>";
-	}
+    @Override
+    public String getBuildDescription() {
+        return "<b>" + branch + "</b>";
+    }
 
-	@Override
-	public String getPusher() {
-		return user;
-	}
+    @Override
+    public String getPusher() {
+        return user;
+    }
 
-	@Override
-	public String getPullRequestNumber() {
-		return branch.isPullRequest() ? branch.pullRequestNumber() + "" : null;
-	}
+    @Override
+    public String getPullRequestNumber() {
+        return branch.isPullRequest() ? branch.pullRequestNumber() + "" : null;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(branch, sha, user);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(branch, sha, user);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final ManualBuildCause other = (ManualBuildCause) obj;
-		return Objects.equal(this.branch, other.branch) && Objects.equal(this.sha, other.sha) && Objects.equal(this.user, other.user);
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ManualBuildCause other = (ManualBuildCause) obj;
+        return Objects.equal(this.branch, other.branch) && Objects.equal(this.sha, other.sha) && Objects.equal(this.user, other.user);
+    }
 
-	@Override
-	public GitBranch getBranch() {
-		return branch;
-	}
+    @Override
+    public GitBranch getBranch() {
+        return branch;
+    }
 
-	@Override
-	public Iterable<GithubLogEntry> getChangeLogEntries() {
-		return Collections.emptyList();
-	}
+    @Override
+    public Iterable<GithubLogEntry> getChangeLogEntries() {
+        return Collections.emptyList();
+    }
 }

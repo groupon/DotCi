@@ -40,143 +40,143 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class GithubRepositoryService {
-	private static final Logger LOGGER = Logger.getLogger(GithubRepositoryService.class.getName());
-	private GHRepository repository;
-	private GitHub github;
-	private String repoUrl;
-	private GithubAccessTokenRepository githubAccessTokenRepository;
+    private static final Logger LOGGER = Logger.getLogger(GithubRepositoryService.class.getName());
+    private GHRepository repository;
+    private GitHub github;
+    private String repoUrl;
+    private GithubAccessTokenRepository githubAccessTokenRepository;
 
-	public GithubRepositoryService(GHRepository repository) {
-		this(repository, new GithubAccessTokenRepository());
-	}
+    public GithubRepositoryService(GHRepository repository) {
+        this(repository, new GithubAccessTokenRepository());
+    }
 
-	protected GithubRepositoryService(GHRepository repository, GithubAccessTokenRepository githubAccessTokenRepository) {
-		this.repository = repository;
-		this.githubAccessTokenRepository = githubAccessTokenRepository;
+    protected GithubRepositoryService(GHRepository repository, GithubAccessTokenRepository githubAccessTokenRepository) {
+        this.repository = repository;
+        this.githubAccessTokenRepository = githubAccessTokenRepository;
 
-	}
+    }
 
-	/**
-	 * GHRepository is lazily intialized when this constructor is used
-	 * 
-	 * @param repoUrl
-	 */
-	public GithubRepositoryService(String repoUrl) {
-		this.repoUrl = repoUrl;
-	}
+    /**
+     * GHRepository is lazily intialized when this constructor is used
+     * 
+     * @param repoUrl
+     */
+    public GithubRepositoryService(String repoUrl) {
+        this.repoUrl = repoUrl;
+    }
 
-	private static GitHub getGithub(String token) {
-		try {
-			return GitHub.connectUsingOAuth(SetupConfig.get().getGithubApiUrl(), token);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    private static GitHub getGithub(String token) {
+        try {
+            return GitHub.connectUsingOAuth(SetupConfig.get().getGithubApiUrl(), token);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public void addHook() throws IOException {
-		String githubCallbackUrl = getSetupConfig().getGithubCallbackUrl();
-		if (!githubCallbackUrl.endsWith("/")) {
-			githubCallbackUrl = githubCallbackUrl + "/";
-		}
-		Map<String, String> params = ImmutableMap.of("url", githubCallbackUrl);
-		List<GHEvent> events = Arrays.asList(GHEvent.PUSH, GHEvent.PULL_REQUEST);
-		githubAccessTokenRepository.put(getRepository().getUrl());
-		removeExistingHook(githubCallbackUrl);
-		getRepository().createHook("web", params, events, true);
-	}
+    public void addHook() throws IOException {
+        String githubCallbackUrl = getSetupConfig().getGithubCallbackUrl();
+        if (!githubCallbackUrl.endsWith("/")) {
+            githubCallbackUrl = githubCallbackUrl + "/";
+        }
+        Map<String, String> params = ImmutableMap.of("url", githubCallbackUrl);
+        List<GHEvent> events = Arrays.asList(GHEvent.PUSH, GHEvent.PULL_REQUEST);
+        githubAccessTokenRepository.put(getRepository().getUrl());
+        removeExistingHook(githubCallbackUrl);
+        getRepository().createHook("web", params, events, true);
+    }
 
-	private void removeExistingHook(String callbackUrl) throws IOException {
-		for (GHHook hook : getRepository().getHooks()) {
-			if (hook.isActive() && callbackUrl.equals(hook.getConfig().get("url"))) {
-				hook.delete();
-			}
-		}
-	}
+    private void removeExistingHook(String callbackUrl) throws IOException {
+        for (GHHook hook : getRepository().getHooks()) {
+            if (hook.isActive() && callbackUrl.equals(hook.getConfig().get("url"))) {
+                hook.delete();
+            }
+        }
+    }
 
-	protected SetupConfig getSetupConfig() {
-		return SetupConfig.get();
-	}
+    protected SetupConfig getSetupConfig() {
+        return SetupConfig.get();
+    }
 
-	public GHRef getRef(String refName) throws IOException {
+    public GHRef getRef(String refName) throws IOException {
         return getRepository().getRef(refName);
-	}
+    }
 
-	public GHRepository getGithubRepository() {
-		return getRepository();
-	}
+    public GHRepository getGithubRepository() {
+        return getRepository();
+    }
 
-	public GHContent getGHFile(String fileName, String sha) throws IOException {
-		return getGithubRepository().getFileContent(fileName, sha);
-	}
+    public GHContent getGHFile(String fileName, String sha) throws IOException {
+        return getGithubRepository().getFileContent(fileName, sha);
+    }
 
-	public String getShaForBranch(String branch) {
-		GitBranch gitBranch = new GitBranch(branch);
-		if (gitBranch.isPullRequest()) {
-			try {
-				return getGithubRepository().getPullRequest(gitBranch.pullRequestNumber()).getHead().getSha();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		} else {
-			try {
-				GHRef ref = getRef("heads/" + gitBranch);
-				return ref.getObject().getSha();
-			} catch (IOException e) {
-				return gitBranch.toString();
-			}
-		}
-	}
+    public String getShaForBranch(String branch) {
+        GitBranch gitBranch = new GitBranch(branch);
+        if (gitBranch.isPullRequest()) {
+            try {
+                return getGithubRepository().getPullRequest(gitBranch.pullRequestNumber()).getHead().getSha();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            try {
+                GHRef ref = getRef("heads/" + gitBranch);
+                return ref.getObject().getSha();
+            } catch (IOException e) {
+                return gitBranch.toString();
+            }
+        }
+    }
 
-	private synchronized GHRepository getRepository() {
-		if (repository == null) {
-			String fullRepoName = new GitUrl(repoUrl).getFullRepoName();
-			try {
-				repository = getGithub().getRepository(fullRepoName);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		return repository;
-	}
+    private synchronized GHRepository getRepository() {
+        if (repository == null) {
+            String fullRepoName = new GitUrl(repoUrl).getFullRepoName();
+            try {
+                repository = getGithub().getRepository(fullRepoName);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return repository;
+    }
 
-	public synchronized GitHub getGithub() {
-		if (github == null) {
-			String accessToken = new GithubAccessTokenRepository().getAccessToken(repoUrl);
-			github = getGithub(accessToken);
-		}
-		return github;
-	}
+    public synchronized GitHub getGithub() {
+        if (github == null) {
+            String accessToken = new GithubAccessTokenRepository().getAccessToken(repoUrl);
+            github = getGithub(accessToken);
+        }
+        return github;
+    }
 
-	public boolean hasDockerFile(String sha) throws IOException {
-		LOGGER.info("Checking for dockerfile in: " + repoUrl);
-		try {
-			getGHFile("Dockerfile", sha).getContent();
-		} catch (FileNotFoundException e) {
-			return false;
-		}
-		return true;
+    public boolean hasDockerFile(String sha) throws IOException {
+        LOGGER.info("Checking for dockerfile in: " + repoUrl);
+        try {
+            getGHFile("Dockerfile", sha).getContent();
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+        return true;
 
-	}
+    }
 
-	public void linkProjectToCi() throws IOException {
-		addHook();
-		addDeployKey();
-	}
+    public void linkProjectToCi() throws IOException {
+        addHook();
+        addDeployKey();
+    }
 
-	protected void addDeployKey() throws IOException {
-		if (getRepository().isPrivate()) {
-			removeDeployKeyIfPreviouslyAdded();
-			getRepository().addDeployKey("DotCi", getSetupConfig().getDeployKey());
-		}
-	}
+    protected void addDeployKey() throws IOException {
+        if (getRepository().isPrivate()) {
+            removeDeployKeyIfPreviouslyAdded();
+            getRepository().addDeployKey("DotCi", getSetupConfig().getDeployKey());
+        }
+    }
 
-	private void removeDeployKeyIfPreviouslyAdded() throws IOException {
-		String configuredDeployKey = StringUtils.trim(getSetupConfig().getDeployKey());
-		for (GHDeployKey deployKey : getRepository().getDeployKeys()) {
-			// needs startsWith as email address is trimmed out
-			if (configuredDeployKey.startsWith(deployKey.getKey())) {
-				deployKey.delete();
-			}
-		}
-	}
+    private void removeDeployKeyIfPreviouslyAdded() throws IOException {
+        String configuredDeployKey = StringUtils.trim(getSetupConfig().getDeployKey());
+        for (GHDeployKey deployKey : getRepository().getDeployKeys()) {
+            // needs startsWith as email address is trimmed out
+            if (configuredDeployKey.startsWith(deployKey.getKey())) {
+                deployKey.delete();
+            }
+        }
+    }
 }

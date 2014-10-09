@@ -29,19 +29,19 @@ import java.util.List;
 import jenkins.model.Jenkins;
 
 public class OrganizationContainerRepository {
-	public OrganizationContainer getOrCreateContainer(String viewName) throws IOException {
-		OrganizationContainer existingcontainer = getOrganizationContainer(viewName);
-		return existingcontainer == null ? Jenkins.getInstance().createProject(OrganizationContainer.class, viewName) : existingcontainer;
-	}
+    public OrganizationContainer getOrCreateContainer(String viewName) throws IOException {
+        OrganizationContainer existingcontainer = getOrganizationContainer(viewName);
+        return existingcontainer == null ? Jenkins.getInstance().createProject(OrganizationContainer.class, viewName) : existingcontainer;
+    }
 
-	public OrganizationContainer getOrganizationContainer(String viewName) {
-		List<OrganizationContainer> containers = Jenkins.getInstance().getItems(OrganizationContainer.class);
-		for (OrganizationContainer container : containers) {
-			if (container.getName().equals(viewName)) {
-				return container;
-			}
-		}
-		return null;
-	}
+    public OrganizationContainer getOrganizationContainer(String viewName) {
+        List<OrganizationContainer> containers = Jenkins.getInstance().getItems(OrganizationContainer.class);
+        for (OrganizationContainer container : containers) {
+            if (container.getName().equals(viewName)) {
+                return container;
+            }
+        }
+        return null;
+    }
 
 }

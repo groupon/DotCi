@@ -37,28 +37,28 @@ import static org.mockito.Mockito.mock;
 
 public class BuildCauseTest {
 
-	@Test
-	public void should_export_env_vars() {
-		BuildCause cause = mock(BuildCause.class);
-		doCallRealMethod().when(cause).getEnvVars();
+    @Test
+    public void should_export_env_vars() {
+        BuildCause cause = mock(BuildCause.class);
+        doCallRealMethod().when(cause).getEnvVars();
 
-		doReturn("sha1234").when(cause).getSha();
-		doReturn("surya").when(cause).getPusher();
-		doReturn("44").when(cause).getPullRequestNumber();
-		assertNotNull(cause.getEnvVars());
-		assertEquals("sha1234", cause.getEnvVars().get("DOTCI_SHA"));
-		assertEquals("surya", cause.getEnvVars().get("DOTCI_PUSHER"));
-		assertEquals("44", cause.getEnvVars().get("DOTCI_PULL_REQUEST"));
-	}
+        doReturn("sha1234").when(cause).getSha();
+        doReturn("surya").when(cause).getPusher();
+        doReturn("44").when(cause).getPullRequestNumber();
+        assertNotNull(cause.getEnvVars());
+        assertEquals("sha1234", cause.getEnvVars().get("DOTCI_SHA"));
+        assertEquals("surya", cause.getEnvVars().get("DOTCI_PUSHER"));
+        assertEquals("44", cause.getEnvVars().get("DOTCI_PULL_REQUEST"));
+    }
 
-	@Test
-	public void should_export_not_export_null_env_vars() {
-		BuildCause cause = mock(BuildCause.class);
-		doCallRealMethod().when(cause).getEnvVars();
+    @Test
+    public void should_export_not_export_null_env_vars() {
+        BuildCause cause = mock(BuildCause.class);
+        doCallRealMethod().when(cause).getEnvVars();
 
-		doReturn(null).when(cause).getPullRequestNumber();
-		assertNotNull(cause.getEnvVars());
-		assertFalse(cause.getEnvVars().keySet().contains("DOTCI_PULL_REQUEST"));
-	}
+        doReturn(null).when(cause).getPullRequestNumber();
+        assertNotNull(cause.getEnvVars());
+        assertFalse(cause.getEnvVars().keySet().contains("DOTCI_PULL_REQUEST"));
+    }
 
 }

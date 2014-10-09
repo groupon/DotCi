@@ -31,10 +31,10 @@ import static org.junit.Assert.assertTrue;
 
 public class CurrentBuildStateTest {
 
-	@Test
-	public void should_be_building_before_post_production_state() {
-		CurrentBuildState currentBuildState = new CurrentBuildState("NOT_STARTED", Result.NOT_BUILT);
-		assertTrue(currentBuildState.isBuilding());
-	}
+    @Test
+    public void should_be_building_before_post_production_state() {
+        CurrentBuildState currentBuildState = new CurrentBuildState("NOT_STARTED", Result.NOT_BUILT);
+        assertTrue(currentBuildState.isBuilding());
+    }
 
 }
