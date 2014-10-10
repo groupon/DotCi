@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.repository;
 
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.util.GReflectionUtils;
 import hudson.model.Result;
@@ -43,13 +44,17 @@ import com.groupon.jenkins.github.services.GithubCurrentUserService;
 import com.groupon.jenkins.mongo.MongoRepository;
 import com.groupon.jenkins.mongo.MongoRunMap;
 import com.mongodb.BasicDBObject;
+import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
+
+import javax.inject.Inject;
 
 public class DynamicBuildRepository extends MongoRepository {
     private static final Logger LOGGER = Logger.getLogger(DynamicBuildRepository.class.getName());
 
-    public DynamicBuildRepository() {
-        super();
+    @Inject
+    public DynamicBuildRepository(Datastore datastore) {
+        super(datastore);
     }
 
     public void save(DbBackedBuild build) {
@@ -267,13 +272,13 @@ public class DynamicBuildRepository extends MongoRepository {
             .field("className").equal("com.groupon.jenkins.dynamic.build.DynamicBuild");
 
         query.or(
-                query.criteria("actions.causes.user").equal(GithubCurrentUserService.current().getCurrentLogin()),
-                query.criteria("actions.causes.pusher").equal(GithubCurrentUserService.current().getCurrentLogin())
+            query.criteria("actions.causes.user").equal(GithubCurrentUserService.current().getCurrentLogin()),
+            query.criteria("actions.causes.pusher").equal(GithubCurrentUserService.current().getCurrentLogin())
         );
 
         List<DynamicBuild> builds = query.asList();
 
-                DynamicProjectRepository repo = new DynamicProjectRepository();
+        DynamicProjectRepository repo = SetupConfig.get().getDynamicProjectRepository();
         for(DbBackedBuild build : builds) {
             DbBackedProject project = repo.getProjectById(build.getProjectId());
             associateProject(project, build);

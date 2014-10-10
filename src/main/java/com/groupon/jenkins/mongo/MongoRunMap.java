@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.SortedMap;
 
 import com.google.common.collect.Lists;
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DbBackedProject;
 import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
@@ -42,7 +43,7 @@ public class MongoRunMap<P extends DbBackedProject<P, B>, B extends DbBackedBuil
 
     public MongoRunMap(DbBackedProject<P, B> project) {
         this.project = project;
-        this.dynamicBuildRepository = new DynamicBuildRepository();
+        this.dynamicBuildRepository = SetupConfig.get().getDynamicBuildRepository();
     }
 
     @Override
@@ -144,7 +145,7 @@ public class MongoRunMap<P extends DbBackedProject<P, B>, B extends DbBackedBuil
     @Override
     public Collection<B> values() {
         if (values == null) {
-            values = Lists.newArrayList(new DynamicBuildRepository().<B> latestBuilds(project, 20));
+            values = Lists.newArrayList(SetupConfig.get().getDynamicBuildRepository().<B> latestBuilds(project, 20));
         }
         return values;
     }

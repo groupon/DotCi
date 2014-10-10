@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.util.GReflectionUtils;
 import com.mongodb.DBObject;
@@ -121,7 +122,7 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
     @Override
     public synchronized void save() throws IOException {
         LOGGER.info("saving build:" + getName() + ": " + getNumber());
-        new DynamicBuildRepository().save(this);
+        SetupConfig.get().getDynamicBuildRepository().save(this);
     }
 
     @Override
@@ -290,7 +291,8 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
     }
 
     public Run getPreviousFinishedBuildOfSameBranch(BuildListener listener) {
-        return new DynamicBuildRepository().getPreviousFinishedBuildOfSameBranch(this, getCurrentBranch().toString());
+        return SetupConfig.get().getDynamicBuildRepository()
+                .getPreviousFinishedBuildOfSameBranch(this, getCurrentBranch().toString());
     }
 
     public String getPusher() {

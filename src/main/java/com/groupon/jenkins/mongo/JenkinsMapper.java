@@ -20,31 +20,29 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.dynamic.build;
+ */
 
-import com.groupon.jenkins.SetupConfig;
-import hudson.model.Job;
-import hudson.model.PermalinkProjectAction.Permalink;
-import hudson.model.Run;
+package com.groupon.jenkins.mongo;
 
-import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
+import jenkins.model.Jenkins;
+import org.mongodb.morphia.mapping.Mapper;
 
-public class LastSuccessfulMasterPermalink extends Permalink {
+public class JenkinsMapper extends Mapper {
 
-    @Override
-    public String getDisplayName() {
-        return "Last Successful Master";
+    public JenkinsMapper() {
+        super();
+        getOptions().setActLikeSerializer(true);
+        getOptions().objectFactory = new CustomMorphiaObjectFactory(Jenkins.getInstance().getPluginManager().uberClassLoader);
+
+        includeSpecialConverters();
     }
 
-    @Override
-    public String getId() {
-        return "lastSuccessfulMaster";
+    protected void includeSpecialConverters() {
+        getConverters().addConverter(new CopyOnWriteListConverter());
+        getConverters().addConverter(new DescribableListConverter());
+        getConverters().addConverter(new ParametersDefinitionPropertyCoverter());
+        getConverters().addConverter(new CombinationConverter());
+        getConverters().addConverter(new AxisListConverter());
+        getConverters().addConverter(new ResultConverter());
     }
-
-    @Override
-    public Run<?, ?> resolve(Job<?, ?> job) {
-        return (Run<?, ?>) SetupConfig.get().getDynamicBuildRepository().getLastSuccessfulBuild((DbBackedProject) job, "master");
-    }
-
 }

@@ -49,8 +49,10 @@ import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.kohsuke.github.GHRepository;
+import org.mongodb.morphia.Datastore;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 import static java.lang.String.format;
 
@@ -59,11 +61,13 @@ public class DynamicProjectRepository extends MongoRepository {
     private final OrganizationContainerRepository organizationRepository;
     private final DynamicBuildRepository dynamicBuildRepository;
 
-    public DynamicProjectRepository() {
-        this(new OrganizationContainerRepository(), new DynamicBuildRepository());
+    @Inject
+    public DynamicProjectRepository(Datastore datastore, DynamicBuildRepository buildRepository) {
+        this(datastore, new OrganizationContainerRepository(), buildRepository);
     }
 
-    protected DynamicProjectRepository(OrganizationContainerRepository organizationRepository, DynamicBuildRepository dynamicBuildRepository) {
+    protected DynamicProjectRepository(Datastore datastore, OrganizationContainerRepository organizationRepository, DynamicBuildRepository dynamicBuildRepository) {
+        super(datastore);
         this.organizationRepository = organizationRepository;
         this.dynamicBuildRepository = dynamicBuildRepository;
     }

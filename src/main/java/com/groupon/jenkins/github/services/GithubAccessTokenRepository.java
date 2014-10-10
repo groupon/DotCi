@@ -32,12 +32,17 @@ import java.io.IOException;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.jenkinsci.plugins.GithubAuthenticationToken;
 import org.kohsuke.github.GitHub;
+import org.mongodb.morphia.Datastore;
+
+import javax.inject.Inject;
 
 public class GithubAccessTokenRepository extends MongoRepository {
 
     public static final String COLLECTION_NAME = "github_tokens";
 
-    public GithubAccessTokenRepository() {
+    @Inject
+    public GithubAccessTokenRepository(Datastore datastore) {
+        super(datastore);
     }
 
     public String getAccessToken(String repourl) {
@@ -55,20 +60,20 @@ public class GithubAccessTokenRepository extends MongoRepository {
         return getCollection().findOne(query);
     }
 
-      public void put(String url) throws IOException {
+    public void put(String url) throws IOException {
         DBObject token = getToken(url);
 
         GithubAuthenticationToken auth = getAuthentication();
         GitHub gh = auth.getGitHub();
         String accessToken = getEncryptedToken(auth);
 
-            if (token != null) {
-                 getCollection().remove(token);
-            }
+        if (token != null) {
+            getCollection().remove(token);
+        }
 
-            BasicDBObject doc = new BasicDBObject("user", gh.getMyself().getLogin()).append("access_token", accessToken).append("repo_url", url);
-            getCollection().insert(doc);
-      }
+        BasicDBObject doc = new BasicDBObject("user", gh.getMyself().getLogin()).append("access_token", accessToken).append("repo_url", url);
+        getCollection().insert(doc);
+    }
 
     private GithubAuthenticationToken getAuthentication() {
         return (GithubAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();

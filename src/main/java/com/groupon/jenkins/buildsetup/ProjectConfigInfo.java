@@ -2,6 +2,7 @@ package com.groupon.jenkins.buildsetup;
 
 import java.io.IOException;
 
+import com.groupon.jenkins.SetupConfig;
 import jenkins.model.Jenkins;
 
 import org.kohsuke.github.GHRepository;
@@ -19,7 +20,13 @@ public class ProjectConfigInfo {
     private final GithubRepositoryService githubRepositoryService;
 
     public ProjectConfigInfo(String ghRepoName, GHRepository ghRepository) {
-        this(ghRepoName, ghRepository, new DynamicProjectRepository(), new GithubAccessTokenRepository(), new GithubRepositoryService(ghRepository));
+        this(
+            ghRepoName,
+            ghRepository,
+            SetupConfig.get().getDynamicProjectRepository(),
+            SetupConfig.get().getGithubAccessTokenRepository(),
+            new GithubRepositoryService(ghRepository)
+        );
     }
 
     protected ProjectConfigInfo(String ghRepoName, GHRepository ghRepository, DynamicProjectRepository dynamicProjectRepository, GithubAccessTokenRepository githubAccessTokenRepository, GithubRepositoryService githubRepositoryService) {

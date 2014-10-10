@@ -23,9 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
 <com.groupon.jenkins.SetupConfig plugin="DotCi@3.0.2">
-  <dbHost>localhost</dbHost>
-  <dbPort>27017</dbPort>
-  <dbName>test</dbName>
-  <githubApiUrl>https://localhost/api/v3</githubApiUrl>
-  <githubCallbackUrl>http://localhost/githook/</githubCallbackUrl>
+    <dbHost>localhost</dbHost>
+    <dbPort>27017</dbPort>
+    <dbName>test</dbName>
+    <githubApiUrl>https://localhost/api/v3</githubApiUrl>
+    <githubCallbackUrl>http://localhost/githook/</githubCallbackUrl>
+    <guiceModule class="com.groupon.jenkins.mongo.TestingModule" />
 </com.groupon.jenkins.SetupConfig>
