@@ -30,8 +30,8 @@ import java.io.IOException;
 
 public interface BuildExecutionContext {
 
-	boolean performStep(BuildStep buildStep, BuildListener listener) throws InterruptedException, IOException;
+    boolean performStep(BuildStep buildStep, BuildListener listener) throws InterruptedException, IOException;
 
-	void setResult(Result r);
+    void setResult(Result r);
 
 }

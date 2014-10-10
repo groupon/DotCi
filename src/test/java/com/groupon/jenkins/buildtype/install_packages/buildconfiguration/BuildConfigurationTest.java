@@ -31,11 +31,11 @@ import static org.junit.Assert.*;
 
 public class BuildConfigurationTest {
 
-	@Test
-	public void should_skip_build_if_build_is_skipped() {
-		String dotCiYml = ResourceUtils.readResource(getClass(),"ci_skip_build.yml");
-		BuildConfiguration config = new BuildConfiguration(dotCiYml, new EnvVars());
-		assertTrue(config.isSkipped());
-	}
+    @Test
+    public void should_skip_build_if_build_is_skipped() {
+        String dotCiYml = ResourceUtils.readResource(getClass(),"ci_skip_build.yml");
+        BuildConfiguration config = new BuildConfiguration(dotCiYml, new EnvVars());
+        assertTrue(config.isSkipped());
+    }
 
 }

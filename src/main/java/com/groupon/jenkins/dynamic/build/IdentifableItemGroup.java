@@ -27,5 +27,5 @@ import hudson.model.Item;
 import hudson.model.ItemGroup;
 
 public interface IdentifableItemGroup<T extends Item> extends ItemGroup<T> {
-	Object getId();
+    Object getId();
 }

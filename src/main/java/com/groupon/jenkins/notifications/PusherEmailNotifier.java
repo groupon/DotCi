@@ -37,23 +37,23 @@ import com.groupon.jenkins.dynamic.build.cause.GitHubPushCause;
 @Extension
 public class PusherEmailNotifier extends EmailNotifierBase {
 
-	public PusherEmailNotifier() {
-		super("pusher_email");
-	}
+    public PusherEmailNotifier() {
+        super("pusher_email");
+    }
 
-	@Override
-	public boolean needsEmail(DynamicBuild build, BuildListener listener) {
-		return StringUtils.isNotEmpty(getPusherEmail(build));
-	}
+    @Override
+    public boolean needsEmail(DynamicBuild build, BuildListener listener) {
+        return StringUtils.isNotEmpty(getPusherEmail(build));
+    }
 
-	private String getPusherEmail(DynamicBuild build) {
-		GitHubPushCause cause = build.getCause(GitHubPushCause.class);
-		return cause == null ? null : cause.getPusherEmailAddress();
-	}
+    private String getPusherEmail(DynamicBuild build) {
+        GitHubPushCause cause = build.getCause(GitHubPushCause.class);
+        return cause == null ? null : cause.getPusherEmailAddress();
+    }
 
-	@Override
-	protected List<String> getNotificationEmails(DynamicBuild build) {
-		return Arrays.asList(getPusherEmail(build));
-	}
+    @Override
+    protected List<String> getNotificationEmails(DynamicBuild build) {
+        return Arrays.asList(getPusherEmail(build));
+    }
 
 }

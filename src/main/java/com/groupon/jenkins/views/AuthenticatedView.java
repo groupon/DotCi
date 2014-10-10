@@ -45,43 +45,43 @@ import com.groupon.jenkins.util.AuthenticationMixin;
 
 public abstract class AuthenticatedView extends View implements StaplerProxy {
 
-	protected AuthenticatedView(String name) {
-		super(name);
-	}
+    protected AuthenticatedView(String name) {
+        super(name);
+    }
 
-	@Override
-	public boolean contains(TopLevelItem item) {
-		return item.hasPermission(Job.CONFIGURE);
-	}
+    @Override
+    public boolean contains(TopLevelItem item) {
+        return item.hasPermission(Job.CONFIGURE);
+    }
 
-	@Override
-	public TopLevelItem doCreateItem(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-		ItemGroup<? extends TopLevelItem> ig = getOwnerItemGroup();
-		if (ig instanceof ModifiableItemGroup) {
-			return ((ModifiableItemGroup<? extends TopLevelItem>) ig).doCreateItem(req, rsp);
-		}
-		return null;
-	}
+    @Override
+    public TopLevelItem doCreateItem(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+        ItemGroup<? extends TopLevelItem> ig = getOwnerItemGroup();
+        if (ig instanceof ModifiableItemGroup) {
+            return ((ModifiableItemGroup<? extends TopLevelItem>) ig).doCreateItem(req, rsp);
+        }
+        return null;
+    }
 
-	@Override
-	public Collection<TopLevelItem> getItems() {
-		List<TopLevelItem> items = new LinkedList<TopLevelItem>();
-		for (TopLevelItem item : getOwnerItemGroup().getItems()) {
-			if (item.hasPermission(Job.CONFIGURE)) {
-				items.add(item);
-			}
-		}
-		return Collections.unmodifiableList(items);
-	}
+    @Override
+    public Collection<TopLevelItem> getItems() {
+        List<TopLevelItem> items = new LinkedList<TopLevelItem>();
+        for (TopLevelItem item : getOwnerItemGroup().getItems()) {
+            if (item.hasPermission(Job.CONFIGURE)) {
+                items.add(item);
+            }
+        }
+        return Collections.unmodifiableList(items);
+    }
 
-	@Override
-	public Object getTarget() {
-		makeAuthenticationMixin().authenticate();
-		return this;
-	}
+    @Override
+    public Object getTarget() {
+        makeAuthenticationMixin().authenticate();
+        return this;
+    }
 
-	protected AuthenticationMixin makeAuthenticationMixin() {
-		return new AuthenticationMixin();
-	}
+    protected AuthenticationMixin makeAuthenticationMixin() {
+        return new AuthenticationMixin();
+    }
 
 }

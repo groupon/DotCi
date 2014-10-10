@@ -40,34 +40,34 @@ import com.google.inject.TypeLiteral;
 //@formatter:on 
 
 public abstract class ConfigValue<T> extends TypeLiteral<T> {
-	private Object value;
+    private Object value;
 
-	public ConfigValue(Object value) {
-		this.value = value;
-	}
+    public ConfigValue(Object value) {
+        this.value = value;
+    }
 
-	public void replace(ConfigValue<?> otherConfig) {
-		this.value = otherConfig.getValue();
-	}
+    public void replace(ConfigValue<?> otherConfig) {
+        this.value = otherConfig.getValue();
+    }
 
-	public boolean isEmpty() {
-		return value == null;
-	}
+    public boolean isEmpty() {
+        return value == null;
+    }
 
-	public boolean isValid() {
-		return isEmpty() ? true : getRawType().isAssignableFrom(value.getClass());
-	}
+    public boolean isValid() {
+        return isEmpty() ? true : getRawType().isAssignableFrom(value.getClass());
+    }
 
-	public abstract void append(ConfigValue<?> config);
+    public abstract void append(ConfigValue<?> config);
 
-	@SuppressWarnings("unchecked")
-	public T getValue() {
-		return (T) value;
-	}
+    @SuppressWarnings("unchecked")
+    public T getValue() {
+        return (T) value;
+    }
 
-	protected void setValue(T newValue) {
-		this.value = newValue;
-	}
+    protected void setValue(T newValue) {
+        this.value = newValue;
+    }
 
     public abstract <T> T getValue(Class<T> returnType);
 }

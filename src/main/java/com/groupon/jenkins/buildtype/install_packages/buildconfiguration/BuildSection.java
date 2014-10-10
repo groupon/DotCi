@@ -34,46 +34,46 @@ import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configv
 
 public class BuildSection extends CompositeConfigSection {
 
-	public static final String NAME = "build";
-	private final BuildRunSection buildRunSection;
-	private final AfterRunSection afterRunSection;
-	private final CheckoutSection checkoutSection;
-	private final BeforeSection beforeSection;
-	private final SkipSection skipSection;
+    public static final String NAME = "build";
+    private final BuildRunSection buildRunSection;
+    private final AfterRunSection afterRunSection;
+    private final CheckoutSection checkoutSection;
+    private final BeforeSection beforeSection;
+    private final SkipSection skipSection;
 
-	public BuildSection(MapValue<String, ?> configValue) {
-		super(NAME, configValue);
-		this.skipSection = new SkipSection(getSectionConfig(SkipSection.NAME, BooleanValue.class));
-		this.checkoutSection = new CheckoutSection(getSectionConfig(CheckoutSection.NAME, ListValue.class));
-		this.beforeSection = new BeforeSection(getSectionConfig(BeforeSection.NAME, ListOrSingleValue.class));
-		this.buildRunSection = new BuildRunSection(getSectionConfig(BuildRunSection.NAME, ListOrMapOrString.class));
-		this.afterRunSection = new AfterRunSection(getSectionConfig("after", ListOrSingleValue.class));
-		setSubSections(skipSection, checkoutSection, new BeforeInstallSection(getSectionConfig(BeforeInstallSection.NAME, ListOrSingleValue.class)), new SerialExecutionSection("info", getSectionConfig("info", ListOrSingleValue.class)), beforeSection, buildRunSection, afterRunSection);
-	}
+    public BuildSection(MapValue<String, ?> configValue) {
+        super(NAME, configValue);
+        this.skipSection = new SkipSection(getSectionConfig(SkipSection.NAME, BooleanValue.class));
+        this.checkoutSection = new CheckoutSection(getSectionConfig(CheckoutSection.NAME, ListValue.class));
+        this.beforeSection = new BeforeSection(getSectionConfig(BeforeSection.NAME, ListOrSingleValue.class));
+        this.buildRunSection = new BuildRunSection(getSectionConfig(BuildRunSection.NAME, ListOrMapOrString.class));
+        this.afterRunSection = new AfterRunSection(getSectionConfig("after", ListOrSingleValue.class));
+        setSubSections(skipSection, checkoutSection, new BeforeInstallSection(getSectionConfig(BeforeInstallSection.NAME, ListOrSingleValue.class)), new SerialExecutionSection("info", getSectionConfig("info", ListOrSingleValue.class)), beforeSection, buildRunSection, afterRunSection);
+    }
 
-	public boolean isMultiScript() {
-		return buildRunSection.isMultiConfig() || !isAfterRunEmpty();
-	}
+    public boolean isMultiScript() {
+        return buildRunSection.isMultiConfig() || !isAfterRunEmpty();
+    }
 
-	private boolean isAfterRunEmpty() {
-		return afterRunSection.getConfigValue().isEmpty();
-	}
+    private boolean isAfterRunEmpty() {
+        return afterRunSection.getConfigValue().isEmpty();
+    }
 
-	public List<String> getScriptKeys() {
-		List<String> keys = new LinkedList<String>();
-		if (buildRunSection.isMultiConfig()) {
-			keys.addAll(buildRunSection.getKeys());
-		} else {
-			keys.add("default");
-		}
-		if (!isAfterRunEmpty()) {
-			keys.add("post_build");
-		}
-		return keys;
-	}
+    public List<String> getScriptKeys() {
+        List<String> keys = new LinkedList<String>();
+        if (buildRunSection.isMultiConfig()) {
+            keys.addAll(buildRunSection.getKeys());
+        } else {
+            keys.add("default");
+        }
+        if (!isAfterRunEmpty()) {
+            keys.add("post_build");
+        }
+        return keys;
+    }
 
-	public boolean isSkipped() {
-		return skipSection.isSkipped();
-	}
+    public boolean isSkipped() {
+        return skipSection.isSkipped();
+    }
 
 }

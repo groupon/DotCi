@@ -32,30 +32,30 @@ import java.util.List;
 import java.util.Map;
 
 public class TestHelpers {
-	public static Map map(Object... keyValues) {
-		HashMap out = new HashMap();
-		for (int i = 0; i < keyValues.length; i++) {
-			if (i % 2 != 0) {
-				out.put(keyValues[i - 1], keyValues[i]);
-			}
-		}
-		return out;
-	}
+    public static Map map(Object... keyValues) {
+        HashMap out = new HashMap();
+        for (int i = 0; i < keyValues.length; i++) {
+            if (i % 2 != 0) {
+                out.put(keyValues[i - 1], keyValues[i]);
+            }
+        }
+        return out;
+    }
 
-	public static <T> List<T> list(T... values) {
-		return Arrays.asList(values);
-	}
+    public static <T> List<T> list(T... values) {
+        return Arrays.asList(values);
+    }
 
-	public static <T> ListValue<T> configList(T... values) {
-		return new ListValue<T>(Arrays.asList(values));
-	}
+    public static <T> ListValue<T> configList(T... values) {
+        return new ListValue<T>(Arrays.asList(values));
+    }
 
-	public static ListOrSingleValue<String> configListOrSingleValue(String... values) {
-		return new ListOrSingleValue(Arrays.asList(values));
-	}
+    public static ListOrSingleValue<String> configListOrSingleValue(String... values) {
+        return new ListOrSingleValue(Arrays.asList(values));
+    }
 
-	public static MapValue<String, Object> configMap(Object... keyValues) {
-		return new MapValue<String, Object>(map(keyValues));
-	}
+    public static MapValue<String, Object> configMap(Object... keyValues) {
+        return new MapValue<String, Object>(map(keyValues));
+    }
 
 }

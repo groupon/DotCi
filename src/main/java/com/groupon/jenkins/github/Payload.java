@@ -35,118 +35,118 @@ import net.sf.json.JSONObject;
 
 public class Payload {
 
-	private final JSONObject payloadJson;
+    private final JSONObject payloadJson;
 
-	public Payload(String payload) {
-		this.payloadJson = JSONObject.fromObject(payload);
-	}
+    public Payload(String payload) {
+        this.payloadJson = JSONObject.fromObject(payload);
+    }
 
-	public boolean isPullRequest() {
-		return payloadJson.containsKey("pull_request");
-	}
+    public boolean isPullRequest() {
+        return payloadJson.containsKey("pull_request");
+    }
 
-	public Cause getCause() {
-		if (isPullRequest()) {
-			JSONObject pullRequest = getPullRequest();
-			final String label = pullRequest.getJSONObject("head").getString("label");
-			String number = pullRequest.getString("number");
-			return new GitHubPullRequestCause(this, getSha(), label, number);
+    public Cause getCause() {
+        if (isPullRequest()) {
+            JSONObject pullRequest = getPullRequest();
+            final String label = pullRequest.getJSONObject("head").getString("label");
+            String number = pullRequest.getString("number");
+            return new GitHubPullRequestCause(this, getSha(), label, number);
 
-		} else {
-			final String pusherName = payloadJson.getJSONObject("pusher").getString("name");
-			final String email = payloadJson.getJSONObject("pusher").getString("email");
-			return new GitHubPushCause(this, getSha(), pusherName, email);
-		}
-	}
+        } else {
+            final String pusherName = payloadJson.getJSONObject("pusher").getString("name");
+            final String email = payloadJson.getJSONObject("pusher").getString("email");
+            return new GitHubPushCause(this, getSha(), pusherName, email);
+        }
+    }
 
-	public String getSha() {
-		if (isPullRequest()) {
-			return getPullRequest().getJSONObject("head").getString("sha");
-		}
+    public String getSha() {
+        if (isPullRequest()) {
+            return getPullRequest().getJSONObject("head").getString("sha");
+        }
         return payloadJson.getString("after");
-	}
+    }
 
-	private JSONObject getPullRequest() {
-		return payloadJson.getJSONObject("pull_request");
-	}
+    private JSONObject getPullRequest() {
+        return payloadJson.getJSONObject("pull_request");
+    }
 
-	public String getBranch() {
-		if (isPullRequest()) {
-			return "Pull Request: " + getPullRequestNumber();
-		}
-	    return payloadJson.getString("ref").replaceAll("refs/heads/", "");
-	}
+    public String getBranch() {
+        if (isPullRequest()) {
+            return "Pull Request: " + getPullRequestNumber();
+        }
+        return payloadJson.getString("ref").replaceAll("refs/heads/", "");
+    }
 
-	public boolean needsBuild() {
-		if (payloadJson.has("ref") && payloadJson.getString("ref").startsWith("refs/tags/")) {
-			return false;
-		}
-		if (isPullRequest()) {
-			return !isPullRequestClosed() && !isPullRequestFromWithinSameRepo();
-		}
+    public boolean needsBuild() {
+        if (payloadJson.has("ref") && payloadJson.getString("ref").startsWith("refs/tags/")) {
+            return false;
+        }
+        if (isPullRequest()) {
+            return !isPullRequestClosed() && !isPullRequestFromWithinSameRepo();
+        }
         return !payloadJson.getBoolean("deleted");
-	}
+    }
 
-	private boolean isPullRequestClosed() {
-		return "closed".equals(getPullRequest().getString("state"));
-	}
+    private boolean isPullRequestClosed() {
+        return "closed".equals(getPullRequest().getString("state"));
+    }
 
-	private boolean isPullRequestFromWithinSameRepo() {
-		String headRepoUrl = getPullRequest().getJSONObject("head").getJSONObject("repo").getString("ssh_url");
-		String pullRequestRepoUrl = getPullRequest().getJSONObject("base").getJSONObject("repo").getString("ssh_url");
-		return headRepoUrl.equals(pullRequestRepoUrl);
-	}
+    private boolean isPullRequestFromWithinSameRepo() {
+        String headRepoUrl = getPullRequest().getJSONObject("head").getJSONObject("repo").getString("ssh_url");
+        String pullRequestRepoUrl = getPullRequest().getJSONObject("base").getJSONObject("repo").getString("ssh_url");
+        return headRepoUrl.equals(pullRequestRepoUrl);
+    }
 
-	public String getBuildDescription() {
-		String shortSha = getSha().substring(0, 7);
-		return String.format("<b>%s</b> (<a href=\"%s\">%s...</a>) <br> %s", getBranchDescription(), getDiffUrl(), shortSha, getPusher());
-	}
+    public String getBuildDescription() {
+        String shortSha = getSha().substring(0, 7);
+        return String.format("<b>%s</b> (<a href=\"%s\">%s...</a>) <br> %s", getBranchDescription(), getDiffUrl(), shortSha, getPusher());
+    }
 
-	public String getBranchDescription() {
-		if (isPullRequest()) {
-			return "Pull Request " + getPullRequestNumber();
-		}
-		return getBranch().replace("origin/", "");
-	}
+    public String getBranchDescription() {
+        if (isPullRequest()) {
+            return "Pull Request " + getPullRequestNumber();
+        }
+        return getBranch().replace("origin/", "");
+    }
 
-	public String getPullRequestNumber() {
-		return getPullRequest().getString("number");
-	}
+    public String getPullRequestNumber() {
+        return getPullRequest().getString("number");
+    }
 
-	public String getPusher() {
-		if (isPullRequest()) {
-			return payloadJson.getJSONObject("sender").getString("login");
-		}
-		return payloadJson.getJSONObject("pusher").getString("name");
-	}
+    public String getPusher() {
+        if (isPullRequest()) {
+            return payloadJson.getJSONObject("sender").getString("login");
+        }
+        return payloadJson.getJSONObject("pusher").getString("name");
+    }
 
-	public String getDiffUrl() {
-		if (isPullRequest()) {
-			return getPullRequest().getString("html_url");
-		} else {
-			return payloadJson.getString("compare");
-		}
-	}
+    public String getDiffUrl() {
+        if (isPullRequest()) {
+            return getPullRequest().getString("html_url");
+        } else {
+            return payloadJson.getString("compare");
+        }
+    }
 
-	public String getProjectUrl() {
+    public String getProjectUrl() {
         if(isPullRequest()){
             return getPullRequest().getJSONObject("base").getJSONObject("repo").getString("html_url");
         }
-		return  payloadJson.getJSONObject("repository").getString("url");
-	}
+        return  payloadJson.getJSONObject("repository").getString("url");
+    }
 
-	public List<GithubLogEntry> getLogEntries() {
-		List<GithubLogEntry> logEntries = new ArrayList<GithubLogEntry>();
-		if (!isPullRequest()) {
-			JSONArray commits = payloadJson.getJSONArray("commits");
-			for (Object commit : commits) {
-				logEntries.add(convertToLogEntry((Map<String, Object>) commit));
-			}
-		}
-		return logEntries;
-	}
+    public List<GithubLogEntry> getLogEntries() {
+        List<GithubLogEntry> logEntries = new ArrayList<GithubLogEntry>();
+        if (!isPullRequest()) {
+            JSONArray commits = payloadJson.getJSONArray("commits");
+            for (Object commit : commits) {
+                logEntries.add(convertToLogEntry((Map<String, Object>) commit));
+            }
+        }
+        return logEntries;
+    }
 
-	private GithubLogEntry convertToLogEntry(Map<String, Object> commit) {
-		return new GithubLogEntry(commit.get("message").toString(), commit.get("url").toString(), commit.get("id").toString());
-	}
+    private GithubLogEntry convertToLogEntry(Map<String, Object> commit) {
+        return new GithubLogEntry(commit.get("message").toString(), commit.get("url").toString(), commit.get("id").toString());
+    }
 }

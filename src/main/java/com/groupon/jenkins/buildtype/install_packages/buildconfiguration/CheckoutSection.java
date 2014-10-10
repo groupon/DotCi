@@ -29,18 +29,18 @@ import hudson.matrix.Combination;
 
 public class CheckoutSection extends ConfigSection<ListValue<String>> {
 
-	public static final String NAME = "checkout";
+    public static final String NAME = "checkout";
 
-	protected CheckoutSection(ListValue listValue) {
-		super(NAME, listValue, MergeStrategy.REPLACE);
-	}
+    protected CheckoutSection(ListValue listValue) {
+        super(NAME, listValue, MergeStrategy.REPLACE);
+    }
 
-	@Override
-	public ShellCommands toScript(Combination combination) {
-		return getCheckoutCommands();
-	}
+    @Override
+    public ShellCommands toScript(Combination combination) {
+        return getCheckoutCommands();
+    }
 
-	public ShellCommands getCheckoutCommands() {
-		return new ShellCommands(getConfigValue().getValue());
-	}
+    public ShellCommands getCheckoutCommands() {
+        return new ShellCommands(getConfigValue().getValue());
+    }
 }

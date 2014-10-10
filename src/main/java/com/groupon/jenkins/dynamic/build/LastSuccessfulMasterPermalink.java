@@ -31,19 +31,19 @@ import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 
 public class LastSuccessfulMasterPermalink extends Permalink {
 
-	@Override
-	public String getDisplayName() {
-		return "Last Successful Master";
-	}
+    @Override
+    public String getDisplayName() {
+        return "Last Successful Master";
+    }
 
-	@Override
-	public String getId() {
-		return "lastSuccessfulMaster";
-	}
+    @Override
+    public String getId() {
+        return "lastSuccessfulMaster";
+    }
 
-	@Override
-	public Run<?, ?> resolve(Job<?, ?> job) {
-		return (Run<?, ?>) new DynamicBuildRepository().getLastSuccessfulBuild((DbBackedProject) job, "master");
-	}
+    @Override
+    public Run<?, ?> resolve(Job<?, ?> job) {
+        return (Run<?, ?>) new DynamicBuildRepository().getLastSuccessfulBuild((DbBackedProject) job, "master");
+    }
 
 }

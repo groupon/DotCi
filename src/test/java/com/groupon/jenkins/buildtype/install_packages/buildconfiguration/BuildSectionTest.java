@@ -32,42 +32,42 @@ import static org.junit.Assert.assertTrue;
 
 public class BuildSectionTest {
 
-	@Test
-	public void should_be_multi_config_if_section_is_parallized() {
-		BuildSection buildSection = new BuildSection(configMap("run", map("spec", "balh", "cuccumber", "cucke")));
-		assertTrue(buildSection.isMultiScript());
-	}
+    @Test
+    public void should_be_multi_config_if_section_is_parallized() {
+        BuildSection buildSection = new BuildSection(configMap("run", map("spec", "balh", "cuccumber", "cucke")));
+        assertTrue(buildSection.isMultiScript());
+    }
 
-	@Test
-	public void should_not_be_multi_config_if_section_is_not_parallized() {
-		BuildSection buildSection = new BuildSection(configMap("run", map("spec", "balh")));
-		assertFalse(buildSection.isMultiScript());
-	}
+    @Test
+    public void should_not_be_multi_config_if_section_is_not_parallized() {
+        BuildSection buildSection = new BuildSection(configMap("run", map("spec", "balh")));
+        assertFalse(buildSection.isMultiScript());
+    }
 
-	@Test
-	public void should_be_multi_config_if_post_build_section_is_specified() {
-		BuildSection buildSection = new BuildSection(configMap("run", map("spec", "balh"), "after", "deploy blah"));
-		assertTrue(buildSection.isMultiScript());
-	}
+    @Test
+    public void should_be_multi_config_if_post_build_section_is_specified() {
+        BuildSection buildSection = new BuildSection(configMap("run", map("spec", "balh"), "after", "deploy blah"));
+        assertTrue(buildSection.isMultiScript());
+    }
 
-	@Test
-	public void should_inculde_post_build_script_in_script_keys() {
-		BuildSection buildSection = new BuildSection(configMap("run", map("spec", "balh"), "after", "deploy blah"));
-		assertTrue(buildSection.getScriptKeys().contains("default"));
-		assertTrue(buildSection.getScriptKeys().contains("post_build"));
-	}
+    @Test
+    public void should_inculde_post_build_script_in_script_keys() {
+        BuildSection buildSection = new BuildSection(configMap("run", map("spec", "balh"), "after", "deploy blah"));
+        assertTrue(buildSection.getScriptKeys().contains("default"));
+        assertTrue(buildSection.getScriptKeys().contains("post_build"));
+    }
 
-	@Test
-	public void should_not_inculde_post_build_script_in_script_keys() {
-		BuildSection buildSection = new BuildSection(configMap("run", map("spec", "balh", "cucumber", "asdfas")));
-		assertTrue(buildSection.getScriptKeys().contains("spec"));
-		assertFalse(buildSection.getScriptKeys().contains("post_build"));
-	}
+    @Test
+    public void should_not_inculde_post_build_script_in_script_keys() {
+        BuildSection buildSection = new BuildSection(configMap("run", map("spec", "balh", "cucumber", "asdfas")));
+        assertTrue(buildSection.getScriptKeys().contains("spec"));
+        assertFalse(buildSection.getScriptKeys().contains("post_build"));
+    }
 
-	@Test
-	public void should_skip_build_if_skip_is_true() {
-		BuildSection buildSection = new BuildSection(configMap("skip", true));
-		assertTrue(buildSection.isSkipped());
-	}
+    @Test
+    public void should_skip_build_if_skip_is_true() {
+        BuildSection buildSection = new BuildSection(configMap("skip", true));
+        assertTrue(buildSection.isSkipped());
+    }
 
 }

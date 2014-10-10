@@ -37,12 +37,12 @@ import java.util.List;
  */
 public class NoDuplicatesParameterAction extends ParametersAction {
 
-	public NoDuplicatesParameterAction(StringParameterValue parameterValue) {
-		super(parameterValue);
-	}
+    public NoDuplicatesParameterAction(StringParameterValue parameterValue) {
+        super(parameterValue);
+    }
 
-	@Override
-	public boolean shouldSchedule(List<Action> actions) {
-		return true;
-	}
+    @Override
+    public boolean shouldSchedule(List<Action> actions) {
+        return true;
+    }
 }

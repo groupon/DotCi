@@ -34,11 +34,11 @@ import static com.groupon.jenkins.testhelpers.TestHelpers.map;
 
 public class VarsSectionTest {
 
-	@Test
-	public void should_export_environment_variables() {
-		VarsSection varsSection = new VarsSection(new MapValue<String, String>(map("RBXOPT", "-X19", "JRUBY_OPTS", "--1.9")));
-		ShellCommands script = varsSection.toScript(new Combination(map("script", "main")));
-		assertTrue(script.toShellScript().contains("export RBXOPT=-X19"));
-		assertTrue(script.toShellScript().contains("export JRUBY_OPTS=--1.9"));
-	}
+    @Test
+    public void should_export_environment_variables() {
+        VarsSection varsSection = new VarsSection(new MapValue<String, String>(map("RBXOPT", "-X19", "JRUBY_OPTS", "--1.9")));
+        ShellCommands script = varsSection.toScript(new Combination(map("script", "main")));
+        assertTrue(script.toShellScript().contains("export RBXOPT=-X19"));
+        assertTrue(script.toShellScript().contains("export JRUBY_OPTS=--1.9"));
+    }
 }

@@ -45,46 +45,46 @@ import static org.mockito.Mockito.when;
 
 public class DynamicBuildModelTest {
 
-	@Test
-	public void should_add_manual_build_cause_before_run_if_build_is_manually_kicked_off() {
-		DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().manualStart("surya", "master").get();
-		GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
-		when(githubRepositoryService.getShaForBranch("master")).thenReturn("masterSha");
-		DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
-		model.run();
-		verify(dynamicBuild).addCause(new ManualBuildCause(new GitBranch("master"), "masterSha", "surya"));
-	}
+    @Test
+    public void should_add_manual_build_cause_before_run_if_build_is_manually_kicked_off() {
+        DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().manualStart("surya", "master").get();
+        GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
+        when(githubRepositoryService.getShaForBranch("master")).thenReturn("masterSha");
+        DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
+        model.run();
+        verify(dynamicBuild).addCause(new ManualBuildCause(new GitBranch("master"), "masterSha", "surya"));
+    }
 
-	@Test
-	public void should_delete_sub_build_when_build_is_deleted() throws IOException {
-		DynamicSubBuild subBuild = mock(DynamicSubBuild.class);
-		DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().withSubBuilds(subBuild).get();
-		GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
-		DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
+    @Test
+    public void should_delete_sub_build_when_build_is_deleted() throws IOException {
+        DynamicSubBuild subBuild = mock(DynamicSubBuild.class);
+        DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().withSubBuilds(subBuild).get();
+        GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
+        DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
 
-		model.deleteBuild();
+        model.deleteBuild();
 
-		verify(dynamicBuild).delete();
-		verify(subBuild).delete();
-	}
+        verify(dynamicBuild).delete();
+        verify(subBuild).delete();
+    }
 
-	@Test
-	public void should_return_null_cause_if_buildcause_has_not_been_initialized() {
-		GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
-		DynamicBuildModel model = new DynamicBuildModel(newBuild().get(), githubRepositoryService);
-		assertEquals(BuildCause.NULL_BUILD_CAUSE, model.getBuildCause());
-	}
+    @Test
+    public void should_return_null_cause_if_buildcause_has_not_been_initialized() {
+        GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
+        DynamicBuildModel model = new DynamicBuildModel(newBuild().get(), githubRepositoryService);
+        assertEquals(BuildCause.NULL_BUILD_CAUSE, model.getBuildCause());
+    }
 
-	@Test
-	public void should_add_unknown_build_cause_if_build_kickedoff_by_an_upstream_build() {
-		DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().get();
-		when(dynamicBuild.getCause()).thenReturn(BuildCause.NULL_BUILD_CAUSE);
-		GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
-		DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
-		model.run();
-		ArgumentCaptor<UnknownBuildCause> argument = ArgumentCaptor.forClass(UnknownBuildCause.class);
-		verify(dynamicBuild).addCause(argument.capture());
-		UnknownBuildCause buildCause = argument.getValue();
-		assertNotNull(buildCause);
-	}
+    @Test
+    public void should_add_unknown_build_cause_if_build_kickedoff_by_an_upstream_build() {
+        DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().get();
+        when(dynamicBuild.getCause()).thenReturn(BuildCause.NULL_BUILD_CAUSE);
+        GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
+        DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
+        model.run();
+        ArgumentCaptor<UnknownBuildCause> argument = ArgumentCaptor.forClass(UnknownBuildCause.class);
+        verify(dynamicBuild).addCause(argument.capture());
+        UnknownBuildCause buildCause = argument.getValue();
+        assertNotNull(buildCause);
+    }
 }

@@ -36,41 +36,41 @@ import java.util.Map;
 
 public class PluginsSection extends ConfigSection<ListValue<?>> {
 
-	public static final String NAME = "plugins";
+    public static final String NAME = "plugins";
 
-	public PluginsSection(ListValue<?> configValue) {
-		super(NAME, configValue, MergeStrategy.APPEND);
-	}
+    public PluginsSection(ListValue<?> configValue) {
+        super(NAME, configValue, MergeStrategy.APPEND);
+    }
 
-	public List<DotCiPluginAdapter> getPlugins() {
-		if (getConfigValue().isEmpty()) {
-			return Collections.emptyList();
-		}
-		List<?> pluginSpecs = getConfigValue().getValue();
-		List<DotCiPluginAdapter> plugins = new ArrayList<DotCiPluginAdapter>(pluginSpecs.size());
-		for (Object pluginSpec : pluginSpecs) {
-			String pluginName;
-			Object options;
-			if (pluginSpec instanceof String) {
-				pluginName = (String) pluginSpec;
-				options = new HashMap<Object, Object>();
-			} else { // has to be a Map
-				Map<String, Object> pluginSpecMap = (Map<String, Object>) pluginSpec;
-				pluginName = Iterables.getOnlyElement(pluginSpecMap.keySet());
-				options = pluginSpecMap.get(pluginName);
-			}
-			plugins.add(createPlugin(pluginName, options));
-		}
-		return plugins;
-	}
+    public List<DotCiPluginAdapter> getPlugins() {
+        if (getConfigValue().isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<?> pluginSpecs = getConfigValue().getValue();
+        List<DotCiPluginAdapter> plugins = new ArrayList<DotCiPluginAdapter>(pluginSpecs.size());
+        for (Object pluginSpec : pluginSpecs) {
+            String pluginName;
+            Object options;
+            if (pluginSpec instanceof String) {
+                pluginName = (String) pluginSpec;
+                options = new HashMap<Object, Object>();
+            } else { // has to be a Map
+                Map<String, Object> pluginSpecMap = (Map<String, Object>) pluginSpec;
+                pluginName = Iterables.getOnlyElement(pluginSpecMap.keySet());
+                options = pluginSpecMap.get(pluginName);
+            }
+            plugins.add(createPlugin(pluginName, options));
+        }
+        return plugins;
+    }
 
-	protected DotCiPluginAdapter createPlugin(String name, Object options) {
-		return DotCiPluginAdapter.create(name, options);
-	}
+    protected DotCiPluginAdapter createPlugin(String name, Object options) {
+        return DotCiPluginAdapter.create(name, options);
+    }
 
-	@Override
-	public ShellCommands toScript(Combination combination) {
-		return ShellCommands.NOOP;
-	}
+    @Override
+    public ShellCommands toScript(Combination combination) {
+        return ShellCommands.NOOP;
+    }
 
 }

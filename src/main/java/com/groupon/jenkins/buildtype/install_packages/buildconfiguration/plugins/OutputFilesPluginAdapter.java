@@ -34,16 +34,16 @@ import java.io.IOException;
 @Extension
 public class OutputFilesPluginAdapter extends DotCiPluginAdapter {
 
-	public OutputFilesPluginAdapter() {
-		super("output_files", "");
-	}
+    public OutputFilesPluginAdapter() {
+        super("output_files", "");
+    }
 
-	@Override
-	public boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener) {
-		return true;
-	}
+    @Override
+    public boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener) {
+        return true;
+    }
 
-	public void runFinished(DynamicSubBuild run, DynamicBuild parent, BuildListener listener) throws IOException {
-		copyFiles(run, parent, (String) options, listener);
-	}
+    public void runFinished(DynamicSubBuild run, DynamicBuild parent, BuildListener listener) throws IOException {
+        copyFiles(run, parent, (String) options, listener);
+    }
 }

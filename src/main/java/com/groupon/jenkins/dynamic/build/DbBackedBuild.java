@@ -104,46 +104,46 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
     }
 
 
-	private static final Logger LOGGER = Logger.getLogger(DbBackedBuild.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DbBackedBuild.class.getName());
 
-	protected DbBackedBuild(P project) throws IOException {
-		super(project);
-	}
+    protected DbBackedBuild(P project) throws IOException {
+        super(project);
+    }
 
-	public DbBackedBuild(P project, File buildDir) throws IOException {
-		super(project, buildDir);
-	}
+    public DbBackedBuild(P project, File buildDir) throws IOException {
+        super(project, buildDir);
+    }
 
-	public DbBackedBuild(P job, Calendar timestamp) {
-		super(job, timestamp);
-	}
+    public DbBackedBuild(P job, Calendar timestamp) {
+        super(job, timestamp);
+    }
 
-	@Override
-	public synchronized void save() throws IOException {
-		LOGGER.info("saving build:" + getName() + ": " + getNumber());
-		new DynamicBuildRepository().save(this);
-	}
+    @Override
+    public synchronized void save() throws IOException {
+        LOGGER.info("saving build:" + getName() + ": " + getNumber());
+        new DynamicBuildRepository().save(this);
+    }
 
-	@Override
-	protected void onEndBuilding() {
-		super.onEndBuilding();
-		try {
-			this.save();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    @Override
+    protected void onEndBuilding() {
+        super.onEndBuilding();
+        try {
+            this.save();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Deprecated
     // Keeping this so we can more easily migrate from existing systems
-	public void restoreFromDb(AbstractProject project, Map<String, Object> input) {
-		String state = ((String) input.get("state"));
-		Date date = ((Date) input.get("last_updated"));
-		setField(project, "project");
-		setField(date.getTime(), "timestamp");
-		setField(getState(state), "state");
+    public void restoreFromDb(AbstractProject project, Map<String, Object> input) {
+        String state = ((String) input.get("state"));
+        Date date = ((Date) input.get("last_updated"));
+        setField(project, "project");
+        setField(date.getTime(), "timestamp");
+        setField(getState(state), "state");
         super.onLoad();
-	}
+    }
 
     public String getState() {
         String stateName = null;
@@ -157,146 +157,146 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
 
         return stateName;
     }
-	public Object getState(String state) {
-		try {
-			return Enum.valueOf((Class<Enum>) Class.forName("hudson.model.Run$State"), state);
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public Object getState(String state) {
+        try {
+            return Enum.valueOf((Class<Enum>) Class.forName("hudson.model.Run$State"), state);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	@Override
-	public boolean hasParticipant(User user) {
-		return false;
-	}
+    @Override
+    public boolean hasParticipant(User user) {
+        return false;
+    }
 
-	@Override
-	public B getNextBuild() {
-		return getParent().getBuildByNumber(getNumber() + 1);
-	}
+    @Override
+    public B getNextBuild() {
+        return getParent().getBuildByNumber(getNumber() + 1);
+    }
 
-	@Override
-	public B getPreviousBuild() {
-		return null;
-	}
+    @Override
+    public B getPreviousBuild() {
+        return null;
+    }
 
-	private void setField(Object project, String fieldStr) {
-		Field field;
-		try {
-			field = Run.class.getDeclaredField(fieldStr);
-			field.setAccessible(true);
-			field.set(this, project);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+    private void setField(Object project, String fieldStr) {
+        Field field;
+        try {
+            field = Run.class.getDeclaredField(fieldStr);
+            field.setAccessible(true);
+            field.set(this, project);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	@Override
-	@Exported
-	public Executor getExecutor() {
-		Jenkins jenkins = Jenkins.getInstance();
-		if (jenkins == null) {
-			return null;
-		}
-		for (Computer computer : jenkins.getComputers()) {
-			for (Executor executor : computer.getExecutors()) {
-				if (isCurrent(executor)) {
-					return executor;
-				}
-			}
-		}
-		return null;
-	}
+    @Override
+    @Exported
+    public Executor getExecutor() {
+        Jenkins jenkins = Jenkins.getInstance();
+        if (jenkins == null) {
+            return null;
+        }
+        for (Computer computer : jenkins.getComputers()) {
+            for (Executor executor : computer.getExecutors()) {
+                if (isCurrent(executor)) {
+                    return executor;
+                }
+            }
+        }
+        return null;
+    }
 
-	private boolean isCurrent(Executor executor) {
-		Executable currentExecutable = executor.getCurrentExecutable();
-		return currentExecutable != null && currentExecutable instanceof DbBackedBuild && this.equals(currentExecutable);
-	}
+    private boolean isCurrent(Executor executor) {
+        Executable currentExecutable = executor.getCurrentExecutable();
+        return currentExecutable != null && currentExecutable instanceof DbBackedBuild && this.equals(currentExecutable);
+    }
 
-	@Override
-	public Executor getOneOffExecutor() {
-		for (Computer c : Jenkins.getInstance().getComputers()) {
-			for (Executor e : c.getOneOffExecutors()) {
-				if (isCurrent(e))
-					return e;
-			}
-		}
-		return null;
-	}
+    @Override
+    public Executor getOneOffExecutor() {
+        for (Computer c : Jenkins.getInstance().getComputers()) {
+            for (Executor e : c.getOneOffExecutors()) {
+                if (isCurrent(e))
+                    return e;
+            }
+        }
+        return null;
+    }
 
-	@Override
-	@Exported
-	public ChangeLogSet<? extends Entry> getChangeSet() {
-		return new GithubChangeLogSet(this, getCause().getChangeLogEntries());
-	}
+    @Override
+    @Exported
+    public ChangeLogSet<? extends Entry> getChangeSet() {
+        return new GithubChangeLogSet(this, getCause().getChangeLogEntries());
+    }
 
-	public String getName() {
-		return getParent().getName();
-	}
+    public String getName() {
+        return getParent().getName();
+    }
 
-	@Override
-	@Exported
-	public Set<User> getCulprits() {
-		return new HashSet<User>();
-	}
+    @Override
+    @Exported
+    public Set<User> getCulprits() {
+        return new HashSet<User>();
+    }
 
-	public GitBranch getCurrentBranch() {
-		return getCause().getBranch();
-	}
+    public GitBranch getCurrentBranch() {
+        return getCause().getBranch();
+    }
 
-	public String getDisplayTime() {
-		return Util.getPastTimeString(System.currentTimeMillis() - getTimestamp().getTimeInMillis()) + " ago";
-	}
+    public String getDisplayTime() {
+        return Util.getPastTimeString(System.currentTimeMillis() - getTimestamp().getTimeInMillis()) + " ago";
+    }
 
-	public abstract BuildCause getCause();
+    public abstract BuildCause getCause();
 
-	@Override
-	public EnvVars getEnvironment(TaskListener log) throws IOException, InterruptedException {
-		EnvVars envVars = getJenkinsEnvVariables(log);
-		envVars.putAll(getDotCiEnvVars(envVars));
-		return envVars;
-	}
+    @Override
+    public EnvVars getEnvironment(TaskListener log) throws IOException, InterruptedException {
+        EnvVars envVars = getJenkinsEnvVariables(log);
+        envVars.putAll(getDotCiEnvVars(envVars));
+        return envVars;
+    }
 
-	public Map<String, String> getDotCiEnvVars(EnvVars jenkinsEnvVars) {
-		Map<String, String> envVars = new HashMap<String, String>();
-		envVars.put("DOTCI_BRANCH", jenkinsEnvVars.get("BRANCH"));
-		envVars.put("DOTCI", "true");
-		envVars.put("CI", "true");
-		if (getCause() != null) {
-			envVars.putAll(getCause().getEnvVars());
-		}
-		return envVars;
-	}
+    public Map<String, String> getDotCiEnvVars(EnvVars jenkinsEnvVars) {
+        Map<String, String> envVars = new HashMap<String, String>();
+        envVars.put("DOTCI_BRANCH", jenkinsEnvVars.get("BRANCH"));
+        envVars.put("DOTCI", "true");
+        envVars.put("CI", "true");
+        if (getCause() != null) {
+            envVars.putAll(getCause().getEnvVars());
+        }
+        return envVars;
+    }
 
-	public String getBuildId() {
-		return getProject().getId() + getId();
-	}
+    public String getBuildId() {
+        return getProject().getId() + getId();
+    }
 
-	public EnvVars getJenkinsEnvVariables(TaskListener log) {
-		try {
-			return super.getEnvironment(log);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public EnvVars getJenkinsEnvVariables(TaskListener log) {
+        try {
+            return super.getEnvironment(log);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public boolean isSkipped() {
-		return getAction(SkippedBuildAction.class) != null;
-	}
+    public boolean isSkipped() {
+        return getAction(SkippedBuildAction.class) != null;
+    }
 
-	@Override
-	public String getWhyKeepLog() {
-		return null;
-	}
+    @Override
+    public String getWhyKeepLog() {
+        return null;
+    }
 
-	public Run getPreviousFinishedBuildOfSameBranch(BuildListener listener) {
-		return new DynamicBuildRepository().getPreviousFinishedBuildOfSameBranch(this, getCurrentBranch().toString());
-	}
+    public Run getPreviousFinishedBuildOfSameBranch(BuildListener listener) {
+        return new DynamicBuildRepository().getPreviousFinishedBuildOfSameBranch(this, getCurrentBranch().toString());
+    }
 
-	public String getPusher() {
-		return getCause() == null ? null : getCause().getPusher();
-	}
+    public String getPusher() {
+        return getCause() == null ? null : getCause().getPusher();
+    }
 
-	public abstract String getSha();
+    public abstract String getSha();
 
 }

@@ -29,14 +29,14 @@ import hudson.matrix.Combination;
 
 public class BeforeSection extends ConfigSection<ListOrSingleValue<String>> {
 
-	public static final String NAME = "before";
+    public static final String NAME = "before";
 
-	protected BeforeSection(ListOrSingleValue<String> commands) {
-		super(NAME, commands, MergeStrategy.REPLACE);
-	}
+    protected BeforeSection(ListOrSingleValue<String> commands) {
+        super(NAME, commands, MergeStrategy.REPLACE);
+    }
 
-	@Override
-	public ShellCommands toScript(Combination combination) {
-		return  new ShellCommands(getConfigValue().getValues().toArray(new String[] {}));
-	}
+    @Override
+    public ShellCommands toScript(Combination combination) {
+        return  new ShellCommands(getConfigValue().getValues().toArray(new String[] {}));
+    }
 }

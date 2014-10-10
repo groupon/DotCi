@@ -33,53 +33,53 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ConfigSectionTest {
-	@Test
-	public void should_merge_only_if_other_config_is_not_empty() {
-		ConfigSection<ListOrSingleValue<String>> configSection = getConfigSection("meow", MergeStrategy.REPLACE);
-		ConfigSection<ListOrSingleValue<String>> replacedWithSection = getConfigSection(null, MergeStrategy.REPLACE);
+    @Test
+    public void should_merge_only_if_other_config_is_not_empty() {
+        ConfigSection<ListOrSingleValue<String>> configSection = getConfigSection("meow", MergeStrategy.REPLACE);
+        ConfigSection<ListOrSingleValue<String>> replacedWithSection = getConfigSection(null, MergeStrategy.REPLACE);
 
-		configSection.merge(replacedWithSection);
-		assertFalse(configSection.getConfigValue().isEmpty());
-		assertEquals("meow", configSection.getConfigValue().getValues().get(0));
-	}
+        configSection.merge(replacedWithSection);
+        assertFalse(configSection.getConfigValue().isEmpty());
+        assertEquals("meow", configSection.getConfigValue().getValues().get(0));
+    }
 
-	@Test
-	public void should_replace_if_merge_strategy_replace() {
-		ConfigSection<ListOrSingleValue<String>> configSection = getConfigSection("meow", MergeStrategy.REPLACE);
-		ConfigSection<ListOrSingleValue<String>> replacedWithSection = getConfigSection("purr", MergeStrategy.REPLACE);
+    @Test
+    public void should_replace_if_merge_strategy_replace() {
+        ConfigSection<ListOrSingleValue<String>> configSection = getConfigSection("meow", MergeStrategy.REPLACE);
+        ConfigSection<ListOrSingleValue<String>> replacedWithSection = getConfigSection("purr", MergeStrategy.REPLACE);
 
-		configSection.merge(replacedWithSection);
-		assertEquals("purr", configSection.getConfigValue().getValues().get(0));
-	}
+        configSection.merge(replacedWithSection);
+        assertEquals("purr", configSection.getConfigValue().getValues().get(0));
+    }
 
-	@Test
-	public void should_append_if_merge_strategy_append() {
-		ConfigSection<ListOrSingleValue<String>> configSection = getConfigSection("meow", MergeStrategy.APPEND);
-		ConfigSection<ListOrSingleValue<String>> replacedWithSection = getConfigSection("purr", MergeStrategy.REPLACE);
+    @Test
+    public void should_append_if_merge_strategy_append() {
+        ConfigSection<ListOrSingleValue<String>> configSection = getConfigSection("meow", MergeStrategy.APPEND);
+        ConfigSection<ListOrSingleValue<String>> replacedWithSection = getConfigSection("purr", MergeStrategy.REPLACE);
 
-		configSection.merge(replacedWithSection);
-		assertTrue(configSection.getConfigValue().getValues().contains("meow"));
-		assertTrue(configSection.getConfigValue().getValues().contains("purr"));
-	}
+        configSection.merge(replacedWithSection);
+        assertTrue(configSection.getConfigValue().getValues().contains("meow"));
+        assertTrue(configSection.getConfigValue().getValues().contains("purr"));
+    }
 
-	@Test
-	public void should_validate_configvalue_for_errors() {
-		MapValue<String, Object> invalidMapValue = new MapValue<String, Object>("not_a_map");
-		ConfigSection<MapValue<String, Object>> invalidConfigSection = new ConfigSection<MapValue<String, Object>>("", invalidMapValue, MergeStrategy.APPEND) {
-			@Override
-			public ShellCommands toScript(Combination combination) {
-				return null;
-			}
-		};
-		assertFalse(invalidConfigSection.isValid());
-	}
+    @Test
+    public void should_validate_configvalue_for_errors() {
+        MapValue<String, Object> invalidMapValue = new MapValue<String, Object>("not_a_map");
+        ConfigSection<MapValue<String, Object>> invalidConfigSection = new ConfigSection<MapValue<String, Object>>("", invalidMapValue, MergeStrategy.APPEND) {
+            @Override
+            public ShellCommands toScript(Combination combination) {
+                return null;
+            }
+        };
+        assertFalse(invalidConfigSection.isValid());
+    }
 
-	private ConfigSection<ListOrSingleValue<String>> getConfigSection(String configValue, MergeStrategy mergeStrategy) {
-		return new ConfigSection<ListOrSingleValue<String>>("", new ListOrSingleValue<String>(configValue), mergeStrategy) {
-			@Override
-			public ShellCommands toScript(Combination combination) {
-				return null;
-			}
-		};
-	}
+    private ConfigSection<ListOrSingleValue<String>> getConfigSection(String configValue, MergeStrategy mergeStrategy) {
+        return new ConfigSection<ListOrSingleValue<String>>("", new ListOrSingleValue<String>(configValue), mergeStrategy) {
+            @Override
+            public ShellCommands toScript(Combination combination) {
+                return null;
+            }
+        };
+    }
 }

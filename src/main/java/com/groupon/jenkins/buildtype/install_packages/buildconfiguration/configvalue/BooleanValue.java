@@ -25,19 +25,19 @@ package com.groupon.jenkins.buildtype.install_packages.buildconfiguration.config
 
 public class BooleanValue extends ConfigValue<Boolean> {
 
-	public BooleanValue(Object value) {
-		super(value);
-	}
+    public BooleanValue(Object value) {
+        super(value);
+    }
 
-	@Override
-	public void append(ConfigValue<?> config) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void append(ConfigValue<?> config) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public Boolean getValue() {
-		return super.getValue() == null ? Boolean.FALSE : super.getValue();
-	}
+    @Override
+    public Boolean getValue() {
+        return super.getValue() == null ? Boolean.FALSE : super.getValue();
+    }
 
     @Override
     public <T> T getValue(Class<T> returnType) {

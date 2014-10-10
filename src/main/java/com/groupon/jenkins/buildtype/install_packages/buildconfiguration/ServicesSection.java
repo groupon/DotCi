@@ -37,63 +37,63 @@ import static com.groupon.jenkins.buildtype.dockerimage.DockerCommandBuilder.doc
 
 public class ServicesSection extends ConfigSection<ListOrSingleValue<String>> {
 
-	public static final String NAME = "services";
+    public static final String NAME = "services";
 
-	protected ServicesSection(ListOrSingleValue<String> configValue) {
-		super(NAME, configValue, MergeStrategy.APPEND);
-	}
+    protected ServicesSection(ListOrSingleValue<String> configValue) {
+        super(NAME, configValue, MergeStrategy.APPEND);
+    }
 
-	@Override
-	public ShellCommands toScript(Combination combination) {
-		return ShellCommands.NOOP;
-	}
+    @Override
+    public ShellCommands toScript(Combination combination) {
+        return ShellCommands.NOOP;
+    }
 
-	public List<String> getServiceStartCommands(String buildId) {
-		List<String> commands = new LinkedList<String>();
-		for (String serviceImageName : getConfigValue().getValues()) {
-			commands.add(dockerCommand("pull").args(serviceImageName).get());
-			/* @formatter:off */
-			String runCommand = dockerCommand("run")
-			.flag("d")
-			.flag("name",getContainerId(serviceImageName, buildId))
-			.args(serviceImageName)
-			.get();
-		   /* @formatter:on */
-			commands.add(runCommand);
-		}
-		return commands;
-	}
+    public List<String> getServiceStartCommands(String buildId) {
+        List<String> commands = new LinkedList<String>();
+        for (String serviceImageName : getConfigValue().getValues()) {
+            commands.add(dockerCommand("pull").args(serviceImageName).get());
+            /* @formatter:off */
+            String runCommand = dockerCommand("run")
+            .flag("d")
+            .flag("name",getContainerId(serviceImageName, buildId))
+            .args(serviceImageName)
+            .get();
+           /* @formatter:on */
+            commands.add(runCommand);
+        }
+        return commands;
+    }
 
-	protected String getContainerId(String serviceImageName, String buildId) {
-		String serviceId = serviceImageName.replaceAll("/", "_").replaceAll(":", "_").replaceAll("\\.", "_");
-		return serviceId + "_" + buildId;
-	}
+    protected String getContainerId(String serviceImageName, String buildId) {
+        String serviceId = serviceImageName.replaceAll("/", "_").replaceAll(":", "_").replaceAll("\\.", "_");
+        return serviceId + "_" + buildId;
+    }
 
-	public Iterable<String> getContainerLinkCommands(final String buildId) {
-		return Iterables.transform(getConfigValue().getValues(), new Function<String, String>() {
-			@Override
-			public String apply(@Nullable String serviceImageName) {
-				String serviceId = getServiceRuntimeId(serviceImageName);
-				String runningImageId = getContainerId(serviceImageName, buildId);
-				return runningImageId + ":" + serviceId;
-			}
-		});
+    public Iterable<String> getContainerLinkCommands(final String buildId) {
+        return Iterables.transform(getConfigValue().getValues(), new Function<String, String>() {
+            @Override
+            public String apply(@Nullable String serviceImageName) {
+                String serviceId = getServiceRuntimeId(serviceImageName);
+                String runningImageId = getContainerId(serviceImageName, buildId);
+                return runningImageId + ":" + serviceId;
+            }
+        });
 
-	}
+    }
 
-	private String getServiceRuntimeId(String serviceImageName) {
-		String[] serviceParts = serviceImageName.split("/");
-		return serviceParts[serviceParts.length - 1].split(":")[0];
-	}
+    private String getServiceRuntimeId(String serviceImageName) {
+        String[] serviceParts = serviceImageName.split("/");
+        return serviceParts[serviceParts.length - 1].split(":")[0];
+    }
 
-	public List<String> getCleanupCommands(String buildId) {
-		List<String> commands = new LinkedList<String>();
-		for (String serviceImageName : getConfigValue().getValues()) {
-			String killCommand = dockerCommand("kill").args(getContainerId(serviceImageName, buildId)).get();
-			String removeCommand = dockerCommand("rm").args(getContainerId(serviceImageName, buildId)).get();
-			commands.add(killCommand);
-			commands.add(removeCommand);
-		}
-		return commands;
-	}
+    public List<String> getCleanupCommands(String buildId) {
+        List<String> commands = new LinkedList<String>();
+        for (String serviceImageName : getConfigValue().getValues()) {
+            String killCommand = dockerCommand("kill").args(getContainerId(serviceImageName, buildId)).get();
+            String removeCommand = dockerCommand("rm").args(getContainerId(serviceImageName, buildId)).get();
+            commands.add(killCommand);
+            commands.add(removeCommand);
+        }
+        return commands;
+    }
 }

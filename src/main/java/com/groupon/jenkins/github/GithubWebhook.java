@@ -44,66 +44,66 @@ import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 @Extension
 @ExportedBean
 public class GithubWebhook implements UnprotectedRootAction {
-	private static final Logger LOGGER = Logger.getLogger(GithubWebhook.class.getName());
-	private final SequentialExecutionQueue queue = new SequentialExecutionQueue(Executors.newSingleThreadExecutor());
+    private static final Logger LOGGER = Logger.getLogger(GithubWebhook.class.getName());
+    private final SequentialExecutionQueue queue = new SequentialExecutionQueue(Executors.newSingleThreadExecutor());
 
-	@Override
-	public String getUrlName() {
-		return "githook";
-	}
+    @Override
+    public String getUrlName() {
+        return "githook";
+    }
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void doIndex(StaplerRequest req, StaplerResponse response) throws IOException {
-		String payload = req.getParameter("payload");
-		if (StringUtils.isEmpty(payload) && "POST".equalsIgnoreCase(req.getMethod())) {
-			payload = getRequestPayload(req);
-		}
-		if (StringUtils.isEmpty(payload)) {
-			throw new IllegalArgumentException("Not intended to be browsed interactively (must specify payload parameter)");
-		}
-		processGitHubPayload(payload);
-	}
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public void doIndex(StaplerRequest req, StaplerResponse response) throws IOException {
+        String payload = req.getParameter("payload");
+        if (StringUtils.isEmpty(payload) && "POST".equalsIgnoreCase(req.getMethod())) {
+            payload = getRequestPayload(req);
+        }
+        if (StringUtils.isEmpty(payload)) {
+            throw new IllegalArgumentException("Not intended to be browsed interactively (must specify payload parameter)");
+        }
+        processGitHubPayload(payload);
+    }
 
-	protected String getRequestPayload(StaplerRequest req) throws IOException {
-		return CharStreams.toString(req.getReader());
-	}
+    protected String getRequestPayload(StaplerRequest req) throws IOException {
+        return CharStreams.toString(req.getReader());
+    }
 
-	public void processGitHubPayload(String payloadData) {
-		final Payload payload = makePayload(payloadData);
-		LOGGER.info("Received POST by " + payload.getPusher());
-		if (payload.needsBuild()) {
-			LOGGER.info("Received kicking off build for " + payload.getProjectUrl());
-			for (final AbstractProject<?, ?> job : makeDynamicProjectRepo().getJobsFor(payload.getProjectUrl())) {
+    public void processGitHubPayload(String payloadData) {
+        final Payload payload = makePayload(payloadData);
+        LOGGER.info("Received POST by " + payload.getPusher());
+        if (payload.needsBuild()) {
+            LOGGER.info("Received kicking off build for " + payload.getProjectUrl());
+            for (final AbstractProject<?, ?> job : makeDynamicProjectRepo().getJobsFor(payload.getProjectUrl())) {
 
-				LOGGER.info("starting job" + job.getName());
-				queue.execute(new Runnable() {
-					@Override
-					public void run() {
-						StringParameterValue branch = new StringParameterValue("BRANCH", payload.getBranch());
-						job.scheduleBuild(0, payload.getCause(), new NoDuplicatesParameterAction(branch));
-					}
-				});
+                LOGGER.info("starting job" + job.getName());
+                queue.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        StringParameterValue branch = new StringParameterValue("BRANCH", payload.getBranch());
+                        job.scheduleBuild(0, payload.getCause(), new NoDuplicatesParameterAction(branch));
+                    }
+                });
 
-			}
-		}
-	}
+            }
+        }
+    }
 
-	protected DynamicProjectRepository makeDynamicProjectRepo() {
-		return new DynamicProjectRepository();
-	}
+    protected DynamicProjectRepository makeDynamicProjectRepo() {
+        return new DynamicProjectRepository();
+    }
 
-	protected Payload makePayload(String payloadData) {
-		return new Payload(payloadData);
-	}
+    protected Payload makePayload(String payloadData) {
+        return new Payload(payloadData);
+    }
 
-	@Override
-	public String getIconFileName() {
-		return null;
-	}
+    @Override
+    public String getIconFileName() {
+        return null;
+    }
 
-	@Override
-	public String getDisplayName() {
-		return null;
-	}
+    @Override
+    public String getDisplayName() {
+        return null;
+    }
 
 }

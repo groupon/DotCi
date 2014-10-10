@@ -37,23 +37,23 @@ import static org.mockito.Mockito.when;
 
 public class GithubReposControllerTest {
 
-	@Test
-	public void should_show_repos_with_admin_access_only() {
-		final GithubCurrentUserService githubCurrentUser = mock(GithubCurrentUserService.class);
-		GHRepository repoWithAdminAccess = mock(GHRepository.class);
-		when(repoWithAdminAccess.hasAdminAccess()).thenReturn(true);
-		when(githubCurrentUser.getRepositories("meow")).thenReturn(map("one", mock(GHRepository.class), "two", repoWithAdminAccess));
-		GithubReposController controller = new GithubReposController() {
-			@Override
-			protected GithubCurrentUserService getCurrentUser() {
-				return githubCurrentUser;
-			}
+    @Test
+    public void should_show_repos_with_admin_access_only() {
+        final GithubCurrentUserService githubCurrentUser = mock(GithubCurrentUserService.class);
+        GHRepository repoWithAdminAccess = mock(GHRepository.class);
+        when(repoWithAdminAccess.hasAdminAccess()).thenReturn(true);
+        when(githubCurrentUser.getRepositories("meow")).thenReturn(map("one", mock(GHRepository.class), "two", repoWithAdminAccess));
+        GithubReposController controller = new GithubReposController() {
+            @Override
+            protected GithubCurrentUserService getCurrentUser() {
+                return githubCurrentUser;
+            }
 
-			@Override
-			public String getCurrentOrg() {
-				return "meow";
-			}
-		};
-		assertEquals(1, Iterables.size(controller.getRepositories()));
-	}
+            @Override
+            public String getCurrentOrg() {
+                return "meow";
+            }
+        };
+        assertEquals(1, Iterables.size(controller.getRepositories()));
+    }
 }

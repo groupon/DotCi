@@ -31,29 +31,29 @@ import static org.junit.Assert.assertTrue;
 
 public class GitBranchTest {
 
-	@Test
-	public void regular_branches_are_not_pull_requests() {
-		assertFalse(new GitBranch("master").isPullRequest());
-	}
+    @Test
+    public void regular_branches_are_not_pull_requests() {
+        assertFalse(new GitBranch("master").isPullRequest());
+    }
 
-	@Test
-	public void pull_request_branches_follow_convention() {
-		assertTrue(new GitBranch("Pull Request: 27").isPullRequest());
-	}
+    @Test
+    public void pull_request_branches_follow_convention() {
+        assertTrue(new GitBranch("Pull Request: 27").isPullRequest());
+    }
 
-	@Test
-	public void should_extract_pull_request_number() {
-		assertEquals(27, new GitBranch("Pull Request: 27").pullRequestNumber());
-	}
+    @Test
+    public void should_extract_pull_request_number() {
+        assertEquals(27, new GitBranch("Pull Request: 27").pullRequestNumber());
+    }
 
-	@Test
-	public void should_return_null_if_not_pull_request_when_asked_for_pull_request_number() {
-		assertFalse(new GitBranch("master").isPullRequest());
-	}
+    @Test
+    public void should_return_null_if_not_pull_request_when_asked_for_pull_request_number() {
+        assertFalse(new GitBranch("master").isPullRequest());
+    }
 
-	@Test
-	public void should_return_pr_number_if_not_pull_request_when_asked_for_pull_request_number() {
-		assertEquals(27, new GitBranch("Pull Request: 27").pullRequestNumber());
-	}
+    @Test
+    public void should_return_pr_number_if_not_pull_request_when_asked_for_pull_request_number() {
+        assertEquals(27, new GitBranch("Pull Request: 27").pullRequestNumber());
+    }
 
 }

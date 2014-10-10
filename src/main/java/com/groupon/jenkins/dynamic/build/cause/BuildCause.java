@@ -32,32 +32,32 @@ import com.groupon.jenkins.github.GitBranch;
 
 public abstract class BuildCause extends Cause {
 
-	public static final BuildCause NULL_BUILD_CAUSE = new NullBuildCause();
+    public static final BuildCause NULL_BUILD_CAUSE = new NullBuildCause();
 
-	public abstract String getSha();
+    public abstract String getSha();
 
-	public abstract String getBuildDescription();
+    public abstract String getBuildDescription();
 
-	public abstract String getPusher();
+    public abstract String getPusher();
 
-	public abstract String getPullRequestNumber();
+    public abstract String getPullRequestNumber();
 
-	public Map<String, String> getEnvVars() {
-		Map<String, String> vars = new HashMap<String, String>();
-		putIfNotNull(vars, "DOTCI_SHA", getSha());
-		putIfNotNull(vars, "DOTCI_PUSHER", getPusher());
-		putIfNotNull(vars, "DOTCI_PULL_REQUEST", getPullRequestNumber());
-		return vars;
-	}
+    public Map<String, String> getEnvVars() {
+        Map<String, String> vars = new HashMap<String, String>();
+        putIfNotNull(vars, "DOTCI_SHA", getSha());
+        putIfNotNull(vars, "DOTCI_PUSHER", getPusher());
+        putIfNotNull(vars, "DOTCI_PULL_REQUEST", getPullRequestNumber());
+        return vars;
+    }
 
-	private static void putIfNotNull(Map<String, String> vars, String key, String value) {
-		if (value != null) {
-			vars.put(key, value);
-		}
-	}
+    private static void putIfNotNull(Map<String, String> vars, String key, String value) {
+        if (value != null) {
+            vars.put(key, value);
+        }
+    }
 
-	public abstract GitBranch getBranch();
+    public abstract GitBranch getBranch();
 
-	public abstract Iterable<GithubLogEntry> getChangeLogEntries();
+    public abstract Iterable<GithubLogEntry> getChangeLogEntries();
 
 }

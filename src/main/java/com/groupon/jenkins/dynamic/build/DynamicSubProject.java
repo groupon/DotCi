@@ -77,174 +77,174 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
 
     private static final Logger LOGGER = Logger.getLogger(DbBackedProject.class.getName());
 
-	private Combination combination;
+    private Combination combination;
 
-	protected DynamicSubProject(DynamicProject parent, String name) {
-		super(parent, name);
-	}
+    protected DynamicSubProject(DynamicProject parent, String name) {
+        super(parent, name);
+    }
 
-	public DynamicSubProject(DynamicProject parent, Combination combination) {
-		this(parent, combination.toString());
-		this.combination = combination;
-	}
+    public DynamicSubProject(DynamicProject parent, Combination combination) {
+        this(parent, combination.toString());
+        this.combination = combination;
+    }
 
-	@Override
-	public boolean isConcurrentBuild() {
-		return getParent().isConcurrentBuild();
-	}
+    @Override
+    public boolean isConcurrentBuild() {
+        return getParent().isConcurrentBuild();
+    }
 
-	@Override
-	public void setConcurrentBuild(boolean b) throws IOException {
-		throw new UnsupportedOperationException("The setting can be only changed at MatrixProject");
-	}
+    @Override
+    public void setConcurrentBuild(boolean b) throws IOException {
+        throw new UnsupportedOperationException("The setting can be only changed at MatrixProject");
+    }
 
-	@Override
-	public int getNextBuildNumber() {
-		AbstractBuild<?, ?> lb = getParent().getLastBuildAnyBranch();
-		int n = lb.getNumber() + 1;
-		return n;
-	}
+    @Override
+    public int getNextBuildNumber() {
+        AbstractBuild<?, ?> lb = getParent().getLastBuildAnyBranch();
+        int n = lb.getNumber() + 1;
+        return n;
+    }
 
-	@Override
-	public int assignBuildNumber() throws IOException {
-		int nb = getNextBuildNumber();
-		DynamicSubBuild r = getLastBuild();
-		if (r != null && r.getNumber() >= nb) {
-			// make sure we don't schedule the same build twice
-			throw new IllegalStateException("Build #" + nb + " is already completed");
-		}
-		return nb;
-	}
+    @Override
+    public int assignBuildNumber() throws IOException {
+        int nb = getNextBuildNumber();
+        DynamicSubBuild r = getLastBuild();
+        if (r != null && r.getNumber() >= nb) {
+            // make sure we don't schedule the same build twice
+            throw new IllegalStateException("Build #" + nb + " is already completed");
+        }
+        return nb;
+    }
 
-	@Override
-	public String getDisplayName() {
-		return getName();
-	}
+    @Override
+    public String getDisplayName() {
+        return getName();
+    }
 
-	@Override
-	public DynamicProject getParent() {
-		return (DynamicProject) super.getParent();
-	}
+    @Override
+    public DynamicProject getParent() {
+        return (DynamicProject) super.getParent();
+    }
 
-	@Override
-	public int getQuietPeriod() {
-		return 0;
-	}
+    @Override
+    public int getQuietPeriod() {
+        return 0;
+    }
 
-	@Override
-	public int getScmCheckoutRetryCount() {
-		return getParent().getScmCheckoutRetryCount();
-	}
+    @Override
+    public int getScmCheckoutRetryCount() {
+        return getParent().getScmCheckoutRetryCount();
+    }
 
-	/**
-	 * Inherit the value from the parent.
-	 */
-	@Override
-	public SCMCheckoutStrategy getScmCheckoutStrategy() {
-		return getParent().getScmCheckoutStrategy();
-	}
+    /**
+     * Inherit the value from the parent.
+     */
+    @Override
+    public SCMCheckoutStrategy getScmCheckoutStrategy() {
+        return getParent().getScmCheckoutStrategy();
+    }
 
-	@Override
-	public boolean isConfigurable() {
-		return false;
-	}
+    @Override
+    public boolean isConfigurable() {
+        return false;
+    }
 
-	@Override
-	protected Class<DynamicSubBuild> getBuildClass() {
-		return DynamicSubBuild.class;
-	}
+    @Override
+    protected Class<DynamicSubBuild> getBuildClass() {
+        return DynamicSubBuild.class;
+    }
 
-	@Override
-	protected HistoryWidget createHistoryWidget() {
-		return new BuildHistoryWidget(this, getBuilds(), HISTORY_ADAPTER);
-	}
+    @Override
+    protected HistoryWidget createHistoryWidget() {
+        return new BuildHistoryWidget(this, getBuilds(), HISTORY_ADAPTER);
+    }
 
-	@Override
-	protected DynamicSubBuild newBuild() throws IOException {
-		List<Action> actions = Executor.currentExecutor().getCurrentWorkUnit().context.actions;
-		DynamicBuild parentBuild = getParent().getLastBuild();
-		CauseAction causeAction = null;
-		for (Action a : actions) {
-			if (a instanceof ParentBuildAction) {
-				parentBuild = ((ParentBuildAction) a).getParent();
-			}
-			if (a instanceof CauseAction) {
-				causeAction = (CauseAction) a;
-			}
+    @Override
+    protected DynamicSubBuild newBuild() throws IOException {
+        List<Action> actions = Executor.currentExecutor().getCurrentWorkUnit().context.actions;
+        DynamicBuild parentBuild = getParent().getLastBuild();
+        CauseAction causeAction = null;
+        for (Action a : actions) {
+            if (a instanceof ParentBuildAction) {
+                parentBuild = ((ParentBuildAction) a).getParent();
+            }
+            if (a instanceof CauseAction) {
+                causeAction = (CauseAction) a;
+            }
 
-		}
+        }
 
-		DynamicSubBuild newBuild = new DynamicSubBuild(this, parentBuild.getTimestamp(), parentBuild.getCause());
+        DynamicSubBuild newBuild = new DynamicSubBuild(this, parentBuild.getTimestamp(), parentBuild.getCause());
 
-		newBuild.number = parentBuild.getNumber();
-		newBuild.save();
-		return newBuild;
-	}
+        newBuild.number = parentBuild.getNumber();
+        newBuild.save();
+        return newBuild;
+    }
 
-	@Override
-	protected void buildDependencyGraph(DependencyGraph graph) {
-	}
+    @Override
+    protected void buildDependencyGraph(DependencyGraph graph) {
+    }
 
-	@Override
-	public DynamicSubProject asProject() {
-		return this;
-	}
+    @Override
+    public DynamicSubProject asProject() {
+        return this;
+    }
 
-	@Override
-	public List<Builder> getBuilders() {
-		return getParent().getBuilders();
-	}
+    @Override
+    public List<Builder> getBuilders() {
+        return getParent().getBuilders();
+    }
 
-	@Override
-	public DescribableList<Builder, Descriptor<Builder>> getBuildersList() {
-		return getParent().getBuildersList();
-	}
+    @Override
+    public DescribableList<Builder, Descriptor<Builder>> getBuildersList() {
+        return getParent().getBuildersList();
+    }
 
-	@Override
-	public Map<Descriptor<BuildWrapper>, BuildWrapper> getBuildWrappers() {
-		return getParent().getBuildWrappers();
-	}
+    @Override
+    public Map<Descriptor<BuildWrapper>, BuildWrapper> getBuildWrappers() {
+        return getParent().getBuildWrappers();
+    }
 
-	@Override
-	public DescribableList<BuildWrapper, Descriptor<BuildWrapper>> getBuildWrappersList() {
-		return getParent().getBuildWrappersList();
-	}
+    @Override
+    public DescribableList<BuildWrapper, Descriptor<BuildWrapper>> getBuildWrappersList() {
+        return getParent().getBuildWrappersList();
+    }
 
-	@Override
-	public Label getAssignedLabel() {
-		return getParent().getAssignedLabel();
-	}
+    @Override
+    public Label getAssignedLabel() {
+        return getParent().getAssignedLabel();
+    }
 
-	@Override
-	public LogRotator getLogRotator() {
-		LogRotator lr = getParent().getLogRotator();
-		int artifactDaysToKeep = lr != null ? lr.getArtifactDaysToKeep() : -1;
-		int artifactNumToKeep = lr != null ? lr.getArtifactNumToKeep() : -1;
-		return new LinkedLogRotator(artifactDaysToKeep, artifactNumToKeep);
-	}
+    @Override
+    public LogRotator getLogRotator() {
+        LogRotator lr = getParent().getLogRotator();
+        int artifactDaysToKeep = lr != null ? lr.getArtifactDaysToKeep() : -1;
+        int artifactNumToKeep = lr != null ? lr.getArtifactNumToKeep() : -1;
+        return new LinkedLogRotator(artifactDaysToKeep, artifactNumToKeep);
+    }
 
-	@Override
-	public SCM getScm() {
-		return getParent().getScm();
-	}
+    @Override
+    public SCM getScm() {
+        return getParent().getScm();
+    }
 
-	public boolean scheduleBuild(ParametersAction parameters, Cause c) {
+    public boolean scheduleBuild(ParametersAction parameters, Cause c) {
 
-		return scheduleBuild(Collections.singletonList(parameters), c);
-	}
+        return scheduleBuild(Collections.singletonList(parameters), c);
+    }
 
-	public boolean scheduleBuild(List<? extends Action> actions, Cause c) {
-		List<Action> allActions = new ArrayList<Action>();
-		if (actions != null) {
-			allActions.addAll(actions);
-		}
+    public boolean scheduleBuild(List<? extends Action> actions, Cause c) {
+        List<Action> allActions = new ArrayList<Action>();
+        if (actions != null) {
+            allActions.addAll(actions);
+        }
 
-		allActions.add(new CauseAction(c));
+        allActions.add(new CauseAction(c));
 
-		return Jenkins.getInstance().getQueue().schedule(this, getQuietPeriod(), allActions) != null;
-	}
+        return Jenkins.getInstance().getQueue().schedule(this, getQuietPeriod(), allActions) != null;
+    }
 
-	public static class ParentBuildAction extends InvisibleAction implements QueueAction {
+    public static class ParentBuildAction extends InvisibleAction implements QueueAction {
         private transient DynamicBuild parentBuild;
 
         public ParentBuildAction(DynamicBuild parentBuild) {
@@ -252,47 +252,47 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
             this.parentBuild = parentBuild;
         }
 
-		@Override
-		public boolean shouldSchedule(List<Action> actions) {
-			return true;
-		}
+        @Override
+        public boolean shouldSchedule(List<Action> actions) {
+            return true;
+        }
 
         public DynamicBuild getParent() {
             return parentBuild;
         }
-	}
+    }
 
-	public Combination getCombination() {
-		return combination;
-	}
+    public Combination getCombination() {
+        return combination;
+    }
 
-	public void setCombination(Combination combination) {
-		this.combination = combination;
-	}
+    public void setCombination(Combination combination) {
+        this.combination = combination;
+    }
 
-	@Override
-	public void onLoad(ItemGroup<? extends Item> parent, String name) throws IOException {
-		try {
-			Field parentField = AbstractItem.class.getDeclaredField("parent");
-			parentField.setAccessible(true);
-			ReflectionUtils.setField(parentField, this, parent);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+    @Override
+    public void onLoad(ItemGroup<? extends Item> parent, String name) throws IOException {
+        try {
+            Field parentField = AbstractItem.class.getDeclaredField("parent");
+            parentField.setAccessible(true);
+            ReflectionUtils.setField(parentField, this, parent);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-		doSetName(name);
-		if (transientActions == null) {
-			transientActions = new Vector<Action>();
-		}
-		updateTransientActions();
-		getBuildersList().setOwner(this);
-		getPublishersList().setOwner(this);
-		getBuildWrappersList().setOwner(this);
+        doSetName(name);
+        if (transientActions == null) {
+            transientActions = new Vector<Action>();
+        }
+        updateTransientActions();
+        getBuildersList().setOwner(this);
+        getPublishersList().setOwner(this);
+        getBuildWrappersList().setOwner(this);
 
         initRepos();
-	}
+    }
 
-	public CurrentBuildState getCurrentStateByNumber(int number) {
-		return dynamicBuildRepository.getCurrentStateByNumber(this, number);
-	}
+    public CurrentBuildState getCurrentStateByNumber(int number) {
+        return dynamicBuildRepository.getCurrentStateByNumber(this, number);
+    }
 }

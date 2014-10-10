@@ -29,22 +29,22 @@ import java.lang.reflect.Method;
 import org.kohsuke.github.GitHub;
 
 public class GithubUtils {
-	public static <T> T getObject(GitHub github, String url, Class<T> clazz) throws InvocationTargetException {
-		try {
-			Method retrieve = github.getClass().getDeclaredMethod("retrieve");
-			retrieve.setAccessible(true);
-			Object requester = retrieve.invoke(github);
-			Method to = requester.getClass().getDeclaredMethod("to", String.class, Class.class);
-			to.setAccessible(true);
-			return (T) to.invoke(requester, url, clazz);
-		} catch (SecurityException e) {
-			throw new RuntimeException(e);
-		} catch (NoSuchMethodException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public static <T> T getObject(GitHub github, String url, Class<T> clazz) throws InvocationTargetException {
+        try {
+            Method retrieve = github.getClass().getDeclaredMethod("retrieve");
+            retrieve.setAccessible(true);
+            Object requester = retrieve.invoke(github);
+            Method to = requester.getClass().getDeclaredMethod("to", String.class, Class.class);
+            to.setAccessible(true);
+            return (T) to.invoke(requester, url, clazz);
+        } catch (SecurityException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

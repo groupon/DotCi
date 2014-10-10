@@ -40,75 +40,75 @@ import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import org.apache.commons.lang.StringUtils;
 
 public abstract class DotCiPluginAdapter implements ExtensionPoint {
-	protected String pluginInputFiles;
-	private final String name;
-	protected Object options;
+    protected String pluginInputFiles;
+    private final String name;
+    protected Object options;
 
-	protected DotCiPluginAdapter(String name, String pluginInputFiles) {
-		this.name = name;
-		this.pluginInputFiles = pluginInputFiles;
+    protected DotCiPluginAdapter(String name, String pluginInputFiles) {
+        this.name = name;
+        this.pluginInputFiles = pluginInputFiles;
 
-	}
+    }
 
-	public static ExtensionList<DotCiPluginAdapter> all() {
-		return Jenkins.getInstance().getExtensionList(DotCiPluginAdapter.class);
-	}
+    public static ExtensionList<DotCiPluginAdapter> all() {
+        return Jenkins.getInstance().getExtensionList(DotCiPluginAdapter.class);
+    }
 
-	public static DotCiPluginAdapter create(String pluginName, Object options) {
-		if (pluginName.equals("test_output")) {
-			pluginName = (((Map<String, String>) options).get("format"));
-		}
-		for (DotCiPluginAdapter adapter : all()) {
-			if (adapter.getName().equals(pluginName)) {
-				try {
-					adapter = adapter.getClass().newInstance();
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-				adapter.setOptions(options);
-				return adapter;
-			}
+    public static DotCiPluginAdapter create(String pluginName, Object options) {
+        if (pluginName.equals("test_output")) {
+            pluginName = (((Map<String, String>) options).get("format"));
+        }
+        for (DotCiPluginAdapter adapter : all()) {
+            if (adapter.getName().equals(pluginName)) {
+                try {
+                    adapter = adapter.getClass().newInstance();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                adapter.setOptions(options);
+                return adapter;
+            }
 
-		}
-		throw new InvalidBuildConfigurationException("Plugin " + pluginName + " not supported");
-	}
+        }
+        throw new InvalidBuildConfigurationException("Plugin " + pluginName + " not supported");
+    }
 
-	private void setOptions(Object options) {
-		this.options = options;
-	}
+    private void setOptions(Object options) {
+        this.options = options;
+    }
 
-	private String getName() {
-		return this.name;
-	}
+    private String getName() {
+        return this.name;
+    }
 
-	public abstract boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener);
+    public abstract boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener);
 
-	public void runFinished(DynamicSubBuild run, DynamicBuild parent, BuildListener listener) throws IOException {
+    public void runFinished(DynamicSubBuild run, DynamicBuild parent, BuildListener listener) throws IOException {
         if(StringUtils.isNotEmpty(pluginInputFiles)){
             copyFiles(run, parent, pluginInputFiles, listener);
         }
-	}
+    }
 
-	 public void copyFiles(DynamicSubBuild run, DynamicBuild parent, String outputFiles, BuildListener listener) throws IOException {
-		String baseWorkSpace;
-		try {
-			listener.getLogger().println("Copying files :" + outputFiles);
-			FilePath workspacePath = run.getWorkspace();
-			FilePath targetPath = parent.getWorkspace();
-			if (workspacePath != null && targetPath != null) {
-				baseWorkSpace = workspacePath.toURI().toString();
-				for (FilePath file : workspacePath.list(outputFiles)) {
-					String dir = file.toURI().toString().replaceAll(baseWorkSpace, "").replaceAll(file.getName(), "");
-					FilePath targetChildDir = targetPath.child(dir);
-					if (!targetChildDir.exists()) {
-						targetChildDir.mkdirs();
-					}
-					file.copyTo(targetChildDir.child(file.getName()));
-				}
-			}
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}
-	}
+     public void copyFiles(DynamicSubBuild run, DynamicBuild parent, String outputFiles, BuildListener listener) throws IOException {
+        String baseWorkSpace;
+        try {
+            listener.getLogger().println("Copying files :" + outputFiles);
+            FilePath workspacePath = run.getWorkspace();
+            FilePath targetPath = parent.getWorkspace();
+            if (workspacePath != null && targetPath != null) {
+                baseWorkSpace = workspacePath.toURI().toString();
+                for (FilePath file : workspacePath.list(outputFiles)) {
+                    String dir = file.toURI().toString().replaceAll(baseWorkSpace, "").replaceAll(file.getName(), "");
+                    FilePath targetChildDir = targetPath.child(dir);
+                    if (!targetChildDir.exists()) {
+                        targetChildDir.mkdirs();
+                    }
+                    file.copyTo(targetChildDir.child(file.getName()));
+                }
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
 
 }

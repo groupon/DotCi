@@ -39,38 +39,38 @@ import org.kohsuke.stapler.export.Exported;
 
 public class AllListView extends View {
 
-	private final OrganizationContainer organizationContainer;
+    private final OrganizationContainer organizationContainer;
 
-	public AllListView(OrganizationContainer organizationContainer) {
-		super("All", organizationContainer);
-		this.organizationContainer = organizationContainer;
-	}
+    public AllListView(OrganizationContainer organizationContainer) {
+        super("All", organizationContainer);
+        this.organizationContainer = organizationContainer;
+    }
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	@Exported(name = "jobs")
-	public Collection getItems() {
-		return organizationContainer.getItems();
-	}
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Override
+    @Exported(name = "jobs")
+    public Collection getItems() {
+        return organizationContainer.getItems();
+    }
 
-	@Override
-	public boolean contains(TopLevelItem item) {
-		return true;
-	}
+    @Override
+    public boolean contains(TopLevelItem item) {
+        return true;
+    }
 
-	@Override
-	public void onJobRenamed(Item item, String oldName, String newName) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void onJobRenamed(Item item, String oldName, String newName) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	protected void submit(StaplerRequest req) throws IOException, ServletException, FormException {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    protected void submit(StaplerRequest req) throws IOException, ServletException, FormException {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public Item doCreateItem(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Item doCreateItem(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+        throw new UnsupportedOperationException();
+    }
 
 }

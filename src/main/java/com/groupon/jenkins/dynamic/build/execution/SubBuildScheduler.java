@@ -52,113 +52,113 @@ public class SubBuildScheduler {
       public void runFinished(DynamicSubBuild subBuild) throws IOException;
     }
 
-	private final DynamicBuild dynamicBuild;
+    private final DynamicBuild dynamicBuild;
 
     private SubBuildRunner subBuildRunner;
     private SubBuildFinishListener subBuildFinishListener;
 
-	public SubBuildScheduler(DynamicBuild build, SubBuildRunner subBuildRunner, SubBuildFinishListener subBuildFinishListener) {
-		this.dynamicBuild = build;
+    public SubBuildScheduler(DynamicBuild build, SubBuildRunner subBuildRunner, SubBuildFinishListener subBuildFinishListener) {
+        this.dynamicBuild = build;
         this.subBuildRunner = subBuildRunner;
         this.subBuildFinishListener = subBuildFinishListener;
-	}
+    }
 
 
-	public Result runSubBuilds(Iterable<Combination> subBuildCombinations, BuildListener listener) throws InterruptedException, IOException {
+    public Result runSubBuilds(Iterable<Combination> subBuildCombinations, BuildListener listener) throws InterruptedException, IOException {
         Iterable<DynamicSubProject> subProjects = getRunSubProjects(subBuildCombinations);
-		scheduleSubBuilds(subBuildCombinations, listener);
-		Result r = Result.SUCCESS;
-		for (DynamicSubProject c : subProjects) {
-			CurrentBuildState runState = waitForCompletion(c, listener);
-			Result runResult = getResult(runState);
-			r = r.combine(runResult);
-			listener.getLogger().println("Run " + c.getName() + " finished with : " + runResult);
+        scheduleSubBuilds(subBuildCombinations, listener);
+        Result r = Result.SUCCESS;
+        for (DynamicSubProject c : subProjects) {
+            CurrentBuildState runState = waitForCompletion(c, listener);
+            Result runResult = getResult(runState);
+            r = r.combine(runResult);
+            listener.getLogger().println("Run " + c.getName() + " finished with : " + runResult);
             subBuildFinishListener.runFinished(c.getBuildByNumber(dynamicBuild.getNumber()) );
-		}
-		return r;
-	}
+        }
+        return r;
+    }
 
-	private Result getResult(CurrentBuildState run) {
-		return run != null ? run.getResult() : Result.ABORTED;
-	}
+    private Result getResult(CurrentBuildState run) {
+        return run != null ? run.getResult() : Result.ABORTED;
+    }
 
-	protected void scheduleSubBuilds(Iterable<Combination> subBuildCombinations, TaskListener listener) {
-		for ( Combination subBuildCombination : subBuildCombinations) {
+    protected void scheduleSubBuilds(Iterable<Combination> subBuildCombinations, TaskListener listener) {
+        for ( Combination subBuildCombination : subBuildCombinations) {
             DynamicSubProject c = dynamicBuild.getSubProject(subBuildCombination);
-			listener.getLogger().println(Messages.MatrixBuild_Triggering(ModelHyperlinkNote.encodeTo(c)));
-			List<Action> childActions = new ArrayList<Action>();
-			childActions.addAll(Util.filter(dynamicBuild.getActions(), ParametersAction.class));
-			childActions.add(new SubBuildExecutionAction(subBuildRunner));
+            listener.getLogger().println(Messages.MatrixBuild_Triggering(ModelHyperlinkNote.encodeTo(c)));
+            List<Action> childActions = new ArrayList<Action>();
+            childActions.addAll(Util.filter(dynamicBuild.getActions(), ParametersAction.class));
+            childActions.add(new SubBuildExecutionAction(subBuildRunner));
       childActions.add(new ParentBuildAction(dynamicBuild));
-			c.scheduleBuild(childActions, dynamicBuild.getCause());
-		}
-	}
+            c.scheduleBuild(childActions, dynamicBuild.getCause());
+        }
+    }
 
-	public CurrentBuildState waitForCompletion(DynamicSubProject c, TaskListener listener) throws InterruptedException {
+    public CurrentBuildState waitForCompletion(DynamicSubProject c, TaskListener listener) throws InterruptedException {
 
-		// wait for the completion
-		int appearsCancelledCount = 0;
-		while (true) {
-			Thread.sleep(1000);
-			CurrentBuildState b = c.getCurrentStateByNumber(dynamicBuild.getNumber());
-			if (b != null) { // its building or is done
-				if (b.isBuilding()) {
-					continue;
-				} else {
-					Result buildResult = b.getResult();
-					if (buildResult != null) {
-						return b;
-					}
-				}
-			} else { // not building or done, check queue
-				Queue.Item qi = c.getQueueItem();
-				if (qi == null) {
-					appearsCancelledCount++;
-					listener.getLogger().println(c.getName() + " appears cancelled: " + appearsCancelledCount);
-				} else {
-					appearsCancelledCount = 0;
-				}
+        // wait for the completion
+        int appearsCancelledCount = 0;
+        while (true) {
+            Thread.sleep(1000);
+            CurrentBuildState b = c.getCurrentStateByNumber(dynamicBuild.getNumber());
+            if (b != null) { // its building or is done
+                if (b.isBuilding()) {
+                    continue;
+                } else {
+                    Result buildResult = b.getResult();
+                    if (buildResult != null) {
+                        return b;
+                    }
+                }
+            } else { // not building or done, check queue
+                Queue.Item qi = c.getQueueItem();
+                if (qi == null) {
+                    appearsCancelledCount++;
+                    listener.getLogger().println(c.getName() + " appears cancelled: " + appearsCancelledCount);
+                } else {
+                    appearsCancelledCount = 0;
+                }
 
-				if (appearsCancelledCount >= 5) {
-					listener.getLogger().println(Messages.MatrixBuild_AppearsCancelled(ModelHyperlinkNote.encodeTo(c)));
-					return new CurrentBuildState("COMPLETED", Result.ABORTED);
-				}
-			}
+                if (appearsCancelledCount >= 5) {
+                    listener.getLogger().println(Messages.MatrixBuild_AppearsCancelled(ModelHyperlinkNote.encodeTo(c)));
+                    return new CurrentBuildState("COMPLETED", Result.ABORTED);
+                }
+            }
 
-		}
-	}
+        }
+    }
 
-	public void cancelSubBuilds(PrintStream logger) {
-		Queue q = getJenkins().getQueue();
-		synchronized (q) {
-			final int n = dynamicBuild.getNumber();
-			for (Item i : q.getItems()) {
-				ParentBuildAction parentBuildAction = i.getAction(ParentBuildAction.class);
-				if (parentBuildAction != null && dynamicBuild.equals(parentBuildAction.getParent())) {
-					q.cancel(i);
-				}
-			}
-			for (DynamicSubProject c : dynamicBuild.getAllSubProjects()) {
-				DynamicSubBuild b = c.getBuildByNumber(n);
-				if (b != null && b.isBuilding()) {
-					Executor exe = b.getExecutor();
-					if (exe != null) {
-						logger.println(Messages.MatrixBuild_Interrupting(ModelHyperlinkNote.encodeTo(b)));
-						exe.interrupt();
-					}
-				}
-			}
-		}
-	}
+    public void cancelSubBuilds(PrintStream logger) {
+        Queue q = getJenkins().getQueue();
+        synchronized (q) {
+            final int n = dynamicBuild.getNumber();
+            for (Item i : q.getItems()) {
+                ParentBuildAction parentBuildAction = i.getAction(ParentBuildAction.class);
+                if (parentBuildAction != null && dynamicBuild.equals(parentBuildAction.getParent())) {
+                    q.cancel(i);
+                }
+            }
+            for (DynamicSubProject c : dynamicBuild.getAllSubProjects()) {
+                DynamicSubBuild b = c.getBuildByNumber(n);
+                if (b != null && b.isBuilding()) {
+                    Executor exe = b.getExecutor();
+                    if (exe != null) {
+                        logger.println(Messages.MatrixBuild_Interrupting(ModelHyperlinkNote.encodeTo(b)));
+                        exe.interrupt();
+                    }
+                }
+            }
+        }
+    }
 
     public Iterable<DynamicSubProject> getRunSubProjects(Iterable<Combination> combinations) {
         return dynamicBuild.getSubProjects(combinations);
     }
 
 
-	private Jenkins getJenkins() {
+    private Jenkins getJenkins() {
 
-		return Jenkins.getInstance();
-	}
+        return Jenkins.getInstance();
+    }
 
 }

@@ -29,13 +29,13 @@ import hudson.matrix.Combination;
 
 public class AfterRunSection extends SerialExecutionSection {
 
-	public AfterRunSection(ListOrSingleValue<String> configValue) {
-		super("after", configValue);
-	}
+    public AfterRunSection(ListOrSingleValue<String> configValue) {
+        super("after", configValue);
+    }
 
-	@Override
-	public ShellCommands toScript(Combination combination) {
-		return "post_build".equals(combination.get("script")) ? super.toScript(combination) : null;
-	}
+    @Override
+    public ShellCommands toScript(Combination combination) {
+        return "post_build".equals(combination.get("script")) ? super.toScript(combination) : null;
+    }
 
 }

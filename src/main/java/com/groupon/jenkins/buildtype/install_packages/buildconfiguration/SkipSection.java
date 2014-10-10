@@ -29,18 +29,18 @@ import hudson.matrix.Combination;
 
 public class SkipSection extends ConfigSection<BooleanValue> {
 
-	public static final String NAME = "skip";
+    public static final String NAME = "skip";
 
-	protected SkipSection(BooleanValue configValue) {
-		super(NAME, configValue, MergeStrategy.REPLACE);
-	}
+    protected SkipSection(BooleanValue configValue) {
+        super(NAME, configValue, MergeStrategy.REPLACE);
+    }
 
-	@Override
-	public ShellCommands toScript(Combination combination) {
-		return ShellCommands.NOOP;
-	}
+    @Override
+    public ShellCommands toScript(Combination combination) {
+        return ShellCommands.NOOP;
+    }
 
-	public boolean isSkipped() {
-		return getConfigValue().getValue();
-	}
+    public boolean isSkipped() {
+        return getConfigValue().getValue();
+    }
 }

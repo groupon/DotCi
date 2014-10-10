@@ -43,42 +43,42 @@ import static org.mockito.Mockito.when;
 
 public class CompositeConfigSectionTest {
 
-	@Test
-	public void yml_with_unrecognized_keys_is_invalid() {
-		ConfigSection buildConfiguration = new BuildConfiguration(new MapValue(map("environment", map("not_legit_key", ""))));
-		assertFalse(buildConfiguration.isValid());
-	}
+    @Test
+    public void yml_with_unrecognized_keys_is_invalid() {
+        ConfigSection buildConfiguration = new BuildConfiguration(new MapValue(map("environment", map("not_legit_key", ""))));
+        assertFalse(buildConfiguration.isValid());
+    }
 
-	@Test
-	public void yml_with_invalid_value_format_is_invalid() {
-		CompositeConfigSection buildConfiguration = new BuildConfiguration(new MapValue(map("environment", "")));
-		assertFalse(buildConfiguration.isValid());
-	}
+    @Test
+    public void yml_with_invalid_value_format_is_invalid() {
+        CompositeConfigSection buildConfiguration = new BuildConfiguration(new MapValue(map("environment", "")));
+        assertFalse(buildConfiguration.isValid());
+    }
 
-	@Test
-	public void yml_with_missing_keys_is_invalid() {
-		ConfigSection buildConfiguration = new BuildConfiguration(new MapValue(map("environment", map("language", "ruby"))));
-		assertTrue(buildConfiguration.isValid());
-	}
+    @Test
+    public void yml_with_missing_keys_is_invalid() {
+        ConfigSection buildConfiguration = new BuildConfiguration(new MapValue(map("environment", map("language", "ruby"))));
+        assertTrue(buildConfiguration.isValid());
+    }
 
-	@Test
-	public void should_specify_unrecognized_key_in_error_message() {
-		CompositeConfigSection buildConfiguration = new BuildConfiguration(new MapValue(map("environment", "", "unknown_key", "")));
-		assertEquals("Unrecognized key unknown_key in .ci.yml", get(buildConfiguration.getValidationErrors(), 0));
-	}
+    @Test
+    public void should_specify_unrecognized_key_in_error_message() {
+        CompositeConfigSection buildConfiguration = new BuildConfiguration(new MapValue(map("environment", "", "unknown_key", "")));
+        assertEquals("Unrecognized key unknown_key in .ci.yml", get(buildConfiguration.getValidationErrors(), 0));
+    }
 
-	@Test
-	public void should_check_sub_sections_for_errors_too() {
-		CompositeConfigSection buildConfiguration = new BuildConfiguration(new MapValue(map("environment", "")));
-		ConfigSection validConfigSection = mock(ConfigSection.class);
-		ConfigSection inValidConfigSection = mock(ConfigSection.class);
-		when(inValidConfigSection.getValidationErrors()).thenReturn(list("error_message"));
-		when(inValidConfigSection.getName()).thenReturn("environment");
-		when(validConfigSection.getValidationErrors()).thenReturn(Lists.<String> newArrayList());
-		buildConfiguration.setSubSections(validConfigSection, inValidConfigSection);
-		assertFalse(buildConfiguration.isValid());
-		assertThat(buildConfiguration.getValidationErrors(), Matchers.<String> iterableWithSize(1));
-		assertThat(buildConfiguration.getValidationErrors(), Matchers.<String> iterableWithSize(1));
-		assertThat(buildConfiguration.getValidationErrors(), contains("error_message"));
-	}
+    @Test
+    public void should_check_sub_sections_for_errors_too() {
+        CompositeConfigSection buildConfiguration = new BuildConfiguration(new MapValue(map("environment", "")));
+        ConfigSection validConfigSection = mock(ConfigSection.class);
+        ConfigSection inValidConfigSection = mock(ConfigSection.class);
+        when(inValidConfigSection.getValidationErrors()).thenReturn(list("error_message"));
+        when(inValidConfigSection.getName()).thenReturn("environment");
+        when(validConfigSection.getValidationErrors()).thenReturn(Lists.<String> newArrayList());
+        buildConfiguration.setSubSections(validConfigSection, inValidConfigSection);
+        assertFalse(buildConfiguration.isValid());
+        assertThat(buildConfiguration.getValidationErrors(), Matchers.<String> iterableWithSize(1));
+        assertThat(buildConfiguration.getValidationErrors(), Matchers.<String> iterableWithSize(1));
+        assertThat(buildConfiguration.getValidationErrors(), contains("error_message"));
+    }
 }

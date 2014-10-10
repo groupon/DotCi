@@ -25,14 +25,14 @@ package com.groupon.jenkins.buildtype.install_packages.buildconfiguration.config
 
 public class StringValue extends ConfigValue<String> {
 
-	public StringValue(Object config) {
-		super(config);
-	}
+    public StringValue(Object config) {
+        super(config);
+    }
 
-	@Override
-	public void append(ConfigValue<?> config) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void append(ConfigValue<?> config) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public <R> R getValue(Class<R> returnType) {

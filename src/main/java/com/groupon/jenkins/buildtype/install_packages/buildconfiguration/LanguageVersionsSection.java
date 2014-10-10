@@ -30,23 +30,23 @@ import java.util.List;
 
 public class LanguageVersionsSection extends ConfigSection<ListOrSingleValue<String>> {
 
-	public static final String NAME = "language_versions";
+    public static final String NAME = "language_versions";
 
-	protected LanguageVersionsSection(ListOrSingleValue<String> configValue) {
-		super(NAME, configValue, MergeStrategy.REPLACE);
-	}
+    protected LanguageVersionsSection(ListOrSingleValue<String> configValue) {
+        super(NAME, configValue, MergeStrategy.REPLACE);
+    }
 
-	@Override
-	public ShellCommands toScript(Combination combination) {
-		return ShellCommands.NOOP;
-	}
+    @Override
+    public ShellCommands toScript(Combination combination) {
+        return ShellCommands.NOOP;
+    }
 
-	public boolean isMultiLanguageVersions() {
-		return getConfigValue().size() > 1;
-	}
+    public boolean isMultiLanguageVersions() {
+        return getConfigValue().size() > 1;
+    }
 
-	public List<String> getLanguageVersions() {
-		return getConfigValue().getValues();
-	}
+    public List<String> getLanguageVersions() {
+        return getConfigValue().getValues();
+    }
 
 }

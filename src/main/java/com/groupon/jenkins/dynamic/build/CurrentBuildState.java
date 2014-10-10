@@ -27,40 +27,40 @@ import hudson.model.Result;
 
 public class CurrentBuildState {
 
-	private final Result result;
-	private final String state;
+    private final Result result;
+    private final String state;
 
-	public CurrentBuildState(String state, Result result) {
-		this.state = state;
-		this.result = result;
-	}
+    public CurrentBuildState(String state, Result result) {
+        this.state = state;
+        this.result = result;
+    }
 
-	public boolean isBuilding() {
-		return state == null ? false : State.valueOf(state).compareTo(State.POST_PRODUCTION) < 0;
-	}
+    public boolean isBuilding() {
+        return state == null ? false : State.valueOf(state).compareTo(State.POST_PRODUCTION) < 0;
+    }
 
-	public Result getResult() {
-		return this.result;
-	}
+    public Result getResult() {
+        return this.result;
+    }
 
-	private static enum State {
-		/**
-		 * Build is created/queued but we haven't started building it.
-		 */
-		NOT_STARTED,
-		/**
-		 * Build is in progress.
-		 */
-		BUILDING,
-		/**
-		 * Build is completed now, and the status is determined, but log files
-		 * are still being updated.
-		 */
-		POST_PRODUCTION,
-		/**
-		 * Build is completed now, and log file is closed.
-		 */
-		COMPLETED
-	}
+    private static enum State {
+        /**
+         * Build is created/queued but we haven't started building it.
+         */
+        NOT_STARTED,
+        /**
+         * Build is in progress.
+         */
+        BUILDING,
+        /**
+         * Build is completed now, and the status is determined, but log files
+         * are still being updated.
+         */
+        POST_PRODUCTION,
+        /**
+         * Build is completed now, and log file is closed.
+         */
+        COMPLETED
+    }
 
 }
