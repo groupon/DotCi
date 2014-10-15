@@ -21,15 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
-<?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-  <j:set target="${it}" property="trimmed" value="${all==null}"/>
-    <l:tabBar>
-        <l:tab name="All" active="${it.branch == null}" href="allBuildsTab" />
-        <l:tab name="mine" active="${it.branch == 'mine'}" href="mineBuildsTab"/>
-        <j:forEach var="s" items="${it.owner.branchTabs}">
-            <l:tab name="${s}" active="${it.branch == s}" href="${s}BuildsTab"/>
-        </j:forEach>
-    </l:tabBar>
-    <st:include page="build_history.jelly" />
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <f:entry title="CSV list of branch tabs to display" field="branchTabs">
+        <f:textbox/>
+    </f:entry>
 </j:jelly>

@@ -53,6 +53,7 @@ import hudson.widgets.HistoryWidget;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import jenkins.model.Jenkins;
@@ -155,26 +156,19 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         return getProperty(BuildTypeProperty.class) == null ? null : getProperty(BuildTypeProperty.class).getBuildType();
     }
 
+
+    public Iterable<String> getBranchTabs(){
+        DynamicProjectBranchTabsProperty branchTabsProperty = getProperty(DynamicProjectBranchTabsProperty.class);
+        return branchTabsProperty ==null? Arrays.asList("master") :branchTabsProperty.getBranches();
+    }
+
     @Override
     @WithBridgeMethods(value = Jenkins.class, castRequired = true)
     public OrganizationContainer getParent() {
         return (OrganizationContainer) super.getParent();
     }
 
-    public void doMasterBuilds(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        req.getSession().setAttribute("branchView" + this.getName(), "master");
-        rsp.forwardToPreviousPage(req);
-    }
 
-    public void doMyBuilds(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        req.getSession().setAttribute("branchView" + this.getName(), "mine");
-        rsp.forwardToPreviousPage(req);
-    }
-
-    public void doAllBuilds(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        req.getSession().removeAttribute("branchView" + this.getName());
-        rsp.forwardToPreviousPage(req);
-    }
 
     @Override
     protected HistoryWidget createHistoryWidget() {
@@ -191,13 +185,34 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
             String sha = req.getParameter("value");
             return dynamicBuildRepository.getBuildBySha(this, sha);
         }
+        if(token !=null && token.endsWith("BuildsTab")){
+            handleBranchTabs(token, req, rsp);
+            return this;
+        }
 
         Object permalink = super.getDynamic(token, req, rsp);
         if (permalink == null) {
             DynamicSubProject item = getItem(token);
             return item;
         }
+
         return permalink;
+    }
+
+    private void handleBranchTabs(String token, StaplerRequest req, StaplerResponse rsp) {
+        String branch = token.replace("BuildsTab","");
+        if("all".equals(branch)){
+            req.getSession().removeAttribute("branchView" + this.getName());
+        }else{
+            req.getSession().setAttribute("branchView" + this.getName(), branch);
+        }
+        try {
+            rsp.forwardToPreviousPage(req);
+        } catch (ServletException e) {
+           throw new RuntimeException(e) ;
+        } catch (IOException e) {
+            throw new RuntimeException(e) ;
+        }
     }
 
     @Override
