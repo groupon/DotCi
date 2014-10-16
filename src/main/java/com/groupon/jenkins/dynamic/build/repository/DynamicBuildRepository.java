@@ -23,25 +23,13 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.repository;
 
-import hudson.model.Result;
-import hudson.model.Run;
-import hudson.util.RunList;
-
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.CurrentBuildState;
+import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DbBackedProject;
 import com.groupon.jenkins.dynamic.build.DbBackedRunList;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.DbBackedBuild;
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.github.services.GithubCurrentUserService;
 import com.groupon.jenkins.mongo.BuildInfo;
 import com.groupon.jenkins.mongo.MongoRepository;
@@ -50,6 +38,15 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.QueryBuilder;
 import com.mongodb.ReadPreference;
+import hudson.model.Result;
+import hudson.model.Run;
+import hudson.util.RunList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class DynamicBuildRepository extends MongoRepository {
 	private static final Logger LOGGER = Logger.getLogger(DynamicBuildRepository.class.getName());

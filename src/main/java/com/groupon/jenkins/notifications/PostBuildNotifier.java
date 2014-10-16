@@ -23,89 +23,117 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.notifications;
 
+import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.Run;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import jenkins.model.Jenkins;
 
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 
 public abstract class PostBuildNotifier implements ExtensionPoint {
-	public enum Type {
-		FAILURE_AND_RECOVERY, ALL
-	}
 
-	private final String name;
-	private Object options;
+    public static List<PostBuildNotifier> createNotifiers(List notifierSpecs) {
+        if(Iterables.isEmpty(notifierSpecs)){
+            return Collections.emptyList();
+        }
+        List<PostBuildNotifier> notifiers = new ArrayList<PostBuildNotifier>();
+        for (Object pluginSpec : notifierSpecs) {
+            String pluginName;
+            Object options;
+            if (pluginSpec instanceof String) {
+                pluginName = (String) pluginSpec;
+                options = new HashMap<String, String>();
+            } else { // has to be a Map
+                Map<String, Object> pluginSpecMap = (Map<String, Object>) pluginSpec;
+                pluginName = Iterables.getOnlyElement(pluginSpecMap.keySet());
+                options = pluginSpecMap.get(pluginName);
+            }
+            notifiers.add(create(pluginName, options));
+        }
+        return notifiers;
+    }
 
-	public PostBuildNotifier(String name) {
-		this.name = name;
-	}
+    public enum Type {
+        FAILURE_AND_RECOVERY, ALL
+    }
 
-	protected boolean didBranchRecover(DynamicBuild build, BuildListener listener) {
-		Run r = build.getPreviousFinishedBuildOfSameBranch(listener);
-		return r != null && r.getResult().equals(Result.FAILURE);
-	}
+    private final String name;
+    private Object options;
 
-	public boolean perform(DynamicBuild build, BuildListener listener) {
-		return doesBuildNeedNotification(build, listener) ? notify(build, listener) : true;
-	}
+    public PostBuildNotifier(String name) {
+        this.name = name;
+    }
 
-	protected abstract Type getType();
+    protected boolean didBranchRecover(DynamicBuild build, BuildListener listener) {
+        Run r = build.getPreviousFinishedBuildOfSameBranch(listener);
+        return r != null && r.getResult().equals(Result.FAILURE);
+    }
 
-	protected abstract boolean notify(DynamicBuild build, BuildListener listener);
+    public boolean perform(DynamicBuild build, BuildListener listener) {
+        return doesBuildNeedNotification(build, listener) ? notify(build, listener) : true;
+    }
 
-	protected boolean doesBuildNeedNotification(DynamicBuild build, BuildListener listener) {
-		if (getType().equals(Type.ALL)) {
-			return true;
-		}
-		if (Result.SUCCESS.equals(build.getResult()))
-			return didBranchRecover(build, listener);
-		return Result.FAILURE.equals(build.getResult());
-	}
+    protected abstract Type getType();
 
-	protected String getNotificationMessage(DynamicBuild build, BuildListener listener) {
-		String subject;
-		if (Result.FAILURE.equals(build.getResult())) {
-			subject = "Build  failed for  branch " + build.getCurrentBranch() + "  " + build.getParent().getName() + " - " + build.getNumber();
-		} else {
-			subject = "Build recovered for branch " + build.getCurrentBranch() + "  " + build.getParent().getName() + " - " + build.getNumber();
-		}
-		return subject;
-	}
+    protected abstract boolean notify(DynamicBuild build, BuildListener listener);
 
-	public static ExtensionList<PostBuildNotifier> all() {
-		return Jenkins.getInstance().getExtensionList(PostBuildNotifier.class);
-	}
+    protected boolean doesBuildNeedNotification(DynamicBuild build, BuildListener listener) {
+        if (getType().equals(Type.ALL)) {
+            return true;
+        }
+        if (Result.SUCCESS.equals(build.getResult()))
+            return didBranchRecover(build, listener);
+        return Result.FAILURE.equals(build.getResult());
+    }
 
-	public static PostBuildNotifier create(String pluginName, Object options) {
-		for (PostBuildNotifier notifier : all()) {
-			if (notifier.getName().equals(pluginName)) {
-				try {
-					notifier = notifier.getClass().newInstance();
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-				notifier.setOptions(options);
-				return notifier;
-			}
+    protected String getNotificationMessage(DynamicBuild build, BuildListener listener) {
+        String subject;
+        if (Result.FAILURE.equals(build.getResult())) {
+            subject = "Build  failed for  branch " + build.getCurrentBranch() + "  " + build.getParent().getName() + " - " + build.getNumber();
+        } else {
+            subject = "Build recovered for branch " + build.getCurrentBranch() + "  " + build.getParent().getName() + " - " + build.getNumber();
+        }
+        return subject;
+    }
 
-		}
-		throw new InvalidBuildConfigurationException("Notification " + pluginName + " not supported");
-	}
+    public static ExtensionList<PostBuildNotifier> all() {
+        return Jenkins.getInstance().getExtensionList(PostBuildNotifier.class);
+    }
 
-	public void setOptions(Object options) {
-		this.options = options;
-	}
+    public static PostBuildNotifier create(String pluginName, Object options) {
+        for (PostBuildNotifier notifier : all()) {
+            if (notifier.getName().equals(pluginName)) {
+                try {
+                    notifier = notifier.getClass().newInstance();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                notifier.setOptions(options);
+                return notifier;
+            }
 
-	private String getName() {
-		return name;
-	}
+        }
+        throw new InvalidBuildConfigurationException("Notification " + pluginName + " not supported");
+    }
 
-	public Object getOptions() {
-		return options;
-	}
+    public void setOptions(Object options) {
+        this.options = options;
+    }
+
+    private String getName() {
+        return name;
+    }
+
+    public Object getOptions() {
+        return options;
+    }
 }
