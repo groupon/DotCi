@@ -27,13 +27,16 @@ package com.groupon.jenkins.buildtype.docker;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.dockerimage.DockerCommandBuilder;
+import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.config.Config;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import com.groupon.jenkins.notifications.PostBuildNotifier;
 import hudson.matrix.Axis;
 import hudson.matrix.AxisList;
 import hudson.matrix.Combination;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -167,5 +170,15 @@ public abstract class DockerBuildConfiguration {
 
     protected String getImageName() {
         return config.get("image",String.class);
+    }
+
+    public List<DotCiPluginAdapter> getPlugins() {
+        List plugins = config.get("plugins") != null? (List) config.get("plugins") : Collections.emptyList();
+        return DotCiPluginAdapter.createPlugins(plugins) ;
+    }
+
+    public List<PostBuildNotifier> getNotifiers() {
+        List notifiers = config.get("notifications") !=null? (List) config.get("notifications") :Collections.emptyList();
+        return PostBuildNotifier.createNotifiers(notifiers) ;
     }
 }

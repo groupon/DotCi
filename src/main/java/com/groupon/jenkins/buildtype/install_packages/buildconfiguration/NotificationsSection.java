@@ -23,15 +23,11 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
-import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
 import hudson.matrix.Combination;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class NotificationsSection extends ConfigSection<ListValue<?>> {
 
@@ -48,25 +44,7 @@ public class NotificationsSection extends ConfigSection<ListValue<?>> {
 
     public List<PostBuildNotifier> getNotifiers() {
         List<?> notifierSpecs = getConfigValue().getValue();
-        List<PostBuildNotifier> notifiers = new ArrayList<PostBuildNotifier>(notifierSpecs.size());
-        for (Object pluginSpec : notifierSpecs) {
-            String pluginName;
-            Object options;
-            if (pluginSpec instanceof String) {
-                pluginName = (String) pluginSpec;
-                options = new HashMap<String, String>();
-            } else { // has to be a Map
-                Map<String, Object> pluginSpecMap = (Map<String, Object>) pluginSpec;
-                pluginName = Iterables.getOnlyElement(pluginSpecMap.keySet());
-                options = pluginSpecMap.get(pluginName);
-            }
-            notifiers.add(createNotifier(pluginName, options));
-        }
-        return notifiers;
-    }
-
-    protected PostBuildNotifier createNotifier(String name, Object options) {
-        return PostBuildNotifier.create(name, options);
+        return PostBuildNotifier.createNotifiers(notifierSpecs);
     }
 
 }

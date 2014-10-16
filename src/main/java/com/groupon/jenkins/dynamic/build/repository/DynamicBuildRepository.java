@@ -23,26 +23,20 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.repository;
 
+import com.groupon.jenkins.dynamic.build.CurrentBuildState;
+import com.groupon.jenkins.dynamic.build.DbBackedBuild;
+import com.groupon.jenkins.dynamic.build.DbBackedProject;
+import com.groupon.jenkins.dynamic.build.DbBackedRunList;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.github.services.GithubCurrentUserService;
+import com.groupon.jenkins.mongo.MongoRepository;
+import com.groupon.jenkins.mongo.MongoRunMap;
 import com.groupon.jenkins.util.GReflectionUtils;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.util.RunList;
-
 import java.util.List;
-
 import java.util.logging.Logger;
-
-import com.groupon.jenkins.dynamic.build.CurrentBuildState;
-import com.groupon.jenkins.dynamic.build.DbBackedProject;
-import com.groupon.jenkins.dynamic.build.DbBackedRunList;
-import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.DbBackedBuild;
-import com.groupon.jenkins.github.services.GithubCurrentUserService;
-
-import com.groupon.jenkins.mongo.MongoRepository;
-import com.groupon.jenkins.mongo.MongoRunMap;
-import com.mongodb.BasicDBObject;
 import org.mongodb.morphia.query.Query;
 
 public class DynamicBuildRepository extends MongoRepository {

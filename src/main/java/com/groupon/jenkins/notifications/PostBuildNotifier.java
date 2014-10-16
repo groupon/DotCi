@@ -23,17 +23,44 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.notifications;
 
+import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.Run;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import jenkins.model.Jenkins;
 
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 
 public abstract class PostBuildNotifier implements ExtensionPoint {
+    public static List<PostBuildNotifier> createNotifiers(List notifierSpecs) {
+        if(Iterables.isEmpty(notifierSpecs)){
+            return Collections.emptyList();
+        }
+        List<PostBuildNotifier> notifiers = new ArrayList<PostBuildNotifier>();
+        for (Object pluginSpec : notifierSpecs) {
+            String pluginName;
+            Object options;
+            if (pluginSpec instanceof String) {
+                pluginName = (String) pluginSpec;
+                options = new HashMap<String, String>();
+            } else { // has to be a Map
+                Map<String, Object> pluginSpecMap = (Map<String, Object>) pluginSpec;
+                pluginName = Iterables.getOnlyElement(pluginSpecMap.keySet());
+                options = pluginSpecMap.get(pluginName);
+            }
+            notifiers.add(create(pluginName, options));
+        }
+        return notifiers;
+    }
+
     public enum Type {
         FAILURE_AND_RECOVERY, ALL
     }
