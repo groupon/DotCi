@@ -61,7 +61,7 @@ import com.groupon.jenkins.github.GitBranch;
 @Entity("run")
 public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> extends Build<P, B> {
     @Id
-    private ObjectId id;
+    private ObjectId id = new ObjectId();
 
     private ObjectId projectId; //TODO replace with Reference
 

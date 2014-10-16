@@ -60,7 +60,7 @@ import org.mongodb.morphia.mapping.Mapper;
 public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> extends Project<P, B> {
 
     @Id
-    private ObjectId id;
+    private ObjectId id = new ObjectId();
 
     @PrePersist
     private void saveName(final DBObject dbObj) {

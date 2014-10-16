@@ -24,25 +24,67 @@ THE SOFTWARE.
 
 package com.groupon.jenkins.mongo;
 
+import com.groupon.jenkins.dynamic.build.DbBackedProject;
+import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.mongodb.MongoOptions;
+import hudson.matrix.AxisList;
+import hudson.model.ParametersDefinitionProperty;
+import hudson.util.CopyOnWriteList;
+import hudson.util.DescribableList;
 import jenkins.model.Jenkins;
+import org.mongodb.morphia.mapping.CustomMapper;
+import org.mongodb.morphia.mapping.MappedClass;
+import org.mongodb.morphia.mapping.MappedField;
 import org.mongodb.morphia.mapping.Mapper;
+import org.mongodb.morphia.mapping.MapperOptions;
+import org.mongodb.morphia.mapping.cache.EntityCache;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class JenkinsMapper extends Mapper {
 
     public JenkinsMapper() {
         super();
+        setOptions(new JenkinsMongoOptions());
         getOptions().setActLikeSerializer(true);
         getOptions().objectFactory = new CustomMorphiaObjectFactory(Jenkins.getInstance().getPluginManager().uberClassLoader);
 
         includeSpecialConverters();
+        includedSpecialMappedClasses();
+    }
+
+    @Override
+    public DBObject toDBObject(final Object entity, final Map<Object, DBObject> involvedObjects) {
+        involvedObjects.put(entity, null);
+        return super.toDBObject(entity, involvedObjects);
+    }
+
+    /**
+     * These classes have difficult types to discover using Morphia's libraries
+     */
+    protected void includedSpecialMappedClasses() {
+        addMappedClass(new CopyOnWriteListMappedClass(this));
     }
 
     protected void includeSpecialConverters() {
-        getConverters().addConverter(new CopyOnWriteListConverter());
-        getConverters().addConverter(new DescribableListConverter());
         getConverters().addConverter(new ParametersDefinitionPropertyCoverter());
         getConverters().addConverter(new CombinationConverter());
-        getConverters().addConverter(new AxisListConverter());
         getConverters().addConverter(new ResultConverter());
     }
 }
+
+class JenkinsMongoOptions extends MapperOptions {
+    private final JenkinsEmbeddedMapper jenkinsEmbeddedMapper = new JenkinsEmbeddedMapper();
+
+    @Override
+    public CustomMapper getDefaultMapper() {
+        return jenkinsEmbeddedMapper;
+    }
+}
+
