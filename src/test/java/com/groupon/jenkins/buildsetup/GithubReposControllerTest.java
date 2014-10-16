@@ -23,7 +23,9 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.buildsetup;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
 import org.kohsuke.github.GHRepository;
 
 import com.google.common.collect.Iterables;
@@ -36,6 +38,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class GithubReposControllerTest {
+
+    @Rule
+    public JenkinsRule j = new JenkinsRule();
 
     @Test
     public void should_show_repos_with_admin_access_only() {
