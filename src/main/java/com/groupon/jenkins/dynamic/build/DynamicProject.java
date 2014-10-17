@@ -185,10 +185,7 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
             String sha = req.getParameter("value");
             return dynamicBuildRepository.getBuildBySha(this, sha);
         }
-        if(token !=null && token.endsWith("BuildsTab")){
-            handleBranchTabs(token, req, rsp);
-            return this;
-        }
+
 
         Object permalink = super.getDynamic(token, req, rsp);
         if (permalink == null) {
@@ -199,19 +196,20 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         return permalink;
     }
 
-    private void handleBranchTabs(String token, StaplerRequest req, StaplerResponse rsp) {
+    public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+        String tab  = req.getRestOfPath().replace("/","");
+        if(tab !=null && tab.endsWith("BuildsTab")){
+            handleBranchTabs(tab, req);
+            rsp.forwardToPreviousPage(req);
+        }
+    }
+
+    private void handleBranchTabs(String token, StaplerRequest req) {
         String branch = token.replace("BuildsTab","");
         if("all".equals(branch)){
             req.getSession().removeAttribute("branchView" + this.getName());
         }else{
             req.getSession().setAttribute("branchView" + this.getName(), branch);
-        }
-        try {
-            rsp.forwardToPreviousPage(req);
-        } catch (ServletException e) {
-           throw new RuntimeException(e) ;
-        } catch (IOException e) {
-            throw new RuntimeException(e) ;
         }
     }
 

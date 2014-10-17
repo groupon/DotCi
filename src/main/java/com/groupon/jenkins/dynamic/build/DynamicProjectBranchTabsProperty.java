@@ -24,6 +24,9 @@
 
 package com.groupon.jenkins.dynamic.build;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import hudson.Extension;
 import hudson.model.Job;
 import hudson.model.JobProperty;
@@ -35,19 +38,32 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 
+import javax.annotation.Nullable;
+
 public class DynamicProjectBranchTabsProperty extends JobProperty<Job<?, ?>> {
     private final ArrayList<String> branches;
     private String branchTabs; public DynamicProjectBranchTabsProperty(String branchTabs) {
         this.branchTabs = branchTabs;
-        this.branches = new ArrayList<String>();
-        if(!StringUtils.isEmpty(branchTabs)){
-            branches.addAll(Arrays.asList(getSpecifiedBranches(branchTabs)));
-        }
+        this.branches = parseBranches();
     }
 
-    private String[] getSpecifiedBranches(String branchTabs) {
-        return branchTabs.split(",");
+    private ArrayList<String> parseBranches() {
+        ArrayList<String> parsedBranches = new ArrayList<String>();
+        if(!StringUtils.isEmpty(branchTabs)){
+            parsedBranches.addAll(trim());
+        }
+        return parsedBranches;
     }
+
+    private List<String> trim() {
+        return Lists.newArrayList( Iterables.transform(Arrays.asList( branchTabs.split("\\n")), new Function<String, String>() {
+            @Override
+            public String apply(@Nullable String input) {
+                return input.trim();
+            }
+        }));
+    }
+
 
     public List<String> getBranches(){
         return branches;

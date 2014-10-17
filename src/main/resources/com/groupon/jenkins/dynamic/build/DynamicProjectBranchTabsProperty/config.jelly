@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <f:entry title="CSV list of branch tabs to display" field="branchTabs">
-        <f:textbox/>
+    <f:entry title="List of branch tab Regex(one on each line)" field="branchTabs">
+        <f:textarea/>
     </f:entry>
 </j:jelly>
