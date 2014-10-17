@@ -32,7 +32,7 @@ import org.mongodb.morphia.converters.SimpleValueConverter;
 import org.mongodb.morphia.converters.TypeConverter;
 import org.mongodb.morphia.mapping.MappedField;
 
-public class AxisListConverter extends TypeConverter implements SimpleValueConverter{
+public class AxisListConverter extends TypeConverter implements SimpleValueConverter {
 
     public AxisListConverter() {
         super(AxisList.class);

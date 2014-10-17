@@ -28,8 +28,11 @@ import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DbBackedProject;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
+import com.groupon.jenkins.dynamic.buildtype.BuildTypeProperty;
 import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import hudson.model.JobProperty;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.jenkinsci.plugins.GithubAuthenticationToken;
@@ -56,11 +59,6 @@ public class MongoRepositoryTest {
     @Rule
     public JenkinsRule j = new JenkinsRule();
 
-    @Before
-    public void setupFongo() throws Exception {
-
-    }
-
     @After
     public void clearFongo() {
         Datastore ds = SetupConfig.get().getDynamicBuildRepository().getDatastore();
@@ -78,13 +76,13 @@ public class MongoRepositoryTest {
         GHRepository ghRepository = setupMockGHRepository();
 
         DynamicProject project = repo.createNewProject(ghRepository);
+        project.addProperty(new CyclicProperty(project));
+        project.save();
 
         assert(repo.getDatastore().getCount(DynamicProject.class) > 0);
         DynamicProject restoredProject = repo.getDatastore().createQuery(DynamicProject.class).get();
 
         assert("repo_name".equals(restoredProject.getName()));
-
-
     }
 
     @Test
@@ -153,7 +151,7 @@ public class MongoRepositoryTest {
 
         PowerMockito.mockStatic(GitHub.class);
         GitHub github = PowerMockito.mock(GitHub.class);
-        PowerMockito.when(GitHub.connectUsingOAuth("https://localhost/api/v3", "thisismytoken")).thenReturn(github);
+        //PowerMockito.when(GitHub.connectUsingOAuth("https://localhost/api/v3", "thisismytoken")).thenReturn(github);
         PowerMockito.when(github.getMyself()).thenReturn(myself);
         PowerMockito.when(github.getRepository("groupon/DotCi")).thenReturn(ghRepository);
 
@@ -168,4 +166,13 @@ public class MongoRepositoryTest {
 
         return ghRepository;
     }
+}
+
+class CyclicProperty extends JobProperty<DynamicProject> {
+    private DynamicProject project;
+    CyclicProperty(DynamicProject project) {
+        super();
+        this.project = project;
+    }
+
 }

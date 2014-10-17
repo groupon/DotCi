@@ -60,6 +60,11 @@ public class JenkinsMapper extends Mapper {
     }
 
     @Override
+    public DBObject toDBObject(final Object entity) {
+        return toDBObject(entity, new HashMap<Object,DBObject>());
+    }
+
+    @Override
     public DBObject toDBObject(final Object entity, final Map<Object, DBObject> involvedObjects) {
         involvedObjects.put(entity, null);
         return super.toDBObject(entity, involvedObjects);
@@ -75,6 +80,7 @@ public class JenkinsMapper extends Mapper {
     protected void includeSpecialConverters() {
         getConverters().addConverter(new ParametersDefinitionPropertyCoverter());
         getConverters().addConverter(new CombinationConverter());
+        getConverters().addConverter(new AxisListConverter());
         getConverters().addConverter(new ResultConverter());
     }
 }

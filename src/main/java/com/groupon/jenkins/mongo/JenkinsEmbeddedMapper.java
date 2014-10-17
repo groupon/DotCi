@@ -48,7 +48,6 @@ import java.util.Map;
 import java.util.Set;
 
 class JenkinsEmbeddedMapper implements CustomMapper {
-    public static final Set<Class> PROBLEMATIC_CLASSES = new HashSet<Class>(Arrays.asList(AxisList.class, DynamicProject.class, DbBackedProject.class));
     private final Map<Class, CustomMapper> customMappers;
     JenkinsEmbeddedMapper() {
         customMappers = new HashMap<Class, CustomMapper>();
@@ -58,22 +57,20 @@ class JenkinsEmbeddedMapper implements CustomMapper {
     @Override
     public void toDBObject(Object entity, MappedField mf, DBObject dbObject, Map<Object, DBObject> involvedObjects, Mapper mapper) {
         Object fieldValue = mf.getFieldValue(entity);
-Object idvalue = mapper.getId(fieldValue);
-        if(customMappers.containsKey(entity.getClass())) {
-            customMappers.get(entity.getClass()).toDBObject(entity, mf, dbObject, involvedObjects, mapper);
-        } else if(fieldValue != null
-                && mapper.getId(fieldValue) != null
-                && involvedObjects.containsKey(fieldValue)
-                && (involvedObjects.get(fieldValue) == null ||involvedObjects.get(fieldValue).keySet().size() == 2)) {
+        if(fieldValue == null) return; // nothing to do
+
+        if(customMappers.containsKey(fieldValue.getClass())) {
+            customMappers.get(fieldValue.getClass()).toDBObject(entity, mf, dbObject, involvedObjects, mapper);
+        } else if(mapper.getId(fieldValue) != null && involvedObjects.containsKey(fieldValue)) {
 
             Object id = mapper.getId(fieldValue);
-            if(id != null) {
+            if(id != null
+                    || involvedObjects.get(fieldValue) == null
+                    ||involvedObjects.get(fieldValue).keySet().size() != 2) {
+
                 DBObject refObj = new BasicDBObject(mapper.ID_KEY, id);
-
                 refObj.put(mapper.CLASS_NAME_FIELDNAME, fieldValue.getClass().getName());
-
                 involvedObjects.put(entity, refObj);
-
                 dbObject.put(mf.getNameToStore(), refObj);
             }
         } else {
@@ -105,15 +102,13 @@ Object idvalue = mapper.getId(fieldValue);
             mapper.getOptions().getEmbeddedMapper().fromDBObject(dbObject, mf, entity, cache, mapper);
         }
     }
-
-
 }
 
 class CopyOnWriteListMapper implements CustomMapper {
     @Override
     public void toDBObject(Object entity, MappedField mf, DBObject dbObject, Map<Object, DBObject> involvedObjects, Mapper mapper) {
         final String name = mf.getNameToStore();
-        CopyOnWriteList copyOnWriteList = (CopyOnWriteList) entity;
+        CopyOnWriteList copyOnWriteList = (CopyOnWriteList) mf.getFieldValue(entity);
         List core = new ArrayList();
 
         for(Object obj : copyOnWriteList) {
@@ -125,10 +120,10 @@ class CopyOnWriteListMapper implements CustomMapper {
 
     @Override
     public void fromDBObject(DBObject dbObject, MappedField mf, Object entity, EntityCache cache, Mapper mapper) {
-        DBObject cowlObject = (DBObject) dbObject.get(mf.getNameToStore());
-        BasicDBList rawList = (BasicDBList) cowlObject.get("core");
+        BasicDBList cowlist = (BasicDBList) dbObject.get(mf.getNameToStore());
+
         List core = new ArrayList();
-        for(Object obj : rawList) {
+        for(Object obj : cowlist) {
             DBObject listEntryDbObj = (DBObject) obj;
 
             // Hack until we can coax MappedField to understand what CopyOnWriteList is. Eliminate as soon as possible.
