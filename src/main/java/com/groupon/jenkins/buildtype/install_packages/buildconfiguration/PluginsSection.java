@@ -73,4 +73,12 @@ public class PluginsSection extends ConfigSection<ListValue<?>> {
         return ShellCommands.NOOP;
     }
 
+    @Override
+    public Iterable<String> getValidationErrors() {
+        List<String> validationErrors = new ArrayList<String>();
+        for (DotCiPluginAdapter plugin: getPlugins()){
+            validationErrors.addAll(plugin.getValidationErrors());
+        }
+        return validationErrors;
+    }
 }

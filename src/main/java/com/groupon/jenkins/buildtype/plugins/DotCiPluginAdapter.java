@@ -24,19 +24,18 @@ THE SOFTWARE.
 package com.groupon.jenkins.buildtype.plugins;
 
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.BuildListener;
-
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
-
 import jenkins.model.Jenkins;
-
-import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import org.apache.commons.lang.StringUtils;
 
 public abstract class DotCiPluginAdapter implements ExtensionPoint {
@@ -111,4 +110,7 @@ public abstract class DotCiPluginAdapter implements ExtensionPoint {
         }
     }
 
+    public Collection<String> getValidationErrors() {
+        return Collections.EMPTY_LIST;
+    }
 }
