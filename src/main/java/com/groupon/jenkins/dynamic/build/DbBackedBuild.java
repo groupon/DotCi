@@ -138,11 +138,16 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
     @Deprecated
     // Keeping this so we can more easily migrate from existing systems
     public void restoreFromDb(AbstractProject project, Map<String, Object> input) {
+        id = (ObjectId) input.get("_id");
+
         String state = ((String) input.get("state"));
-        Date date = ((Date) input.get("last_updated"));
-        setField(project, "project");
-        setField(date.getTime(), "timestamp");
         setField(getState(state), "state");
+
+        Date date = ((Date) input.get("last_updated"));
+        setField(date.getTime(), "timestamp");
+
+        setField(project, "project");
+
         super.onLoad();
     }
 

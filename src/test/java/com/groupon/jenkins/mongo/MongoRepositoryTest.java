@@ -170,9 +170,17 @@ public class MongoRepositoryTest {
 
 class CyclicProperty extends JobProperty<DynamicProject> {
     private DynamicProject project;
+    private ArbitraryCycleClass cyclicObject;
     CyclicProperty(DynamicProject project) {
         super();
         this.project = project;
+        cyclicObject = new ArbitraryCycleClass();
     }
+}
 
+class ArbitraryCycleClass {
+    private ArbitraryCycleClass cyclicObject;
+    ArbitraryCycleClass() {
+        cyclicObject = this;
+    }
 }

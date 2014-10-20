@@ -61,27 +61,51 @@ class JenkinsEmbeddedMapper implements CustomMapper {
 
         if(customMappers.containsKey(fieldValue.getClass())) {
             customMappers.get(fieldValue.getClass()).toDBObject(entity, mf, dbObject, involvedObjects, mapper);
-        } else if(mapper.getId(fieldValue) != null && involvedObjects.containsKey(fieldValue)) {
-
-            Object id = mapper.getId(fieldValue);
-            if(id != null
-                    || involvedObjects.get(fieldValue) == null
-                    ||involvedObjects.get(fieldValue).keySet().size() != 2) {
-
-                DBObject refObj = new BasicDBObject(mapper.ID_KEY, id);
-                refObj.put(mapper.CLASS_NAME_FIELDNAME, fieldValue.getClass().getName());
-                involvedObjects.put(entity, refObj);
-                dbObject.put(mf.getNameToStore(), refObj);
-            }
         } else {
-            mapper.getOptions().getEmbeddedMapper().toDBObject(entity, mf, dbObject, involvedObjects, mapper);
+            if(involvedObjects.containsKey(fieldValue)) {
+                DBObject cachedStub = involvedObjects.get(fieldValue);
+
+                if(cachedStub == null) {
+                    DBObject newStub = createStub(mapper, fieldValue, mapper.getId(fieldValue));
+                    involvedObjects.put(fieldValue, newStub);
+                    cachedStub = newStub;
+                } else if (cachedStub.keySet().size() > 2
+                        && cachedStub.containsField(mapper.ID_KEY)
+                        && cachedStub.containsField(mapper.CLASS_NAME_FIELDNAME)) {
+
+                    // remove full object from the cache and replace it with the stub
+                    Object id = cachedStub.get(mapper.ID_KEY);
+                    DBObject newStub = createStub(mapper, fieldValue, id);
+
+                    involvedObjects.put(fieldValue, newStub);
+                    cachedStub = newStub;
+                }
+
+                dbObject.put(mf.getNameToStore(), cachedStub);
+
+            } else {
+                mapper.getOptions().getEmbeddedMapper().toDBObject(entity, mf, dbObject, involvedObjects, mapper);
+            }
+
         }
     }
+
+    private DBObject createStub(Mapper mapper, Object fieldValue, Object id) {
+        if(id == null) {
+            id = new ObjectId();
+        }
+
+        DBObject stub = new BasicDBObject(mapper.CLASS_NAME_FIELDNAME, fieldValue.getClass().getName());
+        stub.put(mapper.ID_KEY, id);
+
+        return stub;
+    }
+
 
     private Key extractKey(Mapper mapper, MappedField mf, DBObject dbObject) {
         if(mapper == null || mf == null || dbObject == null ||  (dbObject instanceof BasicDBList)) return null;
 
-        ObjectId objectId = (ObjectId) dbObject.get("_id");
+        ObjectId objectId = (ObjectId) dbObject.get(mapper.ID_KEY);
         //HACKY GET RID OF SOON
         Object obj = mapper.getOptions().getObjectFactory().createInstance(mapper, mf, dbObject);
 
@@ -93,7 +117,7 @@ class JenkinsEmbeddedMapper implements CustomMapper {
     public void fromDBObject(DBObject dbObject, MappedField mf, Object entity, EntityCache cache, Mapper mapper) {
 
         Key key = extractKey(mapper, mf, (DBObject) dbObject.get(mf.getNameToStore()));
-        if(key != null && cache.exists(key)) {
+        if(key != null && cache.getEntity(key) != null) {
             Object object = cache.getEntity(key);
             mf.setFieldValue(entity, object);
         } else if(customMappers.containsKey(mf.getType())) {
@@ -121,6 +145,8 @@ class CopyOnWriteListMapper implements CustomMapper {
     @Override
     public void fromDBObject(DBObject dbObject, MappedField mf, Object entity, EntityCache cache, Mapper mapper) {
         BasicDBList cowlist = (BasicDBList) dbObject.get(mf.getNameToStore());
+
+        if(cowlist == null) throw new IllegalArgumentException("Improperly formatted DBObject for CopyOnWriteList");
 
         List core = new ArrayList();
         for(Object obj : cowlist) {

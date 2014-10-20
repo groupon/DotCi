@@ -24,28 +24,16 @@ THE SOFTWARE.
 
 package com.groupon.jenkins.mongo;
 
-import com.groupon.jenkins.dynamic.build.DbBackedProject;
-import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.mongodb.MongoOptions;
-import hudson.matrix.AxisList;
-import hudson.model.ParametersDefinitionProperty;
 import hudson.util.CopyOnWriteList;
-import hudson.util.DescribableList;
 import jenkins.model.Jenkins;
 import org.mongodb.morphia.mapping.CustomMapper;
-import org.mongodb.morphia.mapping.MappedClass;
-import org.mongodb.morphia.mapping.MappedField;
 import org.mongodb.morphia.mapping.Mapper;
 import org.mongodb.morphia.mapping.MapperOptions;
-import org.mongodb.morphia.mapping.cache.EntityCache;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
+
 
 public class JenkinsMapper extends Mapper {
 
@@ -61,12 +49,14 @@ public class JenkinsMapper extends Mapper {
 
     @Override
     public DBObject toDBObject(final Object entity) {
-        return toDBObject(entity, new HashMap<Object,DBObject>());
+        return toDBObject(entity, new LinkedHashMap<Object, DBObject>());
     }
 
     @Override
     public DBObject toDBObject(final Object entity, final Map<Object, DBObject> involvedObjects) {
-        involvedObjects.put(entity, null);
+        if( ! (entity instanceof CopyOnWriteList || involvedObjects.containsKey(entity) )) {
+            involvedObjects.put(entity, null);
+        }
         return super.toDBObject(entity, involvedObjects);
     }
 
