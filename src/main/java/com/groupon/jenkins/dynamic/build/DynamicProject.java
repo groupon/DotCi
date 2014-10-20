@@ -196,16 +196,13 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         return permalink;
     }
 
-    public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+    public void doBranchBuilds(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
         String tab  = req.getRestOfPath().replace("/","");
-        if(tab !=null && tab.endsWith("BuildsTab")){
-            handleBranchTabs(tab, req);
-            rsp.forwardToPreviousPage(req);
-        }
+        handleBranchTabs(tab, req);
+        rsp.forwardToPreviousPage(req);
     }
 
-    private void handleBranchTabs(String token, StaplerRequest req) {
-        String branch = token.replace("BuildsTab","");
+    private void handleBranchTabs(String branch, StaplerRequest req) {
         if("all".equals(branch)){
             req.getSession().removeAttribute("branchView" + this.getName());
         }else{
