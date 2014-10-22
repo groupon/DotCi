@@ -23,24 +23,21 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.mongo;
 
-import com.groupon.jenkins.dynamic.build.DbBackedProject;
-import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import hudson.matrix.AxisList;
+import hudson.security.Permission;
 import hudson.util.CopyOnWriteList;
-import org.apache.tools.ant.taskdefs.Copy;
+import jenkins.model.Jenkins;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.mapping.CustomMapper;
-import org.mongodb.morphia.mapping.MappedClass;
 import org.mongodb.morphia.mapping.MappedField;
 import org.mongodb.morphia.mapping.Mapper;
 import org.mongodb.morphia.mapping.cache.EntityCache;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -49,9 +46,19 @@ import java.util.Set;
 
 class JenkinsEmbeddedMapper implements CustomMapper {
     private final Map<Class, CustomMapper> customMappers;
+    private final Set<String> xmlClasses;
+    private final XmlMapper xmlMapper;
+    private final AwkwardMapMapper awkwardMapper;
+
     JenkinsEmbeddedMapper() {
         customMappers = new HashMap<Class, CustomMapper>();
         customMappers.put(CopyOnWriteList.class, new CopyOnWriteListMapper());
+
+        xmlMapper = new XmlMapper(Jenkins.XSTREAM2);
+        awkwardMapper = new AwkwardMapMapper();
+
+        xmlClasses = new HashSet<String>();
+        xmlClasses.add("hudson.security.AuthorizationMatrixProperty");
     }
 
     @Override
@@ -61,6 +68,8 @@ class JenkinsEmbeddedMapper implements CustomMapper {
 
         if(customMappers.containsKey(fieldValue.getClass())) {
             customMappers.get(fieldValue.getClass()).toDBObject(entity, mf, dbObject, involvedObjects, mapper);
+        } else if (isAwkwardMap(mf)) {
+            awkwardMapper.toDBObject(entity, mf, dbObject, involvedObjects, mapper);
         } else {
             if(involvedObjects.containsKey(fieldValue)) {
                 DBObject cachedStub = involvedObjects.get(fieldValue);
@@ -90,6 +99,10 @@ class JenkinsEmbeddedMapper implements CustomMapper {
         }
     }
 
+    private boolean isAwkwardMap(MappedField mf) {
+        return mf.isMap() && Permission.class == mf.getMapKeyClass();
+    }
+
     private DBObject createStub(Mapper mapper, Object fieldValue, Object id) {
         if(id == null) {
             id = new ObjectId();
@@ -100,7 +113,6 @@ class JenkinsEmbeddedMapper implements CustomMapper {
 
         return stub;
     }
-
 
     private Key extractKey(Mapper mapper, MappedField mf, DBObject dbObject) {
         if(mapper == null || mf == null || dbObject == null ||  (dbObject instanceof BasicDBList)) return null;
@@ -113,6 +125,7 @@ class JenkinsEmbeddedMapper implements CustomMapper {
 
         return new Key(obj.getClass(), objectId);
     }
+
     @Override
     public void fromDBObject(DBObject dbObject, MappedField mf, Object entity, EntityCache cache, Mapper mapper) {
 
@@ -122,44 +135,11 @@ class JenkinsEmbeddedMapper implements CustomMapper {
             mf.setFieldValue(entity, object);
         } else if(customMappers.containsKey(mf.getType())) {
             customMappers.get(mf.getType()).fromDBObject(dbObject, mf, entity, cache, mapper);
+        } else if (isAwkwardMap(mf)) {
+            awkwardMapper.fromDBObject(dbObject, mf, entity, cache, mapper);
         } else {
             mapper.getOptions().getEmbeddedMapper().fromDBObject(dbObject, mf, entity, cache, mapper);
         }
-    }
-}
-
-class CopyOnWriteListMapper implements CustomMapper {
-    @Override
-    public void toDBObject(Object entity, MappedField mf, DBObject dbObject, Map<Object, DBObject> involvedObjects, Mapper mapper) {
-        final String name = mf.getNameToStore();
-        CopyOnWriteList copyOnWriteList = (CopyOnWriteList) mf.getFieldValue(entity);
-        List core = new ArrayList();
-
-        for(Object obj : copyOnWriteList) {
-            core.add(mapper.toDBObject(obj, involvedObjects));
-        }
-
-        dbObject.put(name, core);
-    }
-
-    @Override
-    public void fromDBObject(DBObject dbObject, MappedField mf, Object entity, EntityCache cache, Mapper mapper) {
-        BasicDBList cowlist = (BasicDBList) dbObject.get(mf.getNameToStore());
-
-        if(cowlist == null) throw new IllegalArgumentException("Improperly formatted DBObject for CopyOnWriteList");
-
-        List core = new ArrayList();
-        for(Object obj : cowlist) {
-            DBObject listEntryDbObj = (DBObject) obj;
-
-            // Hack until we can coax MappedField to understand what CopyOnWriteList is. Eliminate as soon as possible.
-            // Currently mf.getSubType() is null because MappedField does not use Iterable to determine a list and thus
-            // does not check for subtypes.
-            Class clazz = mapper.getOptions().getObjectFactory().createInstance(mapper, mf, listEntryDbObj).getClass();
-
-            core.add(mapper.fromDBObject(clazz, listEntryDbObj, cache));
-        }
-        mf.setFieldValue(entity, new CopyOnWriteList(core));
     }
 }
 

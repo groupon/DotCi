@@ -70,7 +70,7 @@ class JenkinsMappedClass extends MappedClass {
         }
     }
 
-    protected MappedField mapField(Field field) {
+    protected MappedField mapField(final Field field) {
         ManuallyConfiguredMappedField mf = new ManuallyConfiguredMappedField(field, getClazz());
         mf.discover();
 
@@ -90,7 +90,7 @@ class CopyOnWriteListMappedClass extends JenkinsMappedClass {
     }
 
     @Override
-    protected MappedField mapField(Field field) {
+    protected MappedField mapField(final Field field) {
         if("core".equals(field.getName())) {
             ManuallyConfiguredMappedField mf = new ManuallyConfiguredMappedField(field, getClazz()) {
                 @Override
@@ -108,6 +108,7 @@ class CopyOnWriteListMappedClass extends JenkinsMappedClass {
             };
 
             mf.discover();
+
             return mf;
         }
         return super.mapField(field);
