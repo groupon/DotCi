@@ -28,14 +28,21 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.mongodb.morphia.mapping.CustomMapper;
+import org.mongodb.morphia.mapping.MappedClass;
 import org.mongodb.morphia.mapping.MappedField;
 import org.mongodb.morphia.mapping.Mapper;
 import org.mongodb.morphia.mapping.cache.EntityCache;
+import org.mongodb.morphia.utils.ReflectionUtils;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 class AwkwardMapMapper implements CustomMapper {
     public static final String KEY = "key";
@@ -45,40 +52,29 @@ class AwkwardMapMapper implements CustomMapper {
     public void toDBObject(Object entity, MappedField mf, DBObject dbObject, Map<Object, DBObject> involvedObjects, Mapper mapper) {
         final String name = mf.getNameToStore();
 
-        Map<Object, Object> awkwardMap = (Map<Object, Object>) mf.getFieldValue(entity);
+        Map<?, ?> awkwardMap = (Map<?, ?>) mf.getFieldValue(entity);
         List out = new ArrayList();
 
         for(final Map.Entry entry : awkwardMap.entrySet()) {
             DBObject mappedEntry = new BasicDBObject();
 
-            mappedEntry.put(KEY, convertTo(mapper, mf.getMapKeyClass(), entry.getKey(), involvedObjects));
-            mappedEntry.put(VALUE, convertTo(mapper, mf.getSubType(), entry.getValue(), involvedObjects));
+            try {
+                Field key = entry.getClass().getDeclaredField(KEY);
+                EntryMappedField keyField = new EntryMappedField(key, entry.getClass(), mf);
 
-            out.add(mappedEntry);
+                Field value = entry.getClass().getDeclaredField(VALUE);
+                EntryMappedField  valueField = new EntryMappedField(value, entry.getClass(), mf);
+
+                mapper.getOptions().getDefaultMapper().toDBObject(entry, keyField, mappedEntry, involvedObjects, mapper);
+                mapper.getOptions().getDefaultMapper().toDBObject(entry, valueField, mappedEntry, involvedObjects, mapper);
+
+                out.add(mappedEntry);
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         dbObject.put(name, out);
-    }
-
-    private Object convertTo(Mapper mapper, Type mappedClazz, Object value, Map<Object, DBObject> involvedObjects) {
-        if (value == null) {
-            return null;
-        } else if (mapper.getConverters().hasSimpleValueConverter(mappedClazz)
-                || mapper.getConverters().hasSimpleValueConverter(value.getClass())) {
-            return mapper.getConverters().encode(value);
-        } else {
-            return mapper.toDBObject(value, involvedObjects);
-        }
-    }
-
-    private Object convertFrom(Mapper mapper, Class mappedClazz, Object fromDBObject, EntityCache cache) {
-        if (fromDBObject == null) {
-            return null;
-        } else if (mapper.getConverters().hasSimpleValueConverter(mappedClazz)) {
-            return mapper.getConverters().decode(mappedClazz, fromDBObject);
-        } else {
-            return mapper.fromDBObject(mappedClazz, (DBObject) fromDBObject, cache);
-        }
     }
 
     @Override
@@ -89,12 +85,86 @@ class AwkwardMapMapper implements CustomMapper {
 
         for(Object obj : entriesList) {
             DBObject listEntryDbObj = (DBObject) obj;
+            //Map.Entry entry = (Map.Entry) mapper.getOptions().getObjectFactory().createInstance(Map.Entry.class);
+            Pair entry = new Pair();
+            try {
+                Field key = entry.getClass().getDeclaredField(KEY);
+                EntryMappedField keyField = new EntryMappedField(key, entry.getClass(), mf);
 
-            Object key = convertFrom(mapper, mf.getMapKeyClass(), listEntryDbObj.get(KEY), cache);
-            Object value = convertFrom(mapper, mf.getSubClass(), listEntryDbObj.get(VALUE), cache);
+                Field value = entry.getClass().getDeclaredField(VALUE);
+                EntryMappedField valueField = new EntryMappedField(value, entry.getClass(), mf);
 
-            map.put(key, value);
+                mapper.getOptions().getEmbeddedMapper().fromDBObject(listEntryDbObj, keyField, entry, cache, mapper);
+                mapper.getOptions().getEmbeddedMapper().fromDBObject(listEntryDbObj, valueField, entry, cache, mapper);
+
+                map.put(entry.getKey(), entry.getValue());
+
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
         }
+
         mf.setFieldValue(entity, map);
     }
+}
+
+/**
+ * Remove as soon as we're able to figure out how to instantiate Map.Entry.
+ */
+@Deprecated
+class Pair {
+    private Object key;
+    private Object value;
+    Pair() {
+
+    }
+
+    public Object getKey() {
+        return key;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+}
+
+class EntryMappedField extends ManuallyConfiguredMappedField {
+    EntryMappedField(Field field, Class<?> clazz, MappedField mappedField) {
+        super(field, clazz);
+        super.discover();
+        if(AwkwardMapMapper.KEY.equals(field.getName())) {
+            realType = mappedField.getMapKeyClass();
+            subType = realType.getComponentType();
+        } else if(AwkwardMapMapper.VALUE.equals(field.getName())) {
+            realType = mappedField.getSubClass();
+            subType = mappedField.getSubType() instanceof ParameterizedType ? ((ParameterizedType) mappedField.getSubType()).getActualTypeArguments()[0] : null;
+        } else {
+            throw new RuntimeException("Entry field is neither key nor entry");
+        }
+
+        if (realType.isArray()
+                || Collection.class.isAssignableFrom(realType)
+                || Map.class.isAssignableFrom(realType)) {
+
+            isSingleValue = false;
+
+            isMap = Map.class.isAssignableFrom(realType);
+            isSet = Set.class.isAssignableFrom(realType);
+            //for debugging
+            isCollection = Collection.class.isAssignableFrom(realType);
+            isArray = realType.isArray();
+
+            if (isMap) {
+                mapKeyType = ReflectionUtils.getParameterizedType(field, 0);
+            }
+        }
+        try {
+            constructor = realType.getDeclaredConstructor();
+            constructor.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            constructor = null;
+        }
+    }
+
+
 }

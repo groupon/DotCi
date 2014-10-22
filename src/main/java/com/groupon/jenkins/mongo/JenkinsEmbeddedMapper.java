@@ -66,7 +66,10 @@ class JenkinsEmbeddedMapper implements CustomMapper {
         Object fieldValue = mf.getFieldValue(entity);
         if(fieldValue == null) return; // nothing to do
 
-        if(customMappers.containsKey(fieldValue.getClass())) {
+
+        if(mapper.getConverters().hasSimpleValueConverter(mf) || mapper.getConverters().hasSimpleValueConverter(fieldValue)) {
+            mapper.getOptions().getValueMapper().toDBObject(entity, mf, dbObject, involvedObjects, mapper);
+        } else if(customMappers.containsKey(fieldValue.getClass())) {
             customMappers.get(fieldValue.getClass()).toDBObject(entity, mf, dbObject, involvedObjects, mapper);
         } else if (isAwkwardMap(mf)) {
             awkwardMapper.toDBObject(entity, mf, dbObject, involvedObjects, mapper);
