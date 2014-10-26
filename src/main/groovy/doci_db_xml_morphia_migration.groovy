@@ -1,86 +1,107 @@
 import com.groupon.jenkins.dynamic.build.repository.*;
+import com.groupon.jenkins.mongo.MongoRepository;
 import com.mongodb.BasicDBObject;
+import org.bson.types.ObjectId;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
 import hudson.util.XStream2;
 import com.groupon.jenkins.SetupConfig;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import groovy.xml.*;
+import com.groupon.jenkins.dynamic.build.*;
 
-def migrate_build(project, db_build_obj) {
-  try{
-    def xml_processor = new XStream2() 
-    xml_processor.ignoreUnknownElements()
+class Migrator {
+  def LOGGER = Logger.getLogger(MongoRepository.class.getName())
+  def xml_processor = new XStream2()
 
-    def root = new XmlSlurper().parseText(db_build_obj.get("xml"))
-    root.dynamicBuildLayouter.replaceNode{}
+  def migrate_build(project, db_build_obj) {
+    try{
+      xml_processor.ignoreUnknownElements()
 
-    def doc = XmlUtil.serialize(root)
+      def root = new XmlSlurper().parseText(db_build_obj.get("xml"))
+      root.dynamicBuildLayouter.replaceNode{}
+      root.actions."org.jenkinsci.plugins.envinject.EnvInjectPluginAction".replaceNode{}
 
-    def build = xml_processor.fromXML(doc)
+      def doc = XmlUtil.serialize(root)
 
-    build.restoreFromDb(project, db_build_obj.toMap())
-    return build
-  } catch(e) {
-    println("Unable to migrate build: ${db_build_obj.get("_id")}")
-    //throw(e)
-  }
-}
+      def build = xml_processor.fromXML(doc)
 
-def migrate_project(parent, db_project_obj) {
-  try {
-    def xml_processor = new XStream2() 
-    xml_processor.ignoreUnknownElements()
-
-    def root = new XmlSlurper().parseText(db_project_obj.get("xml"))
-    root.dynamicProjectRepository.replaceNode{}
-    root.dynamicBuildRepository.replaceNode{}
-
-    def doc = XmlUtil.serialize(root)
-
-    def project = xml_processor.fromXML(doc)
-    project.setId(db_project_obj.get("_id"))
-    project.onLoad(parent, db_project_obj.get("name"))
-
-    def build_coll = SetupConfig.get().getDynamicBuildRepository().getDatastore().getDB().getCollection("dotci_build")
-    def builds = build_coll.find(new BasicDBObject("parent", project.getId()))
-    for(build_obj in builds) {
-      println("Migrating Build: ${project.getName()} [Num: ${build_obj.get("number")} ID:${build_obj.get("_id")}]")
-      def build = migrate_build(project, build_obj)
-      if(build != null) {
-        build.save()
-      }
+      build.restoreFromDb(project, db_build_obj.toMap())
+      return build
+    } catch(e) {
+      LOGGER.log(Level.SEVERE, "Unable to migrate build: ${db_build_obj.get("_id")}", e)
+      throw(e)
     }
-    return project
-  } catch(e) {
-    println("Unable to migrate project: ${db_project_obj.get("_id")}")
-    //throw(e)
   }
-}
 
-def org_containers = Jenkins.getInstance().getItems(OrganizationContainer.class)
+  def migrate_project(parent, db_project_obj) {
+    try {
+      xml_processor.ignoreUnknownElements()
 
-for(container in org_containers) {
-  container.save()
-  println("Migrating Container: " + container.getName())
-  def job_coll = SetupConfig.get().getDynamicBuildRepository().getDatastore().getDB().getCollection("dotci_project")
-  def child_projects = job_coll.find(new BasicDBObject("parent", container.getName()) )
-  for(db_project_obj in child_projects) {
-    println("Migrating Project: ${db_project_obj.get("name")} [ID: ${db_project_obj.get("_id")}]")
+      def root = new XmlSlurper().parseText(db_project_obj.get("xml"))
+      root.dynamicProjectRepository.replaceNode{}
+      root.dynamicBuildRepository.replaceNode{}
+      root.properties."EnvInjectJobProperty".replaceNode{}
+      root.publishers."htmlpublisher.HtmlPublisher".replaceNode{}
 
-    def project = migrate_project(container, db_project_obj)
+      def doc = XmlUtil.serialize(root)
 
-    if(project != null) {
-      project.save()
+      def project = xml_processor.fromXML(doc)
+      project.setId(db_project_obj.get("_id"))
+      project.onLoad(parent, db_project_obj.get("name"))
 
-      def subprojects = job_coll.find(new BasicDBObject("parent", project.getId()))
-      for(subproject_obj in subprojects) {
-        println("Migrating SubProject: ${db_project_obj.get("name")} [ID: ${db_project_obj.get("_id")}]")
-        def subproject = migrate_project(project, subproject_obj)
-        if(subproject != null) {
-          subproject.save()
+      def build_coll = SetupConfig.get().getDynamicBuildRepository().getDatastore().getDB().getCollection("dotci_build")
+      def builds = build_coll.find(new BasicDBObject("parent", project.getId()))
+      for(build_obj in builds) {
+        LOGGER.log(Level.INFO, "Migrating Build: ${project.getName()} [Num: ${build_obj.get("number")} ID:${build_obj.get("_id")}]")
+
+        def build = migrate_build(project, build_obj)
+        if(build != null) {
+          build.save()
+        }
+      }
+      return project
+    } catch(e) {
+      LOGGER.log(Level.SEVERE, "Unable to migrate project: ${db_project_obj.get("_id")}", e)
+      throw(e)
+    }
+  }
+
+  def migrate_container(container) {
+    container.save()
+    LOGGER.log(Level.INFO, "Migrating Container: " + container.getName())
+
+    def job_coll = SetupConfig.get().getDynamicBuildRepository().getDatastore().getDB().getCollection("dotci_project")
+    def child_projects = job_coll.find(new BasicDBObject("parent", container.getName()) )
+    for(db_project_obj in child_projects) {
+      LOGGER.log(Level.INFO,"Migrating Project: ${db_project_obj.get("name")} [ID: ${db_project_obj.get("_id")}]")
+
+      def project = migrate_project(container, db_project_obj)
+
+      if(project != null) {
+        project.save()
+
+        def subprojects = job_coll.find(new BasicDBObject("parent", project.getId()))
+        for(subproject_obj in subprojects) {
+          LOGGER.log(Level.INFO,"Migrating SubProject: ${db_project_obj.get("name")} [ID: ${db_project_obj.get("_id")}]")
+          def subproject = migrate_project(project, subproject_obj)
+          if(subproject != null) {
+            subproject.save()
+          }
         }
       }
     }
+    container.doReload()
   }
-  container.doReload()
+
+  void run() {
+    def org_containers = Jenkins.getInstance().getItems(OrganizationContainer.class)
+
+    for(container in org_containers) {
+      migrate_container(container)      
+    }
+  }
 }
 
+def migrator = new Migrator()
+migrator.run()
