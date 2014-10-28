@@ -21,7 +21,11 @@ class Migrator {
       def root = new XmlSlurper().parseText(db_build_obj.get("xml"))
       root.dynamicBuildLayouter.replaceNode{}
       root.actions."org.jenkinsci.plugins.envinject.EnvInjectPluginAction".replaceNode{}
-
+      root.actions."htmlpublisher.HtmlPublisherTarget_-HTMLBuildAction".replaceNode{ node ->
+        "htmlpublisher.HTMLBuildAction" (plugin: node.@plugin) {
+          actualHtmlPublisherTarget(node.actualHtmlPublisherTarget.'*')
+        }
+      }
       def doc = XmlUtil.serialize(root)
 
       def build = xml_processor.fromXML(doc)
@@ -42,7 +46,7 @@ class Migrator {
       root.dynamicProjectRepository.replaceNode{}
       root.dynamicBuildRepository.replaceNode{}
       root.properties."EnvInjectJobProperty".replaceNode{}
-      root.publishers."htmlpublisher.HtmlPublisher".replaceNode{}
+      root.buildWrappers.EnvInjectBuildWrapper.replaceNode{}
 
       def doc = XmlUtil.serialize(root)
 
@@ -95,8 +99,9 @@ class Migrator {
   }
 
   void run() {
-    def org_containers = Jenkins.getInstance().getItems(OrganizationContainer.class)
+    LOGGER.log(Level.INFO,"Starting DotCi Migration")
 
+    def org_containers = Jenkins.getInstance().getItems(OrganizationContainer.class)
     for(container in org_containers) {
       migrate_container(container)      
     }
