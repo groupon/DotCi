@@ -9,6 +9,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import groovy.xml.*;
 import com.groupon.jenkins.dynamic.build.*;
+import hudson.model.Run;
+import hudson.model.Items
 
 class Migrator {
   def LOGGER = Logger.getLogger(MongoRepository.class.getName())
@@ -28,7 +30,7 @@ class Migrator {
       }
       def doc = XmlUtil.serialize(root)
 
-      def build = xml_processor.fromXML(doc)
+      def build = Run.XSTREAM.fromXML(doc)
 
       build.restoreFromDb(project, db_build_obj.toMap())
       return build
@@ -50,7 +52,7 @@ class Migrator {
 
       def doc = XmlUtil.serialize(root)
 
-      def project = xml_processor.fromXML(doc)
+      def project = Items.XSTREAM.fromXML(doc)
       project.setId(db_project_obj.get("_id"))
       project.onLoad(parent, db_project_obj.get("name"))
 
