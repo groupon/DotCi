@@ -2,6 +2,7 @@ package com.groupon.jenkins.mongo;
 
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -29,5 +30,26 @@ public class GithubAccessTokenRepositoryTest {
         GithubAccessTokenRepository repo = SetupConfig.get().getGithubAccessTokenRepository();
         String username = repo.getAssociatedLogin("https://github.com/Groupon/DotCi");
         assertEquals("bestuser", username);
+    }
+
+    @Test
+    @LocalData
+    @Ignore
+    public void should_update_an_access_token() {
+
+    }
+
+    @Test
+    @LocalData
+    @Ignore
+    public void should_check_if_a_url_is_configured() {
+
+    }
+
+    @Test
+    @LocalData
+    @Ignore
+    public void should_add_an_access_token_based_on_a_url() {
+
     }
 }
