@@ -168,6 +168,9 @@ public class GithubRepositoryService {
     protected void addDeployKey() throws IOException {
         if (getRepository().isPrivate()) {
             removeDeployKeyIfPreviouslyAdded();
+            DeployKeyGenerator.DeployKeyPair keyPair = new DeployKeyGenerator().generateKeyPair();
+            getRepository().addDeployKey("DotCi",keyPair.publicKey);
+            new GithubDeployKeyRepository().put(getRepository().getUrl(),keyPair);
         }
     }
 
