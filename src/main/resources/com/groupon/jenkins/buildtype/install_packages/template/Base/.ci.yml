@@ -31,14 +31,17 @@ environment:
 
 build:
   checkout: 
-    - find . -delete 
+    -  find . ! -path "./deploykey_rsa.pub" ! -path "./deploykey_rsa" -delete
     <% if(DOTCI_PULL_REQUEST) { %>
+    - mkdir -p $JOB_NAME
+    - cd $JOB_NAME
     - git init
     - git remote add origin $GIT_URL
     - git fetch origin "+refs/pull/$DOTCI_PULL_REQUEST/merge:" || { echo -e "\\n === Merge conflict response ! ===\\n\\n Recommend rebase and resolve the pull request.\\n" && exit 1; } #quotes required to escape the colon during git fetch
     - git reset --hard FETCH_HEAD
     <% } else { %>
-    - git clone  --branch=$DOTCI_BRANCH $GIT_URL .
+    - git clone  --branch=$DOTCI_BRANCH $GIT_URL $JOB_NAME
+    - cd $JOB_NAME
     - git reset --hard  $SHA
     <% } %>
   before_install:

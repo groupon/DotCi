@@ -22,32 +22,14 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.github.services;
+package com.groupon.jenkins.github;
 
-import com.groupon.jenkins.github.DeployKeyPair;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.KeyPair;
-import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
+public  class DeployKeyPair{
+        public String publicKey;
+        public String privateKey;
 
-public class DeployKeyGenerator {
-    public DeployKeyPair generateKeyPair(){
-        JSch jsch = new JSch();
-        try {
-            KeyPair kpair= KeyPair.genKeyPair(jsch, KeyPair.RSA);
-            ByteArrayOutputStream privateKeyStream = new ByteArrayOutputStream();
-            kpair.writePrivateKey(privateKeyStream);
-
-            ByteArrayOutputStream publicKeyStream = new ByteArrayOutputStream();
-            kpair.writePublicKey(publicKeyStream,"");
-            return new DeployKeyPair( new String(publicKeyStream.toByteArray(),"UTF-8"), new String(privateKeyStream.toByteArray(),"UTF-8"));
-        } catch (JSchException e) {
-            throw new RuntimeException(e);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+        public DeployKeyPair(String publicKey, String privateKey) {
+            this.publicKey = publicKey;
+            this.privateKey = privateKey;
         }
-
-
     }
-}

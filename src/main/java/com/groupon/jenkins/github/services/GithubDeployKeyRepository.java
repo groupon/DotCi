@@ -24,17 +24,30 @@
 
 package com.groupon.jenkins.github.services;
 
+import com.groupon.jenkins.github.DeployKeyPair;
 import com.groupon.jenkins.mongo.MongoRepository;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import java.io.IOException;
 
 public class GithubDeployKeyRepository extends MongoRepository {
-    public void put(String url,DeployKeyGenerator.DeployKeyPair keyPair) throws IOException {
+    public void put(String url,DeployKeyPair keyPair) throws IOException {
         BasicDBObject doc = new BasicDBObject("public_key", keyPair.publicKey).append("private_key",keyPair.privateKey ).append("repo_url", url);
         getCollection().insert(doc);
     }
     protected DBCollection getCollection() {
         return getDatastore().getDB().getCollection("deploy_keys");
+    }
+
+    public DeployKeyPair get(String repoUrl) {
+        BasicDBObject query = new BasicDBObject("repo_url", repoUrl);
+        DBObject keyPair = getCollection().findOne(query);
+        return new DeployKeyPair((String)keyPair.get("public_key"),(String)keyPair.get("private_key"));
+    }
+
+    public boolean hasDeployKey(String repoUrl) {
+        BasicDBObject query = new BasicDBObject("repo_url", repoUrl);
+        return getCollection().getCount(query) == 1;
     }
 }

@@ -38,7 +38,10 @@ import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildRunner;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildScheduler;
+import com.groupon.jenkins.dynamic.build.execution.WorkspaceFileExporter;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import com.groupon.jenkins.github.DeployKeyPair;
+import com.groupon.jenkins.github.services.GithubDeployKeyRepository;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
 import hudson.Extension;
 import hudson.Launcher;
@@ -66,6 +69,7 @@ public class InstallPackagesBuild extends BuildType implements SubBuildRunner{
 
     @Override
     public Result runBuild(DynamicBuild dynamicBuild, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+        exportDeployKeysIfPrivateRepo(dynamicBuild,listener);
         this.buildConfiguration = calculateBuildConfiguration(dynamicBuild, listener);
         if (buildConfiguration.isSkipped()) {
             dynamicBuild.skip();
@@ -83,6 +87,17 @@ public class InstallPackagesBuild extends BuildType implements SubBuildRunner{
         runNotifiers(dynamicBuild,buildConfiguration,listener);
         return result;
     }
+
+    private void exportDeployKeysIfPrivateRepo(DynamicBuild dynamicBuild, BuildListener listener) throws IOException, InterruptedException {
+        GithubDeployKeyRepository githubDeployKeyRepository = new GithubDeployKeyRepository();
+        if(githubDeployKeyRepository.hasDeployKey(dynamicBuild.getGithubRepoUrl())){
+            DeployKeyPair deployKeyPair = githubDeployKeyRepository.get(dynamicBuild.getGithubRepoUrl());
+            new WorkspaceFileExporter("deploykey_rsa" ,deployKeyPair.privateKey,"rw-------").export(dynamicBuild,listener);
+            new WorkspaceFileExporter("deploykey_rsa.pub",deployKeyPair.privateKey,"rw-r--r--").export(dynamicBuild,listener);
+        }
+
+    }
+
 
     private boolean runNotifiers(DynamicBuild build, BuildConfiguration buildConfiguration, BuildListener listener) {
         boolean result = true ;
