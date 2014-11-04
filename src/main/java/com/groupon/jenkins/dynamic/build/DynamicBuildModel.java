@@ -100,6 +100,7 @@ public class DynamicBuildModel {
         Map<String, String> vars = new HashMap<String, String>();
         vars.put("SHA", build.getSha());
         vars.put("GIT_URL", new GitUrl(build.getParent().getGithubRepoUrl()).getUrl());
+        vars.put("DOTCI_IS_PRIVATE_REPO", new Boolean(build.isPrivateRepo()).toString()) ;
         return vars;
     }
 }

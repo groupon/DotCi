@@ -30,6 +30,7 @@ import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.BuildEnvironment;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import com.groupon.jenkins.github.services.GithubDeployKeyRepository;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import hudson.EnvVars;
 import hudson.Functions;
@@ -48,9 +49,7 @@ import hudson.util.VersionNumber;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -174,6 +173,8 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
             throw  new RuntimeException(e);
         }
     }
+
+
 
     protected class DynamicRunExecution extends Build.BuildExecution implements BuildExecutionContext {
         @Override
@@ -304,6 +305,10 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     public Map<String, String> getDotCiEnvVars() {
         return model.getDotCiEnvVars();
     }
+    public boolean isPrivateRepo() {
+        return new GithubDeployKeyRepository().hasDeployKey(getGithubRepoUrl());
+    }
+
 
     public void skip() {
         addAction(new SkippedBuildAction());

@@ -90,7 +90,7 @@ public class InstallPackagesBuild extends BuildType implements SubBuildRunner{
 
     private void exportDeployKeysIfPrivateRepo(DynamicBuild dynamicBuild, BuildListener listener) throws IOException, InterruptedException {
         GithubDeployKeyRepository githubDeployKeyRepository = new GithubDeployKeyRepository();
-        if(githubDeployKeyRepository.hasDeployKey(dynamicBuild.getGithubRepoUrl())){
+        if(dynamicBuild.isPrivateRepo()){
             DeployKeyPair deployKeyPair = githubDeployKeyRepository.get(dynamicBuild.getGithubRepoUrl());
             new WorkspaceFileExporter("deploykey_rsa" ,deployKeyPair.privateKey,"rw-------").export(dynamicBuild,listener);
             new WorkspaceFileExporter("deploykey_rsa.pub",deployKeyPair.privateKey,"rw-r--r--").export(dynamicBuild,listener);
