@@ -24,6 +24,7 @@
 
 package com.groupon.jenkins.github.services;
 
+import com.groupon.jenkins.github.DeployKeyPair;
 import org.junit.Test;
 import org.springframework.util.Assert;
 
@@ -32,7 +33,7 @@ public class DeployKeyGeneratorTest {
 
     @Test
     public void should_generate_key_pair() throws Exception {
-        DeployKeyGenerator.DeployKeyPair keyPair = new DeployKeyGenerator().generateKeyPair();
+        DeployKeyPair keyPair = new DeployKeyGenerator().generateKeyPair();
         Assert.notNull(keyPair.publicKey);
         Assert.notNull(keyPair.privateKey);
     }
