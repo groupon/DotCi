@@ -29,11 +29,12 @@ import com.groupon.jenkins.mongo.MongoRepository;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import hudson.util.Secret;
 import java.io.IOException;
 
 public class GithubDeployKeyRepository extends MongoRepository {
     public void put(String url,DeployKeyPair keyPair) throws IOException {
-        BasicDBObject doc = new BasicDBObject("public_key", keyPair.publicKey).append("private_key",keyPair.privateKey ).append("repo_url", url);
+        BasicDBObject doc = new BasicDBObject("public_key", encrypt(keyPair.publicKey)).append("private_key",encrypt(keyPair.privateKey)).append("repo_url", url);
         getCollection().insert(doc);
     }
     protected DBCollection getCollection() {
@@ -43,11 +44,18 @@ public class GithubDeployKeyRepository extends MongoRepository {
     public DeployKeyPair get(String repoUrl) {
         BasicDBObject query = new BasicDBObject("repo_url", repoUrl);
         DBObject keyPair = getCollection().findOne(query);
-        return new DeployKeyPair((String)keyPair.get("public_key"),(String)keyPair.get("private_key"));
+        return new DeployKeyPair(decrypt((String)keyPair.get("public_key")),decrypt( (String)keyPair.get("private_key")));
     }
 
     public boolean hasDeployKey(String repoUrl) {
         BasicDBObject query = new BasicDBObject("repo_url", repoUrl);
         return getCollection().getCount(query) == 1;
+    }
+    private String encrypt(String value) {
+        return Secret.fromString(value).getEncryptedValue();
+    }
+
+    private  String decrypt(String value){
+        return Secret.fromString(value).getPlainText();
     }
 }
