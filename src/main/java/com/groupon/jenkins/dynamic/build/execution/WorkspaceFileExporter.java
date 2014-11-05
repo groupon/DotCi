@@ -26,6 +26,7 @@ package com.groupon.jenkins.dynamic.build.execution;
 import hudson.FilePath;
 import hudson.Util;
 import hudson.model.AbstractBuild;
+import hudson.model.BuildListener;
 import hudson.model.Node;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
@@ -38,61 +39,97 @@ import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermissions;
 
 public class WorkspaceFileExporter {
-    private final String contents;
-	private final String fileName;
-    private String permissions;
 
-    public WorkspaceFileExporter(String fileName, String contents, String permissions) {
-        this.contents = contents;
-		this.fileName = fileName;
-        this.permissions = permissions;
+
+    private WorkspaceFile workspaceFile;
+
+    public WorkspaceFileExporter(WorkspaceFile workspaceFile) {
+        this.workspaceFile = workspaceFile;
     }
 
 
-	public FilePath export(AbstractBuild<?, ?> build, TaskListener listener) throws InterruptedException, IOException {
-		FilePath ws = build.getWorkspace();
-		if (ws == null) {
-			Node node = build.getBuiltOn();
-			if (node == null) {
-				throw new NullPointerException("no such build node: " + build.getBuiltOnStr());
-			}
-			throw new NullPointerException("no workspace from node " + node + " which is computer " + node.toComputer() + " and has channel " + node.getChannel());
-		}
-		try {
-			return createScriptFile(ws, contents);
-		} catch (IOException e) {
-			Util.displayIOException(e, listener);
-			e.printStackTrace(listener.fatalError(Messages.CommandInterpreter_UnableToProduceScript()));
+    public FilePath export(AbstractBuild<?,?> build, TaskListener listener) throws InterruptedException, IOException {
+        FilePath ws = getFilePath(build);
+        try {
+            return createFile(ws);
+        } catch (IOException e) {
+            Util.displayIOException(e, listener);
+            e.printStackTrace(listener.fatalError(Messages.CommandInterpreter_UnableToProduceScript()));
             throw e;
-		}
+        }
 
-	}
+    }
 
-	private FilePath createScriptFile(FilePath ws, final String fileContents) throws IOException, InterruptedException {
-		return new FilePath(ws.getChannel(), ws.act(new WorkspaceFileCreatorFileCallable(fileName,fileContents, permissions)));
-	}
-    private static class WorkspaceFileCreatorFileCallable implements FilePath.FileCallable<String> {
-        private final String fileContents;
-        private static final long serialVersionUID = 1L;
-        private final String fileName;
-        private String permissions;
+    private FilePath getFilePath(AbstractBuild<?, ?> build) {
+        FilePath ws = build.getWorkspace();
+        if (ws == null) {
+            Node node = build.getBuiltOn();
+            if (node == null) {
+                throw new RuntimeException("no such build node: " + build.getBuiltOnStr());
+            }
+            throw new RuntimeException("no workspace from node " + node + " which is computer " + node.toComputer() + " and has channel " + node.getChannel());
+        }
+        return ws;
+    }
 
-        WorkspaceFileCreatorFileCallable(String fileName, String fileContents, String permissions) {
-            this.fileContents = fileContents;
+    private FilePath createFile(FilePath ws) throws IOException, InterruptedException {
+        return new FilePath(ws.getChannel(), ws.act(new WorkspaceFileCreatorFileCallable(workspaceFile)));
+    }
+
+    public void delete(AbstractBuild<?,?> build, BuildListener listener) throws IOException, InterruptedException {
+        FilePath ws = getFilePath(build);
+        ws.act(new WorkspaceFileDeleterFileCallable(workspaceFile));
+    }
+
+    public  static class WorkspaceFile{
+        final String contents;
+        final String fileName;
+        final String permissions;
+        public WorkspaceFile(String fileName, String contents, String permissions) {
+            this.contents = contents;
             this.fileName = fileName;
             this.permissions = permissions;
         }
+        public WorkspaceFile(String fileName){
+            this.fileName = fileName;
+            this.contents = null;
+            this.permissions = null;
+        }
+
+    }
+
+    private static class WorkspaceFileDeleterFileCallable implements FilePath.FileCallable<String> {
+        private static final long serialVersionUID = 1L;
+        private WorkspaceFile workspaceFile;
+
+        public WorkspaceFileDeleterFileCallable(WorkspaceFile workspaceFile) {
+            this.workspaceFile = workspaceFile;
+        }
+        public String invoke(File dir, VirtualChannel channel) throws IOException {
+            File f = new File(dir.getAbsolutePath() + "/" + workspaceFile.fileName);
+            f.delete();
+            return f.getAbsolutePath();
+        }
+    }
+    private static class WorkspaceFileCreatorFileCallable implements FilePath.FileCallable<String> {
+        private static final long serialVersionUID = 1L;
+        private WorkspaceFile workspaceFile;
+
+        public WorkspaceFileCreatorFileCallable(WorkspaceFile workspaceFile) {
+            this.workspaceFile = workspaceFile;
+        }
+
         @Override
         public String invoke(File dir, VirtualChannel channel) throws IOException {
             dir.mkdirs();
             File f;
             Writer w = null;
             try {
-                f = new File(dir.getAbsolutePath() + "/" + fileName);
+                f = new File(dir.getAbsolutePath() + "/" + workspaceFile.fileName);
                 f.createNewFile();
                 w = new FileWriter(f);
-                w.write(fileContents);
-                Files.setPosixFilePermissions(f.toPath(), PosixFilePermissions.fromString(permissions));
+                w.write(workspaceFile.contents);
+                Files.setPosixFilePermissions(f.toPath(), PosixFilePermissions.fromString(workspaceFile.permissions));
             } finally {
                 if (w != null) {
                     w.close();

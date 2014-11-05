@@ -42,7 +42,7 @@ build:
     <% } else { %>
 
     <% if(DOTCI_IS_PRIVATE_REPO == 'true') { %>
-    - ssh-agent bash -c "ssh-add -D && ssh-add $WORKSPACE/deploykey_rsa && git clone  --branch=$DOTCI_BRANCH $GIT_URL $JOB_NAME "
+    - ssh-agent bash -c "ssh-add -D && ssh-add \$WORKSPACE/deploykey_rsa && git clone  --branch=$DOTCI_BRANCH $GIT_URL $JOB_NAME "
     <% } else { %>
     - git clone  --branch=$DOTCI_BRANCH $GIT_URL $JOB_NAME
     <% } %>

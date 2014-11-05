@@ -23,20 +23,29 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
-import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
-import com.groupon.jenkins.util.GReflectionUtils;
+import com.groupon.jenkins.dynamic.build.cause.BuildCause;
+import com.groupon.jenkins.dynamic.build.execution.WorkspaceFileExporter;
+import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
+import com.groupon.jenkins.github.DeployKeyPair;
+import com.groupon.jenkins.github.GitBranch;
+import com.groupon.jenkins.github.services.GithubDeployKeyRepository;
 import com.mongodb.DBObject;
 import hudson.EnvVars;
 import hudson.Util;
-import hudson.model.*;
+import hudson.model.AbstractProject;
+import hudson.model.Build;
+import hudson.model.BuildListener;
+import hudson.model.Computer;
+import hudson.model.Executor;
 import hudson.model.Queue.Executable;
+import hudson.model.Run;
+import hudson.model.TaskListener;
+import hudson.model.User;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.ChangeLogSet.Entry;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.security.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,18 +53,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.logging.Level;
-
 import jenkins.model.Jenkins;
-
 import org.bson.types.ObjectId;
 import org.kohsuke.stapler.export.Exported;
-import org.mongodb.morphia.annotations.*;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.PostLoad;
+import org.mongodb.morphia.annotations.PrePersist;
 import org.springframework.util.ReflectionUtils;
-
-import com.groupon.jenkins.dynamic.build.cause.BuildCause;
-import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
-import com.groupon.jenkins.github.GitBranch;
 
 @Entity("run")
 public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> extends Build<P, B> {
@@ -291,6 +296,30 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
 
     public Run getPreviousFinishedBuildOfSameBranch(BuildListener listener) {
         return new DynamicBuildRepository().getPreviousFinishedBuildOfSameBranch(this, getCurrentBranch().toString());
+    }
+
+    public boolean isPrivateRepo() {
+        return new GithubDeployKeyRepository().hasDeployKey(getGithubRepoUrl());
+    }
+
+    public abstract String getGithubRepoUrl();
+
+    protected void exportDeployKeysIfPrivateRepo( BuildListener listener) throws IOException, InterruptedException {
+        if(isPrivateRepo()){
+            DeployKeyPair deployKeyPair = new GithubDeployKeyRepository().get(getGithubRepoUrl());
+            WorkspaceFileExporter.WorkspaceFile privateKeyFile = new WorkspaceFileExporter.WorkspaceFile("deploykey_rsa", deployKeyPair.privateKey, "rw-------");
+            WorkspaceFileExporter.WorkspaceFile publicKeyFile = new WorkspaceFileExporter.WorkspaceFile("deploykey_rsa.pub", deployKeyPair.privateKey, "rw-r--r--");
+            new WorkspaceFileExporter(publicKeyFile).export(this,listener);
+            new WorkspaceFileExporter(privateKeyFile).export(this,listener);
+        }
+
+    }
+
+    protected void deleteDeployKeys(BuildListener listener) throws IOException, InterruptedException {
+        if(isPrivateRepo()){
+            new WorkspaceFileExporter(new WorkspaceFileExporter.WorkspaceFile("deploykey_rsa")).delete(this,listener);
+            new WorkspaceFileExporter(new WorkspaceFileExporter.WorkspaceFile("deploykey_rsa.pub")).delete(this,listener);
+        }
     }
 
     public String getPusher() {
