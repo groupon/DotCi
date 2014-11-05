@@ -34,6 +34,7 @@ import hudson.tasks.Messages;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermissions;
@@ -81,7 +82,8 @@ public class WorkspaceFileExporter {
         ws.act(new WorkspaceFileDeleterFileCallable(workspaceFile));
     }
 
-    public  static class WorkspaceFile{
+    public  static class WorkspaceFile implements Serializable{
+        private static final long serialVersionUID = 1L;
         final String contents;
         final String fileName;
         final String permissions;
