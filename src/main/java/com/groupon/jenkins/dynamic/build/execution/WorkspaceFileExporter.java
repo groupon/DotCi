@@ -28,8 +28,14 @@ import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.Node;
 import hudson.model.TaskListener;
+import hudson.remoting.VirtualChannel;
 import hudson.tasks.Messages;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.attribute.PosixFilePermissions;
 
 public class WorkspaceFileExporter {
     private final String contents;
@@ -65,5 +71,34 @@ public class WorkspaceFileExporter {
 	private FilePath createScriptFile(FilePath ws, final String fileContents) throws IOException, InterruptedException {
 		return new FilePath(ws.getChannel(), ws.act(new WorkspaceFileCreatorFileCallable(fileName,fileContents, permissions)));
 	}
+    private static class WorkspaceFileCreatorFileCallable implements FilePath.FileCallable<String> {
+        private final String fileContents;
+        private static final long serialVersionUID = 1L;
+        private final String fileName;
+        private String permissions;
 
+        WorkspaceFileCreatorFileCallable(String fileName, String fileContents, String permissions) {
+            this.fileContents = fileContents;
+            this.fileName = fileName;
+            this.permissions = permissions;
+        }
+        @Override
+        public String invoke(File dir, VirtualChannel channel) throws IOException {
+            dir.mkdirs();
+            File f;
+            Writer w = null;
+            try {
+                f = new File(dir.getAbsolutePath() + "/" + fileName);
+                f.createNewFile();
+                w = new FileWriter(f);
+                w.write(fileContents);
+                Files.setPosixFilePermissions(f.toPath(), PosixFilePermissions.fromString(permissions));
+            } finally {
+                if (w != null) {
+                    w.close();
+                }
+            }
+            return f.getAbsolutePath();
+        }
+    }
 }
