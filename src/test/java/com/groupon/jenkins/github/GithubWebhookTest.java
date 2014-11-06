@@ -23,27 +23,25 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.github;
 
+import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.dynamic.build.cause.GithubCause;
+import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import hudson.model.ParametersAction;
-
+import hudson.security.ACL;
 import java.io.IOException;
-
+import org.acegisecurity.context.SecurityContextHolder;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kohsuke.stapler.StaplerRequest;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
-import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.cause.GithubCause;
-import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
-
 import static com.google.common.collect.Lists.newArrayList;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -76,6 +74,14 @@ public class GithubWebhookTest {
         StaplerRequest request = mock(StaplerRequest.class);
         when(request.getParameter("payload")).thenReturn("payload");
         verifyBuildTrigger(request);
+    }
+
+    @Test
+    public void should_authenticate_as_SYSTEM() throws IOException, InterruptedException {
+        StaplerRequest request = mock(StaplerRequest.class);
+        when(request.getParameter("payload")).thenReturn("payload");
+        verifyBuildTrigger(request);
+        Assert.assertEquals(ACL.SYSTEM, SecurityContextHolder.getContext().getAuthentication());
     }
 
     protected void verifyBuildTrigger(StaplerRequest request) throws IOException, InterruptedException {

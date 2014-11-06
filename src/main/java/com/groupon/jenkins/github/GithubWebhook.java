@@ -23,23 +23,22 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.github;
 
+import com.google.common.io.CharStreams;
+import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import hudson.Extension;
-import hudson.model.UnprotectedRootAction;
 import hudson.model.AbstractProject;
 import hudson.model.StringParameterValue;
+import hudson.model.UnprotectedRootAction;
+import hudson.security.ACL;
 import hudson.util.SequentialExecutionQueue;
-
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
-
+import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.ExportedBean;
-
-import com.google.common.io.CharStreams;
-import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 
 @Extension
 @ExportedBean
@@ -69,6 +68,7 @@ public class GithubWebhook implements UnprotectedRootAction {
     }
 
     public void processGitHubPayload(String payloadData) {
+        SecurityContextHolder.getContext().setAuthentication(ACL.SYSTEM);
         final Payload payload = makePayload(payloadData);
         LOGGER.info("Received POST by " + payload.getPusher());
         if (payload.needsBuild()) {
