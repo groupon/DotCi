@@ -25,13 +25,10 @@ package com.groupon.jenkins.github.services;
 
 import com.groupon.jenkins.mongo.MongoRepository;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import hudson.util.Secret;
 import java.io.IOException;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.jenkinsci.plugins.GithubAuthenticationToken;
-import org.kohsuke.github.GitHub;
 
 public class GithubAccessTokenRepository extends MongoRepository {
 
@@ -55,32 +52,27 @@ public class GithubAccessTokenRepository extends MongoRepository {
         return getCollection().findOne(query);
     }
 
-      public void put(String url) throws IOException {
+      public void put(String url,String accessToken, String user) throws IOException {
         DBObject token = getToken(url);
 
-        GithubAuthenticationToken auth = getAuthentication();
-        GitHub gh = auth.getGitHub();
-        String accessToken = getEncryptedToken(auth);
+        String encryptedToken = getEncryptedValue(accessToken);
 
             if (token != null) {
                  getCollection().remove(token);
             }
 
-            BasicDBObject doc = new BasicDBObject("user", gh.getMyself().getLogin()).append("access_token", accessToken).append("repo_url", url);
+            BasicDBObject doc = new BasicDBObject("user", user).append("access_token", encryptedToken).append("repo_url", url);
             getCollection().insert(doc);
       }
 
-    private GithubAuthenticationToken getAuthentication() {
-        return (GithubAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+    private String getEncryptedValue(String accessToken) {
+        return Secret.fromString(accessToken).getEncryptedValue();
     }
 
-    private String getEncryptedToken(GithubAuthenticationToken auth) {
-        return Secret.fromString(auth.getAccessToken()).getEncryptedValue();
-    }
 
-    public void updateAccessToken(String username) {
+    public void updateAccessToken(String username, String accessToken) {
         BasicDBObject query = new BasicDBObject("user", username);
-        BasicDBObject update = new BasicDBObject("$set", new BasicDBObject("access_token", getEncryptedToken(getAuthentication())));
+        BasicDBObject update = new BasicDBObject("$set", new BasicDBObject("access_token", getEncryptedValue(accessToken)));
         getCollection().update(query,update,false,true);
     }
 

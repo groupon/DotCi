@@ -23,26 +23,20 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.repository;
 
+import com.groupon.jenkins.dynamic.build.CurrentBuildState;
+import com.groupon.jenkins.dynamic.build.DbBackedBuild;
+import com.groupon.jenkins.dynamic.build.DbBackedProject;
+import com.groupon.jenkins.dynamic.build.DbBackedRunList;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.mongo.MongoRepository;
+import com.groupon.jenkins.mongo.MongoRunMap;
 import com.groupon.jenkins.util.GReflectionUtils;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.util.RunList;
-
 import java.util.List;
-
 import java.util.logging.Logger;
-
-import com.groupon.jenkins.dynamic.build.CurrentBuildState;
-import com.groupon.jenkins.dynamic.build.DbBackedProject;
-import com.groupon.jenkins.dynamic.build.DbBackedRunList;
-import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.DbBackedBuild;
-import com.groupon.jenkins.github.services.GithubCurrentUserService;
-
-import com.groupon.jenkins.mongo.MongoRepository;
-import com.groupon.jenkins.mongo.MongoRunMap;
-import com.mongodb.BasicDBObject;
+import jenkins.model.Jenkins;
 import org.mongodb.morphia.query.Query;
 
 public class DynamicBuildRepository extends MongoRepository {
@@ -180,7 +174,7 @@ public class DynamicBuildRepository extends MongoRepository {
         int number = Integer.parseInt(n) - 1;
 
         List<DbBackedBuild> builds = getQuery(project).order("number").
-                field("pusher").equal(GithubCurrentUserService.current().getCurrentLogin()).
+                field("pusher").equal(Jenkins.getAuthentication().getName()).
                 field("number").greaterThan(number).
                 asList();
 
@@ -213,8 +207,8 @@ public class DynamicBuildRepository extends MongoRepository {
             .order("-number");
 
         query.or(
-            query.criteria("actions.causes.user").equal(GithubCurrentUserService.current().getCurrentLogin()),
-            query.criteria("actions.causes.pusher").equal(GithubCurrentUserService.current().getCurrentLogin())
+            query.criteria("actions.causes.user").equal(Jenkins.getAuthentication().getName()),
+            query.criteria("actions.causes.pusher").equal(Jenkins.getAuthentication().getName())
         );
 
         List<DbBackedBuild> builds = query.asList();
@@ -267,8 +261,8 @@ public class DynamicBuildRepository extends MongoRepository {
             .field("className").equal("com.groupon.jenkins.dynamic.build.DynamicBuild");
 
         query.or(
-                query.criteria("actions.causes.user").equal(GithubCurrentUserService.current().getCurrentLogin()),
-                query.criteria("actions.causes.pusher").equal(GithubCurrentUserService.current().getCurrentLogin())
+                query.criteria("actions.causes.user").equal(Jenkins.getAuthentication().getName()),
+                query.criteria("actions.causes.pusher").equal(Jenkins.getAuthentication().getName())
         );
 
         List<DynamicBuild> builds = query.asList();

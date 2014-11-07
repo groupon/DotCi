@@ -23,15 +23,9 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.mybuildsview;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
-import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
-import com.groupon.jenkins.github.services.GithubCurrentUserService;
 import com.groupon.jenkins.views.AuthenticatedView;
 import hudson.Extension;
 import hudson.model.Computer;
@@ -54,7 +48,6 @@ import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 
 public class MyBuildsView extends AuthenticatedView {
@@ -67,9 +60,6 @@ public class MyBuildsView extends AuthenticatedView {
         return new DynamicBuildRepository();
     }
 
-    protected GithubCurrentUserService getUser() {
-        return GithubCurrentUserService.current();
-    }
 
     @Override
     public List<Computer> getComputers() {
@@ -78,27 +68,17 @@ public class MyBuildsView extends AuthenticatedView {
 
     @Override
     public RunList getBuilds() {
-        Iterable<DynamicBuild> builds = makeDynamicBuildRepository().getLastBuildsForUser(getUser().getCurrentLogin(), 20);
+        Iterable<DynamicBuild> builds = makeDynamicBuildRepository().getLastBuildsForUser(getCurrentUser(), 20);
         return RunList.fromRuns(Lists.newArrayList(builds));
     }
 
-    public Iterable<OrganizationContainer> getOrgs() {
-        Iterable<OrganizationContainer> orgs = Iterables.transform(getUser().getOrgs(), new Function<String, OrganizationContainer>() {
-            @Override
-            public OrganizationContainer apply(@Nullable String orgName) {
-                return (OrganizationContainer) Jenkins.getInstance().getItem(orgName);
-            }
-        });
-        return Iterables.filter(orgs, Predicates.notNull());
+    private String getCurrentUser() {
+        return Jenkins.getAuthentication().getName();
     }
+
 
     public void doBuilds(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
         req.getSession().setAttribute("viewType", "builds");
-        rsp.forwardToPreviousPage(req);
-    }
-
-    public void doOrgs(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        req.getSession().setAttribute("viewType", "orgs");
         rsp.forwardToPreviousPage(req);
     }
 

@@ -23,22 +23,22 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.buildsetup;
 
+import com.google.common.collect.Iterables;
+import com.groupon.jenkins.github.services.GithubCurrentUserService;
+import java.io.IOException;
 import org.junit.Test;
 import org.kohsuke.github.GHRepository;
 
-import com.google.common.collect.Iterables;
-import com.groupon.jenkins.github.services.GithubCurrentUserService;
+import static org.junit.Assert.*;
 
 import static com.groupon.jenkins.testhelpers.TestHelpers.map;
-import static org.junit.Assert.assertEquals;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class GithubReposControllerTest {
 
     @Test
-    public void should_show_repos_with_admin_access_only() {
+    public void should_show_repos_with_admin_access_only() throws IOException {
         final GithubCurrentUserService githubCurrentUser = mock(GithubCurrentUserService.class);
         GHRepository repoWithAdminAccess = mock(GHRepository.class);
         when(repoWithAdminAccess.hasAdminAccess()).thenReturn(true);

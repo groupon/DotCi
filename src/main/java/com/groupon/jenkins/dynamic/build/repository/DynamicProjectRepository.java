@@ -23,7 +23,6 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.repository;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
@@ -38,10 +37,6 @@ import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainerRe
 import com.groupon.jenkins.github.GithubRepoProperty;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import com.groupon.jenkins.mongo.MongoRepository;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import hudson.model.ItemGroup;
-import hudson.model.Items;
 import hudson.model.ParametersDefinitionProperty;
 import java.io.IOException;
 import java.util.List;
@@ -134,9 +129,9 @@ public class DynamicProjectRepository extends MongoRepository {
         return Jenkins.getInstance().getAllItems(DynamicProject.class);
     }
 
-    public DynamicProject createNewProject(GHRepository githubRepository) {
+    public DynamicProject createNewProject(GHRepository githubRepository,String accessToken, String user) {
         try {
-            new GithubRepositoryService(githubRepository).linkProjectToCi();
+            new GithubRepositoryService(githubRepository).linkProjectToCi(accessToken,user);
 
             OrganizationContainer folder = this.organizationRepository.getOrCreateContainer(githubRepository.getOwner().getLogin());
             String projectName = githubRepository.getName();

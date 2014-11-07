@@ -33,6 +33,9 @@ import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import com.mongodb.BasicDBObject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.jenkinsci.plugins.GithubAuthenticationToken;
@@ -41,25 +44,28 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
-
-import org.kohsuke.github.*;
+import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.recipes.LocalData;
+import org.kohsuke.github.GHContent;
+import org.kohsuke.github.GHDeployKey;
+import org.kohsuke.github.GHEvent;
+import org.kohsuke.github.GHHook;
+import org.kohsuke.github.GHMyself;
+import org.kohsuke.github.GHRef;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHUser;
+import org.kohsuke.github.GitHub;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 import org.mongodb.morphia.mapping.Mapper;
 import org.powermock.api.mockito.PowerMockito;
-
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.recipes.LocalData;
 import org.powermock.reflect.Whitebox;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import static org.junit.Assert.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ GHRepository.class, GithubRepositoryService.class, GHHook.class, GitHub.class, GHRef.class, GHRef.GHObject.class, MongoRepository.class })
@@ -103,7 +109,7 @@ public class MongoRepositoryTest {
 
         GHRepository ghRepository = setupMockGHRepository();
 
-        DynamicProject project = repo.createNewProject(ghRepository);
+        DynamicProject project = repo.createNewProject(ghRepository,null,null);
 
         assert(repo.getDatastore().getCount(DynamicProject.class) > 0);
         DynamicProject restoredProject = repo.getDatastore().createQuery(DynamicProject.class).get();
@@ -121,7 +127,7 @@ public class MongoRepositoryTest {
         GHRepository ghRepository = setupMockGHRepository();
 
         DynamicProjectRepository repo = new DynamicProjectRepository();
-        DynamicProject project = repo.createNewProject(ghRepository);
+        DynamicProject project = repo.createNewProject(ghRepository,null,null);
 
         project.scheduleBuild2(0).get();
 

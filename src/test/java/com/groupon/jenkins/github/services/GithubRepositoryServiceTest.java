@@ -23,13 +23,15 @@ public class GithubRepositoryServiceTest {
     private SetupConfig setupConfig;
     private GithubAccessTokenRepository githubAccessTokenRepository;
     private GithubRepositoryService githubRepositoryService;
+    private GithubDeployKeyRepository githubDeployKeyRepository;
 
     @Before
     public void setup() {
         githubRepository = mock(GHRepository.class);
         setupConfig = mock(SetupConfig.class);
         githubAccessTokenRepository = mock(GithubAccessTokenRepository.class);
-        githubRepositoryService = spy(new GithubRepositoryService(githubRepository, githubAccessTokenRepository));
+        githubDeployKeyRepository = mock(GithubDeployKeyRepository.class);
+        githubRepositoryService = spy(new GithubRepositoryService(githubRepository, githubAccessTokenRepository,githubDeployKeyRepository));
         doReturn(setupConfig).when(githubRepositoryService).getSetupConfig();
     }
 
@@ -37,7 +39,7 @@ public class GithubRepositoryServiceTest {
     public void should_add_hook_with_the_url_from_dotci_configuration() throws IOException {
         when(setupConfig.getGithubCallbackUrl()).thenReturn("http://jenkins/githook/");
 
-        githubRepositoryService.addHook();
+        githubRepositoryService.addHook("access_token","user");
 
         List<GHEvent> events = Arrays.asList(GHEvent.PUSH, GHEvent.PULL_REQUEST);
         verify(githubRepository).createHook("web", ImmutableMap.of("url", "http://jenkins/githook/"), events, true);
@@ -48,16 +50,16 @@ public class GithubRepositoryServiceTest {
         when(setupConfig.getGithubCallbackUrl()).thenReturn("http://jenkins/githook/");
         when(githubRepository.getUrl()).thenReturn("http://github.com/kittah/crunchies");
 
-        githubRepositoryService.addHook();
+        githubRepositoryService.addHook("access_token", "user");
 
-        verify(githubAccessTokenRepository).put("http://github.com/kittah/crunchies");
+        verify(githubAccessTokenRepository).put("http://github.com/kittah/crunchies", "access_token", "user");
     }
 
     @Test
     public void should_add_traling_slash_if_missing() throws IOException {
         when(setupConfig.getGithubCallbackUrl()).thenReturn("http://jenkins/githook");
 
-        githubRepositoryService.addHook();
+        githubRepositoryService.addHook("access_token",null);
 
         List<GHEvent> events = Arrays.asList(GHEvent.PUSH, GHEvent.PULL_REQUEST);
         verify(githubRepository).createHook("web", ImmutableMap.of("url", "http://jenkins/githook/"), events, true);

@@ -26,13 +26,22 @@ package com.groupon.jenkins.github.services;
 
 import com.groupon.jenkins.github.DeployKeyPair;
 import com.groupon.jenkins.mongo.MongoRepository;
+import com.groupon.jenkins.services.EncryptionService;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import hudson.util.Secret;
 import java.io.IOException;
 
 public class GithubDeployKeyRepository extends MongoRepository {
+    private EncryptionService encryptionService;
+
+    public  GithubDeployKeyRepository(){
+       this(new EncryptionService());
+    }
+
+    GithubDeployKeyRepository(EncryptionService encryptionService){
+        this.encryptionService = encryptionService;
+    }
     public void put(String url,DeployKeyPair keyPair) throws IOException {
         BasicDBObject doc = new BasicDBObject("public_key", encrypt(keyPair.publicKey)).append("private_key",encrypt(keyPair.privateKey)).append("repo_url", url);
         getCollection().insert(doc);
@@ -51,11 +60,11 @@ public class GithubDeployKeyRepository extends MongoRepository {
         BasicDBObject query = new BasicDBObject("repo_url", repoUrl);
         return getCollection().getCount(query) == 1;
     }
-    private String encrypt(String value) {
-        return Secret.fromString(value).getEncryptedValue();
+    protected String encrypt(String value) {
+        return  encryptionService.encrypt(value);
     }
 
     private  String decrypt(String value){
-        return Secret.fromString(value).getPlainText();
+        return encryptionService.decrypt(value);
     }
 }

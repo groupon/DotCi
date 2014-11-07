@@ -37,13 +37,17 @@ public class SetupConfig extends GlobalConfiguration {
     private String dbHost;
     private int dbPort;
     private String dbName;
-    private String githubApiUrl;
-    private String githubCallbackUrl;
     private String label;
     private String fromEmailAddress;
     private String defaultBuildType;
-    private boolean privateRepoSupport;
 
+    private boolean privateRepoSupport;
+    private String githubApiUrl;
+    private String githubWebUrl;
+    private String githubClientID;
+    private String githubClientSecret;
+
+    private String githubCallbackUrl;
     public static SetupConfig get() {
         return GlobalConfiguration.all().get(SetupConfig.class);
     }
@@ -96,12 +100,7 @@ public class SetupConfig extends GlobalConfiguration {
         this.dbPort = dbPort;
     }
 
-    public String getGithubApiUrl() {
-        if (StringUtils.isEmpty(githubApiUrl)) {
-            return "https://api.github.com/";
-        }
-        return githubApiUrl;
-    }
+
 
     public void setGithubApiUrl(String githubApiUrl) {
         this.githubApiUrl = githubApiUrl;
@@ -160,5 +159,40 @@ public class SetupConfig extends GlobalConfiguration {
     }
     public boolean getPrivateRepoSupport() {
         return privateRepoSupport;
+    }
+
+    public String getGithubApiUrl() {
+        if (StringUtils.isEmpty(githubApiUrl)) {
+            return "https://api.github.com/";
+        }
+        return githubApiUrl;
+    }
+
+    public String getGithubWebUrl() {
+        if (StringUtils.isEmpty(githubWebUrl)) {
+            return "https://github.com/";
+        }
+        return githubWebUrl;
+    }
+
+    public void setGithubWebUrl(String githubWebUrl) {
+        this.githubWebUrl = githubWebUrl;
+    }
+
+
+    public String getGithubClientID() {
+        return githubClientID;
+    }
+
+    public void setGithubClientID(String githubClientID) {
+        this.githubClientID = githubClientID;
+    }
+
+    public String getGithubClientSecret() {
+        return githubClientSecret;
+    }
+
+    public void setGithubClientSecret(String githubClientSecret) {
+        this.githubClientSecret = githubClientSecret;
     }
 }
