@@ -31,7 +31,9 @@ import com.groupon.jenkins.github.GitBranch;
 import com.groupon.jenkins.github.services.GithubDeployKeyRepository;
 import com.mongodb.DBObject;
 import hudson.EnvVars;
+import hudson.Launcher;
 import hudson.Util;
+import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Build;
 import hudson.model.BuildListener;
@@ -304,21 +306,21 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
 
     public abstract String getGithubRepoUrl();
 
-    protected void exportDeployKeysIfPrivateRepo( BuildListener listener) throws IOException, InterruptedException {
+    protected void exportDeployKeysIfPrivateRepo(BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
         if(isPrivateRepo()){
             DeployKeyPair deployKeyPair = new GithubDeployKeyRepository().get(getGithubRepoUrl());
             WorkspaceFileExporter.WorkspaceFile privateKeyFile = new WorkspaceFileExporter.WorkspaceFile("deploykey_rsa", deployKeyPair.privateKey, "rw-------");
             WorkspaceFileExporter.WorkspaceFile publicKeyFile = new WorkspaceFileExporter.WorkspaceFile("deploykey_rsa.pub", deployKeyPair.privateKey, "rw-r--r--");
-            new WorkspaceFileExporter(publicKeyFile).export(this,listener);
-            new WorkspaceFileExporter(privateKeyFile).export(this,listener);
+            new WorkspaceFileExporter(publicKeyFile, WorkspaceFileExporter.Operation.CREATE).perform((AbstractBuild)this,launcher,listener);
+            new WorkspaceFileExporter(privateKeyFile, WorkspaceFileExporter.Operation.CREATE).perform((AbstractBuild)this,launcher,listener);
         }
 
     }
 
-    protected void deleteDeployKeys(BuildListener listener) throws IOException, InterruptedException {
+    protected void deleteDeployKeys(BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
         if(isPrivateRepo()){
-            new WorkspaceFileExporter(new WorkspaceFileExporter.WorkspaceFile("deploykey_rsa")).delete(this,listener);
-            new WorkspaceFileExporter(new WorkspaceFileExporter.WorkspaceFile("deploykey_rsa.pub")).delete(this,listener);
+            new WorkspaceFileExporter(new WorkspaceFileExporter.WorkspaceFile("deploykey_rsa"), WorkspaceFileExporter.Operation.DELETE).perform((AbstractBuild)this,launcher,listener);
+            new WorkspaceFileExporter(new WorkspaceFileExporter.WorkspaceFile("deploykey_rsa.pub"), WorkspaceFileExporter.Operation.DELETE).perform((AbstractBuild) this, launcher, listener);
         }
     }
 

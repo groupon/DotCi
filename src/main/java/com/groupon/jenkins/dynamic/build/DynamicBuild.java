@@ -194,7 +194,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
                 if (!buildEnvironment.initialize()) {
                     return Result.FAILURE;
                 }
-                exportDeployKeysIfPrivateRepo(listener);
+                exportDeployKeysIfPrivateRepo(listener,launcher);
                 setDescription(getCause().getBuildDescription());
                 BuildType buildType = BuildType.getBuildType(getParent());
                 Result buildRunResult =   buildType.runBuild(DynamicBuild.this, this, launcher, listener);
@@ -221,7 +221,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
                 if (buildEnvironment.tearDownBuildEnvironments(listener)) {
                     return Result.FAILURE;
                 }
-                deleteDeployKeys(listener);
+                deleteDeployKeys(listener, launcher);
             }
 
         }

@@ -24,12 +24,14 @@
 package com.groupon.jenkins.dynamic.build.execution;
 
 import hudson.FilePath;
+import hudson.Launcher;
 import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Node;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
+import hudson.tasks.Builder;
 import hudson.tasks.Messages;
 import java.io.File;
 import java.io.FileWriter;
@@ -39,26 +41,42 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermissions;
 
-public class WorkspaceFileExporter {
+public class WorkspaceFileExporter extends Builder {
+
+    public  enum Operation{DELETE,CREATE }
 
 
     private WorkspaceFile workspaceFile;
+    private Operation operation;
 
-    public WorkspaceFileExporter(WorkspaceFile workspaceFile) {
+    public WorkspaceFileExporter(WorkspaceFile workspaceFile, Operation operation) {
         this.workspaceFile = workspaceFile;
+        this.operation = operation;
     }
 
 
-    public FilePath export(AbstractBuild<?,?> build, TaskListener listener) throws InterruptedException, IOException {
+    @Override
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+        return Operation.DELETE.equals(operation)? delete(build): export(build,listener);
+    }
+
+    private boolean export(AbstractBuild<?,?> build, TaskListener listener) throws InterruptedException, IOException {
         FilePath ws = getFilePath(build);
         try {
-            return createFile(ws);
+            createFile(ws);
         } catch (IOException e) {
             Util.displayIOException(e, listener);
             e.printStackTrace(listener.fatalError(Messages.CommandInterpreter_UnableToProduceScript()));
             throw e;
         }
+        return true;
 
+    }
+
+    private boolean delete(AbstractBuild<?,?> build) throws IOException, InterruptedException {
+        FilePath ws = getFilePath(build);
+        ws.act(new WorkspaceFileDeleterFileCallable(workspaceFile));
+        return true;
     }
 
     private FilePath getFilePath(AbstractBuild<?, ?> build) {
@@ -77,10 +95,6 @@ public class WorkspaceFileExporter {
         return new FilePath(ws.getChannel(), ws.act(new WorkspaceFileCreatorFileCallable(workspaceFile)));
     }
 
-    public void delete(AbstractBuild<?,?> build, BuildListener listener) throws IOException, InterruptedException {
-        FilePath ws = getFilePath(build);
-        ws.act(new WorkspaceFileDeleterFileCallable(workspaceFile));
-    }
 
     public  static class WorkspaceFile implements Serializable{
         private static final long serialVersionUID = 1L;

@@ -138,11 +138,11 @@ public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSub
         @Override
         protected Result doRun(BuildListener listener) throws Exception {
             try{
-                exportDeployKeysIfPrivateRepo(listener);
+                exportDeployKeysIfPrivateRepo(listener, launcher);
                 SubBuildExecutionAction subBuildExecutionAction = getAction(SubBuildExecutionAction.class);
                 return subBuildExecutionAction.run(DynamicSubBuild.this.getCombination(), this, listener) ;
             }finally {
-                deleteDeployKeys(listener);
+                deleteDeployKeys(listener, launcher);
             }
 
         }
