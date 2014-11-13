@@ -90,7 +90,7 @@ public class GithubAccessTokenRepository extends MongoRepository {
     }
 
     public boolean isConfigured(String url) {
-        return getToken(url) !=null;
+        return getToken(url) != null;
     }
 
     protected DBCollection getCollection() {
