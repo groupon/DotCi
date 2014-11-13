@@ -27,6 +27,7 @@ package com.groupon.jenkins.mongo;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.reflection.SerializationMethodInvoker;
 import hudson.util.CopyOnWriteList;
 import jenkins.model.Jenkins;
 import org.mongodb.morphia.mapping.CustomMapper;
@@ -41,9 +42,7 @@ import java.util.Set;
 
 
 public class JenkinsMapper extends Mapper {
-    private final Set<String> xmlClasses;
-    private final XStream xmlProcessor;
-    public static final String XML_FIELD_NAME = "xml";
+    private final SerializationMethodInvoker serializationMethodInvoker;
 
     public JenkinsMapper() {
         super();
@@ -51,8 +50,7 @@ public class JenkinsMapper extends Mapper {
         getOptions().setActLikeSerializer(true);
         getOptions().objectFactory = new CustomMorphiaObjectFactory(Jenkins.getInstance().getPluginManager().uberClassLoader);
 
-        xmlProcessor = Jenkins.XSTREAM2;
-        xmlClasses = new HashSet<String>();
+        serializationMethodInvoker = new SerializationMethodInvoker();
 
         includeSpecialConverters();
         includedSpecialMappedClasses();
@@ -69,38 +67,13 @@ public class JenkinsMapper extends Mapper {
             involvedObjects.put(entity, null);
         }
 
-        if(shouldUseXml(entity.getClass())) {
-            return toXmlObject(entity);
-        } else {
-            return super.toDBObject(entity, involvedObjects);
-        }
+        return super.toDBObject(entity, involvedObjects);
     }
 
     @Override
     public Object fromDBObject(final Class entityClass, final DBObject dbObject, final EntityCache cache) {
-        if(shouldUseXml(entityClass)) {
-            return fromXmlObject(dbObject);
-        }
-        return super.fromDBObject(entityClass, dbObject, cache);
-    }
-
-    private boolean shouldUseXml(Class clazz) {
-        return false && xmlClasses.contains(clazz.getName());
-    }
-
-    private Object fromXmlObject(DBObject xmlObject) {
-        String xml = (String) xmlObject.get(XML_FIELD_NAME);
-
-        return xmlProcessor.fromXML(xml);
-    }
-
-    private DBObject toXmlObject(Object entity) {
-        String xml = xmlProcessor.toXML(entity);
-
-        DBObject dbObject = new BasicDBObject(XML_FIELD_NAME, xml);
-        dbObject.put(CLASS_NAME_FIELDNAME, entity.getClass().getName());
-
-        return dbObject;
+        Object object = super.fromDBObject(entityClass, dbObject, cache);
+        return serializationMethodInvoker.callReadResolve(object);
     }
 
     /**
@@ -108,9 +81,6 @@ public class JenkinsMapper extends Mapper {
      */
     protected void includedSpecialMappedClasses() {
         addMappedClass(new CopyOnWriteListMappedClass(this));
-
-        // Should be saved as xml
-        xmlClasses.add("hudson.security.AuthorizationMatrixProperty");
     }
 
     protected void includeSpecialConverters() {

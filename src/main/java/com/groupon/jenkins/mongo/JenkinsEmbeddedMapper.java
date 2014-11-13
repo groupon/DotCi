@@ -26,6 +26,7 @@ package com.groupon.jenkins.mongo;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.thoughtworks.xstream.converters.reflection.SerializationMethodInvoker;
 import hudson.security.Permission;
 import hudson.util.CopyOnWriteList;
 import jenkins.model.Jenkins;
@@ -46,19 +47,18 @@ import java.util.Set;
 
 class JenkinsEmbeddedMapper implements CustomMapper {
     private final Map<Class, CustomMapper> customMappers;
-    private final Set<String> xmlClasses;
-    private final XmlMapper xmlMapper;
+
     private final AwkwardMapMapper awkwardMapper;
+
+    private final SerializationMethodInvoker serializationMethodInvoker;
 
     JenkinsEmbeddedMapper() {
         customMappers = new HashMap<Class, CustomMapper>();
         customMappers.put(CopyOnWriteList.class, new CopyOnWriteListMapper());
 
-        xmlMapper = new XmlMapper(Jenkins.XSTREAM2);
-        awkwardMapper = new AwkwardMapMapper();
+        serializationMethodInvoker = new SerializationMethodInvoker();
 
-        xmlClasses = new HashSet<String>();
-        xmlClasses.add("hudson.security.AuthorizationMatrixProperty");
+        awkwardMapper = new AwkwardMapMapper();
     }
 
     @Override
@@ -142,7 +142,10 @@ class JenkinsEmbeddedMapper implements CustomMapper {
             awkwardMapper.fromDBObject(dbObject, mf, entity, cache, mapper);
         } else {
             mapper.getOptions().getEmbeddedMapper().fromDBObject(dbObject, mf, entity, cache, mapper);
+            serializationMethodInvoker.callReadResolve(mf.getFieldValue(entity));
         }
+
+
     }
 }
 
