@@ -1,7 +1,6 @@
 package com.groupon.jenkins.mongo;
 
 import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;

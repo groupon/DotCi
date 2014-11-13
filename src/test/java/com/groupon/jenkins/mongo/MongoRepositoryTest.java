@@ -25,57 +25,51 @@ package com.groupon.jenkins.mongo;
 
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DbBackedBuild;
-import com.groupon.jenkins.dynamic.build.DbBackedProject;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
-import com.groupon.jenkins.dynamic.buildtype.BuildTypeProperty;
-import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
+import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import hudson.model.JobProperty;
+import hudson.util.XStream2;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.jenkinsci.plugins.GithubAuthenticationToken;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import org.junit.rules.RuleChain;
 import org.kohsuke.github.*;
-import org.mongodb.morphia.Datastore;
 import org.powermock.api.mockito.PowerMockito;
 
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.recipes.LocalData;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
 public class MongoRepositoryTest {
 
+
     @Rule
-    public JenkinsRule j = new JenkinsRule();
-
-    @After
-    public void clearFongo() {
-        Datastore ds = SetupConfig.get().getDynamicBuildRepository().getDatastore();
-
-        ds.delete(ds.createQuery(DbBackedProject.class));
-        ds.delete(ds.createQuery(DbBackedBuild.class));
-        ds.getDB().getCollection(GithubAccessTokenRepository.COLLECTION_NAME).remove(new BasicDBObject());
-    }
+    public RuleChain chain = RuleChain
+            .outerRule(new JenkinsRule())
+            .around(new MongoDataLoadRule());
 
     @Test
     @LocalData
     public void should_save_a_project() throws Exception {
         DynamicProjectRepository repo = SetupConfig.get().getDynamicProjectRepository();
 
+
         GHRepository ghRepository = setupMockGHRepository();
 
         DynamicProject project = repo.createNewProject(ghRepository);
+
         project.addProperty(new CyclicProperty(project));
         project.save();
 
