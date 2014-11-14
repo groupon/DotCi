@@ -34,7 +34,7 @@ public class GroovyYamlTemplateProcessor {
     private final String config;
     private final Map envVars;
 
-    public GroovyYamlTemplateProcessor(String config, Map envVars) {
+    public GroovyYamlTemplateProcessor(String config, Map<String,Object> envVars) {
         this.config = config;
         this.envVars = new HashMap(envVars);
         this.envVars.remove("PATH");

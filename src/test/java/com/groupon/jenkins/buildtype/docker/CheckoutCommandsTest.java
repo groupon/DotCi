@@ -24,8 +24,9 @@
 
 package com.groupon.jenkins.buildtype.docker;
 
-import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -33,13 +34,21 @@ public class CheckoutCommandsTest {
 
     @Test
     public void should_checkout_pr_if_pr(){
-       ShellCommands commands = CheckoutCommands.get(ImmutableMap.of("DOTCI_PULL_REQUEST", "17", "GIT_URL","git@github.com:groupon/DotCi.git")) ;
+        Map<String, Object> envVArs = new HashMap<String, Object>(){{
+           put( "DOTCI_PULL_REQUEST", "17");
+           put("GIT_URL","git@github.com:groupon/DotCi.git");
+        }};
+        ShellCommands commands = CheckoutCommands.get(envVArs) ;
         Assert.assertEquals("git fetch origin \"+refs/pull/17/merge:\"",commands.get(2));
     }
 
     @Test
     public void should_checkout_branch_if_branch(){
-        ShellCommands commands = CheckoutCommands.get(ImmutableMap.of("GIT_URL", "git@github.com:groupon/DotCi.git", "DOTCI_BRANCH","dotci_branch")) ;
+        Map<String, Object> envVArs = new HashMap<String, Object>(){{
+            put( "DOTCI_BRANCH", "dotci_branch");
+            put("GIT_URL","git@github.com:groupon/DotCi.git");
+        }};
+        ShellCommands commands = CheckoutCommands.get(envVArs) ;
         Assert.assertEquals("git clone  --branch=dotci_branch https://github.com/groupon/DotCi /var/groupon/DotCi",commands.get(0));
     }
 }

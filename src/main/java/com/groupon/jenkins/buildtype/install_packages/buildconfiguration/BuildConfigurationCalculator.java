@@ -26,14 +26,14 @@ package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.buildtype.install_packages.template.DotCiTemplate;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
-import hudson.EnvVars;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Map;
 import org.kohsuke.github.GHContent;
 
 public class BuildConfigurationCalculator {
 
-    public BuildConfiguration calculateBuildConfiguration(String githubRepoUrl, String sha, EnvVars envVars) throws IOException, InterruptedException, InvalidBuildConfigurationException {
+    public BuildConfiguration calculateBuildConfiguration(String githubRepoUrl, String sha, Map<String,Object> envVars) throws IOException, InterruptedException, InvalidBuildConfigurationException {
         GithubRepositoryService githubRepositoryService = getGithubRepositoryService(githubRepoUrl);
         DotCiTemplate dotCiTemplate = new DotCiTemplate();
         try {

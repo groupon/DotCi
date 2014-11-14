@@ -147,6 +147,10 @@ public class Payload {
     }
 
     private GithubLogEntry convertToLogEntry(Map<String, Object> commit) {
-        return new GithubLogEntry(commit.get("message").toString(), commit.get("url").toString(), commit.get("id").toString());
+        List<String> affectedPaths = new ArrayList<String>();
+        affectedPaths.addAll((java.util.Collection<? extends String>) commit.get("added"));
+        affectedPaths.addAll((java.util.Collection<? extends String>) commit.get("modified"));
+        affectedPaths.addAll((java.util.Collection<? extends String>) commit.get("removed"));
+        return new GithubLogEntry(commit.get("message").toString(), commit.get("url").toString(), commit.get("id").toString(),affectedPaths);
     }
 }

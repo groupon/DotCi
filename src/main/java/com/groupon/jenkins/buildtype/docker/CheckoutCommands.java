@@ -30,8 +30,8 @@ import java.util.Map;
 import static java.lang.String.format;
 
 public class CheckoutCommands {
-    public static ShellCommands get(Map<String, String> dotCiEnvVars) {
-        GitUrl gitRepoUrl = new GitUrl(dotCiEnvVars.get("GIT_URL"));
+    public static ShellCommands get(Map<String, Object> dotCiEnvVars) {
+        GitUrl gitRepoUrl = new GitUrl((String) dotCiEnvVars.get("GIT_URL"));
         String gitUrl = gitRepoUrl.getHttpsUrl();
         String checkoutLocation = format("/var/%s",gitRepoUrl.getFullRepoName());
         ShellCommands shellCommands = new ShellCommands();

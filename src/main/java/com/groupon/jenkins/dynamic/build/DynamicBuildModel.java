@@ -30,6 +30,8 @@ import com.groupon.jenkins.github.GitBranch;
 import com.groupon.jenkins.github.GitUrl;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import hudson.model.Cause.UserIdCause;
+import hudson.model.TaskListener;
+import hudson.scm.ChangeLogSet;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,5 +103,20 @@ public class DynamicBuildModel {
         vars.put("SHA", build.getSha());
         vars.put("GIT_URL", new GitUrl(build.getParent().getGithubRepoUrl()).getUrl());
         return vars;
+    }
+
+    public Map<String, Object> getEnvironmentWithChangeSet(TaskListener listener) throws IOException, InterruptedException {
+        HashMap<String, Object> environmentWithChangeSet = new HashMap<String, Object>();
+        environmentWithChangeSet.putAll(build.getEnvironment(listener));
+        environmentWithChangeSet.put("DOTCI_CHANGE_SET",getChangeSet());
+        return environmentWithChangeSet;
+    }
+
+    private List<String> getChangeSet() {
+        ArrayList<String> changeSet = new ArrayList<String>();
+        for(ChangeLogSet.Entry change : build.getChangeSet()){
+           changeSet.addAll(change.getAffectedPaths());
+        }
+        return changeSet;
     }
 }

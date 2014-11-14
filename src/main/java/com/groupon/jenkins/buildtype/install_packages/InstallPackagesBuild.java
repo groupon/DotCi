@@ -146,7 +146,7 @@ public class InstallPackagesBuild extends BuildType implements SubBuildRunner{
 
 
     private BuildConfiguration calculateBuildConfiguration(DynamicBuild build, BuildListener listener) throws IOException, InterruptedException, InvalidBuildConfigurationException {
-        return new BuildConfigurationCalculator().calculateBuildConfiguration(build.getGithubRepoUrl(), build.getSha(), build.getEnvironment(listener));
+        return new BuildConfigurationCalculator().calculateBuildConfiguration(build.getGithubRepoUrl(), build.getSha(), build.getEnvironmentWithChangeSet(listener));
     }
 
 

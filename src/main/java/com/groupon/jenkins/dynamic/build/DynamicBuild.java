@@ -42,15 +42,14 @@ import hudson.model.Cause;
 import hudson.model.CauseAction;
 import hudson.model.Executor;
 import hudson.model.Result;
+import hudson.model.TaskListener;
 import hudson.tasks.BuildStep;
 import hudson.util.HttpResponses;
 import hudson.util.VersionNumber;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -173,6 +172,11 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         } catch (IOException e) {
             throw  new RuntimeException(e);
         }
+    }
+
+
+    public Map<String,Object> getEnvironmentWithChangeSet(TaskListener listener) throws IOException, InterruptedException {
+          return model.getEnvironmentWithChangeSet(listener);
     }
 
     protected class DynamicRunExecution extends Build.BuildExecution implements BuildExecutionContext {

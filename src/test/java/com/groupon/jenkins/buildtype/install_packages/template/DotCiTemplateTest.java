@@ -25,7 +25,7 @@
 package com.groupon.jenkins.buildtype.install_packages.template;
 
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfiguration;
-import hudson.EnvVars;
+import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,7 +40,7 @@ public class DotCiTemplateTest {
     public void should_load_base_templates(){
         DotCiTemplate rubyTemplate = new DotCiTemplate().getTemplates().get("ruby");
         Assert.assertNotNull(rubyTemplate);
-        BuildConfiguration buildConfiguration = rubyTemplate.getBuildConfiguration(new EnvVars());
+        BuildConfiguration buildConfiguration = rubyTemplate.getBuildConfiguration(new HashMap<String, Object>());
         Assert.assertNotNull(buildConfiguration);
     }
 

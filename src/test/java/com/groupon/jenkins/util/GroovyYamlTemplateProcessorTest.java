@@ -23,7 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.util;
 
-import hudson.EnvVars;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
@@ -34,7 +34,7 @@ public class GroovyYamlTemplateProcessorTest {
 
     @Test
     public void should_filter_out_elements_that_are_filter_out_by_if_conditions() {
-        EnvVars envVars = new EnvVars();
+        Map<String,Object> envVars = new HashMap<String, Object>();
         envVars.put("DOTCI_BRANCH", "gh-pages");
         GroovyYamlTemplateProcessor effectiveConfiguration = new GroovyYamlTemplateProcessor(ResourceUtils.readResource(getClass(), ".ci_skip_versions.yml"), envVars);
         Map<?, ?> config = effectiveConfiguration.getConfig();
@@ -45,7 +45,7 @@ public class GroovyYamlTemplateProcessorTest {
 
     @Test
     public void should_export_missing_variables_asis() {
-        EnvVars envVars = new EnvVars();
+        Map<String,Object> envVars = new HashMap<String, Object>();
         envVars.put("NOT_MISSING_PROP", "1.9.0");
         GroovyYamlTemplateProcessor effectiveConfiguration = new GroovyYamlTemplateProcessor(ResourceUtils.readResource(getClass(),".ci_missing_props.yml"), envVars);
         Map<?, ?> config = effectiveConfiguration.getConfig();
@@ -58,7 +58,7 @@ public class GroovyYamlTemplateProcessorTest {
 
     @Test
     public void should_not_subsitute_PATH() {
-        EnvVars envVars = new EnvVars();
+        Map<String,Object> envVars = new HashMap<String, Object>();
         envVars.put("PATH", "/PATH/BIN");
         GroovyYamlTemplateProcessor effectiveConfiguration = new GroovyYamlTemplateProcessor(ResourceUtils.readResource(getClass(),".ci_PATH.yml"), envVars);
         Map<?, ?> config = effectiveConfiguration.getConfig();
@@ -69,7 +69,7 @@ public class GroovyYamlTemplateProcessorTest {
 
     @Test
     public void should_return_null_for_missing_DOTCI_vars() {
-        EnvVars envVars = new EnvVars();
+        Map<String,Object> envVars = new HashMap<String, Object>();
         envVars.put("DOTCI_PULL_REQUEST", "1");
         GroovyYamlTemplateProcessor effectiveConfiguration = new GroovyYamlTemplateProcessor(ResourceUtils.readResource(getClass(),".ci_pr.yml"), envVars);
         Map<?, ?> config = effectiveConfiguration.getConfig();
