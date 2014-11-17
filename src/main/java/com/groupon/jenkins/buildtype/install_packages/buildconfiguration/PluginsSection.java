@@ -26,6 +26,7 @@ package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import com.groupon.jenkins.extensions.DotCiExtensionsHelper;
 import hudson.matrix.Combination;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +43,7 @@ public class PluginsSection extends ConfigSection<ListValue<?>> {
         if (getConfigValue().isEmpty()) {
             return Collections.emptyList();
         }
-        return DotCiPluginAdapter.createPlugins(getConfigValue().getValue());
+        return new DotCiExtensionsHelper().createPlugins(getConfigValue().getValue());
     }
 
 

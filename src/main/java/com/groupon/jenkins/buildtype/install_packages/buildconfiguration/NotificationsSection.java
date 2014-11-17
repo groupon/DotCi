@@ -25,6 +25,7 @@ package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import com.groupon.jenkins.extensions.DotCiExtensionsHelper;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
 import hudson.matrix.Combination;
 import java.util.List;
@@ -44,7 +45,7 @@ public class NotificationsSection extends ConfigSection<ListValue<?>> {
 
     public List<PostBuildNotifier> getNotifiers() {
         List<?> notifierSpecs = getConfigValue().getValue();
-        return PostBuildNotifier.createNotifiers(notifierSpecs);
+        return new DotCiExtensionsHelper().createNotifiers(notifierSpecs);
     }
 
 }

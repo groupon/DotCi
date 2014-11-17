@@ -30,6 +30,7 @@ import com.groupon.jenkins.buildtype.dockerimage.DockerCommandBuilder;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.config.Config;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import com.groupon.jenkins.extensions.DotCiExtensionsHelper;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
 import hudson.matrix.Axis;
 import hudson.matrix.AxisList;
@@ -174,11 +175,11 @@ public abstract class DockerBuildConfiguration {
 
     public List<DotCiPluginAdapter> getPlugins() {
         List plugins = config.get("plugins") != null? (List) config.get("plugins") : Collections.emptyList();
-        return DotCiPluginAdapter.createPlugins(plugins) ;
+        return new DotCiExtensionsHelper().createPlugins(plugins) ;
     }
 
     public List<PostBuildNotifier> getNotifiers() {
         List notifiers = config.get("notifications") !=null? (List) config.get("notifications") :Collections.emptyList();
-        return PostBuildNotifier.createNotifiers(notifiers) ;
+        return new DotCiExtensionsHelper().createNotifiers(notifiers) ;
     }
 }
