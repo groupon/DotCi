@@ -24,21 +24,18 @@ THE SOFTWARE.
 
 package com.groupon.jenkins.mongo;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.reflection.SerializationMethodInvoker;
 import hudson.util.CopyOnWriteList;
 import jenkins.model.Jenkins;
+import org.mongodb.morphia.converters.ClassConverter;
 import org.mongodb.morphia.mapping.CustomMapper;
 import org.mongodb.morphia.mapping.Mapper;
 import org.mongodb.morphia.mapping.MapperOptions;
 import org.mongodb.morphia.mapping.cache.EntityCache;
 
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 
 public class JenkinsMapper extends Mapper {
@@ -48,7 +45,7 @@ public class JenkinsMapper extends Mapper {
         super();
         setOptions(new JenkinsMongoOptions());
         getOptions().setActLikeSerializer(true);
-        getOptions().objectFactory = new CustomMorphiaObjectFactory(Jenkins.getInstance().getPluginManager().uberClassLoader);
+        getOptions().objectFactory = new CustomMorphiaObjectFactory(getClassLoader());
 
         serializationMethodInvoker = new SerializationMethodInvoker();
 
@@ -89,6 +86,15 @@ public class JenkinsMapper extends Mapper {
         getConverters().addConverter(new AxisListConverter());
         getConverters().addConverter(new ResultConverter());
         getConverters().addConverter(new PermissionsConverter());
+
+        //Register special class converter to use Jenkins class loader
+        getConverters().removeConverter(new ClassConverter());
+        getConverters().addConverter(new SpecialClassConverter(getClassLoader()));
+
+    }
+
+    final protected ClassLoader getClassLoader() {
+        return Jenkins.getInstance().getPluginManager().uberClassLoader;
     }
 }
 
