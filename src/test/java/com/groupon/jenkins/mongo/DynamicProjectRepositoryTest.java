@@ -1,8 +1,10 @@
 package com.groupon.jenkins.mongo;
 
 import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.dynamic.build.DbBackedProject;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
+import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -49,9 +51,11 @@ public class DynamicProjectRepositoryTest {
 
     @Test
     @LocalData
-    @Ignore
     public void should_delete_a_project() {
-                
+        assertEquals(1L, repo.getDatastore().createQuery(DynamicProject.class).countAll());
+        DynamicProject project = repo.getProjectById(new ObjectId("5451e5ee30047b534b7bd50b"));
+        repo.delete(project);
+        assertEquals(0L, repo.getDatastore().createQuery(DynamicProject.class).countAll());
     }
 
     @Test
