@@ -161,6 +161,7 @@ class JenkinsEmbeddedMapper implements CustomMapper {
     }
 
     // Taken from Morphia's Embedded Mapper
+    @Deprecated
     private void readMap(final DBObject dbObject, final MappedField mf, final Object entity, final EntityCache cache, final Mapper mapper) {
         final Map map = mapper.getOptions().getObjectFactory().createMap(mf);
 
@@ -197,6 +198,9 @@ class JenkinsEmbeddedMapper implements CustomMapper {
         }
     }
 
+
+    // Taken from Morphia's Embedded Mapper
+    @Deprecated
     private Object readMapOrCollectionOrEntity(DBObject dbObj, MappedField mf, EntityCache cache, Mapper mapper) {
         try {
 
@@ -222,6 +226,7 @@ class JenkinsEmbeddedMapper implements CustomMapper {
     }
 
     // Taken from Morphia's Embedded Mapper
+    @Deprecated
     private void readCollection(final DBObject dbObject, final MappedField mf, final Object entity, final EntityCache cache,
                                 final Mapper mapper) {
         // multiple documents in a List
@@ -274,11 +279,11 @@ class JenkinsEmbeddedMapper implements CustomMapper {
 }
 
 // Taken from Morphia's Embedded Mapper
+@Deprecated
 class MapOrCollectionMF extends MappedField {
     private ParameterizedType pType;
     private Object value;
 
-    /* (non-Javadoc) @see java.lang.Object#clone() */
     @Override
     protected Object clone() throws CloneNotSupportedException {
         final MapOrCollectionMF other = new MapOrCollectionMF();
