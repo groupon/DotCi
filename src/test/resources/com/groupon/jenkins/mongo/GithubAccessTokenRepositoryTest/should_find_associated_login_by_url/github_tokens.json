@@ -1,0 +1,5 @@
+{ "_id" : { "$oid" : "5451e5ee30047b534b7bd50a"},
+  "access_token" : "0123/0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefgh/0123456789abcdefghi/012345==",
+  "repo_url" : "https://github.com/Groupon/DotCi",
+  "user" : "bestuser"
+}

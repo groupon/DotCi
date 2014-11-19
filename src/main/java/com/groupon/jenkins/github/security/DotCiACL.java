@@ -29,6 +29,7 @@ import com.groupon.jenkins.dynamic.build.DynamicSubProject;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
 import com.groupon.jenkins.github.GitUrl;
 import hudson.model.AbstractItem;
+import hudson.model.Item;
 import hudson.model.Job;
 import hudson.security.ACL;
 import hudson.security.Permission;
@@ -40,9 +41,10 @@ public class DotCiACL extends ACL {
     private OrganizationContainer container;
     private final String adminUserNames;
     private final boolean authenticatedUserReadPermission;
+    private boolean authenticatedUserJobCreatePermission;
 
-    public DotCiACL(Job<?, ?> job,String adminUserNames, boolean authenticatedUserReadPermission) {
-        this(adminUserNames,authenticatedUserReadPermission);
+    public DotCiACL(Job<?, ?> job,String adminUserNames, boolean authenticatedUserReadPermission, boolean authenticatedUserJobCreatePermission) {
+        this(adminUserNames,authenticatedUserReadPermission,authenticatedUserJobCreatePermission);
         if (job instanceof DynamicProject) {
             this.project = (DynamicProject) job;
         }
@@ -51,13 +53,14 @@ public class DotCiACL extends ACL {
         }
     }
 
-    public DotCiACL(String adminUserNames, boolean authenticatedUserReadPermission) {
+    public DotCiACL(String adminUserNames, boolean authenticatedUserReadPermission, boolean authenticatedUserJobCreatePermission) {
         this.adminUserNames = adminUserNames;
         this.authenticatedUserReadPermission = authenticatedUserReadPermission;
+        this.authenticatedUserJobCreatePermission = authenticatedUserJobCreatePermission;
     }
 
-    public DotCiACL(AbstractItem item,String adminUserNames, boolean authenticatedUserReadPermission) {
-        this(adminUserNames, authenticatedUserReadPermission);
+    public DotCiACL(AbstractItem item,String adminUserNames, boolean authenticatedUserReadPermission, boolean authenticatedUserJobCreatePermission) {
+        this(adminUserNames, authenticatedUserReadPermission,authenticatedUserJobCreatePermission);
         if (item instanceof OrganizationContainer) {
             this.container = (OrganizationContainer) item;
         }
@@ -81,7 +84,11 @@ public class DotCiACL extends ACL {
             }
             return false;
         }
-        return  isReadPermission(permission);
+        return  isReadPermission(permission)|| isCreatePermission(a,permission);
+    }
+
+    private boolean isCreatePermission(Authentication a, Permission permission) {
+        return a.isAuthenticated() && permission.equals(Item.CREATE) && authenticatedUserJobCreatePermission;
     }
 
     private boolean isSystem(Authentication a) {

@@ -24,6 +24,7 @@
 
 package com.groupon.jenkins.github;
 
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
 import hudson.Extension;
 import jenkins.security.SecurityListener;
@@ -35,7 +36,7 @@ import javax.annotation.Nonnull;
 public class GithubTokenRefreshListener extends SecurityListener {
     @Override
     protected void authenticated(@Nonnull UserDetails details) {
-        new GithubAccessTokenRepository().updateAccessToken(details.getUsername());
+        SetupConfig.get().getGithubAccessTokenRepository().updateAccessToken(details.getUsername());
     }
 
     @Override

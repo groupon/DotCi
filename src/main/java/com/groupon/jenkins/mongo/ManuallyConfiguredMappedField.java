@@ -21,22 +21,46 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
+
 package com.groupon.jenkins.mongo;
 
-import hudson.matrix.Combination;
-import org.mongodb.morphia.converters.SimpleValueConverter;
-import org.mongodb.morphia.converters.TypeConverter;
+import org.mongodb.morphia.annotations.ConstructorArgs;
+import org.mongodb.morphia.logging.Logger;
+import org.mongodb.morphia.logging.MorphiaLoggerFactory;
 import org.mongodb.morphia.mapping.MappedField;
+import org.mongodb.morphia.mapping.MappingException;
+import org.mongodb.morphia.utils.ReflectionUtils;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.GenericDeclaration;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
-public class CombinationConverter extends TypeConverter implements SimpleValueConverter {
-    public CombinationConverter() {
-        super(Combination.class);
+
+/**
+ * Hack to address issues in Jenkins mapping
+ * These methods are copied directly from Morphia 1.07 so we can get around the method access limits.
+ *
+ * Deprecated because we want to use the original classes.
+ */
+@Deprecated
+class ManuallyConfiguredMappedField extends MappedField {
+    private static final Logger LOG = MorphiaLoggerFactory.get(MappedField.class);
+    ManuallyConfiguredMappedField(final Field f, final Class<?> clazz) {
+        f.setAccessible(true);
+        field = f;
+        persistedClass = clazz;
     }
 
-    @Override
-    public Object decode(Class targetClass, Object fromDBObject, MappedField optionalExtraInfo) {
-        return new Combination((Map<String, String>) fromDBObject);
+    public void discover() {
+        super.discover();
     }
 }
+

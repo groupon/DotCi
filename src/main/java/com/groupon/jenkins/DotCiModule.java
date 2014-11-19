@@ -20,31 +20,46 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.dynamic.build;
+ */
+package com.groupon.jenkins;
 
-import com.groupon.jenkins.SetupConfig;
-import hudson.model.Job;
-import hudson.model.PermalinkProjectAction.Permalink;
-import hudson.model.Run;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.groupon.jenkins.mongo.JenkinsMapper;
+import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.Morphia;
+import org.mongodb.morphia.mapping.Mapper;
 
-import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
+import javax.inject.Singleton;
+import java.net.UnknownHostException;
 
-public class LastSuccessfulMasterPermalink extends Permalink {
-
+public class DotCiModule extends AbstractModule {
     @Override
-    public String getDisplayName() {
-        return "Last Successful Master";
+    protected void configure() {
     }
 
-    @Override
-    public String getId() {
-        return "lastSuccessfulMaster";
+    @Provides @Singleton
+    Mongo providesMongo() {
+        Mongo mongo = null;
+
+        try {
+            mongo = new MongoClient(SetupConfig.get().getDbHost(), SetupConfig.get().getDbPort());
+        } catch (UnknownHostException e) {
+            addError(e);
+        }
+
+        return mongo;
     }
 
-    @Override
-    public Run<?, ?> resolve(Job<?, ?> job) {
-        return (Run<?, ?>) SetupConfig.get().getDynamicBuildRepository().getLastSuccessfulBuild((DbBackedProject) job, "master");
-    }
+    @Provides @Singleton
+    Datastore provideDatastore(Mongo mongo) {
+        String databaseName = SetupConfig.get().getDbName();
 
+        Mapper mapper = new JenkinsMapper();
+        Morphia morphia = new Morphia(mapper);
+        return morphia.createDatastore(mongo, databaseName);
+
+    }
 }
