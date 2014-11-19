@@ -26,6 +26,7 @@ package com.groupon.jenkins.github.security;
 
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
+import hudson.model.Item;
 import hudson.security.ACL;
 import hudson.security.Permission;
 import jenkins.model.Jenkins;
@@ -38,35 +39,41 @@ public class DotCiACLTest {
 
     @Test
     public void should_allow_system_user_to_do_anything() throws Exception {
-        DotCiACL acl = new DotCiACL("suryagaddipati", false);
+        DotCiACL acl = new DotCiACL("suryagaddipati", false,false);
         Assert.assertTrue(acl.hasPermission(ACL.SYSTEM, Permission.DELETE));
     }
 
     @Test
     public void should_allow_admins_to_do_anything() throws Exception {
-        DotCiACL acl = new DotCiACL("suryagaddipati", false);
+        DotCiACL acl = new DotCiACL("suryagaddipati", false,false);
         Assert.assertTrue(acl.hasPermission(getGithubAuthentication("suryagaddipati"), Permission.DELETE));
     }
 
     @Test
     public void should_allow_read_permission_for_everyone_on_non_dotci() throws Exception {
-        DotCiACL acl = new DotCiACL("suryagaddipati", false);
+        DotCiACL acl = new DotCiACL("suryagaddipati", false,false);
         Assert.assertFalse(acl.hasPermission(getGithubAuthentication("chairman-meow"), Permission.DELETE));
         Assert.assertTrue(acl.hasPermission(getGithubAuthentication("chairman-meow"), Jenkins.READ));
     }
 
     @Test
     public void should_allow_read_permission_for_authenticated_users_if_enabled() throws Exception {
-        DotCiACL acl = new DotCiACL(Mockito.mock(OrganizationContainer.class), "suryagaddipati", true);
+        DotCiACL acl = new DotCiACL(Mockito.mock(OrganizationContainer.class), "suryagaddipati", true,false);
         Assert.assertFalse(acl.hasPermission(getGithubAuthentication("chairman-meow"), Permission.DELETE));
         Assert.assertTrue(acl.hasPermission(getGithubAuthentication("chairman-meow"), Jenkins.READ));
+    }
+
+    @Test
+    public void should_allow_job_create_permission_for_authenticated_users_if_enabled() throws Exception {
+        DotCiACL acl = new DotCiACL("suryagaddipati", false,true);
+        Assert.assertTrue(acl.hasPermission(getGithubAuthentication("chairman-meow"), Item.CREATE ));
     }
 
     @Test
     public void should_allow_permission_on_github_org_only_if_member() throws Exception {
         OrganizationContainer organizationContainer = Mockito.mock(OrganizationContainer.class);
         Mockito.when(organizationContainer.getName()).thenReturn("chairman-meow");
-        DotCiACL acl = new DotCiACL(organizationContainer, "suryagaddipati", false);
+        DotCiACL acl = new DotCiACL(organizationContainer, "suryagaddipati", false,false);
         GithubAuthenticationToken githubAuthentication = getGithubAuthentication("chairman-meow");
         Assert.assertTrue(acl.hasPermission(githubAuthentication, Jenkins.READ));
     }
@@ -74,7 +81,7 @@ public class DotCiACLTest {
     public void should_allow_all_permission_on_github_org_only_if_member() throws Exception {
         DynamicProject project = Mockito.mock(DynamicProject.class);
         Mockito.when(project.getGithubRepoUrl()).thenReturn("https://github.com/groupon/DotCi");
-        DotCiACL acl = new DotCiACL(project, "suryagaddipati", false);
+        DotCiACL acl = new DotCiACL(project, "suryagaddipati", false,false);
         GithubAuthenticationToken githubAuthentication = getGithubAuthentication("chairman-meow");
         Mockito.when(githubAuthentication.hasRepositoryPermission("groupon/DotCi")).thenReturn(true);
         Assert.assertTrue(acl.hasPermission(githubAuthentication, Permission.DELETE));
