@@ -28,23 +28,24 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.mongodb.morphia.mapping.CustomMapper;
-import org.mongodb.morphia.mapping.MappedClass;
 import org.mongodb.morphia.mapping.MappedField;
 import org.mongodb.morphia.mapping.Mapper;
 import org.mongodb.morphia.mapping.cache.EntityCache;
 import org.mongodb.morphia.utils.ReflectionUtils;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-class AwkwardMapMapper implements CustomMapper {
+/**
+ * For Maps which have a key type that can not be mapped to a MongoDB field name,
+ * we can save a list of key-value pairs.
+ */
+class MapKeyValueMapper implements CustomMapper {
     public static final String KEY = "key";
     public static final String VALUE = "value";
 
@@ -132,10 +133,10 @@ class EntryMappedField extends ManuallyConfiguredMappedField {
     EntryMappedField(Field field, Class<?> clazz, MappedField mappedField) {
         super(field, clazz);
         super.discover();
-        if(AwkwardMapMapper.KEY.equals(field.getName())) {
+        if(MapKeyValueMapper.KEY.equals(field.getName())) {
             realType = mappedField.getMapKeyClass();
             subType = realType.getComponentType();
-        } else if(AwkwardMapMapper.VALUE.equals(field.getName())) {
+        } else if(MapKeyValueMapper.VALUE.equals(field.getName())) {
             realType = mappedField.getSubClass();
             subType = mappedField.getSubType() instanceof ParameterizedType ? ((ParameterizedType) mappedField.getSubType()).getActualTypeArguments()[0] : null;
         } else {

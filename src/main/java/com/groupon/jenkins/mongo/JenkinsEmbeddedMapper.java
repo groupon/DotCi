@@ -53,7 +53,7 @@ import java.util.Set;
 class JenkinsEmbeddedMapper implements CustomMapper {
     private final Map<Class, CustomMapper> customMappers;
 
-    private final AwkwardMapMapper awkwardMapper;
+    private final MapKeyValueMapper awkwardMapper;
 
     private final SerializationMethodInvoker serializationMethodInvoker;
 
@@ -63,7 +63,7 @@ class JenkinsEmbeddedMapper implements CustomMapper {
 
         serializationMethodInvoker = new SerializationMethodInvoker();
 
-        awkwardMapper = new AwkwardMapMapper();
+        awkwardMapper = new MapKeyValueMapper();
     }
 
     @Override
@@ -79,18 +79,18 @@ class JenkinsEmbeddedMapper implements CustomMapper {
         } else if (isAwkwardMap(mf)) {
             awkwardMapper.toDBObject(entity, mf, dbObject, involvedObjects, mapper);
         } else {
-            if(involvedObjects.containsKey(fieldValue)) {
+            // Genericly handle an object for serialization
+
+            if(involvedObjects.containsKey(fieldValue)) { // already once serialized
                 DBObject cachedStub = involvedObjects.get(fieldValue);
 
-                if(cachedStub == null) {
+                if(cachedStub == null) {  // visited, but not yet serialized, usually from mapper.toDBObject(...)
                     DBObject newStub = createStub(mapper, fieldValue, mapper.getId(fieldValue));
                     involvedObjects.put(fieldValue, newStub);
                     cachedStub = newStub;
-                } else if (cachedStub.keySet().size() > 2
-                        && cachedStub.containsField(mapper.ID_KEY)
-                        && cachedStub.containsField(mapper.CLASS_NAME_FIELDNAME)) {
-
-                    // remove full object from the cache and replace it with the stub
+                } else if (isFullySerializedObject(cachedStub, mapper)) {
+                    // remove full object from the cache and replace it with an ObjectId reference
+                    // so we're not storing redundant data
                     Object id = cachedStub.get(mapper.ID_KEY);
                     DBObject newStub = createStub(mapper, fieldValue, id);
 
@@ -98,13 +98,19 @@ class JenkinsEmbeddedMapper implements CustomMapper {
                     cachedStub = newStub;
                 }
 
-                dbObject.put(mf.getNameToStore(), cachedStub);
+                dbObject.put(mf.getNameToStore(), cachedStub); // serialize as the reference
 
             } else {
                 mapper.getOptions().getEmbeddedMapper().toDBObject(entity, mf, dbObject, involvedObjects, mapper);
             }
 
         }
+    }
+
+    private boolean isFullySerializedObject(DBObject cachedStub, Mapper mapper) {
+        return cachedStub.keySet().size() > 2
+                && cachedStub.containsField(mapper.ID_KEY)
+                && cachedStub.containsField(mapper.CLASS_NAME_FIELDNAME);
     }
 
     private boolean isAwkwardMap(MappedField mf) {
@@ -146,6 +152,7 @@ class JenkinsEmbeddedMapper implements CustomMapper {
         } else if (isAwkwardMap(mf)) {
             awkwardMapper.fromDBObject(dbObject, mf, entity, cache, mapper);
         } else {
+            // the first two conditions (isMap and isMultipleValues) are part of the hack to fix handling primitives
             if (mf.isMap()) {
                 readMap(dbObject, mf, entity, cache, mapper);
             } else if (mf.isMultipleValues()) {
@@ -160,7 +167,7 @@ class JenkinsEmbeddedMapper implements CustomMapper {
 
     }
 
-    // Taken from Morphia's Embedded Mapper
+    // Taken from Morphia's Embedded Mapper and is almost identical to that method
     @Deprecated
     private void readMap(final DBObject dbObject, final MappedField mf, final Object entity, final EntityCache cache, final Mapper mapper) {
         final Map map = mapper.getOptions().getObjectFactory().createMap(mf);
@@ -176,7 +183,7 @@ class JenkinsEmbeddedMapper implements CustomMapper {
                     if (mapper.getConverters().hasSimpleValueConverter(mf) || mapper.getConverters()
                             .hasSimpleValueConverter(mf.getSubClass())) {
                         newEntity = mapper.getConverters().decode(mf.getSubClass(), val, mf);
-                    } else if(mapper.getConverters().hasSimpleValueConverter(val.getClass())) {
+                    } else if(mapper.getConverters().hasSimpleValueConverter(val.getClass())) { // added this condition to handle incorrectly mapped primitives.
                         newEntity = mapper.getConverters().decode(val.getClass(), val, mf);
                     } else {
                         if (val instanceof DBObject) {
@@ -204,6 +211,7 @@ class JenkinsEmbeddedMapper implements CustomMapper {
     private Object readMapOrCollectionOrEntity(DBObject dbObj, MappedField mf, EntityCache cache, Mapper mapper) {
         try {
 
+            // to get around the protected access
             Method method = Mapper.class.getDeclaredMethod("fromDb", DBObject.class, Object.class, EntityCache.class);
             method.setAccessible(true);
             if (Map.class.isAssignableFrom(mf.getSubClass()) || Iterable.class.isAssignableFrom(mf.getSubClass())) {
@@ -225,7 +233,7 @@ class JenkinsEmbeddedMapper implements CustomMapper {
         }
     }
 
-    // Taken from Morphia's Embedded Mapper
+    // Taken from Morphia's Embedded Mapper and is almost identical to that method
     @Deprecated
     private void readCollection(final DBObject dbObject, final MappedField mf, final Object entity, final EntityCache cache,
                                 final Mapper mapper) {
@@ -253,7 +261,7 @@ class JenkinsEmbeddedMapper implements CustomMapper {
                     if (mapper.getConverters().hasSimpleValueConverter(mf) || mapper.getConverters()
                             .hasSimpleValueConverter(mf.getSubClass())) {
                         newEntity = mapper.getConverters().decode(mf.getSubClass(), o, mf);
-                    } else if(mapper.getConverters().hasSimpleValueConverter(o.getClass())) {
+                    } else if(mapper.getConverters().hasSimpleValueConverter(o.getClass())) {// added this condition to handle incorrectly mapped primitives.
                         newEntity = mapper.getConverters().decode(o.getClass(), o, mf);
                     } else {
                         if (o instanceof DBObject) {

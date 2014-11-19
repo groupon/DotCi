@@ -27,16 +27,21 @@ import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DbBackedProject;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
+import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
 import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.junit.rules.RuleChain;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.recipes.LocalData;
 import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHUser;
 
 public class DynamicProjectRepositoryTest {
     @Rule
@@ -83,8 +88,14 @@ public class DynamicProjectRepositoryTest {
 
     @Test
     @LocalData
-    @Ignore
+    @Ignore // TODO requires regular Jenkins initialization to search. This query is not actually made through MongoDB.
     public void should_find_project_for_a_url() {
+        String testUrl = "https://localhost/test_group/test_job";
+        Iterable<DynamicProject> projects = repo.getJobsFor(testUrl);
+        assertTrue("Unable to find any projects with test url", projects.iterator().hasNext()); // there is at least one item
+        for(DynamicProject project : projects) {
+            assertEquals(testUrl, project.getUrl());
+        }
     }
 
     @Test
@@ -95,8 +106,15 @@ public class DynamicProjectRepositoryTest {
 
     @Test
     @LocalData
-    @Ignore
-    public void should_check_if_a_project_exists() {
+    @Ignore // TODO requires regular Jenkins initialization to search. This query is not actually made through MongoDB.
+    public void should_check_if_a_project_exists() throws Exception {
+        GHRepository ghRepository = mock(GHRepository.class);
+        GHUser ghUser = mock(GHUser.class);
+        when(ghUser.getLogin()).thenReturn("testuser");
+        when(ghRepository.getOwner()).thenReturn(ghUser);
+        when(ghRepository.getName()).thenReturn("test_job");
+
+        assertTrue(repo.projectExists(ghRepository));
 
     }
 

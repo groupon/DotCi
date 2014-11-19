@@ -21,29 +21,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-
 package com.groupon.jenkins.mongo;
 
-import org.mongodb.morphia.mapping.MappedField;
+import org.junit.Test;
 
-import java.lang.reflect.Field;
+import static org.junit.Assert.*;
 
-/**
- * Hack to address issues in Jenkins mapping
- * These methods are copied directly from Morphia 1.07 so we can get around the method access limits.
- *
- * Deprecated because we want to use the original classes.
- */
-@Deprecated
-class ManuallyConfiguredMappedField extends MappedField {
-    ManuallyConfiguredMappedField(final Field f, final Class<?> clazz) {
-        f.setAccessible(true);
-        field = f;
-        persistedClass = clazz;
+public class SpecialClassConverterTest {
+    @Test
+    public void should_load_a_class() {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        SpecialClassConverter converter = new SpecialClassConverter(cl);
+        Object dbObject = "com.groupon.jenkins.mongo.SomeTestClass";
+        Object object = converter.decode(Class.class, dbObject, null);
+        assertEquals(SomeTestClass.class, object);
     }
 
-    public void discover() {
-        super.discover();
-    }
 }
 
+class SomeTestClass {}

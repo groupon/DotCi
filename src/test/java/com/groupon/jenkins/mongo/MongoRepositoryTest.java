@@ -27,13 +27,10 @@ import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
-import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import hudson.model.JobProperty;
-import hudson.util.XStream2;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
+import org.bson.types.ObjectId;
 import org.jenkinsci.plugins.GithubAuthenticationToken;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -42,6 +39,9 @@ import static org.junit.Assert.*;
 
 import org.junit.rules.RuleChain;
 import org.kohsuke.github.*;
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
 import org.powermock.api.mockito.PowerMockito;
 
 import org.jvnet.hudson.test.JenkinsRule;
@@ -65,7 +65,6 @@ public class MongoRepositoryTest {
     public void should_save_a_project() throws Exception {
         DynamicProjectRepository repo = SetupConfig.get().getDynamicProjectRepository();
 
-
         GHRepository ghRepository = setupMockGHRepository();
 
         DynamicProject project = repo.createNewProject(ghRepository);
@@ -73,10 +72,28 @@ public class MongoRepositoryTest {
         project.addProperty(new CyclicProperty(project));
         project.save();
 
-        assert(repo.getDatastore().getCount(DynamicProject.class) > 0);
+        assertTrue(repo.getDatastore().getCount(DynamicProject.class) > 0);
         DynamicProject restoredProject = repo.getDatastore().createQuery(DynamicProject.class).get();
 
-        assert("repo_name".equals(restoredProject.getName()));
+        assertEquals("repo_name", restoredProject.getName());
+    }
+
+    @Test
+    @LocalData
+    public void should_save_mixed_type_lists() {
+        MixedTypeListClass mixed = new MixedTypeListClass();
+        Serializable [] mixedList = {1, "teststring", new DummySerialiazable()};
+        mixed.mixedTypeList = mixedList;
+        Datastore ds = SetupConfig.get().getInjector().getInstance(Datastore.class);
+        ds.save(mixed);
+        MixedTypeListClass restoredMixed = ds.createQuery(MixedTypeListClass.class).get();
+
+        assertEquals(1, restoredMixed.mixedTypeList[0]);
+        assertEquals("teststring", restoredMixed.mixedTypeList[1]);
+        assertNotNull(restoredMixed.mixedTypeList[2]);
+        assertTrue(restoredMixed.mixedTypeList[2] instanceof DummySerialiazable);
+        DummySerialiazable dummy = (DummySerialiazable)restoredMixed.mixedTypeList[2];
+        assertEquals("test", dummy.test);
     }
 
     @Test
@@ -170,6 +187,17 @@ class CyclicProperty extends JobProperty<DynamicProject> {
         this.project = project;
         cyclicObject = new ArbitraryCycleClass();
     }
+}
+
+@Entity("test")
+class MixedTypeListClass {
+    @Id
+    public ObjectId id;
+    public Serializable[] mixedTypeList;
+}
+
+class DummySerialiazable implements Serializable {
+    public String test = "test";
 }
 
 class ArbitraryCycleClass {

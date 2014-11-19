@@ -1,4 +1,5 @@
-/*
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
 The MIT License (MIT)
 
 Copyright (c) 2014, Groupon, Inc.
@@ -20,30 +21,12 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
- */
-
-package com.groupon.jenkins.mongo;
-
-import org.mongodb.morphia.mapping.MappedField;
-
-import java.lang.reflect.Field;
-
-/**
- * Hack to address issues in Jenkins mapping
- * These methods are copied directly from Morphia 1.07 so we can get around the method access limits.
- *
- * Deprecated because we want to use the original classes.
- */
-@Deprecated
-class ManuallyConfiguredMappedField extends MappedField {
-    ManuallyConfiguredMappedField(final Field f, final Class<?> clazz) {
-        f.setAccessible(true);
-        field = f;
-        persistedClass = clazz;
-    }
-
-    public void discover() {
-        super.discover();
-    }
-}
-
+-->
+<com.groupon.jenkins.SetupConfig plugin="DotCi@3.0.2">
+    <dbHost>localhost</dbHost>
+    <dbPort>27017</dbPort>
+    <dbName>test</dbName>
+    <githubApiUrl>https://localhost/api/v3</githubApiUrl>
+    <githubCallbackUrl>http://localhost/githook/</githubCallbackUrl>
+    <guiceModule class="com.groupon.jenkins.TestingModule" />
+</com.groupon.jenkins.SetupConfig>
