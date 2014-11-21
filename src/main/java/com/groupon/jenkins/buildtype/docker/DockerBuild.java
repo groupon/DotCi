@@ -27,6 +27,7 @@ package com.groupon.jenkins.buildtype.docker;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
+import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.buildtype.util.shell.ShellScriptRunner;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
@@ -35,6 +36,7 @@ import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildRunner;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildScheduler;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import com.groupon.jenkins.notifications.PostBuildNotifier;
 import com.groupon.jenkins.util.GroovyYamlTemplateProcessor;
 import hudson.Launcher;
 import hudson.matrix.Combination;
@@ -42,6 +44,7 @@ import hudson.model.BuildListener;
 import hudson.model.Result;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,6 +68,8 @@ public abstract class DockerBuild extends BuildType implements SubBuildRunner {
             }else{
                 result = runSubBuild(new Combination(ImmutableMap.of("script", "main")), buildExecutionContext, listener);
             }
+            runPlugins(build, buildConfiguration.getPlugins(), listener, launcher);
+            runNotifiers(build,buildConfiguration.getNotifiers(),listener);
             return result;
 
         }catch (InterruptedException e){
@@ -76,7 +81,18 @@ public abstract class DockerBuild extends BuildType implements SubBuildRunner {
            throw e;
         }
     }
-
+    private void runPlugins(DynamicBuild dynamicBuild, List<DotCiPluginAdapter> plugins, BuildListener listener, Launcher launcher) {
+        for(DotCiPluginAdapter plugin : plugins){
+            plugin.perform(dynamicBuild, launcher, listener);
+        }
+    }
+    private boolean runNotifiers(DynamicBuild build,  List<PostBuildNotifier> notifiers , BuildListener listener) {
+        boolean result = true ;
+        for (PostBuildNotifier notifier : notifiers) {
+            result = result & notifier.perform(build, listener);
+        }
+        return result;
+    }
 
     private Result runMultiConfigbuildRunner(DynamicBuild dynamicBuild, DockerBuildConfiguration buildConfiguration, BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
         SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, this, new SubBuildScheduler.SubBuildFinishListener() {

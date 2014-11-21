@@ -24,9 +24,8 @@ THE SOFTWARE.
 package com.groupon.jenkins.github;
 
 import hudson.model.Action;
+import hudson.model.ParameterValue;
 import hudson.model.ParametersAction;
-import hudson.model.StringParameterValue;
-
 import java.util.List;
 
 /**
@@ -37,8 +36,8 @@ import java.util.List;
  */
 public class NoDuplicatesParameterAction extends ParametersAction {
 
-    public NoDuplicatesParameterAction(StringParameterValue parameterValue) {
-        super(parameterValue);
+    public NoDuplicatesParameterAction(List<ParameterValue> parametersValues) {
+        super(parametersValues);
     }
 
     @Override
