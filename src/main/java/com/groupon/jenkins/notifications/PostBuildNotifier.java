@@ -23,17 +23,15 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.notifications;
 
-import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
-import hudson.ExtensionList;
-import hudson.ExtensionPoint;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.extensions.DotCiExtension;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.Run;
-import jenkins.model.Jenkins;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
+public abstract class PostBuildNotifier extends DotCiExtension {
 
-public abstract class PostBuildNotifier implements ExtensionPoint {
+
     public enum Type {
         FAILURE_AND_RECOVERY, ALL
     }
@@ -77,31 +75,13 @@ public abstract class PostBuildNotifier implements ExtensionPoint {
         return subject;
     }
 
-    public static ExtensionList<PostBuildNotifier> all() {
-        return Jenkins.getInstance().getExtensionList(PostBuildNotifier.class);
-    }
 
-    public static PostBuildNotifier create(String pluginName, Object options) {
-        for (PostBuildNotifier notifier : all()) {
-            if (notifier.getName().equals(pluginName)) {
-                try {
-                    notifier = notifier.getClass().newInstance();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                notifier.setOptions(options);
-                return notifier;
-            }
-
-        }
-        throw new InvalidBuildConfigurationException("Notification " + pluginName + " not supported");
-    }
 
     public void setOptions(Object options) {
         this.options = options;
     }
 
-    private String getName() {
+    public String getName() {
         return name;
     }
 

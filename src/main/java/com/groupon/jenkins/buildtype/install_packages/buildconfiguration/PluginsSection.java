@@ -23,16 +23,14 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
-import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import com.groupon.jenkins.extensions.DotCiExtensionsHelper;
 import hudson.matrix.Combination;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class PluginsSection extends ConfigSection<ListValue<?>> {
 
@@ -46,31 +44,21 @@ public class PluginsSection extends ConfigSection<ListValue<?>> {
         if (getConfigValue().isEmpty()) {
             return Collections.emptyList();
         }
-        List<?> pluginSpecs = getConfigValue().getValue();
-        List<DotCiPluginAdapter> plugins = new ArrayList<DotCiPluginAdapter>(pluginSpecs.size());
-        for (Object pluginSpec : pluginSpecs) {
-            String pluginName;
-            Object options;
-            if (pluginSpec instanceof String) {
-                pluginName = (String) pluginSpec;
-                options = new HashMap<Object, Object>();
-            } else { // has to be a Map
-                Map<String, Object> pluginSpecMap = (Map<String, Object>) pluginSpec;
-                pluginName = Iterables.getOnlyElement(pluginSpecMap.keySet());
-                options = pluginSpecMap.get(pluginName);
-            }
-            plugins.add(createPlugin(pluginName, options));
-        }
-        return plugins;
+        return new DotCiExtensionsHelper().createPlugins(getConfigValue().getValue());
     }
 
-    protected DotCiPluginAdapter createPlugin(String name, Object options) {
-        return DotCiPluginAdapter.create(name, options);
-    }
 
     @Override
     public ShellCommands toScript(Combination combination) {
         return ShellCommands.NOOP;
     }
 
+    @Override
+    public Iterable<String> getValidationErrors() {
+        List<String> validationErrors = new ArrayList<String>();
+        for (DotCiPluginAdapter plugin: getPlugins()){
+            validationErrors.addAll(plugin.getValidationErrors());
+        }
+        return validationErrors;
+    }
 }

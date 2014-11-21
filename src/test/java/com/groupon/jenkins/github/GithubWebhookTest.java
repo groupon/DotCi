@@ -30,8 +30,10 @@ import hudson.model.ParameterDefinition;
 import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.StringParameterValue;
+import hudson.security.ACL;
 import java.io.IOException;
 import java.util.Arrays;
+import org.acegisecurity.context.SecurityContextHolder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -116,6 +118,15 @@ public class GithubWebhookTest {
         Assert.assertEquals("meow", ((StringParameterValue) parametersAction.getParameter("PARAM")).value);
 
     }
+    @Test
+    public void should_authenticate_as_SYSTEM() throws IOException, InterruptedException {
+        StaplerRequest request = mock(StaplerRequest.class);
+        DynamicProject project = mock(DynamicProject.class);
+        when(request.getParameter("payload")).thenReturn("payload");
+        kickOffBuildTrigger(request,project);
+        Assert.assertEquals(ACL.SYSTEM, SecurityContextHolder.getContext().getAuthentication());
+    }
+
 
     protected void kickOffBuildTrigger(StaplerRequest request, DynamicProject projectForRepo) throws IOException, InterruptedException {
         Payload payload = mock(Payload.class);

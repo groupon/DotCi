@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.dynamic.build;
 
+import com.groupon.jenkins.SetupConfig;
 import hudson.model.Job;
 import hudson.model.PermalinkProjectAction.Permalink;
 import hudson.model.Run;
@@ -43,7 +44,7 @@ public class LastSuccessfulMasterPermalink extends Permalink {
 
     @Override
     public Run<?, ?> resolve(Job<?, ?> job) {
-        return (Run<?, ?>) new DynamicBuildRepository().getLastSuccessfulBuild((DbBackedProject) job, "master");
+        return (Run<?, ?>) SetupConfig.get().getDynamicBuildRepository().getLastSuccessfulBuild((DbBackedProject) job, "master");
     }
 
 }

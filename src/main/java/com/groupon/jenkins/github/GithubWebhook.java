@@ -24,6 +24,7 @@ THE SOFTWARE.
 package com.groupon.jenkins.github;
 
 import com.google.common.io.CharStreams;
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import hudson.Extension;
 import hudson.model.AbstractProject;
@@ -33,12 +34,14 @@ import hudson.model.ParameterValue;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.StringParameterValue;
 import hudson.model.UnprotectedRootAction;
+import hudson.security.ACL;
 import hudson.util.SequentialExecutionQueue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -72,6 +75,7 @@ public class GithubWebhook implements UnprotectedRootAction {
     }
 
     public void processGitHubPayload(String payloadData) {
+        SecurityContextHolder.getContext().setAuthentication(ACL.SYSTEM);
         final Payload payload = makePayload(payloadData);
         LOGGER.info("Received POST by " + payload.getPusher());
         if (payload.needsBuild()) {
@@ -108,7 +112,7 @@ public class GithubWebhook implements UnprotectedRootAction {
         return defValues;
     }
     protected DynamicProjectRepository makeDynamicProjectRepo() {
-        return new DynamicProjectRepository();
+        return SetupConfig.get().getDynamicProjectRepository();
     }
 
     protected Payload makePayload(String payloadData) {
