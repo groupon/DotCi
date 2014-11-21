@@ -23,22 +23,18 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.plugins;
 
-import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
-import hudson.ExtensionList;
-import hudson.ExtensionPoint;
+import com.groupon.jenkins.extensions.DotCiExtension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.BuildListener;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
-import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 
-public abstract class DotCiPluginAdapter implements ExtensionPoint {
+public abstract class DotCiPluginAdapter extends DotCiExtension{
     protected String pluginInputFiles;
     private final String name;
     protected Object options;
@@ -49,34 +45,11 @@ public abstract class DotCiPluginAdapter implements ExtensionPoint {
 
     }
 
-    public static ExtensionList<DotCiPluginAdapter> all() {
-        return Jenkins.getInstance().getExtensionList(DotCiPluginAdapter.class);
-    }
-
-    public static DotCiPluginAdapter create(String pluginName, Object options) {
-        if (pluginName.equals("test_output")) {
-            pluginName = (((Map<String, String>) options).get("format"));
-        }
-        for (DotCiPluginAdapter adapter : all()) {
-            if (adapter.getName().equals(pluginName)) {
-                try {
-                    adapter = adapter.getClass().newInstance();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                adapter.setOptions(options);
-                return adapter;
-            }
-
-        }
-        throw new InvalidBuildConfigurationException("Plugin " + pluginName + " not supported");
-    }
-
-    private void setOptions(Object options) {
+    public void setOptions(Object options) {
         this.options = options;
     }
 
-    private String getName() {
+    public String getName() {
         return this.name;
     }
 

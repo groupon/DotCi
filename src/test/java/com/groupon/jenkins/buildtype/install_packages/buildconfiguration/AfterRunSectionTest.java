@@ -23,15 +23,13 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
+import com.google.common.collect.ImmutableMap;
 import hudson.matrix.Combination;
-
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableMap;
+import static org.junit.Assert.*;
 
 import static com.groupon.jenkins.testhelpers.TestHelpers.configListOrSingleValue;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class AfterRunSectionTest {
 
