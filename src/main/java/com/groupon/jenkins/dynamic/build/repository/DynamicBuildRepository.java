@@ -24,28 +24,23 @@ THE SOFTWARE.
 package com.groupon.jenkins.dynamic.build.repository;
 
 import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.dynamic.build.CurrentBuildState;
+import com.groupon.jenkins.dynamic.build.DbBackedBuild;
+import com.groupon.jenkins.dynamic.build.DbBackedProject;
+import com.groupon.jenkins.dynamic.build.DbBackedRunList;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.github.services.GithubCurrentUserService;
 import com.groupon.jenkins.mongo.BuildInfo;
+import com.groupon.jenkins.mongo.MongoRepository;
+import com.groupon.jenkins.mongo.MongoRunMap;
 import com.groupon.jenkins.util.GReflectionUtils;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.util.RunList;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.logging.Logger;
-
-import com.groupon.jenkins.dynamic.build.CurrentBuildState;
-import com.groupon.jenkins.dynamic.build.DbBackedProject;
-import com.groupon.jenkins.dynamic.build.DbBackedRunList;
-import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.DbBackedBuild;
-import com.groupon.jenkins.github.services.GithubCurrentUserService;
-
-import com.groupon.jenkins.mongo.MongoRepository;
-import com.groupon.jenkins.mongo.MongoRunMap;
-import com.mongodb.BasicDBObject;
+import java.util.regex.Pattern;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
 
@@ -204,7 +199,7 @@ public class DynamicBuildRepository extends MongoRepository {
         Query<DbBackedBuild> query = getQuery(project).limit(i).order("-number");
 
         if (branch != null) {
-            query = query.field("actions.causes.branch.branch").equal(branch);
+            query = filterBranch(branch, query);
         }
 
         List<DbBackedBuild> builds = query.asList();
@@ -214,6 +209,12 @@ public class DynamicBuildRepository extends MongoRepository {
         }
 
         return (Iterable<T>) builds;
+    }
+
+    private Query<DbBackedBuild> filterBranch(String branch, Query<DbBackedBuild> query) {
+        Pattern branchRegex = Pattern.compile(branch);
+        query = query.filter("actions.causes.branch.branch",branchRegex);
+        return query;
     }
 
     public <T extends DbBackedBuild> Iterable<T> getCurrentUserBuilds(DbBackedProject project, int i) {
@@ -246,10 +247,11 @@ public class DynamicBuildRepository extends MongoRepository {
     public DbBackedBuild getPreviousFinishedBuildOfSameBranch(DbBackedBuild build, String branch) {
         DbBackedProject project = (DbBackedProject) build.getProject();
 
-        DbBackedBuild previousBuild = getQuery(project).
+        Query<DbBackedBuild> query = getQuery(project);
+        filterBranch(branch,query);
+        DbBackedBuild previousBuild = query.
                 limit(1).
                 order("-number").
-                field("actions.causes.branch.branch").equal(branch).
                 field("state").equal("COMPLETED").field("number").lessThan(build.getNumber()).
                 get();
 
@@ -292,9 +294,10 @@ public class DynamicBuildRepository extends MongoRepository {
     }
 
     public <T extends DbBackedBuild> T getLastBuild(DbBackedProject project, String branch) {
-        DbBackedBuild build = getQuery(project)
-                .order("-number")
-                .field("actions.causes.branch.branch").equal(branch).get();
+        Query<DbBackedBuild> query = getQuery(project);
+        filterBranch(branch,query);
+        DbBackedBuild build = query
+                .order("-number").get();
         associateProject(project, build);
         return (T) build;
     }
