@@ -22,16 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.services;
+package com.groupon.jenkins.extensions;
 
-import hudson.util.Secret;
+import hudson.ExtensionPoint;
 
-public class EncryptionService {
-    public String encrypt(String value) {
-         return Secret.fromString(value).getEncryptedValue();
-    }
+public abstract class DotCiExtension implements ExtensionPoint {
+    public abstract String  getName() ;
 
-    public String decrypt(String value) {
-       return  Secret.fromString(value).getPlainText();
-    }
+    public abstract void setOptions(Object options) ;
 }

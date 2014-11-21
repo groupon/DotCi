@@ -26,7 +26,9 @@ package com.groupon.jenkins.buildsetup;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.github.services.GithubCurrentUserService;
 import java.io.IOException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
 import org.kohsuke.github.GHRepository;
 
 import static org.junit.Assert.*;
@@ -36,6 +38,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class GithubReposControllerTest {
+
+    @Rule
+    public JenkinsRule j = new JenkinsRule();
 
     @Test
     public void should_show_repos_with_admin_access_only() throws IOException {

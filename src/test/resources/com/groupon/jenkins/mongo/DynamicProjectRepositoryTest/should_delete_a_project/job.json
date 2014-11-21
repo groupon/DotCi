@@ -1,0 +1,38 @@
+{
+  "_id" : { "$oid" : "5451e5ee30047b534b7bd50b"},
+  "className" : "com.groupon.jenkins.dynamic.build.DynamicProject",
+  "name" : "test_job",
+  "containerName" : "test_container",
+  "builders" : [],
+  "buildWrappers" : [],
+  "scm" : {
+    "className" : "hudson.scm.NullSCM"
+  },
+  "assignedNode" : "node1",
+  "canRoam" : false,
+  "disabled" : false,
+  "blockBuildWhenDownstreamBuilding" : false,
+  "blockBuildWhenUpstreamBuilding" : false,
+  "jdk" : "(Default)",
+  "concurrentBuild" : true,
+  "logRotator" : {
+    "className" : "hudson.tasks.LogRotator",
+    "daysToKeep" : 30,
+    "numToKeep" : 100,
+    "artifactDaysToKeep" : -1,
+    "artifactNumToKeep" : -1
+  },
+  "keepDependencies" : false,
+  "properties" : [ ]
+    },
+    {
+      "className" : "com.groupon.jenkins.github.GithubRepoProperty",
+      "repoUrl" : "https://localhost/test_group/test_job"
+    },
+    {
+      "className" : "com.groupon.jenkins.dynamic.buildtype.BuildTypeProperty",
+      "buildType" : "com.groupon.jenkins.buildtype.install_packages.InstallPackagesBuild"
+    }
+  ],
+  "description" : "Test description"
+}

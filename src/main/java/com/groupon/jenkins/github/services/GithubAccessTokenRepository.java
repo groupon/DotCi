@@ -29,12 +29,17 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import hudson.util.Secret;
 import java.io.IOException;
+import org.mongodb.morphia.Datastore;
+
+import javax.inject.Inject;
 
 public class GithubAccessTokenRepository extends MongoRepository {
 
     public static final String COLLECTION_NAME = "github_tokens";
 
-    public GithubAccessTokenRepository() {
+    @Inject
+    public GithubAccessTokenRepository(Datastore datastore) {
+        super(datastore);
     }
 
     public String getAccessToken(String repourl) {
@@ -57,9 +62,9 @@ public class GithubAccessTokenRepository extends MongoRepository {
 
         String encryptedToken = getEncryptedValue(accessToken);
 
-            if (token != null) {
-                 getCollection().remove(token);
-            }
+        if (token != null) {
+            getCollection().remove(token);
+        }
 
             BasicDBObject doc = new BasicDBObject("user", user).append("access_token", encryptedToken).append("repo_url", url);
             getCollection().insert(doc);
@@ -77,7 +82,7 @@ public class GithubAccessTokenRepository extends MongoRepository {
     }
 
     public boolean isConfigured(String url) {
-        return getToken(url) !=null;
+        return getToken(url) != null;
     }
 
     protected DBCollection getCollection() {

@@ -24,6 +24,7 @@ THE SOFTWARE.
 package com.groupon.jenkins.mybuildsview;
 
 import com.google.common.collect.Lists;
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.views.AuthenticatedView;
@@ -57,7 +58,7 @@ public class MyBuildsView extends AuthenticatedView {
     }
 
     protected DynamicBuildRepository makeDynamicBuildRepository() {
-        return new DynamicBuildRepository();
+        return SetupConfig.get().getDynamicBuildRepository();
     }
 
 

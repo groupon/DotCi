@@ -25,9 +25,11 @@ THE SOFTWARE.
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
   <j:set target="${it}" property="trimmed" value="${all==null}"/>
     <l:tabBar>
-        <l:tab name="All" active="${it.branch == null}" href="allBuilds" />
-        <l:tab name="master" active="${it.branch == 'master'}" href="masterBuilds"/>
-        <l:tab name="mine" active="${it.branch == 'mine'}" href="myBuilds"/>
+        <l:tab name="All" active="${it.branch == null}" href="branchBuilds/all" />
+        <l:tab name="mine" active="${it.branch == 'mine'}" href="branchBuilds/mine"/>
+        <j:forEach var="s" items="${it.owner.branchTabs}">
+            <l:tab name="${s}" active="${it.branch == s}" href="branchBuilds/${s}"/>
+        </j:forEach>
     </l:tabBar>
     <st:include page="build_history.jelly" />
 </j:jelly>

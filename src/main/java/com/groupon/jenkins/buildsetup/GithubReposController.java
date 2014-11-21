@@ -26,7 +26,6 @@ package com.groupon.jenkins.buildsetup;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.github.services.GithubCurrentUserService;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import com.groupon.jenkins.util.GithubOauthLoginAction;
@@ -104,7 +103,7 @@ public class GithubReposController implements RootAction,StaplerProxy {
     }
 
     public void doCreateProject(StaplerRequest request, StaplerResponse response) throws IOException {
-        DynamicProject project = new DynamicProjectRepository().createNewProject(getGithubRepository(request),getAccessToken(request), getCurrentUserLogin(request));
+        DynamicProject project = SetupConfig.get().getDynamicProjectRepository().createNewProject(getGithubRepository(request),getAccessToken(request), getCurrentUserLogin(request));
         response.sendRedirect2(redirectAfterCreateItem(request, project));
     }
 

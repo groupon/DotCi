@@ -23,12 +23,11 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.WorkspaceFileExporter;
-import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.github.DeployKeyPair;
 import com.groupon.jenkins.github.GitBranch;
-import com.groupon.jenkins.github.services.GithubDeployKeyRepository;
 import com.mongodb.DBObject;
 import hudson.EnvVars;
 import hudson.Launcher;
@@ -67,7 +66,7 @@ import org.springframework.util.ReflectionUtils;
 @Entity("run")
 public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> extends Build<P, B> {
     @Id
-    private ObjectId id;
+    private ObjectId id = new ObjectId();
 
     private ObjectId projectId; //TODO replace with Reference
 
@@ -128,7 +127,7 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
     @Override
     public synchronized void save() throws IOException {
         LOGGER.info("saving build:" + getName() + ": " + getNumber());
-        new DynamicBuildRepository().save(this);
+        SetupConfig.get().getDynamicBuildRepository().save(this);
     }
 
     @Override
@@ -144,11 +143,16 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
     @Deprecated
     // Keeping this so we can more easily migrate from existing systems
     public void restoreFromDb(AbstractProject project, Map<String, Object> input) {
+        id = (ObjectId) input.get("_id");
+
         String state = ((String) input.get("state"));
-        Date date = ((Date) input.get("last_updated"));
-        setField(project, "project");
-        setField(date.getTime(), "timestamp");
         setField(getState(state), "state");
+
+        Date date = ((Date) input.get("last_updated"));
+        setField(date.getTime(), "timestamp");
+
+        setField(project, "project");
+
         super.onLoad();
     }
 
@@ -264,6 +268,7 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
         return envVars;
     }
 
+
     public Map<String, String> getDotCiEnvVars(EnvVars jenkinsEnvVars) {
         Map<String, String> envVars = new HashMap<String, String>();
         envVars.put("DOTCI_BRANCH", jenkinsEnvVars.get("BRANCH"));
@@ -297,18 +302,19 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
     }
 
     public Run getPreviousFinishedBuildOfSameBranch(BuildListener listener) {
-        return new DynamicBuildRepository().getPreviousFinishedBuildOfSameBranch(this, getCurrentBranch().toString());
+        return SetupConfig.get().getDynamicBuildRepository()
+                .getPreviousFinishedBuildOfSameBranch(this, getCurrentBranch().toString());
     }
 
     public boolean isPrivateRepo() {
-        return new GithubDeployKeyRepository().hasDeployKey(getGithubRepoUrl());
+        return SetupConfig.get().getGithubDeployKeyRepository().hasDeployKey(getGithubRepoUrl());
     }
 
     public abstract String getGithubRepoUrl();
 
     protected void exportDeployKeysIfPrivateRepo(BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
         if(isPrivateRepo()){
-            DeployKeyPair deployKeyPair = new GithubDeployKeyRepository().get(getGithubRepoUrl());
+            DeployKeyPair deployKeyPair = SetupConfig.get().getGithubDeployKeyRepository().get(getGithubRepoUrl());
             WorkspaceFileExporter.WorkspaceFile privateKeyFile = new WorkspaceFileExporter.WorkspaceFile("deploykey_rsa", deployKeyPair.privateKey, "rw-------");
             WorkspaceFileExporter.WorkspaceFile publicKeyFile = new WorkspaceFileExporter.WorkspaceFile("deploykey_rsa.pub", deployKeyPair.privateKey, "rw-r--r--");
             new WorkspaceFileExporter(publicKeyFile, WorkspaceFileExporter.Operation.CREATE).perform((AbstractBuild)this,launcher,listener);

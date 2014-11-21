@@ -23,57 +23,19 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.mongo;
 
-import com.groupon.jenkins.SetupConfig;
-import com.mongodb.*;
-
-import java.net.UnknownHostException;
-
-import jenkins.model.Jenkins;
-
 import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Morphia;
-import org.mongodb.morphia.mapping.Mapper;
+
+import javax.inject.Inject;
 
 public abstract class MongoRepository {
-    private static final transient Object lock = new Object();
-    private static Datastore datastore;
+    private Datastore datastore;
+
+    @Inject
+    public MongoRepository(Datastore datastore) {
+        this.datastore = datastore;
+    }
 
     public Datastore getDatastore() {
-        if(datastore == null) {
-            synchronized (lock) {
-                if(datastore == null) { // confirm we got the lock in time
-                    datastore = configureDatastore();
-                }
-            }
-        }
-
         return datastore;
     }
-
-    private Datastore configureDatastore() {
-        Morphia morphia = new Morphia();
-        Mapper mapper = morphia.getMapper();
-        mapper.getConverters().addConverter(new CopyOnWriteListConverter());
-        mapper.getConverters().addConverter(new DescribableListConverter());
-        mapper.getConverters().addConverter(new ParametersDefinitionPropertyCoverter());
-        mapper.getConverters().addConverter(new CombinationConverter());
-        mapper.getConverters().addConverter(new AxisListConverter());
-        mapper.getConverters().addConverter(new ResultConverter());
-
-
-        mapper.getOptions().setActLikeSerializer(true);
-        mapper.getOptions().objectFactory = new CustomMorphiaObjectFactory(Jenkins.getInstance().getPluginManager().uberClassLoader);
-
-        Mongo mongo;
-
-        try {
-            mongo = new MongoClient(SetupConfig.get().getDbHost(), SetupConfig.get().getDbPort());
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-        String databaseName = SetupConfig.get().getDbName();
-
-        return morphia.createDatastore(mongo, databaseName);
-    }
-
 }

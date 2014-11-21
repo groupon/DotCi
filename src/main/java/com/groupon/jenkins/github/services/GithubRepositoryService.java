@@ -51,7 +51,7 @@ public class GithubRepositoryService {
     private GithubDeployKeyRepository githubDeployKeyRepository;
 
     public GithubRepositoryService(GHRepository repository) {
-        this(repository, new GithubAccessTokenRepository(), new GithubDeployKeyRepository());
+        this(repository, SetupConfig.get().getGithubAccessTokenRepository(), SetupConfig.get().getGithubDeployKeyRepository());
     }
 
     protected GithubRepositoryService(GHRepository repository, GithubAccessTokenRepository githubAccessTokenRepository, GithubDeployKeyRepository githubDeployKeyRepository) {
@@ -59,6 +59,7 @@ public class GithubRepositoryService {
         this.githubAccessTokenRepository = githubAccessTokenRepository;
         this.githubDeployKeyRepository = githubDeployKeyRepository;
 
+        this.githubDeployKeyRepository = githubDeployKeyRepository;
     }
 
     /**
@@ -146,7 +147,7 @@ public class GithubRepositoryService {
 
     public synchronized GitHub getGithub() {
         if (github == null) {
-            String accessToken = new GithubAccessTokenRepository().getAccessToken(repoUrl);
+            String accessToken = SetupConfig.get().getGithubAccessTokenRepository().getAccessToken(repoUrl);
             github = getGithub(accessToken);
         }
         return github;

@@ -23,22 +23,25 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.dynamic.build;
 
-import java.io.IOException;
-
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
+import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
 import com.groupon.jenkins.dynamic.build.cause.ManualBuildCause;
 import com.groupon.jenkins.dynamic.build.cause.UnknownBuildCause;
 import com.groupon.jenkins.github.GitBranch;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import com.groupon.jenkins.testhelpers.DynamicBuildFactory;
+import hudson.EnvVars;
+import hudson.scm.ChangeLogSet;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+
+import static org.junit.Assert.*;
 
 import static com.groupon.jenkins.testhelpers.DynamicBuildFactory.newBuild;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -87,4 +90,21 @@ public class DynamicBuildModelTest {
         UnknownBuildCause buildCause = argument.getValue();
         assertNotNull(buildCause);
     }
+
+    @Test
+    public void should_add_change_log_to_environment() throws IOException, InterruptedException {
+        DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().get();
+        DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, null);
+        when(dynamicBuild.getEnvironment(null)).thenReturn(new EnvVars());
+
+        GithubLogEntry logEntry1 = new GithubLogEntry("message","github_url","commitId", Arrays.asList("Readme.md"));
+        ChangeLogSet githubChangeLog= new GithubChangeLogSet(dynamicBuild,Arrays.asList(logEntry1));
+
+
+        when(dynamicBuild.getChangeSet()).thenReturn(githubChangeLog);
+        Map<String, Object> environment = model.getEnvironmentWithChangeSet(null);
+        assertTrue(environment.containsKey("DOTCI_CHANGE_SET"));
+        assertTrue(((List<String>)environment.get("DOTCI_CHANGE_SET")).contains("Readme.md"));
+    }
+
 }

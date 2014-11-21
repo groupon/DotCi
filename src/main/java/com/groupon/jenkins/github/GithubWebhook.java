@@ -23,23 +23,29 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.github;
 
+import com.google.common.io.CharStreams;
+import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import hudson.Extension;
-import hudson.model.UnprotectedRootAction;
 import hudson.model.AbstractProject;
+import hudson.model.Job;
+import hudson.model.ParameterDefinition;
+import hudson.model.ParameterValue;
+import hudson.model.ParametersDefinitionProperty;
 import hudson.model.StringParameterValue;
+import hudson.model.UnprotectedRootAction;
+import hudson.security.ACL;
 import hudson.util.SequentialExecutionQueue;
-
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
-
+import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.ExportedBean;
-
-import com.google.common.io.CharStreams;
-import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 
 @Extension
 @ExportedBean
@@ -69,6 +75,7 @@ public class GithubWebhook implements UnprotectedRootAction {
     }
 
     public void processGitHubPayload(String payloadData) {
+        SecurityContextHolder.getContext().setAuthentication(ACL.SYSTEM);
         final Payload payload = makePayload(payloadData);
         LOGGER.info("Received POST by " + payload.getPusher());
         if (payload.needsBuild()) {
@@ -79,17 +86,33 @@ public class GithubWebhook implements UnprotectedRootAction {
                 queue.execute(new Runnable() {
                     @Override
                     public void run() {
-                        StringParameterValue branch = new StringParameterValue("BRANCH", payload.getBranch());
-                        job.scheduleBuild(0, payload.getCause(), new NoDuplicatesParameterAction(branch));
+                        job.scheduleBuild(0, payload.getCause(), new NoDuplicatesParameterAction(getParametersValues(job, payload.getBranch())));
                     }
                 });
 
             }
         }
     }
+    private List<ParameterValue> getParametersValues(Job job, String branch) {
+        ParametersDefinitionProperty paramDefProp = (ParametersDefinitionProperty) job.getProperty(ParametersDefinitionProperty.class);
+        ArrayList<ParameterValue> defValues = new ArrayList<ParameterValue>();
 
+        for(ParameterDefinition paramDefinition : paramDefProp.getParameterDefinitions())
+        {
+            if("BRANCH".equals(paramDefinition.getName())){
+                StringParameterValue branchParam = new StringParameterValue("BRANCH", branch);
+               defValues.add(branchParam);
+            }else{
+                ParameterValue defaultValue  = paramDefinition.getDefaultParameterValue();
+                if(defaultValue != null)
+                    defValues.add(defaultValue);
+            }
+        }
+
+        return defValues;
+    }
     protected DynamicProjectRepository makeDynamicProjectRepo() {
-        return new DynamicProjectRepository();
+        return SetupConfig.get().getDynamicProjectRepository();
     }
 
     protected Payload makePayload(String payloadData) {

@@ -23,8 +23,15 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.groupon.jenkins.buildtype.install_packages.InstallPackagesBuild;
+import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
+import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
+import com.groupon.jenkins.github.services.GithubDeployKeyRepository;
 import hudson.Extension;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
@@ -46,6 +53,9 @@ public class SetupConfig extends GlobalConfiguration {
     private String githubWebUrl;
     private String githubClientID;
     private String githubClientSecret;
+    private String deployKey;
+    private AbstractModule guiceModule;
+    private transient Injector injector;
 
     private String githubCallbackUrl;
     public static SetupConfig get() {
@@ -194,5 +204,43 @@ public class SetupConfig extends GlobalConfiguration {
 
     public void setGithubClientSecret(String githubClientSecret) {
         this.githubClientSecret = githubClientSecret;
+    }
+
+    public DynamicBuildRepository getDynamicBuildRepository() {
+        return getInjector().getInstance(DynamicBuildRepository.class);
+    }
+
+    public DynamicProjectRepository getDynamicProjectRepository() {
+        return getInjector().getInstance(DynamicProjectRepository.class);
+    }
+
+    public GithubAccessTokenRepository getGithubAccessTokenRepository() {
+        return getInjector().getInstance(GithubAccessTokenRepository.class);
+    }
+
+    private transient Object injectorLock = new Object();
+
+    public Injector getInjector() {
+        if(injector == null) {
+            synchronized (injectorLock) {
+                if(injector == null) { // make sure we got the lock in time
+                    injector = Guice.createInjector(getGuiceModule());
+                }
+            }
+        }
+
+        return injector;
+    }
+
+
+    private AbstractModule getGuiceModule() {
+        if(guiceModule == null) {
+            return new DotCiModule();
+        }
+        return guiceModule;
+    }
+
+    public GithubDeployKeyRepository getGithubDeployKeyRepository() {
+        return getInjector().getInstance(GithubDeployKeyRepository.class);
     }
 }

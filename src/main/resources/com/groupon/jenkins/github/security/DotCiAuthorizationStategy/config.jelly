@@ -33,5 +33,9 @@
             <f:checkbox />
         </f:entry>
 
+        <f:entry title="Grant Job CREATE permissions to all Authenticated Users" field="authenticatedUserJobCreatePermission">
+            <f:checkbox />
+        </f:entry>
+
     </f:section>
 </j:jelly>

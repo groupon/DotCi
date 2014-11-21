@@ -37,21 +37,23 @@ import org.kohsuke.stapler.DataBoundConstructor;
 public class DotCiAuthorizationStategy extends AuthorizationStrategy {
     private String adminUserNames;
     private boolean authenticatedUserReadPermission;
+    private boolean authenticatedUserJobCreatePermission;
 
     @DataBoundConstructor
-    public DotCiAuthorizationStategy(String adminUserNames,boolean authenticatedUserReadPermission ){
+    public DotCiAuthorizationStategy(String adminUserNames,boolean authenticatedUserReadPermission, boolean authenticatedUserJobCreatePermission ){
         this.adminUserNames = adminUserNames;
         this.authenticatedUserReadPermission = authenticatedUserReadPermission;
+        this.authenticatedUserJobCreatePermission = authenticatedUserJobCreatePermission;
     }
     @Override
     public ACL getRootACL() {
-        return new DotCiACL(adminUserNames,authenticatedUserReadPermission) ;
+        return new DotCiACL(adminUserNames,authenticatedUserReadPermission,authenticatedUserJobCreatePermission) ;
     }
     public ACL getACL(Job<?,?> job) {
-        return new DotCiACL(job,adminUserNames,authenticatedUserReadPermission) ;
+        return new DotCiACL(job,adminUserNames,authenticatedUserReadPermission,authenticatedUserJobCreatePermission) ;
     }
     public ACL getACL(AbstractItem item) {
-       return new DotCiACL(item,adminUserNames,authenticatedUserReadPermission) ;
+       return new DotCiACL(item,adminUserNames,authenticatedUserReadPermission,authenticatedUserJobCreatePermission) ;
     }
 
     public String getAdminUserNames() {
@@ -62,10 +64,15 @@ public class DotCiAuthorizationStategy extends AuthorizationStrategy {
         return authenticatedUserReadPermission;
     }
 
+    public boolean isAuthenticatedUserJobCreatePermission() {
+        return authenticatedUserJobCreatePermission;
+    }
     @Override
     public Collection<String> getGroups() {
         return new ArrayList<String>();
     }
+
+
     @Extension
     public static final class DescriptorImpl extends
             Descriptor<AuthorizationStrategy> {

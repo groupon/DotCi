@@ -159,6 +159,8 @@ public class PayloadTest {
         assertEquals(1, Iterables.size(logEntries));
         GithubLogEntry logEntry = Iterables.get(logEntries, 0);
         assertEquals("c2496e3fcc9a55b0a9f9318563a81aa2f26f4047", logEntry.getCommitId());
+        assertNotNull(logEntry.getAffectedPaths());
+        assertTrue(logEntry.getAffectedPaths().contains("README.md"));
     }
 
     @Test
