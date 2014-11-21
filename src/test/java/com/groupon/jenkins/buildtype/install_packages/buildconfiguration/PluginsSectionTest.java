@@ -23,12 +23,15 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
+import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -38,6 +41,7 @@ import static com.groupon.jenkins.testhelpers.TestHelpers.map;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 public class PluginsSectionTest {
     @Test
@@ -67,6 +71,17 @@ public class PluginsSectionTest {
     @Test
     public void shouldnt_run_any_shell_commands() {
         assertEquals(ShellCommands.NOOP, new PluginsSection(null).toScript(null));
+    }
+
+    @Test
+    public void should_validate_individual_plugins(){
+        PluginsSection pluginsSection = spy(new PluginsSection(null));
+        DotCiPluginAdapter invalidPlugin = mock(DotCiPluginAdapter.class);
+        when(invalidPlugin.getValidationErrors()).thenReturn(Arrays.asList("Invalid Config"));
+        doReturn(Arrays.asList(invalidPlugin)).when(pluginsSection).getPlugins();
+
+        Assert.assertEquals("Invalid Config", Iterables.get(pluginsSection.getValidationErrors(),0));
+
     }
 
 }
