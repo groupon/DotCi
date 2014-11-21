@@ -27,7 +27,6 @@ package com.groupon.jenkins.buildtype.install_packages.template;
 import com.google.common.base.CaseFormat;
 import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.BuildConfiguration;
 import com.groupon.jenkins.util.ResourceUtils;
-import hudson.EnvVars;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import java.util.HashMap;
@@ -50,10 +49,10 @@ public class DotCiTemplate implements ExtensionPoint {
         return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, className);
     }
 
-    public  BuildConfiguration getMergedTemplate(BuildConfiguration configuration, String parentTemplate, EnvVars envVars) {
+    public  BuildConfiguration getMergedTemplate(BuildConfiguration configuration, String parentTemplate, Map<String,Object> envVars) {
          return getMergedTemplate(configuration,getTemplates().get(parentTemplate),envVars);
     }
-    public  BuildConfiguration getMergedTemplate(BuildConfiguration configuration, DotCiTemplate parentTemplate, EnvVars envVars) {
+    public  BuildConfiguration getMergedTemplate(BuildConfiguration configuration, DotCiTemplate parentTemplate, Map<String,Object> envVars) {
         BuildConfiguration parentBuildConfiguration = parentTemplate.getBuildConfiguration(envVars);
         parentBuildConfiguration.merge(configuration);
         return parentBuildConfiguration;
@@ -66,7 +65,7 @@ public class DotCiTemplate implements ExtensionPoint {
        return templates;
     }
 
-    public BuildConfiguration getBuildConfiguration(EnvVars envVars) {
+    public BuildConfiguration getBuildConfiguration(Map<String,Object> envVars) {
         BuildConfiguration buildConfiguration = new BuildConfiguration(ymlDefintion, envVars);
         if (!buildConfiguration.isBaseTemplate()) {
             return getMergedTemplate(buildConfiguration, buildConfiguration.getParentTemplate(), envVars);

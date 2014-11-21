@@ -28,6 +28,7 @@ import hudson.scm.ChangeLogSet;
 
 import java.util.Collection;
 
+import java.util.List;
 import org.kohsuke.stapler.export.Exported;
 
 public class GithubLogEntry extends ChangeLogSet.Entry {
@@ -35,11 +36,13 @@ public class GithubLogEntry extends ChangeLogSet.Entry {
     private final String message;
     private final String githubUrl;
     private final String commitId;
+    private List<String> affectedPaths;
 
-    public GithubLogEntry(String message, String githubUrl, String commitId) {
+    public GithubLogEntry(String message, String githubUrl, String commitId, List<String> affectedPaths) {
         this.message = message;
         this.githubUrl = githubUrl;
         this.commitId = commitId;
+        this.affectedPaths = affectedPaths;
     }
 
     @Override
@@ -57,7 +60,7 @@ public class GithubLogEntry extends ChangeLogSet.Entry {
     @Override
     @Exported
     public Collection<String> getAffectedPaths() {
-        return null;
+        return affectedPaths;
     }
 
     public String getGithubUrl() {

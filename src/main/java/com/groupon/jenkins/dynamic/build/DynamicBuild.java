@@ -42,6 +42,7 @@ import hudson.model.Cause;
 import hudson.model.CauseAction;
 import hudson.model.Executor;
 import hudson.model.Result;
+import hudson.model.TaskListener;
 import hudson.tasks.BuildStep;
 import hudson.util.HttpResponses;
 import hudson.util.VersionNumber;
@@ -174,6 +175,10 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         }
     }
 
+
+    public Map<String,Object> getEnvironmentWithChangeSet(TaskListener listener) throws IOException, InterruptedException {
+        return model.getEnvironmentWithChangeSet(listener);
+    }
     public GHRepository getGithubRepository() {
         return getGithubRepositoryService().getGithubRepository();
     }

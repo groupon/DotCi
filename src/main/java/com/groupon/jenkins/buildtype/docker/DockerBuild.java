@@ -38,7 +38,6 @@ import com.groupon.jenkins.dynamic.build.execution.SubBuildScheduler;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
 import com.groupon.jenkins.util.GroovyYamlTemplateProcessor;
-import hudson.EnvVars;
 import hudson.Launcher;
 import hudson.matrix.Combination;
 import hudson.model.BuildListener;
@@ -54,12 +53,12 @@ public abstract class DockerBuild extends BuildType implements SubBuildRunner {
     private static final Logger LOGGER = Logger.getLogger(DockerBuild.class.getName());
     private DockerBuildConfiguration buildConfiguration;
 
-    public abstract DockerBuildConfiguration getBuildConfiguration(Map config, String buildId, EnvVars buildEnvironment) ;
+    public abstract DockerBuildConfiguration getBuildConfiguration(Map config, String buildId, Map<String,Object> buildEnvironment) ;
 
     @Override
     public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
         try{
-            EnvVars buildEnvironment = build.getEnvironment(listener);
+            Map<String,Object> buildEnvironment = build.getEnvironmentWithChangeSet(listener);
             Map config = new GroovyYamlTemplateProcessor(getDotCiYml(build), buildEnvironment).getConfig();
             this.buildConfiguration = getBuildConfiguration(config,build.getBuildId(),buildEnvironment);
             build.setAxisList(buildConfiguration.getAxisList());
