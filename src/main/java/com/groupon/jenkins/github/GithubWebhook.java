@@ -24,6 +24,7 @@ THE SOFTWARE.
 package com.groupon.jenkins.github;
 
 import com.google.common.io.CharStreams;
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import hudson.Extension;
 import hudson.model.AbstractProject;
@@ -89,7 +90,7 @@ public class GithubWebhook implements UnprotectedRootAction {
     }
 
     protected DynamicProjectRepository makeDynamicProjectRepo() {
-        return new DynamicProjectRepository();
+        return SetupConfig.get().getDynamicProjectRepository();
     }
 
     protected Payload makePayload(String payloadData) {

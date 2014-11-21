@@ -23,12 +23,12 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.repository;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DbBackedProject;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
 import com.groupon.jenkins.dynamic.build.DynamicSubProject;
 import com.groupon.jenkins.dynamic.build.GithubBranchParameterDefinition;
 import com.groupon.jenkins.dynamic.build.IdentifableItemGroup;
@@ -38,10 +38,6 @@ import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainerRe
 import com.groupon.jenkins.github.GithubRepoProperty;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import com.groupon.jenkins.mongo.MongoRepository;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import hudson.model.ItemGroup;
-import hudson.model.Items;
 import hudson.model.ParametersDefinitionProperty;
 import java.io.IOException;
 import java.util.List;
@@ -49,8 +45,10 @@ import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.kohsuke.github.GHRepository;
+import org.mongodb.morphia.Datastore;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 import static java.lang.String.format;
 
@@ -59,11 +57,13 @@ public class DynamicProjectRepository extends MongoRepository {
     private final OrganizationContainerRepository organizationRepository;
     private final DynamicBuildRepository dynamicBuildRepository;
 
-    public DynamicProjectRepository() {
-        this(new OrganizationContainerRepository(), new DynamicBuildRepository());
+    @Inject
+    public DynamicProjectRepository(Datastore datastore, DynamicBuildRepository buildRepository) {
+        this(datastore, new OrganizationContainerRepository(), buildRepository);
     }
 
-    protected DynamicProjectRepository(OrganizationContainerRepository organizationRepository, DynamicBuildRepository dynamicBuildRepository) {
+    protected DynamicProjectRepository(Datastore datastore, OrganizationContainerRepository organizationRepository, DynamicBuildRepository dynamicBuildRepository) {
+        super(datastore);
         this.organizationRepository = organizationRepository;
         this.dynamicBuildRepository = dynamicBuildRepository;
     }
@@ -150,7 +150,7 @@ public class DynamicProjectRepository extends MongoRepository {
             project.addProperty(new ParametersDefinitionProperty(new GithubBranchParameterDefinition("BRANCH", "master",githubRepository.getUrl())));
             project.addProperty(new GithubRepoProperty(githubRepository.getUrl()));
             project.addProperty(new BuildTypeProperty(SetupConfig.get().getDefaultBuildType()));
-
+            project.addProperty(new DynamicProjectBranchTabsProperty("master"));
             project.save();
             folder.addItem(project);
             folder.save();
@@ -166,13 +166,16 @@ public class DynamicProjectRepository extends MongoRepository {
     }
 
     public Iterable<DynamicProject> getProjectsForOrg(final OrganizationContainer organizationContainer) {
-        return getDatastore().createQuery(DynamicProject.class).disableValidation().field("containerName").equal(organizationContainer.getName()).asList();
+        return getDatastore().createQuery(DynamicProject.class).disableValidation()
+                .field("containerName").equal(organizationContainer.getName())
+                .asList();
     }
 
     public DynamicProject getProjectById(ObjectId id) {
         return getDatastore()
                 .createQuery(DynamicProject.class)
-                .field("id").equal(id).get();
+                .field("id").equal(id)
+                .get();
     }
 
 }

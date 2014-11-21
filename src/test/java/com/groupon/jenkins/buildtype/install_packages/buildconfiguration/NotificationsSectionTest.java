@@ -23,47 +23,13 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
-import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configvalue.ListValue;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
-import com.groupon.jenkins.notifications.PostBuildNotifier;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import static com.groupon.jenkins.testhelpers.TestHelpers.list;
-import static com.groupon.jenkins.testhelpers.TestHelpers.map;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-
 public class NotificationsSectionTest {
 
-    @Test
-    public void should_create_create_notifiers_specified_without_any_options() {
-        List<String> pusher_email_notifications = list("pusher_email");
-        ListValue<String> value = new ListValue<String>(pusher_email_notifications);
-        NotificationsSection notificationSection = spy(new NotificationsSection(value));
-        Object emailNotifier = mock(PostBuildNotifier.class);
-        doReturn(emailNotifier).when(notificationSection).createNotifier("pusher_email", new HashMap<String, String>());
-        assertNotNull(notificationSection.getNotifiers());
-        assertEquals(1, notificationSection.getNotifiers().size());
-        assertTrue(notificationSection.getNotifiers().contains(emailNotifier));
-    }
-
-    @Test
-    public void should_create_create_notifiers_specified_with_options() {
-        List<Map> notifications = list(map("email", "chairman_meow@groupon.com"));
-        ListValue<Map> value = new ListValue<Map>(notifications);
-        NotificationsSection notificationSection = spy(new NotificationsSection(value));
-        Object emailNotifier = mock(PostBuildNotifier.class);
-        doReturn(emailNotifier).when(notificationSection).createNotifier("email", "chairman_meow@groupon.com");
-        assertNotNull(notificationSection.getNotifiers());
-        assertEquals(1, notificationSection.getNotifiers().size());
-        assertTrue(notificationSection.getNotifiers().contains(emailNotifier));
-    }
 
     @Test
     public void shouldnt_run_any_shell_commands() {

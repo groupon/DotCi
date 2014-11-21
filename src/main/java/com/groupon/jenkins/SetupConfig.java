@@ -23,16 +23,20 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.groupon.jenkins.buildtype.install_packages.InstallPackagesBuild;
+import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
+import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
 import hudson.Extension;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
-
-import java.util.List;
 
 @Extension
 public class SetupConfig extends GlobalConfiguration {
@@ -45,6 +49,8 @@ public class SetupConfig extends GlobalConfiguration {
     private String fromEmailAddress;
     private String defaultBuildType;
     private String deployKey;
+    private AbstractModule guiceModule;
+    private transient Injector injector;
 
     public static SetupConfig get() {
         return GlobalConfiguration.all().get(SetupConfig.class);
@@ -174,4 +180,40 @@ public class SetupConfig extends GlobalConfiguration {
     public void setDefaultBuildType(String defaultBuildType) {
         this.defaultBuildType = defaultBuildType;
     }
+
+    public DynamicBuildRepository getDynamicBuildRepository() {
+        return getInjector().getInstance(DynamicBuildRepository.class);
+    }
+
+    public DynamicProjectRepository getDynamicProjectRepository() {
+        return getInjector().getInstance(DynamicProjectRepository.class);
+    }
+
+    public GithubAccessTokenRepository getGithubAccessTokenRepository() {
+        return getInjector().getInstance(GithubAccessTokenRepository.class);
+    }
+
+    private transient Object injectorLock = new Object();
+
+    public Injector getInjector() {
+        if(injector == null) {
+            synchronized (injectorLock) {
+                if(injector == null) { // make sure we got the lock in time
+                    injector = Guice.createInjector(getGuiceModule());
+                }
+            }
+        }
+
+        return injector;
+    }
+
+
+    private AbstractModule getGuiceModule() {
+        if(guiceModule == null) {
+            return new DotCiModule();
+        }
+        return guiceModule;
+    }
+
+
 }
