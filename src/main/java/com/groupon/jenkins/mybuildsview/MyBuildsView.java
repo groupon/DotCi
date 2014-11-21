@@ -27,6 +27,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
@@ -64,7 +65,7 @@ public class MyBuildsView extends AuthenticatedView {
     }
 
     protected DynamicBuildRepository makeDynamicBuildRepository() {
-        return new DynamicBuildRepository();
+        return SetupConfig.get().getDynamicBuildRepository();
     }
 
     protected GithubCurrentUserService getUser() {

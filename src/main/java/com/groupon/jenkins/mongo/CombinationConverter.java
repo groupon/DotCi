@@ -23,7 +23,6 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.mongo;
 
-import com.mongodb.DBObject;
 import hudson.matrix.Combination;
 import org.mongodb.morphia.converters.SimpleValueConverter;
 import org.mongodb.morphia.converters.TypeConverter;

@@ -24,7 +24,7 @@ THE SOFTWARE.
 package com.groupon.jenkins.buildtype.install_packages.buildconfiguration;
 
 import com.groupon.jenkins.util.ResourceUtils;
-import hudson.EnvVars;
+import java.util.HashMap;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -34,7 +34,7 @@ public class BuildConfigurationTest {
     @Test
     public void should_skip_build_if_build_is_skipped() {
         String dotCiYml = ResourceUtils.readResource(getClass(),"ci_skip_build.yml");
-        BuildConfiguration config = new BuildConfiguration(dotCiYml, new EnvVars());
+        BuildConfiguration config = new BuildConfiguration(dotCiYml, new HashMap<String, Object>());
         assertTrue(config.isSkipped());
     }
 

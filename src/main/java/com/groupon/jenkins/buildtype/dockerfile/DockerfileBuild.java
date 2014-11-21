@@ -27,7 +27,6 @@ package com.groupon.jenkins.buildtype.dockerfile;
 import com.groupon.jenkins.buildtype.docker.CheckoutCommands;
 import com.groupon.jenkins.buildtype.docker.DockerBuild;
 import com.groupon.jenkins.buildtype.docker.DockerBuildConfiguration;
-import hudson.EnvVars;
 import hudson.Extension;
 import java.util.Map;
 
@@ -41,7 +40,7 @@ public class DockerfileBuild extends DockerBuild{
 
 
     @Override
-    public DockerBuildConfiguration getBuildConfiguration(Map config, String buildId, EnvVars buildEnvironment) {
+    public DockerBuildConfiguration getBuildConfiguration(Map config, String buildId, Map<String,Object> buildEnvironment) {
         return new DockerfileBuildConfiguration(config,buildId, CheckoutCommands.get(buildEnvironment));
     }
 }
