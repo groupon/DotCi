@@ -20,31 +20,23 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.dynamic.build;
+ */
+package com.groupon.jenkins.mongo;
 
-import com.groupon.jenkins.SetupConfig;
-import hudson.model.Job;
-import hudson.model.PermalinkProjectAction.Permalink;
-import hudson.model.Run;
+import org.junit.Test;
 
-import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
+import static org.junit.Assert.*;
 
-public class LastSuccessfulMasterPermalink extends Permalink {
-
-    @Override
-    public String getDisplayName() {
-        return "Last Successful Master";
-    }
-
-    @Override
-    public String getId() {
-        return "lastSuccessfulMaster";
-    }
-
-    @Override
-    public Run<?, ?> resolve(Job<?, ?> job) {
-        return (Run<?, ?>) SetupConfig.get().getDynamicBuildRepository().getLastSuccessfulBuild((DbBackedProject) job, "master");
+public class SpecialClassConverterTest {
+    @Test
+    public void should_load_a_class() {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        SpecialClassConverter converter = new SpecialClassConverter(cl);
+        Object dbObject = "com.groupon.jenkins.mongo.SomeTestClass";
+        Object object = converter.decode(Class.class, dbObject, null);
+        assertEquals(SomeTestClass.class, object);
     }
 
 }
+
+class SomeTestClass {}

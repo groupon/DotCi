@@ -20,31 +20,33 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.dynamic.build;
+ */
 
-import com.groupon.jenkins.SetupConfig;
-import hudson.model.Job;
-import hudson.model.PermalinkProjectAction.Permalink;
-import hudson.model.Run;
+package com.groupon.jenkins.mongo;
 
-import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
+import hudson.security.Permission;
+import org.mongodb.morphia.converters.SimpleValueConverter;
+import org.mongodb.morphia.converters.TypeConverter;
+import org.mongodb.morphia.mapping.MappedField;
 
-public class LastSuccessfulMasterPermalink extends Permalink {
+public class PermissionsConverter extends TypeConverter implements SimpleValueConverter {
 
-    @Override
-    public String getDisplayName() {
-        return "Last Successful Master";
+    public PermissionsConverter(){
+        super(Permission.class);
     }
 
     @Override
-    public String getId() {
-        return "lastSuccessfulMaster";
+    public Object decode(Class targetClass, Object fromDBObject, MappedField optionalExtraInfo) {
+        if(fromDBObject == null) return null;
+
+        return Permission.fromId((String) fromDBObject);
     }
 
     @Override
-    public Run<?, ?> resolve(Job<?, ?> job) {
-        return (Run<?, ?>) SetupConfig.get().getDynamicBuildRepository().getLastSuccessfulBuild((DbBackedProject) job, "master");
+    public Object encode(Object value, MappedField optionalExtraInfo) {
+        if(value == null) return null;
+
+        return ((Permission) value).getId();
     }
 
 }

@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.organizationcontainer;
 
+import com.groupon.jenkins.SetupConfig;
 import hudson.Extension;
 import hudson.model.Action;
 import hudson.model.DescriptorVisibilityFilter;
@@ -131,7 +132,7 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
     }
 
     private Tree<String, DynamicProject> getJobsForThisContainer() {
-        Iterable<DynamicProject> projects = new DynamicProjectRepository().getProjectsForOrg(this);
+        Iterable<DynamicProject> projects = SetupConfig.get().getDynamicProjectRepository().getProjectsForOrg(this);
         Tree<String, DynamicProject> itemMap = new CopyOnWriteMap.Tree<String, DynamicProject>(CaseInsensitiveComparator.INSTANCE);
         for (DynamicProject dbBackedProject : projects) {
             itemMap.put(dbBackedProject.getName(), dbBackedProject);
@@ -190,7 +191,7 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
 
     @Override
     public void onDeleted(DynamicProject item) throws IOException {
-        new DynamicProjectRepository().delete(item);
+        SetupConfig.get().getDynamicProjectRepository().delete(item);
         items.remove(item.getName());
     }
 

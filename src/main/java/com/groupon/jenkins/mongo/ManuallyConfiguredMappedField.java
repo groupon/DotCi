@@ -20,31 +20,30 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-package com.groupon.jenkins.dynamic.build;
+ */
 
-import com.groupon.jenkins.SetupConfig;
-import hudson.model.Job;
-import hudson.model.PermalinkProjectAction.Permalink;
-import hudson.model.Run;
+package com.groupon.jenkins.mongo;
 
-import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
+import org.mongodb.morphia.mapping.MappedField;
 
-public class LastSuccessfulMasterPermalink extends Permalink {
+import java.lang.reflect.Field;
 
-    @Override
-    public String getDisplayName() {
-        return "Last Successful Master";
+/**
+ * Hack to address issues in Jenkins mapping
+ * These methods are copied directly from Morphia 1.07 so we can get around the method access limits.
+ *
+ * Deprecated because we want to use the original classes.
+ */
+@Deprecated
+class ManuallyConfiguredMappedField extends MappedField {
+    ManuallyConfiguredMappedField(final Field f, final Class<?> clazz) {
+        f.setAccessible(true);
+        field = f;
+        persistedClass = clazz;
     }
 
-    @Override
-    public String getId() {
-        return "lastSuccessfulMaster";
+    public void discover() {
+        super.discover();
     }
-
-    @Override
-    public Run<?, ?> resolve(Job<?, ?> job) {
-        return (Run<?, ?>) SetupConfig.get().getDynamicBuildRepository().getLastSuccessfulBuild((DbBackedProject) job, "master");
-    }
-
 }
+

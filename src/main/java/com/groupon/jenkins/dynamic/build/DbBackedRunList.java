@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
+import com.groupon.jenkins.SetupConfig;
 import hudson.util.RunList;
 
 import java.util.Iterator;
@@ -39,7 +40,7 @@ public class DbBackedRunList<P extends DbBackedProject<P, B>, B extends DbBacked
 
     public DbBackedRunList(DbBackedProject<P, B> project) {
         this.project = project;
-        this.dynamicBuildRepository = new DynamicBuildRepository();
+        this.dynamicBuildRepository = SetupConfig.get().getDynamicBuildRepository();
     }
 
     @Override

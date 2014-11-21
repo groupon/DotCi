@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.util.GReflectionUtils;
 import com.mongodb.DBObject;
 import hudson.model.*;
@@ -78,6 +79,7 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
 
     public DbBackedProject(ItemGroup parent, String name) {
         super(parent, name);
+        id = new ObjectId();
         initRepos();
     }
 
@@ -89,8 +91,8 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
 
     @PostLoad
     protected void initRepos() {
-        this.dynamicProjectRepository = new DynamicProjectRepository();
-        this.dynamicBuildRepository = new DynamicBuildRepository();
+        this.dynamicProjectRepository = SetupConfig.get().getDynamicProjectRepository();
+        this.dynamicBuildRepository = SetupConfig.get().getDynamicBuildRepository();
     }
 
     @Override

@@ -24,6 +24,7 @@ THE SOFTWARE.
 package com.groupon.jenkins.buildsetup;
 
 import com.google.common.collect.Iterables;
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.github.services.GithubCurrentUserService;
@@ -101,7 +102,7 @@ public class GithubReposController extends AuthenticatedRootAction {
     }
 
     public void doCreateProject(StaplerRequest request, StaplerResponse response) throws IOException {
-        DynamicProject project = new DynamicProjectRepository().createNewProject(getGithubRepository(request));
+        DynamicProject project = SetupConfig.get().getDynamicProjectRepository().createNewProject(getGithubRepository(request));
         response.sendRedirect2(redirectAfterCreateItem(request, project));
     }
 

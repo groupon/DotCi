@@ -23,94 +23,77 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.mongo;
 
-import com.github.fakemongo.Fongo;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DbBackedBuild;
-import com.groupon.jenkins.dynamic.build.DbBackedProject;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
-import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
-import com.groupon.jenkins.github.services.GithubRepositoryService;
-import com.mongodb.BasicDBObject;
+import hudson.model.JobProperty;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
+import org.bson.types.ObjectId;
 import org.jenkinsci.plugins.GithubAuthenticationToken;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
 
+import org.junit.rules.RuleChain;
 import org.kohsuke.github.*;
 import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Morphia;
-import org.mongodb.morphia.mapping.Mapper;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
 import org.powermock.api.mockito.PowerMockito;
 
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.recipes.LocalData;
-import org.powermock.reflect.Whitebox;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ GHRepository.class, GithubRepositoryService.class, GHHook.class, GitHub.class, GHRef.class, GHRef.GHObject.class, MongoRepository.class })
-@PowerMockIgnore({"javax.management.*","javax.crypto.*", "org.apache.log4j.*"})
 public class MongoRepositoryTest {
 
+
     @Rule
-    public JenkinsRule j = new JenkinsRule();
-
-    @Before
-    public void setupFongo() throws Exception {
-        Morphia morphia = new Morphia();
-        Mapper mapper = morphia.getMapper();
-        mapper.getConverters().addConverter(new CopyOnWriteListConverter());
-        mapper.getConverters().addConverter(new DescribableListConverter());
-        mapper.getConverters().addConverter(new ParametersDefinitionPropertyCoverter());
-        mapper.getConverters().addConverter(new CombinationConverter());
-        mapper.getConverters().addConverter(new AxisListConverter());
-        mapper.getConverters().addConverter(new ResultConverter());
-        mapper.getOptions().setActLikeSerializer(true);
-        mapper.getOptions().objectFactory = new CustomMorphiaObjectFactory(MongoRepository.class.getClassLoader());
-
-        Datastore datastore = morphia.createDatastore(new Fongo(SetupConfig.get().getDbName()).getMongo(), SetupConfig.get().getDbName());
-
-        Whitebox.setInternalState(MongoRepository.class, "datastore", datastore);
-    }
-
-    @After
-    public void clearFongo() {
-        Datastore ds = new DynamicProjectRepository().getDatastore();
-
-        ds.delete(ds.createQuery(DbBackedProject.class));
-        ds.delete(ds.createQuery(DbBackedBuild.class));
-        ds.getDB().getCollection(GithubAccessTokenRepository.COLLECTION_NAME).remove(new BasicDBObject());
-    }
+    public RuleChain chain = RuleChain
+            .outerRule(new JenkinsRule())
+            .around(new MongoDataLoadRule());
 
     @Test
     @LocalData
     public void should_save_a_project() throws Exception {
-        DynamicProjectRepository repo = new DynamicProjectRepository();
+        DynamicProjectRepository repo = SetupConfig.get().getDynamicProjectRepository();
 
         GHRepository ghRepository = setupMockGHRepository();
 
         DynamicProject project = repo.createNewProject(ghRepository);
 
-        assert(repo.getDatastore().getCount(DynamicProject.class) > 0);
+        project.addProperty(new CyclicProperty(project));
+        project.save();
+
+        assertTrue(repo.getDatastore().getCount(DynamicProject.class) > 0);
         DynamicProject restoredProject = repo.getDatastore().createQuery(DynamicProject.class).get();
 
-        assert("repo_name".equals(restoredProject.getName()));
+        assertEquals("repo_name", restoredProject.getName());
+    }
 
+    @Test
+    @LocalData
+    public void should_save_mixed_type_lists() {
+        MixedTypeListClass mixed = new MixedTypeListClass();
+        Serializable [] mixedList = {1, "teststring", new DummySerialiazable()};
+        mixed.mixedTypeList = mixedList;
+        Datastore ds = SetupConfig.get().getInjector().getInstance(Datastore.class);
+        ds.save(mixed);
+        MixedTypeListClass restoredMixed = ds.createQuery(MixedTypeListClass.class).get();
 
+        assertEquals(1, restoredMixed.mixedTypeList[0]);
+        assertEquals("teststring", restoredMixed.mixedTypeList[1]);
+        assertNotNull(restoredMixed.mixedTypeList[2]);
+        assertTrue(restoredMixed.mixedTypeList[2] instanceof DummySerialiazable);
+        DummySerialiazable dummy = (DummySerialiazable)restoredMixed.mixedTypeList[2];
+        assertEquals("test", dummy.test);
     }
 
     @Test
@@ -120,14 +103,14 @@ public class MongoRepositoryTest {
 
         GHRepository ghRepository = setupMockGHRepository();
 
-        DynamicProjectRepository repo = new DynamicProjectRepository();
+        DynamicProjectRepository repo = SetupConfig.get().getDynamicProjectRepository();
         DynamicProject project = repo.createNewProject(ghRepository);
 
         project.scheduleBuild2(0).get();
 
         assert(repo.getDatastore().getCount(DbBackedBuild.class) > 0);
 
-        for(DbBackedBuild build : new DynamicBuildRepository().getBuilds(project)) {
+        for(DbBackedBuild build : SetupConfig.get().getDynamicBuildRepository().getBuilds(project)) {
             assertNotNull(build.getParent());
             assertNotNull(build.getState());
             assertNotNull(build.getResult());
@@ -162,14 +145,10 @@ public class MongoRepositoryTest {
         PowerMockito.when(ghUser.getLogin()).thenReturn("theusername");
         PowerMockito.when(ghRepository.getOwner()).thenReturn(ghUser);
 
-        GithubAccessTokenRepository ghAccessTokenRepository = new GithubAccessTokenRepository();
-        PowerMockito.whenNew(GithubAccessTokenRepository.class).withNoArguments().thenReturn(ghAccessTokenRepository);
-
         String dotCiYaml = "environment:\n  language: ruby\n\nbuild:\n  before: echo \"get out of here denton\"\n  run:\n    unit: echo \"Unit test\"\n    integration: echo \"Integration test\"\n  after: echo it works right\n";
         GHContent content = PowerMockito.mock(GHContent.class);
         PowerMockito.when(content.getContent()).thenReturn(dotCiYaml);
         PowerMockito.when(ghRepository.getFileContent(".ci.yml", "thisisasha")).thenReturn(content);
-
 
         GHRef ghRef = PowerMockito.mock(GHRef.class);
         GHRef.GHObject ghObject = PowerMockito.mock(GHRef.GHObject.class);
@@ -183,7 +162,7 @@ public class MongoRepositoryTest {
 
         PowerMockito.mockStatic(GitHub.class);
         GitHub github = PowerMockito.mock(GitHub.class);
-        PowerMockito.when(GitHub.connectUsingOAuth("https://localhost/api/v3", "thisismytoken")).thenReturn(github);
+        //PowerMockito.when(GitHub.connectUsingOAuth("https://localhost/api/v3", "thisismytoken")).thenReturn(github);
         PowerMockito.when(github.getMyself()).thenReturn(myself);
         PowerMockito.when(github.getRepository("groupon/DotCi")).thenReturn(ghRepository);
 
@@ -197,5 +176,33 @@ public class MongoRepositoryTest {
         SecurityContextHolder.setContext(context);
 
         return ghRepository;
+    }
+}
+
+class CyclicProperty extends JobProperty<DynamicProject> {
+    private DynamicProject project;
+    private ArbitraryCycleClass cyclicObject;
+    CyclicProperty(DynamicProject project) {
+        super();
+        this.project = project;
+        cyclicObject = new ArbitraryCycleClass();
+    }
+}
+
+@Entity("test")
+class MixedTypeListClass {
+    @Id
+    public ObjectId id;
+    public Serializable[] mixedTypeList;
+}
+
+class DummySerialiazable implements Serializable {
+    public String test = "test";
+}
+
+class ArbitraryCycleClass {
+    private ArbitraryCycleClass cyclicObject;
+    ArbitraryCycleClass() {
+        cyclicObject = this;
     }
 }
