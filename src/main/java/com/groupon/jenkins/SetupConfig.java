@@ -31,6 +31,7 @@ import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
+import com.groupon.jenkins.github.services.GithubDeployKeyRepository;
 import hudson.Extension;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
@@ -202,5 +203,9 @@ public class SetupConfig extends GlobalConfiguration {
             return new DotCiModule();
         }
         return guiceModule;
+    }
+
+    public GithubDeployKeyRepository getGithubDeployKeyRepository() {
+        return getInjector().getInstance(GithubDeployKeyRepository.class);
     }
 }

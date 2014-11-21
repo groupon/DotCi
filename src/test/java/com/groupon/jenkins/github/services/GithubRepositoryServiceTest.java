@@ -22,13 +22,15 @@ public class GithubRepositoryServiceTest {
     private SetupConfig setupConfig;
     private GithubAccessTokenRepository githubAccessTokenRepository;
     private GithubRepositoryService githubRepositoryService;
+    private GithubDeployKeyRepository githubDeployKeyRepository;
 
     @Before
     public void setup() {
         githubRepository = mock(GHRepository.class);
         setupConfig = mock(SetupConfig.class);
         githubAccessTokenRepository = mock(GithubAccessTokenRepository.class);
-        githubRepositoryService = spy(new GithubRepositoryService(githubRepository, githubAccessTokenRepository));
+        githubDeployKeyRepository = mock(GithubDeployKeyRepository.class);
+        githubRepositoryService = spy(new GithubRepositoryService(githubRepository, githubAccessTokenRepository,githubDeployKeyRepository));
         doReturn(setupConfig).when(githubRepositoryService).getSetupConfig();
     }
 

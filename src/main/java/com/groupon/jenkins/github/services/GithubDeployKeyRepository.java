@@ -31,8 +31,16 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import hudson.util.Secret;
 import java.io.IOException;
+import org.mongodb.morphia.Datastore;
+
+import javax.inject.Inject;
 
 public class GithubDeployKeyRepository extends MongoRepository {
+    @Inject
+    public GithubDeployKeyRepository(Datastore datastore) {
+        super(datastore);
+    }
+
     public void put(String url,DeployKeyPair keyPair) throws IOException {
         BasicDBObject doc = new BasicDBObject("public_key", encrypt(keyPair.publicKey)).append("private_key",encrypt(keyPair.privateKey)).append("repo_url", url);
         getCollection().insert(doc);

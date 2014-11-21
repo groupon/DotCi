@@ -48,15 +48,17 @@ public class GithubRepositoryService {
     private GitHub github;
     private String repoUrl;
     private GithubAccessTokenRepository githubAccessTokenRepository;
+    private GithubDeployKeyRepository githubDeployKeyRepository;
 
     public GithubRepositoryService(GHRepository repository) {
-        this(repository, SetupConfig.get().getGithubAccessTokenRepository());
+        this(repository, SetupConfig.get().getGithubAccessTokenRepository(), SetupConfig.get().getGithubDeployKeyRepository());
     }
 
-    protected GithubRepositoryService(GHRepository repository, GithubAccessTokenRepository githubAccessTokenRepository) {
+    protected GithubRepositoryService(GHRepository repository, GithubAccessTokenRepository githubAccessTokenRepository, GithubDeployKeyRepository githubDeployKeyRepository) {
         this.repository = repository;
         this.githubAccessTokenRepository = githubAccessTokenRepository;
 
+        this.githubDeployKeyRepository = githubDeployKeyRepository;
     }
 
     /**
@@ -170,8 +172,8 @@ public class GithubRepositoryService {
         if (getRepository().isPrivate()) {
             removeDeployKeyIfPreviouslyAdded();
             DeployKeyPair keyPair = new DeployKeyGenerator().generateKeyPair();
-            getRepository().addDeployKey("DotCi",keyPair.publicKey);
-            new GithubDeployKeyRepository().put(getRepository().getUrl(),keyPair);
+            getRepository().addDeployKey("DotCi", keyPair.publicKey);
+            githubDeployKeyRepository.put(getRepository().getUrl(),keyPair);
         }
     }
 
