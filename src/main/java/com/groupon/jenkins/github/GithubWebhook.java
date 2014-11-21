@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.github;
 
+import com.groupon.jenkins.SetupConfig;
 import hudson.Extension;
 import hudson.model.UnprotectedRootAction;
 import hudson.model.AbstractProject;
@@ -89,7 +90,7 @@ public class GithubWebhook implements UnprotectedRootAction {
     }
 
     protected DynamicProjectRepository makeDynamicProjectRepo() {
-        return new DynamicProjectRepository();
+        return SetupConfig.get().getDynamicProjectRepository();
     }
 
     protected Payload makePayload(String payloadData) {

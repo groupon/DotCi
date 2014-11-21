@@ -97,7 +97,7 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     }
 
     private void init() {
-        Iterable<DynamicSubProject> projects = new DynamicProjectRepository().getChildren(this);
+        Iterable<DynamicSubProject> projects = SetupConfig.get().getDynamicProjectRepository().getChildren(this);
         items = new CopyOnWriteMap.Tree<String, DynamicSubProject>(CaseInsensitiveComparator.INSTANCE);
         for (DynamicSubProject dbBackedProject : projects) {
             items.put(dbBackedProject.getName(), dbBackedProject);
@@ -172,7 +172,13 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
     @Override
     protected HistoryWidget createHistoryWidget() {
-        return new BranchHistoryWidget(this, new RunList(), HISTORY_ADAPTER, new DynamicBuildRepository(), getCurrentBranch());
+        return new BranchHistoryWidget(
+                this,
+                new RunList(),
+                HISTORY_ADAPTER,
+                SetupConfig.get().getDynamicBuildRepository(),
+                getCurrentBranch()
+        );
     }
 
     protected String getCurrentBranch() {
