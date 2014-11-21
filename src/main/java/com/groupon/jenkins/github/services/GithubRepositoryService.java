@@ -25,19 +25,22 @@ package com.groupon.jenkins.github.services;
 
 import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.github.DeployKeyPair;
 import com.groupon.jenkins.github.GitBranch;
 import com.groupon.jenkins.github.GitUrl;
-import com.groupon.jenkins.github.GithubUtils;
-import org.apache.commons.lang.StringUtils;
-import org.kohsuke.github.*;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import org.kohsuke.github.GHContent;
+import org.kohsuke.github.GHDeployKey;
+import org.kohsuke.github.GHEvent;
+import org.kohsuke.github.GHHook;
+import org.kohsuke.github.GHRef;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GitHub;
 
 public class GithubRepositoryService {
     private static final Logger LOGGER = Logger.getLogger(GithubRepositoryService.class.getName());
@@ -166,15 +169,15 @@ public class GithubRepositoryService {
     protected void addDeployKey() throws IOException {
         if (getRepository().isPrivate()) {
             removeDeployKeyIfPreviouslyAdded();
-            getRepository().addDeployKey("DotCi", getSetupConfig().getDeployKey());
+            DeployKeyPair keyPair = new DeployKeyGenerator().generateKeyPair();
+            getRepository().addDeployKey("DotCi",keyPair.publicKey);
+            new GithubDeployKeyRepository().put(getRepository().getUrl(),keyPair);
         }
     }
 
     private void removeDeployKeyIfPreviouslyAdded() throws IOException {
-        String configuredDeployKey = StringUtils.trim(getSetupConfig().getDeployKey());
         for (GHDeployKey deployKey : getRepository().getDeployKeys()) {
-            // needs startsWith as email address is trimmed out
-            if (configuredDeployKey.startsWith(deployKey.getKey())) {
+            if ("DotCi".equals(deployKey.getTitle())) {
                 deployKey.delete();
             }
         }

@@ -48,6 +48,7 @@ public class SetupConfig extends GlobalConfiguration {
     private String label;
     private String fromEmailAddress;
     private String defaultBuildType;
+    private boolean privateRepoSupport;
     private String deployKey;
     private AbstractModule guiceModule;
     private transient Injector injector;
@@ -62,13 +63,6 @@ public class SetupConfig extends GlobalConfiguration {
 
     @Override
     public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
-        JSONObject privateRepoSupportJson = (JSONObject) json.get("privateRepoSupport");
-        if (privateRepoSupportJson != null) {
-            deployKey = privateRepoSupportJson.getString("deployKey");
-            json.remove("privateRepoSupport");
-        } else {
-            deployKey = null;
-        }
         req.bindJSON(this, json);
         save();
         return true;
@@ -152,22 +146,11 @@ public class SetupConfig extends GlobalConfiguration {
         this.fromEmailAddress = fromEmailAddress;
     }
 
-    // for EL
-    public boolean getPrivateRepoSupport() {
-        return deployKey != null;
-    }
 
     public boolean hasPrivateRepoSupport() {
         return getPrivateRepoSupport();
     }
 
-    public String getDeployKey() {
-        return deployKey;
-    }
-
-    public void setDeployKey(String deployKey) {
-        this.deployKey = deployKey;
-    }
 
     public String getDefaultBuildType() {
         if (StringUtils.isEmpty(defaultBuildType)) {
@@ -181,6 +164,12 @@ public class SetupConfig extends GlobalConfiguration {
         this.defaultBuildType = defaultBuildType;
     }
 
+    public void setPrivateRepoSupport(boolean privateRepoSupport) {
+        this.privateRepoSupport = privateRepoSupport;
+    }
+    public boolean getPrivateRepoSupport() {
+        return privateRepoSupport;
+    }
     public DynamicBuildRepository getDynamicBuildRepository() {
         return getInjector().getInstance(DynamicBuildRepository.class);
     }
@@ -214,6 +203,4 @@ public class SetupConfig extends GlobalConfiguration {
         }
         return guiceModule;
     }
-
-
 }

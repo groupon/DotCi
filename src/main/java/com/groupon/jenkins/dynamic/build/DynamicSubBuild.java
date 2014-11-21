@@ -137,8 +137,13 @@ public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSub
 
         @Override
         protected Result doRun(BuildListener listener) throws Exception {
-            SubBuildExecutionAction subBuildExecutionAction = getAction(SubBuildExecutionAction.class);
-            return subBuildExecutionAction.run(DynamicSubBuild.this.getCombination(), this, listener) ;
+            try{
+                exportDeployKeysIfPrivateRepo(listener, launcher);
+                SubBuildExecutionAction subBuildExecutionAction = getAction(SubBuildExecutionAction.class);
+                return subBuildExecutionAction.run(DynamicSubBuild.this.getCombination(), this, listener) ;
+            }finally {
+                deleteDeployKeys(listener, launcher);
+            }
 
         }
 
@@ -152,7 +157,6 @@ public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSub
         public void setResult(Result r) {
             DynamicSubBuild.this.setResult(r);
         }
-
 
     }
 
@@ -176,6 +180,11 @@ public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSub
     @Override
     public BuildCause getCause() {
         return cause;
+    }
+
+    @Override
+    public String getGithubRepoUrl() {
+        return getParentBuild().getParent().getGithubRepoUrl();
     }
 
     @Override

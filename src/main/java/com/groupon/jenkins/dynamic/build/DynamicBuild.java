@@ -194,6 +194,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
             DynamicBuild.this.setResult(r);
         }
 
+
         @Override
         protected Result doRun(BuildListener listener) throws Exception, hudson.model.Run.RunnerAbortedException {
             BuildEnvironment buildEnvironment = new BuildEnvironment(DynamicBuild.this, launcher, listener);
@@ -201,6 +202,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
                 if (!buildEnvironment.initialize()) {
                     return Result.FAILURE;
                 }
+                exportDeployKeysIfPrivateRepo(listener,launcher);
                 setDescription(getCause().getBuildDescription());
                 BuildType buildType = BuildType.getBuildType(getParent());
                 Result buildRunResult =   buildType.runBuild(DynamicBuild.this, this, launcher, listener);
@@ -227,10 +229,12 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
                 if (buildEnvironment.tearDownBuildEnvironments(listener)) {
                     return Result.FAILURE;
                 }
+                deleteDeployKeys(listener, launcher);
             }
 
         }
     }
+
 
     @Override
     @Exported
@@ -312,6 +316,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     public Map<String, String> getDotCiEnvVars() {
         return model.getDotCiEnvVars();
     }
+
 
     public void skip() {
         addAction(new SkippedBuildAction());
