@@ -30,6 +30,8 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.BuildListener;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import org.apache.commons.lang.StringUtils;
 
 public abstract class DotCiPluginAdapter extends DotCiExtension{
@@ -81,4 +83,7 @@ public abstract class DotCiPluginAdapter extends DotCiExtension{
         }
     }
 
+    public Collection<String> getValidationErrors() {
+        return Collections.EMPTY_LIST;
+    }
 }

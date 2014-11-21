@@ -28,6 +28,7 @@ import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DbBackedProject;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
 import com.groupon.jenkins.dynamic.build.DynamicSubProject;
 import com.groupon.jenkins.dynamic.build.GithubBranchParameterDefinition;
 import com.groupon.jenkins.dynamic.build.IdentifableItemGroup;
@@ -149,7 +150,7 @@ public class DynamicProjectRepository extends MongoRepository {
             project.addProperty(new ParametersDefinitionProperty(new GithubBranchParameterDefinition("BRANCH", "master",githubRepository.getUrl())));
             project.addProperty(new GithubRepoProperty(githubRepository.getUrl()));
             project.addProperty(new BuildTypeProperty(SetupConfig.get().getDefaultBuildType()));
-
+            project.addProperty(new DynamicProjectBranchTabsProperty("master"));
             project.save();
             folder.addItem(project);
             folder.save();

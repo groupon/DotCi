@@ -40,6 +40,7 @@ import hudson.util.RunList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
 
@@ -198,7 +199,7 @@ public class DynamicBuildRepository extends MongoRepository {
         Query<DbBackedBuild> query = getQuery(project).limit(i).order("-number");
 
         if (branch != null) {
-            query = query.field("actions.causes.branch.branch").equal(branch);
+            query = filterBranch(branch, query);
         }
 
         List<DbBackedBuild> builds = query.asList();
@@ -208,6 +209,12 @@ public class DynamicBuildRepository extends MongoRepository {
         }
 
         return (Iterable<T>) builds;
+    }
+
+    private Query<DbBackedBuild> filterBranch(String branch, Query<DbBackedBuild> query) {
+        Pattern branchRegex = Pattern.compile(branch);
+        query = query.filter("actions.causes.branch.branch",branchRegex);
+        return query;
     }
 
     public <T extends DbBackedBuild> Iterable<T> getCurrentUserBuilds(DbBackedProject project, int i) {
@@ -240,10 +247,11 @@ public class DynamicBuildRepository extends MongoRepository {
     public DbBackedBuild getPreviousFinishedBuildOfSameBranch(DbBackedBuild build, String branch) {
         DbBackedProject project = (DbBackedProject) build.getProject();
 
-        DbBackedBuild previousBuild = getQuery(project).
+        Query<DbBackedBuild> query = getQuery(project);
+        filterBranch(branch,query);
+        DbBackedBuild previousBuild = query.
                 limit(1).
                 order("-number").
-                field("actions.causes.branch.branch").equal(branch).
                 field("state").equal("COMPLETED").field("number").lessThan(build.getNumber()).
                 get();
 
@@ -286,9 +294,10 @@ public class DynamicBuildRepository extends MongoRepository {
     }
 
     public <T extends DbBackedBuild> T getLastBuild(DbBackedProject project, String branch) {
-        DbBackedBuild build = getQuery(project)
-                .order("-number")
-                .field("actions.causes.branch.branch").equal(branch).get();
+        Query<DbBackedBuild> query = getQuery(project);
+        filterBranch(branch,query);
+        DbBackedBuild build = query
+                .order("-number").get();
         associateProject(project, build);
         return (T) build;
     }
