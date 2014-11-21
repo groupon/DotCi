@@ -48,13 +48,10 @@ public class SetupConfig extends GlobalConfiguration {
     private String label;
     private String fromEmailAddress;
     private String defaultBuildType;
-<<<<<<< HEAD
     private boolean privateRepoSupport;
-=======
     private String deployKey;
     private AbstractModule guiceModule;
     private transient Injector injector;
->>>>>>> origin/master
 
     public static SetupConfig get() {
         return GlobalConfiguration.all().get(SetupConfig.class);
@@ -167,14 +164,12 @@ public class SetupConfig extends GlobalConfiguration {
         this.defaultBuildType = defaultBuildType;
     }
 
-<<<<<<< HEAD
     public void setPrivateRepoSupport(boolean privateRepoSupport) {
         this.privateRepoSupport = privateRepoSupport;
     }
     public boolean getPrivateRepoSupport() {
         return privateRepoSupport;
     }
-=======
     public DynamicBuildRepository getDynamicBuildRepository() {
         return getInjector().getInstance(DynamicBuildRepository.class);
     }
@@ -208,7 +203,4 @@ public class SetupConfig extends GlobalConfiguration {
         }
         return guiceModule;
     }
-
-
->>>>>>> origin/master
 }
