@@ -52,6 +52,7 @@ import java.util.Arrays;
 import java.util.Map;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.kohsuke.github.GHRepository;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -171,6 +172,10 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         } catch (IOException e) {
             throw  new RuntimeException(e);
         }
+    }
+
+    public GHRepository getGithubRepository() {
+        return getGithubRepositoryService().getGithubRepository();
     }
 
     protected class DynamicRunExecution extends Build.BuildExecution implements BuildExecutionContext {
