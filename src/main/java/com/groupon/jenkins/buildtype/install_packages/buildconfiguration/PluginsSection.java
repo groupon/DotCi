@@ -28,6 +28,7 @@ import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.extensions.DotCiExtensionsHelper;
 import hudson.matrix.Combination;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
