@@ -8,6 +8,7 @@ Features:
  - Add environment variable `DOTCI_CHANGE_SET` with list of files in the current changeset as reported by github.
  - Docker builds now support `plugins` section in `.ci.yml`.
  - Option to configure additional tabs in Job configuration.
+
 Bugfixes: 
   - Fixes https://github.com/groupon/DotCi/issues/69. Builds are now kicked off with default additional param values.
   - Fixes https://github.com/groupon/DotCi/issues/64.
