@@ -1,3 +1,18 @@
+##2.3.0(11/24/2014)
+Features:
+ - Add Commit History View for the `SHA` in current build.
+ - Add support for private repos.
+   * Deploy keys are genereated at runtime and added to private repo for checkout.
+   * Deploy keys are exported to workspace before a build starts.
+ - Add option to allow authenticated users to create jobs when using `DotCi Auth`.
+ - Add environment variable `DOTCI_CHANGE_SET` with list of files in the current changeset as reported by github.
+ - Docker builds now support `plugins` section in `.ci.yml`.
+ - Option to configure additional tabs in Job configuration.
+Bugfixes: 
+  - Fixes https://github.com/groupon/DotCi/issues/69. Builds are now kicked off with default additional param values.
+  - Fixes https://github.com/groupon/DotCi/issues/64.
+  - Githook authenticates as `SYSTEM` user now.
+
 ##2.2.0(11/19/2014)
  - Changed serialization from XStream (XML) to Morphia (MongoDB/BSON)
     * Supports most classes that were previously serializable in XML
