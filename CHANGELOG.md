@@ -1,3 +1,9 @@
+##2.2.0(11/19/2014)
+ - Changed serialization from XStream (XML) to Morphia (MongoDB/BSON)
+    * Supports most classes that were previously serializable in XML
+    * Does not currently support non-static inner classes
+    * Includes [migration script] (./src/main/groovy/dotci_db_xml_morphia_migration.groovy) to assist transitioning from Mongo stored XML to BSON
+
 ##2.0.0(09/05/2014)
  - Introduced BuildType extension with two currently supported buildtypes
     * Install Packages
