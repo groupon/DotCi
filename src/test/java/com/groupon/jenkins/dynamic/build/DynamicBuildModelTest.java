@@ -27,6 +27,7 @@ import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
 import com.groupon.jenkins.dynamic.build.cause.ManualBuildCause;
 import com.groupon.jenkins.dynamic.build.cause.UnknownBuildCause;
+import com.groupon.jenkins.dynamic.build.commithistory.CommitHistoryView;
 import com.groupon.jenkins.github.GitBranch;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import com.groupon.jenkins.testhelpers.DynamicBuildFactory;
@@ -42,6 +43,7 @@ import org.mockito.ArgumentCaptor;
 import static org.junit.Assert.*;
 
 import static com.groupon.jenkins.testhelpers.DynamicBuildFactory.newBuild;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -57,6 +59,17 @@ public class DynamicBuildModelTest {
         model.run();
         verify(dynamicBuild).addCause(new ManualBuildCause(new GitBranch("master"), "masterSha", "surya"));
     }
+
+    @Test
+    public void should_add_commit_history_view_to_build() {
+        DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().manualStart("surya", "master").get();
+        GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
+        when(githubRepositoryService.getShaForBranch("master")).thenReturn("masterSha");
+        DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
+        model.run();
+        verify(dynamicBuild).addAction(any(CommitHistoryView.class));
+    }
+
 
     @Test
     public void should_delete_sub_build_when_build_is_deleted() throws IOException {
