@@ -28,7 +28,7 @@ THE SOFTWARE.
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.567</version>
+        <version>1.580.1</version>
         <!-- which version of Jenkins is this plugin built against? -->
     </parent>
     <groupId>com.groupon.jenkins-ci.plugins</groupId>
@@ -217,6 +217,21 @@ THE SOFTWARE.
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>1.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins.workflow</groupId>
+            <artifactId>workflow-cps</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins.workflow</groupId>
+            <artifactId>workflow-basic-steps</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins.workflow</groupId>
+            <artifactId>workflow-job</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
