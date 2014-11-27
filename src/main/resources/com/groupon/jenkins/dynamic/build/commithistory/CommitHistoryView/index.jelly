@@ -26,9 +26,7 @@ THE SOFTWARE.
     <l:layout>
         <l:main-panel>
             <div class="main">
-                <j:forEach var="gcs" items="${it.commitStatuses}" >
-                    <p> <st:include page="commitStatus.groovy" /></p>
-                </j:forEach>
+
             </div>
         </l:main-panel>
     </l:layout>
