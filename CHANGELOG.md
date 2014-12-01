@@ -1,3 +1,8 @@
+##2.4.0(01/12/2014)
+Bugfix: 
+ - Fix docker link container cleanup bug where linked containers were not being discarded if the build failed.
+ - Store empty lists in database.
+
 ##2.3.0(11/24/2014)
 Features:
  - Add Commit History View for the `SHA` in current build.
