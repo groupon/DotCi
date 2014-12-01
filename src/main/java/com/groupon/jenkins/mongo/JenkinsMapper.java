@@ -40,12 +40,19 @@ import java.util.Map;
 
 public class JenkinsMapper extends Mapper {
     private final SerializationMethodInvoker serializationMethodInvoker;
+    private final ClassLoader classLoader;
 
     public JenkinsMapper() {
+        this(Jenkins.getInstance().getPluginManager().uberClassLoader);
+    }
+
+    public JenkinsMapper(ClassLoader classLoader) {
         super();
+        this.classLoader = classLoader;
         setOptions(new JenkinsMongoOptions());
         getOptions().setActLikeSerializer(true);
-        getOptions().objectFactory = new CustomMorphiaObjectFactory(getClassLoader());
+        getOptions().setStoreEmpties(true);
+        getOptions().setObjectFactory(new CustomMorphiaObjectFactory(getClassLoader()));
 
         serializationMethodInvoker = new SerializationMethodInvoker();
 
@@ -94,7 +101,7 @@ public class JenkinsMapper extends Mapper {
     }
 
     final protected ClassLoader getClassLoader() {
-        return Jenkins.getInstance().getPluginManager().uberClassLoader;
+        return classLoader;
     }
 }
 
