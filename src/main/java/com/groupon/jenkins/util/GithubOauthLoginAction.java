@@ -34,6 +34,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import jenkins.model.Jenkins;
 import org.jfree.util.Log;
+import org.kohsuke.github.GHUser;
+import org.kohsuke.github.GitHub;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.StaplerRequest;
@@ -81,11 +83,17 @@ public class GithubOauthLoginAction implements RootAction{
         String content = postForAccessToken(code);
 
         String accessToken = extractToken(content);
-
+        updateOfflineAccessTokenForUser(accessToken);
         request.getSession().setAttribute("access_token",accessToken);
 
         String newProjectSetupUrl = getJenkinsRootUrl() + "/" + GithubReposController.URL;
         return HttpResponses.redirectTo(newProjectSetupUrl);
+    }
+
+    private void updateOfflineAccessTokenForUser(String accessToken) throws IOException {
+            GHUser self = GitHub.connectUsingOAuth(getSetupConfig().getGithubApiUrl(),accessToken).getMyself();
+            String login = self.getLogin();
+            getSetupConfig().getGithubAccessTokenRepository().updateAccessToken(login,accessToken);
     }
 
     String getJenkinsRootUrl() {
