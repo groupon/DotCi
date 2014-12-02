@@ -25,14 +25,13 @@
 package com.groupon.jenkins.util;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.buildsetup.GithubReposController;
 import hudson.Extension;
 import hudson.model.RootAction;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Map;
+import java.util.HashMap;
 import jenkins.model.Jenkins;
 import org.jfree.util.Log;
 import org.kohsuke.stapler.HttpResponse;
@@ -94,10 +93,9 @@ public class GithubOauthLoginAction implements RootAction{
     }
 
     String postForAccessToken(String code) throws IOException {
-
         SetupConfig setupConfig = getSetupConfig();
-        Map<String,String> data = ImmutableMap.of( "client_id" , setupConfig.getGithubClientID(),"client_secret" , setupConfig.getGithubClientSecret() , "code" , code);
-        return httpPoster.post(setupConfig.getGithubWebUrl(),data);
+        return httpPoster.post(setupConfig.getGithubWebUrl()+"/login/oauth/access_token?" + "client_id=" + setupConfig.getGithubClientID() + "&"
+                + "client_secret=" + setupConfig.getGithubClientSecret() + "&" + "code=" + code,new HashMap());
     }
 
 
@@ -124,7 +122,7 @@ public class GithubOauthLoginAction implements RootAction{
 
     @Override
     public String getUrlName() {
-        return "dotciGithubProjects";
+        return "dotci";
     }
 
 }

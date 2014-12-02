@@ -42,7 +42,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 public class HttpPoster {
-    public String post(String url,Map postData) {
+    public String post(String url,Map postData) throws IOException {
         DefaultHttpClient httpclient = new DefaultHttpClient();
         HttpPost post = new HttpPost(url);
         try{
@@ -57,9 +57,6 @@ public class HttpPoster {
                 throw new RuntimeException(response.getStatusLine().toString());
             }
             return getResponse(response);
-
-        }catch (Exception e){
-            throw new RuntimeException(e);
         }finally {
             httpclient.getConnectionManager().shutdown();
         }
