@@ -122,7 +122,7 @@ public class SetupConfig extends GlobalConfiguration {
 
     public String getGithubCallbackUrl() {
         if (StringUtils.isEmpty(githubCallbackUrl)) {
-            return Jenkins.getInstance().getRootUrl() + "/githook/";
+            return Jenkins.getInstance().getRootUrl() + "githook/";
         }
         return this.githubCallbackUrl;
     }

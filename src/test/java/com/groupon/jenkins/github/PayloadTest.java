@@ -25,12 +25,16 @@ package com.groupon.jenkins.github;
 
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
+import com.groupon.jenkins.mongo.JenkinsMapper;
+import com.mongodb.DBObject;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mongodb.morphia.mapping.Mapper;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -178,10 +182,20 @@ public class PayloadTest {
         assertEquals("https://github.acme.com/surya/mycoolapp", payload.getProjectUrl());
     }
 
+    @Test
+    public void should_save_commits_in_cause() throws IOException {
+        Mapper mapper = new JenkinsMapper(this.getClass().getClassLoader());
+        Payload payload = new Payload(readFile("push_new_branch.json"));
+        DBObject dbObject = mapper.toDBObject(payload.getCause());
+        assertNotNull("Log Entries not saved",dbObject.get("logEntries"));
+        assertTrue(dbObject.get("logEntries") instanceof List);
+    }
+
     private String readFile(String fileName) throws IOException {
         InputStream stream = getClass().getResourceAsStream("/" + fileName);
         String payloadReq = IOUtils.toString(stream);
         return payloadReq;
     }
+
 
 }

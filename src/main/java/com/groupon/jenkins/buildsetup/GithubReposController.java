@@ -138,7 +138,7 @@ public class GithubReposController implements RootAction,StaplerProxy {
 
 
     protected String redirectAfterCreateItem(StaplerRequest req, TopLevelItem result) throws IOException {
-        return Jenkins.getInstance().getRootUrlFromRequest() + "/" + result.getUrl();
+        return Jenkins.getInstance().getRootUrl()  + result.getUrl();
     }
 
 

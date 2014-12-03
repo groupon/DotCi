@@ -32,11 +32,10 @@ environment:
 build:
   checkout: 
     -  find . ! -path "./deploykey_rsa.pub" ! -path "./deploykey_rsa" -delete
-    <% if(DOTCI_PULL_REQUEST) { %>
-    - mkdir -p $JOB_NAME
-    - cd $JOB_NAME
     - git init
     - git remote add origin $GIT_URL
+    #=============PR checkout================
+    <% if(DOTCI_PULL_REQUEST) { %>
 
     <% if(DOTCI_IS_PRIVATE_REPO == 'true') { %>
     - ssh-agent bash -c "ssh-add -D && ssh-add \$WORKSPACE/deploykey_rsa && git fetch origin '+refs/pull/$DOTCI_PULL_REQUEST/merge:' "
@@ -45,17 +44,17 @@ build:
     <% } %>
 
     - git reset --hard FETCH_HEAD
+    #======================================
+    #====Regular checkout =================
     <% } else { %>
-
     <% if(DOTCI_IS_PRIVATE_REPO == 'true') { %>
-    - ssh-agent bash -c "ssh-add -D && ssh-add \$WORKSPACE/deploykey_rsa && git clone  --branch=$DOTCI_BRANCH $GIT_URL $JOB_NAME "
+    - ssh-agent bash -c "ssh-add -D && ssh-add \$WORKSPACE/deploykey_rsa &&  git fetch origin $DOTCI_BRANCH"
     <% } else { %>
-    - git clone  --branch=$DOTCI_BRANCH $GIT_URL $JOB_NAME
+    - git fetch origin $DOTCI_BRANCH
     <% } %>
-
-    - cd $JOB_NAME
     - git reset --hard  $SHA
     <% } %>
+    #======================================
   before_install:
     - mkdir -p tmp
   info:

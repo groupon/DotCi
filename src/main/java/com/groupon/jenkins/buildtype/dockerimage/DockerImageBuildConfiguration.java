@@ -54,8 +54,6 @@ public class DockerImageBuildConfiguration extends DockerBuildConfiguration {
 
          shellCommands.addAll(linkServicesToRunCommand(dockerRunCommand, config.get("links", List.class)));
 
-         shellCommands.addAll(linkCleanupCommands);
-
         return shellCommands;
     }
 
