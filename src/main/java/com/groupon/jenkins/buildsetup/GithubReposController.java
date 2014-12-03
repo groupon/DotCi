@@ -26,7 +26,6 @@ package com.groupon.jenkins.buildsetup;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.github.services.GithubCurrentUserService;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import com.groupon.jenkins.util.AuthenticatedRootAction;
@@ -118,7 +117,7 @@ public class GithubReposController extends AuthenticatedRootAction {
     }
 
     protected String redirectAfterCreateItem(StaplerRequest req, TopLevelItem result) throws IOException {
-        return Jenkins.getInstance().getRootUrlFromRequest() + "/" + result.getUrl();
+        return Jenkins.getInstance().getRootUrl()  + result.getUrl();
     }
 
     @Override
