@@ -28,6 +28,10 @@ import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import hudson.model.JobProperty;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.bson.types.ObjectId;
@@ -35,22 +39,24 @@ import org.jenkinsci.plugins.GithubAuthenticationToken;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import static org.junit.Assert.*;
-
 import org.junit.rules.RuleChain;
-import org.kohsuke.github.*;
+import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.recipes.LocalData;
+import org.kohsuke.github.GHContent;
+import org.kohsuke.github.GHDeployKey;
+import org.kohsuke.github.GHEvent;
+import org.kohsuke.github.GHHook;
+import org.kohsuke.github.GHMyself;
+import org.kohsuke.github.GHRef;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHUser;
+import org.kohsuke.github.GitHub;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.powermock.api.mockito.PowerMockito;
 
-import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.recipes.LocalData;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import static org.junit.Assert.*;
 
 public class MongoRepositoryTest {
 
@@ -67,7 +73,7 @@ public class MongoRepositoryTest {
 
         GHRepository ghRepository = setupMockGHRepository();
 
-        DynamicProject project = repo.createNewProject(ghRepository);
+        DynamicProject project = repo.createNewProject(ghRepository,null,null);
 
         project.addProperty(new CyclicProperty(project));
         project.save();
@@ -104,7 +110,7 @@ public class MongoRepositoryTest {
         GHRepository ghRepository = setupMockGHRepository();
 
         DynamicProjectRepository repo = SetupConfig.get().getDynamicProjectRepository();
-        DynamicProject project = repo.createNewProject(ghRepository);
+        DynamicProject project = repo.createNewProject(ghRepository,null,null);
 
         project.scheduleBuild2(0).get();
 

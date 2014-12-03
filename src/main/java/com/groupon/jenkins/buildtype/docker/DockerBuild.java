@@ -25,7 +25,6 @@
 package com.groupon.jenkins.buildtype.docker;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
@@ -57,7 +56,6 @@ public abstract class DockerBuild extends BuildType implements SubBuildRunner {
 
     @Override
     public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
-        try{
             Map<String,Object> buildEnvironment = build.getEnvironmentWithChangeSet(listener);
             Map config = new GroovyYamlTemplateProcessor(getDotCiYml(build), buildEnvironment).getConfig();
             this.buildConfiguration = getBuildConfiguration(config,build.getBuildId(),buildEnvironment);
@@ -68,18 +66,11 @@ public abstract class DockerBuild extends BuildType implements SubBuildRunner {
             }else{
                 result = runSubBuild(new Combination(ImmutableMap.of("script", "main")), buildExecutionContext, listener);
             }
+
             runPlugins(build, buildConfiguration.getPlugins(), listener, launcher);
             runNotifiers(build,buildConfiguration.getNotifiers(),listener);
             return result;
 
-        }catch (InterruptedException e){
-            if(buildConfiguration !=null && Iterables.isEmpty(buildConfiguration.getLinkCleanupCommands())){
-                ShellCommands cleanupCommands = new ShellCommands();
-                cleanupCommands.addAll(buildConfiguration.getLinkCleanupCommands());
-                new ShellScriptRunner(buildExecutionContext, listener).runScript(cleanupCommands);
-            }
-           throw e;
-        }
     }
     private void runPlugins(DynamicBuild dynamicBuild, List<DotCiPluginAdapter> plugins, BuildListener listener, Launcher launcher) {
         for(DotCiPluginAdapter plugin : plugins){
@@ -126,6 +117,12 @@ public abstract class DockerBuild extends BuildType implements SubBuildRunner {
 
     @Override
     public Result runSubBuild(Combination combination, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
-        return new ShellScriptRunner(buildExecutionContext, listener).runScript(buildConfiguration.toShellCommands(combination));
+        Result buildResult;
+        try{
+            buildResult = new ShellScriptRunner(buildExecutionContext, listener).runScript(buildConfiguration.toShellCommands(combination));
+        }finally {
+            new ShellScriptRunner(buildExecutionContext,listener).runScript(new ShellCommands().addAll(buildConfiguration.getLinkCleanupCommands()));
+        }
+        return buildResult;
     }
 }

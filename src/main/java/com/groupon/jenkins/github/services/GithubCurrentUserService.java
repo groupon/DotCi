@@ -27,9 +27,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.acegisecurity.context.SecurityContextHolder;
-import org.jenkinsci.plugins.GithubAuthenticationToken;
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
@@ -48,11 +45,6 @@ public class GithubCurrentUserService {
         }
     }
 
-    public static GithubCurrentUserService current() {
-        GithubAuthenticationToken auth = (GithubAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        GitHub gh = auth.getGitHub();
-        return new GithubCurrentUserService(gh);
-    }
 
     public Map<String, GHRepository> getRepositories(String orgName) {
         try {

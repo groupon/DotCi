@@ -22,40 +22,16 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.github;
+package com.groupon.jenkins.github.services;
 
-import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
-import hudson.Extension;
-import jenkins.security.SecurityListener;
-import org.acegisecurity.userdetails.UserDetails;
+import hudson.util.Secret;
 
-import javax.annotation.Nonnull;
-
-@Extension
-public class GithubTokenRefreshListener extends SecurityListener {
-    @Override
-    protected void authenticated(@Nonnull UserDetails details) {
-        SetupConfig.get().getGithubAccessTokenRepository().updateAccessToken(details.getUsername());
+public class EncryptionService {
+    public String encrypt(String value) {
+         return Secret.fromString(value).getEncryptedValue();
     }
 
-    @Override
-    protected void failedToAuthenticate(@Nonnull String username) {
-
-    }
-
-    @Override
-    protected void loggedIn(@Nonnull String username) {
-
-    }
-
-    @Override
-    protected void failedToLogIn(@Nonnull String username) {
-
-    }
-
-    @Override
-    protected void loggedOut(@Nonnull String username) {
-
+    public String decrypt(String value) {
+       return  Secret.fromString(value).getPlainText();
     }
 }

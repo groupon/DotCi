@@ -26,11 +26,6 @@ THE SOFTWARE.
 <l:layout>
 <l:main-panel>
  <div class="main">
-    <j:if test="${!it.securityConfigured}">
-         <div class="error">
-           Please configure global security to use Github Authentication before trying to create new DotCi job.
-         </div>
-     </j:if>
      <l:tabBar>
         <j:forEach items="${it.orgs}" var="i">
            <l:tab name="${i}" active="${it.currentOrg == i}" href="${i}" />

@@ -134,9 +134,9 @@ public class DynamicProjectRepository extends MongoRepository {
         return Jenkins.getInstance().getAllItems(DynamicProject.class);
     }
 
-    public DynamicProject createNewProject(GHRepository githubRepository) {
+    public DynamicProject createNewProject(GHRepository githubRepository,String accessToken, String user) {
         try {
-            new GithubRepositoryService(githubRepository).linkProjectToCi();
+            new GithubRepositoryService(githubRepository).linkProjectToCi(accessToken,user);
 
             OrganizationContainer folder = this.organizationRepository.getOrCreateContainer(githubRepository.getOwner().getLogin());
             String projectName = githubRepository.getName();

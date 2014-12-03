@@ -81,7 +81,7 @@ public class ProjectConfigInfo {
     }
 
     public String getJenkinsRootUrl() {
-        return Jenkins.getInstance().getRootUrlFromRequest();
+        return Jenkins.getInstance().getRootUrl();
     }
 
     public String getName() {

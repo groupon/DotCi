@@ -26,6 +26,7 @@ package com.groupon.jenkins.dynamic.build;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.cause.ManualBuildCause;
 import com.groupon.jenkins.dynamic.build.cause.UnknownBuildCause;
+import com.groupon.jenkins.dynamic.build.commithistory.CommitHistoryView;
 import com.groupon.jenkins.github.GitBranch;
 import com.groupon.jenkins.github.GitUrl;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
@@ -57,6 +58,7 @@ public class DynamicBuildModel {
 
     public void run() {
         addBuildCauseForNonGithubCauses();
+        this.build.addAction(new CommitHistoryView());
     }
 
     private void addBuildCauseForNonGithubCauses() {

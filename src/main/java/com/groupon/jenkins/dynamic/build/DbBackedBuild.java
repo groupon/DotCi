@@ -28,7 +28,6 @@ import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.WorkspaceFileExporter;
 import com.groupon.jenkins.github.DeployKeyPair;
 import com.groupon.jenkins.github.GitBranch;
-import com.groupon.jenkins.github.services.GithubDeployKeyRepository;
 import com.mongodb.DBObject;
 import hudson.EnvVars;
 import hudson.Launcher;
@@ -308,14 +307,14 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
     }
 
     public boolean isPrivateRepo() {
-        return new GithubDeployKeyRepository().hasDeployKey(getGithubRepoUrl());
+        return SetupConfig.get().getGithubDeployKeyRepository().hasDeployKey(getGithubRepoUrl());
     }
 
     public abstract String getGithubRepoUrl();
 
     protected void exportDeployKeysIfPrivateRepo(BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
         if(isPrivateRepo()){
-            DeployKeyPair deployKeyPair = new GithubDeployKeyRepository().get(getGithubRepoUrl());
+            DeployKeyPair deployKeyPair = SetupConfig.get().getGithubDeployKeyRepository().get(getGithubRepoUrl());
             WorkspaceFileExporter.WorkspaceFile privateKeyFile = new WorkspaceFileExporter.WorkspaceFile("deploykey_rsa", deployKeyPair.privateKey, "rw-------");
             WorkspaceFileExporter.WorkspaceFile publicKeyFile = new WorkspaceFileExporter.WorkspaceFile("deploykey_rsa.pub", deployKeyPair.privateKey, "rw-r--r--");
             new WorkspaceFileExporter(publicKeyFile, WorkspaceFileExporter.Operation.CREATE).perform((AbstractBuild)this,launcher,listener);

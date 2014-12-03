@@ -31,6 +31,7 @@ import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
+import com.groupon.jenkins.github.services.GithubDeployKeyRepository;
 import hudson.Extension;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
@@ -43,16 +44,20 @@ public class SetupConfig extends GlobalConfiguration {
     private String dbHost;
     private int dbPort;
     private String dbName;
-    private String githubApiUrl;
-    private String githubCallbackUrl;
     private String label;
     private String fromEmailAddress;
     private String defaultBuildType;
+
     private boolean privateRepoSupport;
+    private String githubApiUrl;
+    private String githubWebUrl;
+    private String githubClientID;
+    private String githubClientSecret;
     private String deployKey;
     private AbstractModule guiceModule;
     private transient Injector injector;
 
+    private String githubCallbackUrl;
     public static SetupConfig get() {
         return GlobalConfiguration.all().get(SetupConfig.class);
     }
@@ -105,12 +110,7 @@ public class SetupConfig extends GlobalConfiguration {
         this.dbPort = dbPort;
     }
 
-    public String getGithubApiUrl() {
-        if (StringUtils.isEmpty(githubApiUrl)) {
-            return "https://api.github.com/";
-        }
-        return githubApiUrl;
-    }
+
 
     public void setGithubApiUrl(String githubApiUrl) {
         this.githubApiUrl = githubApiUrl;
@@ -122,7 +122,7 @@ public class SetupConfig extends GlobalConfiguration {
 
     public String getGithubCallbackUrl() {
         if (StringUtils.isEmpty(githubCallbackUrl)) {
-            return Jenkins.getInstance().getRootUrl() + "/githook/";
+            return Jenkins.getInstance().getRootUrl() + "githook/";
         }
         return this.githubCallbackUrl;
     }
@@ -170,6 +170,42 @@ public class SetupConfig extends GlobalConfiguration {
     public boolean getPrivateRepoSupport() {
         return privateRepoSupport;
     }
+
+    public String getGithubApiUrl() {
+        if (StringUtils.isEmpty(githubApiUrl)) {
+            return "https://api.github.com/";
+        }
+        return githubApiUrl;
+    }
+
+    public String getGithubWebUrl() {
+        if (StringUtils.isEmpty(githubWebUrl)) {
+            return "https://github.com/";
+        }
+        return githubWebUrl;
+    }
+
+    public void setGithubWebUrl(String githubWebUrl) {
+        this.githubWebUrl = githubWebUrl;
+    }
+
+
+    public String getGithubClientID() {
+        return githubClientID;
+    }
+
+    public void setGithubClientID(String githubClientID) {
+        this.githubClientID = githubClientID;
+    }
+
+    public String getGithubClientSecret() {
+        return githubClientSecret;
+    }
+
+    public void setGithubClientSecret(String githubClientSecret) {
+        this.githubClientSecret = githubClientSecret;
+    }
+
     public DynamicBuildRepository getDynamicBuildRepository() {
         return getInjector().getInstance(DynamicBuildRepository.class);
     }
@@ -202,5 +238,9 @@ public class SetupConfig extends GlobalConfiguration {
             return new DotCiModule();
         }
         return guiceModule;
+    }
+
+    public GithubDeployKeyRepository getGithubDeployKeyRepository() {
+        return getInjector().getInstance(GithubDeployKeyRepository.class);
     }
 }

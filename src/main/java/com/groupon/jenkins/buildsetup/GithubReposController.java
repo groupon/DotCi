@@ -26,52 +26,53 @@ package com.groupon.jenkins.buildsetup;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.github.services.GithubCurrentUserService;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
-import com.groupon.jenkins.util.AuthenticatedRootAction;
+import com.groupon.jenkins.util.GithubOauthLoginAction;
 import hudson.Extension;
+import hudson.model.RootAction;
 import hudson.model.TopLevelItem;
-import hudson.security.SecurityRealm;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import jenkins.model.Jenkins;
-import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.lang.StringUtils;
-import org.jenkinsci.plugins.GithubAuthenticationToken;
-import org.jenkinsci.plugins.GithubSecurityRealm;
 import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHUser;
+import org.kohsuke.github.GitHub;
 import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import javax.servlet.ServletException;
 
 @Extension
-public class GithubReposController extends AuthenticatedRootAction {
+public class GithubReposController implements RootAction,StaplerProxy {
+
+    public static final String URL = "mygithubprojects";
 
     @Override
     public String getIconFileName() {
-        return "new-package.png";
+        return null;
     }
 
     @Override
     public String getDisplayName() {
-        return "New DotCi Job";
+        return null;
     }
 
     @Override
     public String getUrlName() {
-        return "mygithubprojects";
+        return URL;
     }
 
-    public Iterable<String> getOrgs() {
+    public Iterable<String> getOrgs() throws IOException {
         return getCurrentUser().getOrgs();
     }
 
-    public Iterable<ProjectConfigInfo> getRepositories() {
+    public Iterable<ProjectConfigInfo> getRepositories() throws IOException {
         List<ProjectConfigInfo> projectInfos = new LinkedList<ProjectConfigInfo>();
         Map<String, GHRepository> ghRepos = getCurrentUser().getRepositories(getCurrentOrg());
         for (Map.Entry<String, GHRepository> entry : ghRepos.entrySet()) {
@@ -82,8 +83,8 @@ public class GithubReposController extends AuthenticatedRootAction {
         return projectInfos;
     }
 
-    protected GithubCurrentUserService getCurrentUser() {
-        return GithubCurrentUserService.current();
+    protected GithubCurrentUserService getCurrentUser() throws IOException {
+        return new GithubCurrentUserService(getGitHub(Stapler.getCurrentRequest()));
     }
 
     public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
@@ -92,42 +93,59 @@ public class GithubReposController extends AuthenticatedRootAction {
         rsp.forwardToPreviousPage(req);
     }
 
-    private String getCurrentGithubLogin() {
+    private String getCurrentGithubLogin() throws IOException {
         return getCurrentUser().getCurrentLogin();
     }
 
-    public String getCurrentOrg() {
+    public String getCurrentOrg() throws IOException {
         String currentOrg = (String) Stapler.getCurrentRequest().getSession().getAttribute("setupOrg" + getCurrentGithubLogin());
         return StringUtils.isEmpty(currentOrg) ? Iterables.get(getOrgs(), 0) : currentOrg;
     }
 
     public void doCreateProject(StaplerRequest request, StaplerResponse response) throws IOException {
-        DynamicProject project = SetupConfig.get().getDynamicProjectRepository().createNewProject(getGithubRepository(request));
+        DynamicProject project = SetupConfig.get().getDynamicProjectRepository().createNewProject(getGithubRepository(request),getAccessToken(request), getCurrentUserLogin(request));
         response.sendRedirect2(redirectAfterCreateItem(request, project));
+    }
+
+    public void doRefreshHook(StaplerRequest request, StaplerResponse response) throws IOException, ServletException {
+        new GithubRepositoryService(getGithubRepository(request)).addHook(getAccessToken(request), getCurrentUserLogin(request));
+        response.forwardToPreviousPage(request);
     }
 
     private GHRepository getGithubRepository(StaplerRequest request) throws IOException {
         String repoName = request.getParameter("fullName");
-        GithubAuthenticationToken auth = (GithubAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        return auth.getGitHub().getRepository(repoName);
+
+        GitHub github = getGitHub(request);
+        return github.getRepository(repoName);
     }
 
-    public void doRefreshHook(StaplerRequest request, StaplerResponse response) throws IOException, ServletException {
-        new GithubRepositoryService(getGithubRepository(request)).addHook();
-        response.forwardToPreviousPage(request);
+    private GitHub getGitHub(StaplerRequest request) throws IOException {
+        return GitHub.connectUsingOAuth(getSetupConfig().getGithubApiUrl(), getAccessToken(request));
     }
+
+    private SetupConfig getSetupConfig() {
+        return SetupConfig.get();
+    }
+
+    private String getCurrentUserLogin(StaplerRequest request) throws IOException {
+        GHUser self = GitHub.connectUsingOAuth(getSetupConfig().getGithubApiUrl(), getAccessToken(request)).getMyself();
+        return self.getLogin();
+    }
+
+    private String getAccessToken(StaplerRequest request) {
+        return (String) request.getSession().getAttribute("access_token");
+    }
+
 
     protected String redirectAfterCreateItem(StaplerRequest req, TopLevelItem result) throws IOException {
-        return Jenkins.getInstance().getRootUrlFromRequest() + "/" + result.getUrl();
+        return Jenkins.getInstance().getRootUrl()  + result.getUrl();
     }
+
 
     @Override
-    public String getSearchUrl() {
-        return getUrlName();
+    public Object getTarget() {
+        StaplerRequest currentRequest = Stapler.getCurrentRequest();
+        if(getAccessToken(currentRequest) == null) return new GithubOauthLoginAction();
+        return  this;
     }
-    public boolean isSecurityConfigured(){
-        SecurityRealm securityRealm = Jenkins.getInstance().getSecurityRealm();
-        return securityRealm instanceof GithubSecurityRealm;
-    }
-
 }

@@ -22,6 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
 
+
+/**
+ * Copy and paste this into the Jenkins script console (Manage Jekins -> Script Console) after updating to DotCi 2.2 from any earlier version.
+ * You may need to restart Jenkins again to reload root containers
+ */
 import com.groupon.jenkins.dynamic.build.repository.*;
 import com.groupon.jenkins.mongo.MongoRepository;
 import com.mongodb.BasicDBObject;

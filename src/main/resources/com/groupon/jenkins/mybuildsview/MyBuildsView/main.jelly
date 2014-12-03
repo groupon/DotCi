@@ -24,16 +24,7 @@ THE SOFTWARE.
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
  <div class="main">
-        <l:tabBar>
-           <l:tab name="Builds" active="${it.viewType == 'builds' }" href="builds" />
-            <l:tab name="Organizations" active="${it.viewType == 'orgs' }" href="orgs"/>
-       </l:tabBar>
-        <j:if test="${it.viewType == 'builds'}">
         <h3>Recent Builds </h3>
         <t:buildListTable builds="${it.builds}" jobBaseUrl="${rootURL}/" />
-      </j:if>
-    <j:if test="${it.viewType != 'builds'}">
-       <t:projectView jobs="${it.orgs}"/> 
-    </j:if>
    </div>
 </j:jelly>

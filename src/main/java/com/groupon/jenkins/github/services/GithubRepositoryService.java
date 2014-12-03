@@ -48,15 +48,18 @@ public class GithubRepositoryService {
     private GitHub github;
     private String repoUrl;
     private GithubAccessTokenRepository githubAccessTokenRepository;
+    private GithubDeployKeyRepository githubDeployKeyRepository;
 
     public GithubRepositoryService(GHRepository repository) {
-        this(repository, SetupConfig.get().getGithubAccessTokenRepository());
+        this(repository, SetupConfig.get().getGithubAccessTokenRepository(), SetupConfig.get().getGithubDeployKeyRepository());
     }
 
-    protected GithubRepositoryService(GHRepository repository, GithubAccessTokenRepository githubAccessTokenRepository) {
+    protected GithubRepositoryService(GHRepository repository, GithubAccessTokenRepository githubAccessTokenRepository, GithubDeployKeyRepository githubDeployKeyRepository) {
         this.repository = repository;
         this.githubAccessTokenRepository = githubAccessTokenRepository;
+        this.githubDeployKeyRepository = githubDeployKeyRepository;
 
+        this.githubDeployKeyRepository = githubDeployKeyRepository;
     }
 
     /**
@@ -76,14 +79,14 @@ public class GithubRepositoryService {
         }
     }
 
-    public void addHook() throws IOException {
+    public void addHook(String accessToken,String user) throws IOException {
         String githubCallbackUrl = getSetupConfig().getGithubCallbackUrl();
         if (!githubCallbackUrl.endsWith("/")) {
             githubCallbackUrl = githubCallbackUrl + "/";
         }
         Map<String, String> params = ImmutableMap.of("url", githubCallbackUrl);
         List<GHEvent> events = Arrays.asList(GHEvent.PUSH, GHEvent.PULL_REQUEST);
-        githubAccessTokenRepository.put(getRepository().getUrl());
+        githubAccessTokenRepository.put(getRepository().getUrl(),accessToken,user);
         removeExistingHook(githubCallbackUrl);
         getRepository().createHook("web", params, events, true);
     }
@@ -161,8 +164,8 @@ public class GithubRepositoryService {
 
     }
 
-    public void linkProjectToCi() throws IOException {
-        addHook();
+    public void linkProjectToCi(String accessToken, String user) throws IOException {
+        addHook(accessToken,user);
         addDeployKey();
     }
 
@@ -171,7 +174,7 @@ public class GithubRepositoryService {
             removeDeployKeyIfPreviouslyAdded();
             DeployKeyPair keyPair = new DeployKeyGenerator().generateKeyPair();
             getRepository().addDeployKey("DotCi",keyPair.publicKey);
-            new GithubDeployKeyRepository().put(getRepository().getUrl(),keyPair);
+            githubDeployKeyRepository.put(getRepository().getUrl(), keyPair);
         }
     }
 

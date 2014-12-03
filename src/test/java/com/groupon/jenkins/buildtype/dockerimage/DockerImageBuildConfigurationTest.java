@@ -28,7 +28,6 @@ import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import hudson.matrix.Combination;
 import java.util.Arrays;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.google.common.collect.ImmutableMap.of;
@@ -38,7 +37,6 @@ public class DockerImageBuildConfigurationTest {
 
 
     @Test
-    @Ignore
     public void should_support_nested_links(){
         DockerImageBuildConfiguration dockerImageBuildConfiguration = new DockerImageBuildConfiguration(of("image", "ubutu",
                 "links",  asList(of("image","mysql",
@@ -49,10 +47,13 @@ public class DockerImageBuildConfigurationTest {
         Assert.assertEquals("docker run -d --name redis_buildId redis",shellCommands.get(0));
         Assert.assertEquals("docker run -d --name mysql_buildId --link redis_buildId:redis mysql",shellCommands.get(1));
         Assert.assertEquals("docker run --rm --sig-proxy=true --link mysql_buildId:mysql ubutu sh -cx \"echo success\"",shellCommands.get(2));
-        Assert.assertEquals("docker kill  mysql_buildId",shellCommands.get(3));
-        Assert.assertEquals("docker rm  mysql_buildId",shellCommands.get(4));
-        Assert.assertEquals("docker kill  redis_buildId",shellCommands.get(5));
-        Assert.assertEquals("docker rm  redis_buildId",shellCommands.get(6));
+
+        ShellCommands cleanupCommands = new ShellCommands().addAll(dockerImageBuildConfiguration.getLinkCleanupCommands());
+
+        Assert.assertEquals("docker kill  mysql_buildId",cleanupCommands.get(0));
+        Assert.assertEquals("docker rm  mysql_buildId", cleanupCommands.get(1));
+        Assert.assertEquals("docker kill  redis_buildId", cleanupCommands.get(2));
+        Assert.assertEquals("docker rm  redis_buildId", cleanupCommands.get(3));
 
     }
 
@@ -67,7 +68,7 @@ public class DockerImageBuildConfigurationTest {
         ShellCommands shellCommands = dockerImageBuildConfiguration.toShellCommands(null);
         Assert.assertEquals("docker run -d --name mysql_buildId mysql sh -cx \"meow\"",shellCommands.get(0));
         Assert.assertEquals("docker run --rm --sig-proxy=true --link mysql_buildId:custom_mysql_name ubutu sh -cx \"echo success\"",shellCommands.get(1));
-        Assert.assertEquals("docker kill  mysql_buildId",shellCommands.get(2));
+        Assert.assertEquals("docker kill  mysql_buildId",dockerImageBuildConfiguration.getLinkCleanupCommands().get(1));
     }
 
     @Test
@@ -80,7 +81,7 @@ public class DockerImageBuildConfigurationTest {
         ShellCommands shellCommands = dockerImageBuildConfiguration.toShellCommands(null);
         Assert.assertEquals("docker run -d --name mysql_buildId -v /var/test=/var/test mysql",shellCommands.get(0));
         Assert.assertEquals("docker run --rm --sig-proxy=true --link mysql_buildId:mysql ubutu sh -cx \"echo success\"",shellCommands.get(1));
-        Assert.assertEquals("docker kill  mysql_buildId",shellCommands.get(2));
+        Assert.assertEquals("docker kill  mysql_buildId",dockerImageBuildConfiguration.getLinkCleanupCommands().get(1));
     }
 
 
