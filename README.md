@@ -10,46 +10,33 @@ Brings ease of build configuration of cloud ci systems like travisci and ease of
  - [Developer Setup](docs/DevelopmentSetup.md)
  - [License](#license)
 
-###Features
+##Features
 ***
- * **Github Integration** (both github.com and GHE)
-    - Automatically sets up Github webhooks for pull requests and github pushes when a new job is setup.
-    - Sets [commit status](https://github.com/blog/1227-commit-status-api) during and after build run.
-      ![Commit status](docs/screenshots/commit-status.png)
+###Github Integration
+  - Automatically sets up Github [webhooks](https://help.github.com/articles/about-webhooks/) for pull requests and github pushes when a new job is setup.
+  - Private Repo support via generated [deploy keys](https://developer.github.com/guides/managing-deploy-keys/).
+  - Sets [commit status](https://github.com/blog/1227-commit-status-api) during and after build run.
+  - Jobs follow name-spacing structure of github, jobs are nested under organization folder([Screenshot](docs/screenshots/org-view.png))
+  - **Authorization** scheme mapped to corresponding github repo permissions.
+   ([Screenshot](docs/screenshots/authorization.png))
+  -  Changeset is calculated  from github payload.
+  -  Builds for master branch get special treatment
+      * `LastBuild` permalink points to last build for master.
+      * `master` branch status is treated as job status( useful for dashboard/job weather tools)
+      * `lastSuccessfulMaster` permalink.
 
-    - Jobs follow name-spacing structure of github, jobs are nested under organization folder
-      allowing for multiple jobs with same name under different org.
-      ![Org](docs/screenshots/org-view.png)
+### Job Enhancements
+  * Custom build history branch tabs. Define custom tabs based on a branch regex ([Screenshot](docs/screenshots/branch-view.png)).
+   - Fetch builds by git sha (`job/meow/sha?value=<sha>`)
+   - Fetch last build for a branch (`job/meow?branch=<branch-name>`)
+  * Commit History View lists commit history for the `sha` built by the build.([Screenshot](docs/screenshots/commit_history_view.png)).
+  * Scaling Jenkins.
+   - Backed by a mongodb database.
+   - Store unlimited number of builds without performance degradation.
+   - Query build statistics by querying database. Job/Build data is stored in mongodb bson format.
+  * User builds view (This is the default view in our jenkins installation) ([Screensho:t](docs/screenshots/user-view.png))
 
- * Job **authorization** mapped to corresponding github repo permissions.
-
-   ![branch history](docs/screenshots/authorization.png)
-
- * **Job Enhancements**
-    - Build Changeset from github payload.
-    - Builds on master branch get special treatment
-        * LastBuild permalink points to last build for master.
-        * Master tab in buildhistory widget
-
-         ![branch history](docs/screenshots/branch-view.png)
-        *  `lastSuccessfulMaster` permalink.
-
-    - Fetch builds by git sha (`job/meow/sha?value=<sha>`)
-    - Fetch last build for a branch (`job/meow?branch=<branch-name>`)
-
-
-* **Scaling Jenkins**.
-   * Backed by a mongodb database.
-   * Store unlimited number of builds without performance degradation.
-   * Query build statistics by querying database.
-
-* **User builds view** (This is the default view in our jenkins installation)
-
-  ![branch history](docs/screenshots/user-view.png)
-
-* **Build setup through .ci.yml**
-
-  Two supported build types
+  * Build setup through **.ci.yml**:Two supported build types
      * [Docker Build](docs/DockerBuild.md)
      * [Install_Packages Build](docs/InstallPackages.md)
 
