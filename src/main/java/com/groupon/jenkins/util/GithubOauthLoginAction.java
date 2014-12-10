@@ -90,7 +90,7 @@ public class GithubOauthLoginAction implements RootAction{
         return HttpResponses.redirectTo(newProjectSetupUrl);
     }
 
-    private void updateOfflineAccessTokenForUser(String accessToken) throws IOException {
+    protected void updateOfflineAccessTokenForUser(String accessToken) throws IOException {
             GHUser self = GitHub.connectUsingOAuth(getSetupConfig().getGithubApiUrl(),accessToken).getMyself();
             String login = self.getLogin();
             getSetupConfig().getGithubAccessTokenRepository().updateAccessToken(login,accessToken);

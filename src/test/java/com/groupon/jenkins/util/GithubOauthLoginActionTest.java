@@ -38,6 +38,7 @@ import static org.junit.Assert.*;
 
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -50,16 +51,18 @@ public class GithubOauthLoginActionTest {
     private HttpPoster httpPoster;
 
     @Before
-    public void setup() {
+    public void setup() throws IOException {
         httpPoster = mock(HttpPoster.class);
         githubOauthLoginAction = spy(new GithubOauthLoginAction(httpPoster));
         setupConfig = mock(SetupConfig.class);
+        doNothing().when(githubOauthLoginAction).updateOfflineAccessTokenForUser(anyString());
         doReturn(setupConfig).when(githubOauthLoginAction).getSetupConfig();
         doReturn("http://localhost:8080/jenkins").when(githubOauthLoginAction).getJenkinsRootUrl();
         when(setupConfig.getGithubApiUrl()).thenReturn("githubApiUrl");
         when(setupConfig.getGithubWebUrl()).thenReturn("githubWebUrl");
         when(setupConfig.getGithubClientID()).thenReturn("githubClientId");
         when(setupConfig.getGithubClientSecret()).thenReturn("githubClientSecret");
+
     }
 
     @Test
