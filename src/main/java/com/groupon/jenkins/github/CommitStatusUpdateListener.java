@@ -55,7 +55,7 @@ public class CommitStatusUpdateListener extends RunListener<DynamicBuild> {
                 // do nothing
                 // TODO DO SOMETHING
             }
-            repository.createCommitStatus(build.getSha(), GHCommitState.PENDING, url, "Build in progress");
+            repository.createCommitStatus(build.getSha(), GHCommitState.PENDING, url, "Build in progress", "DotCi");
         } catch (IOException e) {
             // Ignore if cannot create a pending status
             LOGGER.log(Level.WARNING, "Failed to Update commit status", e);
