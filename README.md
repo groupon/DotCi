@@ -34,9 +34,8 @@ Brings ease of build configuration of cloud ci systems like travisci and ease of
    - Backed by a mongodb database.
    - Store unlimited number of builds without performance degradation.
    - Query build statistics by querying database. Job/Build data is stored in mongodb bson format.
-  * User builds view (This is the default view in our jenkins installation) ([Screensho:t](docs/screenshots/user-view.png))
-
-  * Build setup through **.ci.yml**:Two supported build types
+  * User builds view (This is the default view in our jenkins installation) ([Screenshot](docs/screenshots/user-view.png))
+  * Build setup through **.ci.yml**. Two supported build types
      * [Docker Build](docs/DockerBuild.md)
      * [Install_Packages Build](docs/InstallPackages.md)
 
