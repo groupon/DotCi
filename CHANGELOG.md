@@ -1,3 +1,7 @@
+##2.5.1(10/12/2014)
+ Bugfix: 
+  - Request `write:repo_hook` in github scopes
+
 ##2.5.0(10/12/2014)
  Features:
   - Remove dependency on github oauth plugin. 
