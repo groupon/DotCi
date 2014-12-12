@@ -63,7 +63,7 @@ public class GithubOauthLoginAction implements RootAction{
         if (getSetupConfig().hasPrivateRepoSupport()) {
             return Joiner.on(",").join( Arrays.asList("repo", "user:email"));
         }
-        return Joiner.on(",").join( Arrays.asList("public_repo", "repo:status", "user:email", "read:org"));
+        return Joiner.on(",").join( Arrays.asList("public_repo", "repo:status", "user:email", "read:org", "write:repo_hook"));
     }
 
 
