@@ -57,7 +57,7 @@ public class CommitStatusUpdateListenerTest {
         DynamicBuild build = newBuild().get();
         commitStatusUpdateListener.onStarted(build, null);
 
-        verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.PENDING, build.getFullUrl(), "Build in progress");
+        verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.PENDING, build.getFullUrl(), "Build in progress","DotCi");
     }
 
     @Test
