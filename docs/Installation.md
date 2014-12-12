@@ -13,6 +13,7 @@
 
 ## Github application
    * Register an OAuth [application](https://github.com/settings/applications/new) with github to obtain Client-ID/Secret.
+     - `Authorization callback URL` needs to be `<YOUR-JENKINS-URL>/dotci/finishLogin`
 
 ## DotCi plugin configuration
   Got to `Manage Jenkins`> `Configure System` and fill out required information under DotCi Configuration
