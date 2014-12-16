@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.github.services;
+package com.groupon.jenkins.util;
 
 import hudson.util.Secret;
 

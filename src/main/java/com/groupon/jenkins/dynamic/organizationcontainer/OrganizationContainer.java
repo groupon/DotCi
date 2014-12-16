@@ -24,27 +24,28 @@ THE SOFTWARE.
 package com.groupon.jenkins.dynamic.organizationcontainer;
 
 import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.dynamic.build.IdentifableItemGroup;
 import hudson.Extension;
+import hudson.model.AbstractItem;
 import hudson.model.Action;
+import hudson.model.Descriptor;
 import hudson.model.DescriptorVisibilityFilter;
+import hudson.model.Hudson;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
 import hudson.model.ItemGroupMixIn;
+import hudson.model.Job;
 import hudson.model.TopLevelItem;
 import hudson.model.TopLevelItemDescriptor;
+import hudson.model.View;
 import hudson.model.ViewGroup;
 import hudson.model.ViewGroupMixIn;
-import hudson.model.AbstractItem;
-import hudson.model.Descriptor;
-import hudson.model.Hudson;
-import hudson.model.Job;
-import hudson.model.View;
 import hudson.util.CaseInsensitiveComparator;
 import hudson.util.CopyOnWriteMap;
 import hudson.util.CopyOnWriteMap.Tree;
 import hudson.views.DefaultViewsTabBar;
 import hudson.views.ViewsTabBar;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,9 +56,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.servlet.ServletException;
-
+import jenkins.model.Jenkins;
+import org.acegisecurity.Authentication;
+import org.acegisecurity.context.SecurityContextHolder;
 import org.bson.types.ObjectId;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerFallback;
@@ -66,10 +67,7 @@ import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.IdentifableItemGroup;
-import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
-import com.groupon.jenkins.github.services.AuthenticationService;
+import javax.servlet.ServletException;
 
 public class OrganizationContainer extends AbstractItem implements IdentifableItemGroup<DynamicProject>, ViewGroup, TopLevelItem, StaplerOverridable, StaplerFallback, StaplerProxy {
     private ObjectId id;
@@ -346,12 +344,16 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
             && !currentRequest.getRequestURI().contains("buildWithParameters") 
             && !currentRequest.getRequestURI().contains("artifact")) {
         //@formatter:on
-            AuthenticationService.authenticate();
+            authenticate();
         }
 
         return this;
     }
 
+    private  void authenticate() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Jenkins.getInstance().getSecurityRealm().createSecurityComponents().manager.authenticate(authentication);
+    }
     public void addItem(DynamicProject project) {
         items.put(project.getName(), project);
     }

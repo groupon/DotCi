@@ -25,29 +25,17 @@
 package com.groupon.jenkins.github.services;
 
 import com.groupon.jenkins.github.DeployKeyPair;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.KeyPair;
-import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
+import com.groupon.jenkins.util.KeyPairGenerator;
+import org.junit.Test;
+import org.springframework.util.Assert;
 
-public class DeployKeyGenerator {
-    public DeployKeyPair generateKeyPair(){
-        JSch jsch = new JSch();
-        try {
-            KeyPair kpair= KeyPair.genKeyPair(jsch, KeyPair.RSA);
-            ByteArrayOutputStream privateKeyStream = new ByteArrayOutputStream();
-            kpair.writePrivateKey(privateKeyStream);
-
-            ByteArrayOutputStream publicKeyStream = new ByteArrayOutputStream();
-            kpair.writePublicKey(publicKeyStream,"");
-            return new DeployKeyPair( new String(publicKeyStream.toByteArray(),"UTF-8"), new String(privateKeyStream.toByteArray(),"UTF-8"));
-        } catch (JSchException e) {
-            throw new RuntimeException(e);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+public class KeyPairGeneratorTest {
 
 
+    @Test
+    public void should_generate_key_pair() throws Exception {
+        DeployKeyPair keyPair = new KeyPairGenerator().generateKeyPair();
+        Assert.notNull(keyPair.publicKey);
+        Assert.notNull(keyPair.privateKey);
     }
 }

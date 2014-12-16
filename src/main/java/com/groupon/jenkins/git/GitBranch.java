@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.github;
+package com.groupon.jenkins.git;
 
 import com.google.common.base.Objects;
 import com.groupon.jenkins.ForBackwardCompatiblity;

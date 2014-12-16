@@ -28,6 +28,7 @@ import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.github.DeployKeyPair;
 import com.groupon.jenkins.github.GitBranch;
 import com.groupon.jenkins.github.GitUrl;
+import com.groupon.jenkins.util.KeyPairGenerator;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
@@ -172,7 +173,7 @@ public class GithubRepositoryService {
     protected void addDeployKey() throws IOException {
         if (getRepository().isPrivate()) {
             removeDeployKeyIfPreviouslyAdded();
-            DeployKeyPair keyPair = new DeployKeyGenerator().generateKeyPair();
+            DeployKeyPair keyPair = new KeyPairGenerator().generateKeyPair();
             getRepository().addDeployKey("DotCi",keyPair.publicKey);
             githubDeployKeyRepository.put(getRepository().getUrl(), keyPair);
         }

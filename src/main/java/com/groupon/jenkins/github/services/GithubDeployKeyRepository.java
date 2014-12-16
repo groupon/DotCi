@@ -26,6 +26,7 @@ package com.groupon.jenkins.github.services;
 
 import com.groupon.jenkins.github.DeployKeyPair;
 import com.groupon.jenkins.mongo.MongoRepository;
+import com.groupon.jenkins.util.EncryptionService;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
