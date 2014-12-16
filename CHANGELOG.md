@@ -1,3 +1,6 @@
+##2.5.2(10/16/2014)
+ Bugfix: 
+  - Fix typo in github ouath url.
 ##2.5.1(10/12/2014)
  Bugfix: 
   - Request `write:repo_hook` in github scopes
