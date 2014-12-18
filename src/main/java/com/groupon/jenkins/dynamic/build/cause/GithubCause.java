@@ -23,9 +23,8 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.cause;
 
-import com.groupon.jenkins.github.GitBranch;
+import com.groupon.jenkins.git.GitBranch;
 import com.groupon.jenkins.github.Payload;
-
 import java.util.List;
 
 public class GithubCause extends BuildCause {

@@ -23,12 +23,11 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.cause;
 
+import com.groupon.jenkins.git.GitBranch;
 import hudson.model.Cause;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import com.groupon.jenkins.github.GitBranch;
 
 public abstract class BuildCause extends Cause {
 

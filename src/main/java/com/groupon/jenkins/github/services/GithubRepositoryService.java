@@ -25,9 +25,9 @@ package com.groupon.jenkins.github.services;
 
 import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.git.GitBranch;
+import com.groupon.jenkins.git.GitUrl;
 import com.groupon.jenkins.github.DeployKeyPair;
-import com.groupon.jenkins.github.GitBranch;
-import com.groupon.jenkins.github.GitUrl;
 import com.groupon.jenkins.util.KeyPairGenerator;
 import java.io.FileNotFoundException;
 import java.io.IOException;

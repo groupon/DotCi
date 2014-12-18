@@ -23,11 +23,10 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.cause;
 
+import com.groupon.jenkins.git.GitBranch;
 import java.util.ArrayList;
-
 import org.kohsuke.stapler.export.Exported;
 
-import com.groupon.jenkins.github.GitBranch;
 
 public class NullBuildCause extends BuildCause {
     @Override

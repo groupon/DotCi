@@ -25,8 +25,9 @@
 package com.groupon.jenkins.buildtype.docker;
 
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
-import com.groupon.jenkins.github.GitUrl;
+import com.groupon.jenkins.git.GitUrl;
 import java.util.Map;
+
 import static java.lang.String.format;
 
 public class CheckoutCommands {

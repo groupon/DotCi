@@ -23,11 +23,10 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.cause;
 
+import com.groupon.jenkins.git.GitBranch;
 import java.util.Collections;
-
 import org.kohsuke.stapler.export.Exported;
 
-import com.groupon.jenkins.github.GitBranch;
 
 public class UnknownBuildCause extends BuildCause {
 

@@ -27,7 +27,7 @@ package com.groupon.jenkins.github.security;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DynamicSubProject;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
-import com.groupon.jenkins.github.GitUrl;
+import com.groupon.jenkins.git.GitUrl;
 import hudson.model.AbstractItem;
 import hudson.model.Item;
 import hudson.model.Job;

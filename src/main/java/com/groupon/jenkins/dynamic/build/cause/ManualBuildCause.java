@@ -23,12 +23,10 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.cause;
 
-import java.util.Collections;
-
-import org.kohsuke.stapler.export.Exported;
-
 import com.google.common.base.Objects;
-import com.groupon.jenkins.github.GitBranch;
+import com.groupon.jenkins.git.GitBranch;
+import java.util.Collections;
+import org.kohsuke.stapler.export.Exported;
 
 public class ManualBuildCause extends BuildCause {
 
