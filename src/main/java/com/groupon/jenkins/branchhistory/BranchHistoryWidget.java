@@ -23,25 +23,21 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.branchhistory;
 
-import hudson.util.RunList;
+import com.groupon.jenkins.dynamic.build.DbBackedBuild;
+import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
+import com.groupon.jenkins.util.GReflectionUtils;
 import hudson.widgets.BuildHistoryWidget;
 import hudson.widgets.HistoryWidget;
-
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.servlet.ServletException;
-
 import org.kohsuke.stapler.Header;
 import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.DbBackedBuild;
-import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
-import com.groupon.jenkins.util.GReflectionUtils;
+import javax.servlet.ServletException;
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
@@ -52,11 +48,10 @@ public class BranchHistoryWidget<T extends DbBackedBuild> extends BuildHistoryWi
     private final String branch;
     private final BranchHistoryWidgetModel<T> model;
 
-    public BranchHistoryWidget(DynamicProject owner, RunList<T> runList, hudson.widgets.HistoryWidget.Adapter<? super T> adapter, DynamicBuildRepository dynamicBuildRepository, String branch) {
-        super(owner, runList, adapter);
+    public BranchHistoryWidget(DynamicProject owner,  hudson.widgets.HistoryWidget.Adapter<? super T> adapter, DynamicBuildRepository dynamicBuildRepository, String branch) {
+        super(owner, new MongoRunList<T>(new BranchHistoryWidgetModel<T>(owner, dynamicBuildRepository, branch)), adapter);
         this.model = new BranchHistoryWidgetModel<T>(owner, dynamicBuildRepository, branch);
         this.branch = branch;
-        this.baseList = this.model.getBaseList();
     }
 
     @Override
@@ -102,7 +97,7 @@ public class BranchHistoryWidget<T extends DbBackedBuild> extends BuildHistoryWi
 
     @Override
     public String getNextBuildNumberToFetch() {
-        return model.getNextBuildToFetch(baseList, adapter).getBuildNumber(adapter);
+        return model.getNextBuildToFetch(this.baseList, adapter).getBuildNumber(adapter);
     }
 
     public Object getBranch() {

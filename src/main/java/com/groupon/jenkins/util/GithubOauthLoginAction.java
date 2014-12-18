@@ -56,7 +56,7 @@ public class GithubOauthLoginAction implements RootAction{
 
     public void doIndex(StaplerRequest request, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
         rsp.sendRedirect2( getSetupConfig().getGithubWebUrl()+ "/login/oauth/authorize?client_id="
-                + getSetupConfig().getGithubClientID() + "&scopes="+getScopes());
+                + getSetupConfig().getGithubClientID() + "&scope="+getScopes());
     }
 
     protected String getScopes() {
