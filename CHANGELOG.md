@@ -1,3 +1,6 @@
+##2.5.3(23/12/2014)
+ Bugfix:
+  - Fix issue #98. Parallization error for docker sub builds.
 ##2.5.2(16/12/2014)
  Bugfix: 
   - Fix typo in github ouath url.
