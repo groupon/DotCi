@@ -25,6 +25,7 @@
 package com.groupon.jenkins.buildtype.util.shell;
 
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
+import hudson.Functions;
 import hudson.model.BuildListener;
 import hudson.model.Executor;
 import hudson.model.Result;
@@ -36,14 +37,16 @@ public class ShellScriptRunner {
     private BuildListener listener;
 
     public ShellScriptRunner(BuildExecutionContext buildExecutionContext, BuildListener listener){
-
         this.buildExecutionContext = buildExecutionContext;
         this.listener = listener;
+
     }
     public Result runScript(ShellCommands commands) throws IOException, InterruptedException {
         Result r = Result.FAILURE;
+        //Todo: use VitualChannel to figure out OS
+        String shellInterpreter = Functions.isWindows() ? "sh" : "/bin/bash";
         try {
-            Shell execution = new Shell("#!/bin/bash -le \n" + commands.toShellScript());
+            Shell execution = new Shell("#!"+shellInterpreter+ " -le \n" + commands.toShellScript());
             if (buildExecutionContext.performStep(execution, listener)) {
                 r = Result.SUCCESS;
             }
