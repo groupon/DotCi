@@ -28,7 +28,7 @@ import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
 import com.groupon.jenkins.dynamic.build.cause.ManualBuildCause;
 import com.groupon.jenkins.dynamic.build.cause.UnknownBuildCause;
 import com.groupon.jenkins.dynamic.build.commithistory.CommitHistoryView;
-import com.groupon.jenkins.github.GitBranch;
+import com.groupon.jenkins.git.GitBranch;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import com.groupon.jenkins.testhelpers.DynamicBuildFactory;
 import hudson.EnvVars;
