@@ -8,6 +8,6 @@ work/
 .vagrant
 /bin
 _site
-DotCi.iws
-DotCi.ipr
-DotCi.iml
+*.iws
+*.ipr
+*.iml
