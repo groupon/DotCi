@@ -153,8 +153,7 @@ public abstract class DockerBuildConfiguration {
 
     protected String getRunCommand(Combination combination) {
         List commands = getCommandForCombination(combination);
-
-        return checkoutCommands.add(new ShellCommands(commands)).toSingleShellCommand();
+         return new ShellCommands().add(checkoutCommands).add(new ShellCommands(commands)).toSingleShellCommand();
     }
 
     protected List getCommandForCombination(Combination combination) {

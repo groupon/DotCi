@@ -126,8 +126,10 @@ public class DockerImageBuildConfigurationTest {
         DockerImageBuildConfiguration dockerImageBuildConfiguration = new DockerImageBuildConfiguration(of("image", "ubutu",
                 "command", of("one","echo one", "two","echo two")),"buildId",new ShellCommands());
         Assert.assertTrue(dockerImageBuildConfiguration.isParallized());
-        ShellCommands shellCommands = dockerImageBuildConfiguration.toShellCommands(new Combination(of("command","two")));
-        Assert.assertEquals("docker run --rm --sig-proxy=true ubutu sh -cx \"echo two\"",shellCommands.get(0));
+        ShellCommands shellCommandsForTwoSubBuild = dockerImageBuildConfiguration.toShellCommands(new Combination(of("command","two")));
+        ShellCommands shellCommandsForOneSubBuild = dockerImageBuildConfiguration.toShellCommands(new Combination(of("command","one")));
+        Assert.assertEquals("docker run --rm --sig-proxy=true ubutu sh -cx \"echo two\"", shellCommandsForTwoSubBuild.get(0));
+        Assert.assertEquals("docker run --rm --sig-proxy=true ubutu sh -cx \"echo one\"", shellCommandsForOneSubBuild.get(0));
     }
 
     @Test
