@@ -35,6 +35,7 @@ import com.groupon.jenkins.dynamic.build.IdentifableItemGroup;
 import com.groupon.jenkins.dynamic.buildtype.BuildTypeProperty;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainerRepository;
+import com.groupon.jenkins.git.GitUrl;
 import com.groupon.jenkins.github.GithubRepoProperty;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import com.groupon.jenkins.mongo.MongoRepository;
@@ -47,7 +48,6 @@ import org.bson.types.ObjectId;
 import org.kohsuke.github.GHRepository;
 import org.mongodb.morphia.Datastore;
 
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static java.lang.String.format;
@@ -122,10 +122,12 @@ public class DynamicProjectRepository extends MongoRepository {
     }
 
     public Iterable<DynamicProject> getJobsFor(final String url) {
-        return Iterables.filter(getAllLoadedDynamicProjects(), new Predicate<DynamicProject>() {
+        return Iterables.filter(Jenkins.getInstance().getAllItems(DynamicProject.class), new Predicate<DynamicProject>() {
             @Override
-            public boolean apply(@Nonnull DynamicProject input) {
-                return url.equals(input.getGithubRepoUrl());
+            public boolean apply(DynamicProject input) {
+                GitUrl gitUrl = new GitUrl(url);
+                String[] orgRepo = gitUrl.getFullRepoName().split("/");
+                return input.getParent().getName().equals(orgRepo[0]) && input.getName().equals(orgRepo[1]);
             }
         });
     }
