@@ -25,21 +25,19 @@ package com.groupon.jenkins.buildsetup;
 
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.github.services.GithubCurrentUserService;
-import com.groupon.jenkins.github.services.GithubRepositoryService;
 import com.groupon.jenkins.util.GithubOauthLoginAction;
 import hudson.Extension;
 import hudson.model.RootAction;
-import hudson.model.TopLevelItem;
+import hudson.util.ReflectionUtils;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GHUser;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerProxy;
@@ -87,10 +85,27 @@ public class GithubReposController implements RootAction,StaplerProxy {
         return new GithubCurrentUserService(getGitHub(Stapler.getCurrentRequest()));
     }
 
-    public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        String org = req.getRestOfPath().replace("/", "");
-        req.getSession().setAttribute("setupOrg" + this.getCurrentGithubLogin(), org);
-        rsp.forwardToPreviousPage(req);
+    public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException, InvocationTargetException, IllegalAccessException {
+        String[] tokens = req.getRestOfPath().split("/");
+        String leadToken = tokens.length > 0? tokens[1]: null;
+        GithubRepoAction repoAction = getRepoAction(leadToken);
+        if(repoAction != null){
+            String methodToken = tokens.length > 1 ? tokens[2] : "index";
+            String methodName = "do" + StringUtils.capitalize(methodToken);
+            Method method = ReflectionUtils.getPublicMethodNamed(repoAction.getClass(), methodName);
+            method.invoke(repoAction,req,rsp);
+        }else{
+            String orgToken = req.getRestOfPath().replace("/", "");
+            req.getSession().setAttribute("setupOrg" + this.getCurrentGithubLogin(), orgToken);
+            rsp.forwardToPreviousPage(req);
+        }
+    }
+
+    private GithubRepoAction getRepoAction(String leadToken) {
+        for(GithubRepoAction repoAction : getRepoActions()){
+           if(repoAction.getName().equals(leadToken)) return repoAction;
+        }
+        return null;
     }
 
     private String getCurrentGithubLogin() throws IOException {
@@ -101,22 +116,8 @@ public class GithubReposController implements RootAction,StaplerProxy {
         String currentOrg = (String) Stapler.getCurrentRequest().getSession().getAttribute("setupOrg" + getCurrentGithubLogin());
         return StringUtils.isEmpty(currentOrg) ? Iterables.get(getOrgs(), 0) : currentOrg;
     }
-
-    public void doCreateProject(StaplerRequest request, StaplerResponse response) throws IOException {
-        DynamicProject project = SetupConfig.get().getDynamicProjectRepository().createNewProject(getGithubRepository(request),getAccessToken(request), getCurrentUserLogin(request));
-        response.sendRedirect2(redirectAfterCreateItem(request, project));
-    }
-
-    public void doRefreshHook(StaplerRequest request, StaplerResponse response) throws IOException, ServletException {
-        new GithubRepositoryService(getGithubRepository(request)).addHook(getAccessToken(request), getCurrentUserLogin(request));
-        response.forwardToPreviousPage(request);
-    }
-
-    private GHRepository getGithubRepository(StaplerRequest request) throws IOException {
-        String repoName = request.getParameter("fullName");
-
-        GitHub github = getGitHub(request);
-        return github.getRepository(repoName);
+    public Iterable<GithubRepoAction> getRepoActions(){
+        return GithubRepoAction.getGithubRepoActions();
     }
 
     private GitHub getGitHub(StaplerRequest request) throws IOException {
@@ -127,18 +128,10 @@ public class GithubReposController implements RootAction,StaplerProxy {
         return SetupConfig.get();
     }
 
-    private String getCurrentUserLogin(StaplerRequest request) throws IOException {
-        GHUser self = GitHub.connectUsingOAuth(getSetupConfig().getGithubApiUrl(), getAccessToken(request)).getMyself();
-        return self.getLogin();
-    }
+
 
     private String getAccessToken(StaplerRequest request) {
         return (String) request.getSession().getAttribute("access_token");
-    }
-
-
-    protected String redirectAfterCreateItem(StaplerRequest req, TopLevelItem result) throws IOException {
-        return Jenkins.getInstance().getRootUrl()  + result.getUrl();
     }
 
 

@@ -80,7 +80,7 @@ public class ProjectConfigInfo {
         return githubAccessTokenRepository.getAssociatedLogin(repository.getUrl());
     }
 
-    public String getJenkinsRootUrl() {
+    private String getJenkinsRootUrl() {
         return Jenkins.getInstance().getRootUrl();
     }
 

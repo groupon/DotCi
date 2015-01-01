@@ -21,9 +21,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
-<?jelly escape-by-default='false'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-    <j:forEach items="${it.repoActions}" var="repoAction">
-        ${repoAction.getHtml(j)}
-    </j:forEach>
-</j:jelly>
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:test="/lib/test">
+    <j:if test="${!p.projectPresent}">
+        <form action="${it.name}/createProject"  name="addproject">
+            <input type="hidden" name="fullName" value="${p.fullName}" />
+            <input type="submit" value="New Job"/>
+        </form>
+    </j:if>
+
+    <j:if test="${p.projectPresent}">
+        <a href="${p.jenkinsProjectUrl}">${p.name}</a>
+    </j:if>
+ </j:jelly>
