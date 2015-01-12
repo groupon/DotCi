@@ -28,12 +28,13 @@ environment:
   vars:
     LEIN_HOME: $WORKSPACE/tmp/lein
     LEIN_JVM_OPTS: ''   # see TieredStopAtLevel in https://github.com/technomancy/leiningen/blob/master/doc/FAQ.md
+    LEIN_VERSION: stable
 
 build:
   before_install:
     - rm -rf $HOME/.lein
     - mkdir -p $LEIN_HOME/bin
-    - curl -L https://raw.github.com/technomancy/leiningen/stable/bin/lein > /tmp/lein-tmp
+    - curl -L https://raw.github.com/technomancy/leiningen/$LEIN_VERSION/bin/lein > /tmp/lein-tmp
     - grep '#!' /tmp/lein-tmp > /dev/null && mv /tmp/lein-tmp /tmp/lein # check that we got a shell script
     - cp -f /tmp/lein $LEIN_HOME/bin/lein
     - chmod 755 $LEIN_HOME/bin/lein
