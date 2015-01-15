@@ -36,7 +36,7 @@ public class CheckoutCommands {
         String checkoutLocation = format("/tmp/%s",gitRepoUrl.getFullRepoName());
         ShellCommands shellCommands = new ShellCommands();
         if(dotCiEnvVars.get("DOTCI_PULL_REQUEST") != null){
-            shellCommands.add(format("git clone  --depth=50 %s %s",gitUrl,checkoutLocation));
+            shellCommands.add(format("git clone %s %s",gitUrl,checkoutLocation));
             shellCommands.add("cd " + checkoutLocation);
             shellCommands.add(format("git fetch origin \"+refs/pull/%s/merge:\"", dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
             shellCommands.add("git reset --hard FETCH_HEAD");
