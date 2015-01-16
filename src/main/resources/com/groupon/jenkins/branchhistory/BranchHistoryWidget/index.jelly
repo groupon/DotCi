@@ -30,6 +30,7 @@ THE SOFTWARE.
         <j:forEach var="s" items="${it.owner.branchTabs}">
             <l:tab name="${s}" active="${it.branch == s}" href="branchBuilds/${s}"/>
         </j:forEach>
+        <l:tab name="+"  href="branchBuilds/mine"/>
     </l:tabBar>
     <st:include page="build_history.jelly" />
 </j:jelly>

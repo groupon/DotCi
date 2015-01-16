@@ -27,22 +27,8 @@
 -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:x="jelly:xml" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-    <l:side-panel>
         <l:tasks>
             <j:set var="url" value="${h.getNearestAncestorUrl(request,it)}"/>
-            <j:choose>
-                <j:when test="${it.parent==app}">
-                    <l:task icon="images/24x24/up.png" href="${rootURL}/" title="${%Back to Dashboard}" contextMenu="false" />
-                </j:when>
-                <j:otherwise>
-                    <l:task icon="images/24x24/up.png" href="${rootURL}/${it.parent.url}" title="${%Up}" contextMenu="false" />
-                </j:otherwise>
-            </j:choose>
-            <l:task icon="images/24x24/search.png"  href="${url}/" title="${%Status}" contextMenu="false"/>
-            <l:task icon="images/24x24/notepad.png" href="${url}/changes" title="${%Changes}" />
-            <l:task icon="images/24x24/folder.png"  href="${url}/ws/" title="${%Workspace}" permission="${it.WORKSPACE}">
-                <l:task icon="images/24x24/folder-delete.png"  href="${url}/doWipeOutWorkspace" title="${%Wipe Out Workspace}" permission="${h.isWipeOutPermissionEnabled() ? it.WIPEOUT : it.BUILD}" post="true" requiresConfirmation="true" confirmationMessage="${%wipe.out.confirm}"/>
-            </l:task>
             <j:if test="${it.configurable}">
                 <p:configurable/>
             </j:if>
@@ -51,5 +37,4 @@
 
         <st:include page="sidepanel2.jelly" optional="true" />
 
-    </l:side-panel>
 </j:jelly>

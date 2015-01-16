@@ -24,17 +24,28 @@
   -->
 
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-    <link rel="stylesheet" href="${resURL}/plugin/DotCi/octicons/octicons.css"/>
     <l:layout title="${it.displayName}${not empty it.parent.fullDisplayName?' ['+it.parent.fullDisplayName+']':''}">
-        <st:include page="sidepanel.jelly" />
+        <l:header>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+        </l:header>
         <l:main-panel>
-            <p>
+            <div class="col-md-offset-4 jumbotron">
                <h3>${not empty it.parent.fullDisplayName?it.parent.fullDisplayName+'/':''}${it.displayName}
                    <a href="${it.githubRepoUrl}" style="color:grey"><span class="octicon octicon-mark-github"/> </a>
                </h3>
+            </div>
 
-            </p>
-            <st:include page="main.jelly" />
+            <div class="container-fluid" >
+            <div class="row" >
+                 <div class="col-xs-4">
+                     <st:include page="sidepanel.jelly" />
+                 </div>
+                <div class="col-xs-20">
+                    <st:include page="main.jelly" />
+                </div>
+            </div>
+            </div>
         </l:main-panel>
     </l:layout>
 </j:jelly>
