@@ -41,16 +41,6 @@ public class NullBuildCause extends BuildCause {
     }
 
     @Override
-    public String getCommitMessage() {
-        return "";
-    }
-
-    @Override
-    public String getCommitter() {
-        return "";
-    }
-
-    @Override
     public String getPusher() {
         return "unknown";
     }
@@ -58,6 +48,11 @@ public class NullBuildCause extends BuildCause {
     @Override
     public String getPullRequestNumber() {
         return "";
+    }
+
+    @Override
+    public CommitInfo getCommitInfo() {
+        return null;
     }
 
     @Override
