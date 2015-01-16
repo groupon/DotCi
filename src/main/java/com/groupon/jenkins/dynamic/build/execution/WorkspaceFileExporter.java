@@ -40,6 +40,7 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermissions;
+import org.jenkinsci.remoting.RoleChecker;
 
 public class WorkspaceFileExporter extends Builder {
 
@@ -126,6 +127,11 @@ public class WorkspaceFileExporter extends Builder {
             f.delete();
             return f.getAbsolutePath();
         }
+
+        @Override
+        public void checkRoles(RoleChecker roleChecker) throws SecurityException {
+
+        }
     }
     private static class WorkspaceFileCreatorFileCallable implements FilePath.FileCallable<String> {
         private static final long serialVersionUID = 1L;
@@ -152,6 +158,11 @@ public class WorkspaceFileExporter extends Builder {
                 }
             }
             return f.getAbsolutePath();
+        }
+
+        @Override
+        public void checkRoles(RoleChecker roleChecker) throws SecurityException {
+
         }
     }
 }

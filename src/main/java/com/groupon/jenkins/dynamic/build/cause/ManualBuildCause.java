@@ -26,6 +26,7 @@ package com.groupon.jenkins.dynamic.build.cause;
 import com.google.common.base.Objects;
 import com.groupon.jenkins.git.GitBranch;
 import java.util.Collections;
+import org.kohsuke.github.GHCommit;
 import org.kohsuke.stapler.export.Exported;
 
 public class ManualBuildCause extends BuildCause {
@@ -33,11 +34,13 @@ public class ManualBuildCause extends BuildCause {
     private final String user;
     private final GitBranch branch;
     private final String sha;
+    private final CommitInfo commitInfo;
 
-    public ManualBuildCause(GitBranch branch, String sha, String user) {
+    public ManualBuildCause(GitBranch branch, GHCommit commit, String user) {
         this.branch = branch;
-        this.sha = sha;
+        this.sha = commit.getSHA1();
         this.user = user;
+        this.commitInfo = new CommitInfo(commit,branch);
     }
 
     @Override
@@ -51,10 +54,7 @@ public class ManualBuildCause extends BuildCause {
         return sha;
     }
 
-    @Override
-    public String getBuildDescription() {
-        return "<b>" + branch + "</b>";
-    }
+
 
     @Override
     public String getPusher() {
@@ -64,6 +64,11 @@ public class ManualBuildCause extends BuildCause {
     @Override
     public String getPullRequestNumber() {
         return branch.isPullRequest() ? branch.pullRequestNumber() + "" : null;
+    }
+
+    @Override
+    public CommitInfo getCommitInfo() {
+        return commitInfo;
     }
 
     @Override

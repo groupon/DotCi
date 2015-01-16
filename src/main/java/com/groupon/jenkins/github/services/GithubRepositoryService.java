@@ -116,22 +116,24 @@ public class GithubRepositoryService {
         return getGithubRepository().getFileContent(fileName, sha);
     }
 
-    public String getShaForBranch(String branch) {
+    public org.kohsuke.github.GHCommit getHeadCommitForBranch(String branch) throws IOException {
+        String sha      ;
         GitBranch gitBranch = new GitBranch(branch);
         if (gitBranch.isPullRequest()) {
             try {
-                return getGithubRepository().getPullRequest(gitBranch.pullRequestNumber()).getHead().getSha();
+                sha = getGithubRepository().getPullRequest(gitBranch.pullRequestNumber()).getHead().getSha();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } else {
             try {
                 GHRef ref = getRef("heads/" + gitBranch);
-                return ref.getObject().getSha();
+                sha =ref.getObject().getSha();
             } catch (IOException e) {
-                return gitBranch.toString();
+                sha= gitBranch.toString();
             }
         }
+        return getGithubRepository().getCommit(sha);
     }
 
     private synchronized GHRepository getRepository() {

@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
+import org.kohsuke.github.GHCommit;
 import org.mockito.ArgumentCaptor;
 
 import static org.junit.Assert.*;
@@ -51,20 +52,20 @@ import static org.mockito.Mockito.when;
 public class DynamicBuildModelTest {
 
     @Test
-    public void should_add_manual_build_cause_before_run_if_build_is_manually_kicked_off() {
+    public void should_add_manual_build_cause_before_run_if_build_is_manually_kicked_off() throws IOException {
         DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().manualStart("surya", "master").get();
         GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
-        when(githubRepositoryService.getShaForBranch("master")).thenReturn("masterSha");
+        when(githubRepositoryService.getHeadCommitForBranch("master")).thenReturn(new GHCommit());
         DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
         model.run();
         verify(dynamicBuild).addCause(new ManualBuildCause(new GitBranch("master"), "masterSha", "surya"));
     }
 
     @Test
-    public void should_add_commit_history_view_to_build() {
+    public void should_add_commit_history_view_to_build() throws IOException {
         DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().manualStart("surya", "master").get();
         GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
-        when(githubRepositoryService.getShaForBranch("master")).thenReturn("masterSha");
+        when(githubRepositoryService.getHeadCommitForBranch("master")).thenReturn(new GHCommit());
         DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
         model.run();
         verify(dynamicBuild).addAction(any(CommitHistoryView.class));

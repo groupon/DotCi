@@ -88,7 +88,11 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     @SuppressWarnings("unchecked")
     @Override
     public void run() {
-        this.model.run();
+        try {
+            this.model.run();
+        } catch (IOException e) {
+            throw  new RuntimeException(e);
+        }
         execute(new DynamicRunExecution());
     }
 
@@ -202,8 +206,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
                 if (!buildEnvironment.initialize()) {
                     return Result.FAILURE;
                 }
-                exportDeployKeysIfPrivateRepo(listener,launcher);
-                setDescription(getCause().getBuildDescription());
+                exportDeployKeysIfPrivateRepo(listener, launcher);
                 BuildType buildType = BuildType.getBuildType(getParent());
                 Result buildRunResult =   buildType.runBuild(DynamicBuild.this, this, launcher, listener);
                 setResult(buildRunResult);

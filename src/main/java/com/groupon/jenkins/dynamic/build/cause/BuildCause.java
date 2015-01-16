@@ -24,9 +24,12 @@ THE SOFTWARE.
 package com.groupon.jenkins.dynamic.build.cause;
 
 import com.groupon.jenkins.git.GitBranch;
+import com.groupon.jenkins.github.Payload;
 import hudson.model.Cause;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
+import org.kohsuke.github.GHCommit;
 
 
 public abstract class BuildCause extends Cause {
@@ -35,11 +38,11 @@ public abstract class BuildCause extends Cause {
 
     public abstract String getSha();
 
-    public abstract String getBuildDescription();
-
     public abstract String getPusher();
 
     public abstract String getPullRequestNumber();
+
+    public abstract CommitInfo getCommitInfo();
 
     public Map<String, String> getEnvVars() {
         Map<String, String> vars = new HashMap<String, String>();
@@ -58,5 +61,47 @@ public abstract class BuildCause extends Cause {
     public abstract GitBranch getBranch();
 
     public abstract Iterable<GithubLogEntry> getChangeLogEntries();
+
+
+    public static class CommitInfo{
+        private String message;
+        private String committer;
+        private String branch;
+        private String sha;
+        private String commitUrl;
+        public CommitInfo(GHCommit commit, GitBranch branch){
+            this.sha = commit.getSHA1();
+            this.message = commit.getCommitShortInfo().getMessage();
+            this.committer = commit.getCommitShortInfo().getCommitter().getName();
+            this.commitUrl = commit.getOwner().getUrl()+"/commit/"+sha;
+            this.branch = branch.toString();
+        }
+
+        public CommitInfo(Payload payload) {
+            this.sha = payload.getSha();
+            this.message = payload.getCommitMessage();
+            this.committer = payload.getCommitter();
+            this.commitUrl = payload.getDiffUrl();
+            this.branch = payload.getBranch();
+        }
+
+        public String getCommitUrl() {
+            return commitUrl;
+        }
+
+        public String getDisplayString(){
+           return sha.substring(0,7) + "(" + branch+")";
+        }
+
+        public String getMessage(){
+            return StringUtils.abbreviate(message, 50);
+        }
+
+        public  String getCommitter(){
+           return committer;
+        }
+
+
+    }
 
 }

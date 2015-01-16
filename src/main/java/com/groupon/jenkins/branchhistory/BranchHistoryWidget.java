@@ -135,7 +135,7 @@ public class BranchHistoryWidget<T extends DbBackedBuild> extends BuildHistoryWi
 
     public String getStatusFontColor(DynamicBuild build){
         if(build.isBuilding()){
-            return "#fff";
+            return "#E7D100";
         }
         if( Result.SUCCESS.equals( build.getResult())){
             return "#038035";

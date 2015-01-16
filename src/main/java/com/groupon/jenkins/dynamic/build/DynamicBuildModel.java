@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.kohsuke.github.GHCommit;
 
 //Testable proxy of dyanamicbuild
 public class DynamicBuildModel {
@@ -56,23 +57,21 @@ public class DynamicBuildModel {
 
 
 
-    public void run() {
+    public void run() throws IOException {
         addBuildCauseForNonGithubCauses();
         this.build.addAction(new CommitHistoryView());
     }
 
-    private void addBuildCauseForNonGithubCauses() {
+    private void addBuildCauseForNonGithubCauses() throws IOException {
+        String branch = build.getEnvVars().get("BRANCH");
+        GHCommit commit = githubRepositoryService.getHeadCommitForBranch(branch);
         if (build.getCause(UserIdCause.class) != null) {
             String user = build.getCause(UserIdCause.class).getUserId();
-            String branch = build.getEnvVars().get("BRANCH");
-            String sha = githubRepositoryService.getShaForBranch(branch);
-            ManualBuildCause manualCause = new ManualBuildCause(new GitBranch(branch), sha, user);
+            ManualBuildCause manualCause = new ManualBuildCause(new GitBranch(branch), commit, user);
             build.addCause(manualCause);
         }
         if (build.getCause() == BuildCause.NULL_BUILD_CAUSE) {
-            String branch = build.getEnvVars().get("BRANCH");
-            String sha = githubRepositoryService.getShaForBranch(branch);
-            build.addCause(new UnknownBuildCause(new GitBranch(branch), sha));
+            build.addCause(new UnknownBuildCause(new GitBranch(branch), commit));
         }
     }
 

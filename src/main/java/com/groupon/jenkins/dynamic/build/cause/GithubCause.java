@@ -31,19 +31,19 @@ public class GithubCause extends BuildCause {
     private final String sha;
     private final String pullRequestNumber;
     private final String pusher;
-    private final String buildDescription;
     @SuppressWarnings("unused")
     private transient Payload payload; // For backward compatibility
     private final GitBranch branch;
     private final List<GithubLogEntry> logEntries;
+    private CommitInfo commitInfo;
 
     public GithubCause(Payload payload, String sha) {
-        this.buildDescription = payload.getBuildDescription();
         this.pusher = payload.getPusher();
         this.pullRequestNumber = payload.isPullRequest() ? payload.getPullRequestNumber() : null;
         this.sha = sha;
         this.branch = new GitBranch(payload.getBranch());
         this.logEntries = payload.getLogEntries();
+        this.commitInfo = new CommitInfo(payload);
     }
 
     @Override
@@ -51,15 +51,12 @@ public class GithubCause extends BuildCause {
         return sha;
     }
 
+
     @Override
     public String getShortDescription() {
         return "Started by Github push";
     }
 
-    @Override
-    public String getBuildDescription() {
-        return buildDescription;
-    }
 
     @Override
     public String getPusher() {
@@ -69,6 +66,11 @@ public class GithubCause extends BuildCause {
     @Override
     public String getPullRequestNumber() {
         return pullRequestNumber;
+    }
+
+    @Override
+    public CommitInfo getCommitInfo() {
+        return commitInfo;
     }
 
     @Override

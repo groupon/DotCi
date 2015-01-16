@@ -41,6 +41,16 @@ public class NullBuildCause extends BuildCause {
     }
 
     @Override
+    public String getCommitMessage() {
+        return "";
+    }
+
+    @Override
+    public String getCommitter() {
+        return "";
+    }
+
+    @Override
     public String getPusher() {
         return "unknown";
     }
@@ -53,11 +63,6 @@ public class NullBuildCause extends BuildCause {
     @Override
     public Iterable<GithubLogEntry> getChangeLogEntries() {
         return new ArrayList<GithubLogEntry>();
-    }
-
-    @Override
-    public String getBuildDescription() {
-        return "";
     }
 
     @Override

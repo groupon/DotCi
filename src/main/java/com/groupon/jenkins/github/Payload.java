@@ -97,10 +97,10 @@ public class Payload {
         return headRepoUrl.equals(pullRequestRepoUrl);
     }
 
-    public String getBuildDescription() {
-        String shortSha = getSha().substring(0, 7);
-        return String.format("<b>%s</b> (<a href=\"%s\">%s...</a>) <br> %s", getBranchDescription(), getDiffUrl(), shortSha, getPusher());
-    }
+//    public String getBuildDescription() {
+//        String shortSha = getSha().substring(0, 7);
+//        return String.format("<b>%s</b> (<a href=\"%s\">%s...</a>) <br> %s", getBranchDescription(), getDiffUrl(), shortSha, getPusher());
+//    }
 
     public String getBranchDescription() {
         if (isPullRequest()) {
@@ -152,5 +152,19 @@ public class Payload {
         affectedPaths.addAll((java.util.Collection<? extends String>) commit.get("modified"));
         affectedPaths.addAll((java.util.Collection<? extends String>) commit.get("removed"));
         return new GithubLogEntry(commit.get("message").toString(), commit.get("url").toString(), commit.get("id").toString(),affectedPaths);
+    }
+
+    public String getCommitter() {
+        if(isPullRequest()){
+            return null;
+        }
+        return  payloadJson.getJSONObject("head_commit").getJSONObject("committer").getString("name");
+    }
+
+    public String getCommitMessage() {
+        if(isPullRequest()){
+            return null;
+        }
+        return  payloadJson.getJSONObject("head_commit").getString("message");
     }
 }

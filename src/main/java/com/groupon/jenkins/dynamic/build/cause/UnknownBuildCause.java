@@ -25,6 +25,7 @@ package com.groupon.jenkins.dynamic.build.cause;
 
 import com.groupon.jenkins.git.GitBranch;
 import java.util.Collections;
+import org.kohsuke.github.GHCommit;
 import org.kohsuke.stapler.export.Exported;
 
 
@@ -32,10 +33,12 @@ public class UnknownBuildCause extends BuildCause {
 
     private final String sha;
     private final GitBranch branch;
+    private final CommitInfo commitInfo;
 
-    public UnknownBuildCause(GitBranch branch, String sha) {
+    public UnknownBuildCause(GitBranch branch, GHCommit commit) {
         this.branch = branch;
-        this.sha = sha;
+        this.sha = commit.getSHA1();
+        this.commitInfo = new CommitInfo(commit,branch);
     }
 
     @Override
@@ -43,10 +46,6 @@ public class UnknownBuildCause extends BuildCause {
         return sha;
     }
 
-    @Override
-    public String getBuildDescription() {
-        return branch.toString();
-    }
 
     @Override
     public String getPusher() {
@@ -56,6 +55,11 @@ public class UnknownBuildCause extends BuildCause {
     @Override
     public String getPullRequestNumber() {
         return branch.isPullRequest() ? branch.pullRequestNumber() + "" : null;
+    }
+
+    @Override
+    public CommitInfo getCommitInfo() {
+        return commitInfo;
     }
 
     @Override

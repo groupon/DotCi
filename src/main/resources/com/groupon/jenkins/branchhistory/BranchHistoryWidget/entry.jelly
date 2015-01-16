@@ -38,13 +38,20 @@ THE SOFTWARE.
       ${build.number}
       </a>
     </td>
+      <td>
+          <j:out value="${app.markupFormatter.translate(build.cause.commitInfo.message)}"/>
+      </td>
+      <td>
+          <a  href="${build.cause.commitInfo.commitUrl}" >
+              ${build.cause.commitInfo.displayString}
+          </a>
+      </td>
+      <td>
+         ${build.cause.commitInfo.committer}
+      </td>
     <td style="padding-right:0">
         ${build.displayTime}
     </td>
-          <td></td>
-          <td>
-              <j:out value="${app.markupFormatter.translate(build.truncatedDescription)}"/>
-          </td>
     <td class="middle-align">
       <j:set var="badges" value="${build.badgeActions}"/>
       <j:if test="${!empty(badges)}">
