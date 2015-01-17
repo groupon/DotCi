@@ -1,4 +1,3 @@
-<?jelly escape-by-default='true'?>
 <!--
   ~ The MIT License (MIT)
   ~
@@ -24,26 +23,19 @@
   -->
 
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-    <l:layout title="${it.displayName}${not empty it.parent.fullDisplayName?' ['+it.parent.fullDisplayName+']':''}">
-        <st:include page="bootstrap_header.jelly" />
-        <l:main-panel>
-            <div class="container-fluid" >
-                <div class="row" >
-                    <div class="col-xs-offset-3">
-                        <h3>${not empty it.parent.fullDisplayName?it.parent.fullDisplayName+'/':''}${it.displayName}
-                            <a href="${it.githubRepoUrl}" style="color:grey"><span class="octicon octicon-mark-github"/> </a>
-                        </h3>
-                    </div>
-                </div>
-                <div class="row" >
-                    <div class="col-xs-3">
-                        <st:include page="sidepanel.jelly" />
-                    </div>
-                    <div class="col-xs-9">
-                        <st:include page="main.jelly" />
-                    </div>
-                </div>
-            </div>
-        </l:main-panel>
-    </l:layout>
-</j:jelly>
+<l:header>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script>
+        // jQuery.noConflict();
+    </script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/>
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css"/>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+</l:header>
+ </j:jelly>
