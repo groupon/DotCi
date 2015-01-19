@@ -6,3 +6,6 @@
     border-collapse: separate;
     border: 1px solid #b7c7cf;
 }
+
+@table-outer-border-color: #b7c7cf;
+@table-head-border-separate-color: #d8e6ec;
