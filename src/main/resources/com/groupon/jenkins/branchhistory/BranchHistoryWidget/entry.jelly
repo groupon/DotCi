@@ -29,12 +29,12 @@ THE SOFTWARE.
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
     <j:set var="link" value="${it.baseUrl}/${build.number}/" />
     <j:set var="transitive" value="${(it.firstTransientBuildKey!=null and (it.adapter.compare(build,it.firstTransientBuildKey) ge 0)) ? 'transitive' : null}" />
-    <tr class="build-row no-wrap ${transitive}" style="background-color:${it.getRowStyling(build).backgroundColor}">
+    <tr class="${transitive}" style="background-color:${it.getRowStyling(build).backgroundColor}">
         <td>
             <span class="octicon ${it.getRowStyling(build).statusIconFont}" style="color:${it.getRowStyling(build).statusIconFontColor}"></span>
             <st:nbsp/>
             <st:nbsp/>
-            <a class="tip model-link tl-tr" href="${link}" style="color:${build.iconColor.HtmlBaseColor}">
+            <a href="${link}" style="color:${it.getRowStyling(build).statusIconFontColor}">
                 ${build.number}
             </a>
         </td>
@@ -49,32 +49,9 @@ THE SOFTWARE.
         <td>
             ${build.cause.commitInfo.committer}
         </td>
-        <td style="padding-right:0">
+        <td >
             ${build.displayTime}
         </td>
-        <td class="middle-align">
-            <j:set var="badges" value="${build.badgeActions}"/>
-            <j:if test="${!empty(badges)}">
-                <st:nbsp/>
-                <j:forEach var="badge" items="${badges}">
-                    <st:include it="${badge}" page="badge.jelly" />
-                </j:forEach>
-            </j:if>
-        </td>
     </tr>
-    <j:if test="${build.building}">
-        <j:set target="${it}" property="nextBuildNumberToFetch" value="${build.number}"/>
-        <tr class="transitive"><td></td><td colspan="2" style="padding:0">
-            <table class="middle-align">
-                <tr><td>
-                    <t:buildProgressBar build="${build}"/>
-                </td><td style="padding:0">
-                    <!-- Check ABORT permission for Project, Admin permission otherwise -->
-                    <j:if test="${empty(it.owner.ABORT) ? h.hasPermission(app.ADMINISTER) : it.owner.hasPermission(it.owner.ABORT)}">
-                        <l:stopButton href="${link}stop" alt="[cancel]"/>
-                    </j:if>
-                </td></tr>
-            </table>
-        </td></tr>
-    </j:if>
+    <st:include it="${badge}" page="progress_row.jelly" />
 </j:jelly>
