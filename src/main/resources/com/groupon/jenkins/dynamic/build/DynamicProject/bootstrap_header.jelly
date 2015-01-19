@@ -37,5 +37,8 @@
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="${resURL}/plugin/DotCi/octicons/octicons.css"/>
+    <link rel="stylesheet" href="${resURL}/plugin/DotCi/css/build_history_styling.css"/>
 </l:header>
  </j:jelly>
