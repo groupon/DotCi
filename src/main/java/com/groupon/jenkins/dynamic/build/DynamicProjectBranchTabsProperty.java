@@ -42,7 +42,8 @@ import javax.annotation.Nullable;
 
 public class DynamicProjectBranchTabsProperty extends JobProperty<Job<?, ?>> {
     private final ArrayList<String> branches;
-    private String branchTabs; public DynamicProjectBranchTabsProperty(String branchTabs) {
+    private String branchTabs;
+    public DynamicProjectBranchTabsProperty(String branchTabs) {
         this.branchTabs = branchTabs;
         this.branches = parseBranches();
     }
@@ -71,6 +72,14 @@ public class DynamicProjectBranchTabsProperty extends JobProperty<Job<?, ?>> {
 
     public String getBranchTabs() {
         return branchTabs;
+    }
+
+    public void addBranch(String branch) {
+        this.branches.add(branch);
+    }
+
+    public void removeBranch(String branch) {
+         this.branches.remove(branch);
     }
 
     @Extension

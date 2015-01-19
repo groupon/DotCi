@@ -30,11 +30,36 @@
         <li role="presentation" class="${it.branch == 'mine'?'active':''}"><a href="branchBuilds/mine" style="text-decoration: none">mine</a></li>
         <j:forEach var="s" items="${it.owner.branchTabs}">
             <li role="presentation" class="${it.branch == s?'active':''}" >
-                <a href="branchBuilds/${s}"  style="text-decoration: none">${s}
+                <a href="branchBuilds/${s}"  style="text-decoration: none">
                     <span class="octicon octicon-git-branch" style="color:grey"></span>
+                    ${s}
+                    <button  type="button" class="close"  aria-hidden="true" onclick="dotCiRemoveTab(event,'${s}')">
+                        <i class="fa fa-times pull-right" ></i>
+                    </button>
                 </a>
             </li>
         </j:forEach>
+
+        <li role="presentation"  >
+            <a href="#" id="addNewTab"  style="text-decoration: none">
+                <span class="octicon octicon-plus"></span>
+            </a>
+        </li>
     </ul>
+
+    <script>
+
+        jQuery( "#addNewTab" ).click(function() {
+        bootbox.prompt("Branch Regex", function(result) {
+        window.location.href = 'addNewBranchTab?branch='+result;
+        });
+        });
+
+        function dotCiRemoveTab(e,tab){
+        e.preventDefault();
+        e.stopPropagation();
+          window.location.href = 'removeTab?branch='+tab;
+        }
+    </script>
 
 </j:jelly>

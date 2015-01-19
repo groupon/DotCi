@@ -54,6 +54,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import jenkins.model.Jenkins;
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -201,6 +202,33 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     public void doBranchBuilds(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
         String tab  = req.getRestOfPath().replace("/","");
         handleBranchTabs(tab, req);
+        rsp.forwardToPreviousPage(req);
+    }
+
+    public void doAddNewBranchTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+        String tab  = req.getParameter("branch");
+        if(StringUtils.isNotEmpty(tab)){
+            DynamicProjectBranchTabsProperty branchTabsProperty = getProperty(DynamicProjectBranchTabsProperty.class);
+            if(branchTabsProperty == null){
+               branchTabsProperty =     new DynamicProjectBranchTabsProperty(tab);
+               addProperty(branchTabsProperty);
+            }else{
+                branchTabsProperty.addBranch(tab);
+            }
+            save();
+        }
+        rsp.forwardToPreviousPage(req);
+    }
+
+
+    public void doRemoveTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+        String tab  = req.getParameter("branch");
+        if(StringUtils.isNotEmpty(tab)){
+            DynamicProjectBranchTabsProperty branchTabsProperty = getProperty(DynamicProjectBranchTabsProperty.class);
+            branchTabsProperty.removeBranch(tab);
+            save();
+        }
+        req.getSession().removeAttribute("branchView" + getName());
         rsp.forwardToPreviousPage(req);
     }
 
