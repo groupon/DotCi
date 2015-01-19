@@ -28,7 +28,6 @@ import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.util.GReflectionUtils;
-import hudson.model.Result;
 import hudson.widgets.BuildHistoryWidget;
 import hudson.widgets.HistoryWidget;
 import java.io.IOException;
@@ -105,46 +104,9 @@ public class BranchHistoryWidget<T extends DbBackedBuild> extends BuildHistoryWi
     public Object getBranch() {
         return branch;
     }
-    public String getBackGroundColor(DynamicBuild build){
-        if(build.isBuilding()){
-          return "#fffcf4";
-        }
-        if( Result.SUCCESS.equals( build.getResult())){
-         return "#fafffa"  ;
 
-        }
-        if(Result.FAILURE.equals(build.getResult())){
-            return "snow";
-        }
-        return "#fdfdfd";
-    }
-
-    public String getStatusIconFont(DynamicBuild build){
-        if(build.isBuilding()){
-            return "octicon-primitive-dot";
-        }
-        if( Result.SUCCESS.equals( build.getResult())){
-            return "octicon-check";
-
-        }
-        if(Result.FAILURE.equals(build.getResult())){
-          return "octicon-x";
-        }
-        return "octicon-stop";
-    }
-
-    public String getStatusFontColor(DynamicBuild build){
-        if(build.isBuilding()){
-            return "#E7D100";
-        }
-        if( Result.SUCCESS.equals( build.getResult())){
-            return "#038035";
-
-        }
-        if(Result.FAILURE.equals(build.getResult())){
-            return "#c00";
-        }
-        return "#666";
+    public RowStyling getRowStyling(DynamicBuild dynamicBuild){
+        return RowStyling.get(dynamicBuild);
     }
 
 

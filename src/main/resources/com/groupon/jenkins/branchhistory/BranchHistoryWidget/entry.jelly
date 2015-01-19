@@ -29,9 +29,9 @@ THE SOFTWARE.
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
     <j:set var="link" value="${it.baseUrl}/${build.number}/" />
     <j:set var="transitive" value="${(it.firstTransientBuildKey!=null and (it.adapter.compare(build,it.firstTransientBuildKey) ge 0)) ? 'transitive' : null}" />
-    <tr class="build-row no-wrap ${transitive}" style="background-color:${it.getBackGroundColor(build)}">
+    <tr class="build-row no-wrap ${transitive}" style="background-color:${it.getRowStyling(build).backgroundColor}">
         <td>
-            <span class="octicon ${it.getStatusIconFont(build)}" style="color:${it.getStatusFontColor(build)}"></span>
+            <span class="octicon ${it.getRowStyling(build).statusIconFont}" style="color:${it.getRowStyling(build).statusIconFontColor}"></span>
             <st:nbsp/>
             <st:nbsp/>
             <a class="tip model-link tl-tr" href="${link}" style="color:${build.iconColor.HtmlBaseColor}">
