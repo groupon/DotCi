@@ -51,7 +51,9 @@
 
         jQuery( "#addNewTab" ).click(function() {
         bootbox.prompt("Branch Regex", function(result) {
-        window.location.href = 'addNewBranchTab?branch='+result;
+        if(result != null){
+           window.location.href = 'addNewBranchTab?branch='+result;
+        }
         });
         });
 
