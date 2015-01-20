@@ -28,10 +28,10 @@ import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import hudson.model.Result;
 
 public enum  RowStyling {
-    IN_PROGRESS("#fffcf4", "octicon-primitive-dot","#E7D100"),
-    SUCCESS("#fafffa", "octicon-check","#038035"),
-    FAILURE("snow","octicon-x","#c00"),
-    ABORTED("#fdfdfd","octicon-stop","#666")
+    IN_PROGRESS("#fffcf4", "fa-circle-o-notch fa-spin","#E7D100"),
+    SUCCESS("#fafffa", "fa-check","#038035"),
+    FAILURE("snow","fa-times","#c00"),
+    ABORTED("#fdfdfd","fa-ban","#666")
     ;
 
     RowStyling(String backgroundColor, String statusIconFont, String statusIconFontColor) {

@@ -31,7 +31,7 @@ THE SOFTWARE.
     <j:set var="transitive" value="${(it.firstTransientBuildKey!=null and (it.adapter.compare(build,it.firstTransientBuildKey) ge 0)) ? 'transitive' : null}" />
     <tr class="${transitive}" style="background-color:${it.getRowStyling(build).backgroundColor}">
         <td>
-            <span class="octicon ${it.getRowStyling(build).statusIconFont}" style="color:${it.getRowStyling(build).statusIconFontColor}"></span>
+            <span class="fa fa-fw ${it.getRowStyling(build).statusIconFont}" style="color:${it.getRowStyling(build).statusIconFontColor}"></span>
             <st:nbsp/>
             <st:nbsp/>
             <a href="${link}" style="color:${it.getRowStyling(build).statusIconFontColor}">
