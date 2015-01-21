@@ -26,8 +26,8 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
     <ul class="nav  nav-tabs">
-        <li role="presentation" class="${it.branch == null?'active':''}"><a href="branchBuilds/all" style="text-decoration: none" >All</a></li>
-        <li role="presentation" class="${it.branch == 'mine'?'active':''}"><a href="branchBuilds/mine" style="text-decoration: none">mine</a></li>
+        <li role="presentation" class="${it.branch == null?'active':''}"><a href="branchBuilds/all" style="text-decoration: none" ><i class="fa fa-cogs" style="color:grey"></i> All</a></li>
+        <li role="presentation" class="${it.branch == 'mine'?'active':''}"><a href="branchBuilds/mine" style="text-decoration: none"><span class="octicon octicon-person" style="color:grey"></span>mine</a></li>
         <j:forEach var="s" items="${it.owner.branchTabs}">
             <li role="presentation" class="${it.branch == s?'active':''}" >
                 <a href="branchBuilds/${s}"  style="text-decoration: none">
