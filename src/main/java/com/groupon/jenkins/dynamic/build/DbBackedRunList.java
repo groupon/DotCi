@@ -108,7 +108,7 @@ public class DbBackedRunList<P extends DbBackedProject<P, B>, B extends DbBacked
 
     @Override
     public Iterator<R> iterator() {
-        return dynamicBuildRepository.<R> latestBuilds(project, 20).iterator();
+        return dynamicBuildRepository.<R> latestBuilds(project, 100).iterator();
     }
 
 }

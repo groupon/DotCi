@@ -43,7 +43,7 @@ import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 public class BranchHistoryWidget<T extends DbBackedBuild> extends BuildHistoryWidget<T> {
 
-    protected static final int BUILD_COUNT = 30;
+    protected static final int BUILD_COUNT = 100;
     protected static final String MY_BUILDS_BRANCH = "mine";
     private final String branch;
     private final BranchHistoryWidgetModel<T> model;
