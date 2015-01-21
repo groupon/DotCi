@@ -69,6 +69,7 @@ THE SOFTWARE.
         <powermock.version>1.5.5</powermock.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
+        <maven-hpi-plugin.version>1.110</maven-hpi-plugin.version>
     </properties>
     <build>
         <plugins>
