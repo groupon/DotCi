@@ -35,6 +35,9 @@
                         </h3>
                     </div>
                     <div class="col-xs-3">
+                        <a data-toggle="modal" class="btn btn-info" href="buildNow" data-target="#exampleModal">Build Now</a>
+                        </div>
+                    <div class="col-xs-3">
                         <a class="btn btn-default btn-sm" id="settings-button" href="configure"  style="">
                             <i class="fa fa-cog"></i> Settings</a>
                     </div>
@@ -48,4 +51,5 @@
             </div>
         </l:main-panel>
     </l:layout>
+    <st:include page="build_now.jelly" />
 </j:jelly>
