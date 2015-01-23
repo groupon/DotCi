@@ -48,6 +48,8 @@ import java.io.IOException;
 import java.util.*;
 
 import jenkins.model.Jenkins;
+import jenkins.model.ParameterizedJobMixIn;
+import jenkins.util.TimeDuration;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
@@ -177,9 +179,29 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     }
 
     public final void doBuildNow(StaplerRequest req, StaplerResponse rsp ) throws IOException, ServletException {
+        if(req.getMethod().equals("POST")){
+            scheduleBuild(req, rsp);
+        }
         req.getView(this, "build_now.jelly").forward(req, rsp);
 
     }
+
+    private void scheduleBuild(StaplerRequest req, StaplerResponse rsp) throws IOException {
+        List<ParameterValue> values = new ArrayList<ParameterValue>();
+        for (ParameterDefinition d: getParameterDefinitions()) {
+            ParameterValue value = d.createValue(req);
+            if (value != null) {
+                values.add(value);
+            }
+        }
+        TimeDuration delay = new TimeDuration(getQuietPeriod());
+
+        Queue.Item item = Jenkins.getInstance().getQueue().schedule2(
+                this, delay.getTime(), new ParametersAction(values), ParameterizedJobMixIn.getBuildCause(this, req)).getItem();
+
+        rsp.sendRedirect(".");
+    }
+
     public List<ParameterDefinition> getParameterDefinitions(){
         ParametersDefinitionProperty pp = getProperty(ParametersDefinitionProperty.class);
         return pp.getParameterDefinitions();
