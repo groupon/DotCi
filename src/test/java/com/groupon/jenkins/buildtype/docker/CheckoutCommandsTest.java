@@ -49,6 +49,6 @@ public class CheckoutCommandsTest {
             put("GIT_URL","git@github.com:groupon/DotCi.git");
         }};
         ShellCommands commands = CheckoutCommands.get(envVArs) ;
-        Assert.assertEquals("git clone  --branch=dotci_branch https://github.com/groupon/DotCi /var/groupon/DotCi",commands.get(0));
+        Assert.assertEquals("git clone  --branch=dotci_branch https://github.com/groupon/DotCi /tmp/groupon/DotCi",commands.get(0));
     }
 }
