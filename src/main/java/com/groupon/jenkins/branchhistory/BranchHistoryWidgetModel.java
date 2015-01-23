@@ -47,7 +47,7 @@ class BranchHistoryWidgetModel<T extends DbBackedBuild> {
         this.branch = branch;
     }
 
-    public Iterable<T> getBuildsAfter(String n) {
+    public Iterable<T> getBuildsAfter(int n) {
         return filterSkipped(isMyBuilds() ? dynamicBuildRepository.<T> getCurrentUserBuildsGreaterThan((DbBackedProject) owner, n) : dynamicBuildRepository.<T> getBuildGreaterThan((DbBackedProject) owner, n, branch));
     }
 

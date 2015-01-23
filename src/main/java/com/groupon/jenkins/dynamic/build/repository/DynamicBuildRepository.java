@@ -161,10 +161,10 @@ public class DynamicBuildRepository extends MongoRepository {
         return (int) getQuery(project).countAll();
     }
 
-    public <T extends DbBackedBuild> Iterable<T> getBuildGreaterThan(DbBackedProject project, String n, String branch) {
-        int number = Integer.parseInt(n) - 1;
+    public <T extends DbBackedBuild> Iterable<T> getBuildGreaterThan(DbBackedProject project, int number, String branch) {
         Query<DbBackedBuild> query = getQuery(project).order("number")
-                .field("number").greaterThan(number);
+                .field("number").greaterThan(number)
+                .order("-number");
 
         if (branch != null) {
             query = query.field("actions.causes.branch.branch").equal(branch);
@@ -179,9 +179,7 @@ public class DynamicBuildRepository extends MongoRepository {
         return (Iterable<T>) query.asList();
     }
 
-    public <T extends DbBackedBuild> Iterable<T> getCurrentUserBuildsGreaterThan(DbBackedProject project, String n) {
-        int number = Integer.parseInt(n) - 1;
-
+    public <T extends DbBackedBuild> Iterable<T> getCurrentUserBuildsGreaterThan(DbBackedProject project, int number) {
         List<DbBackedBuild> builds = getQuery(project)
                 .order("-number")
                 .field("pusher").equal(Jenkins.getAuthentication().getName())
