@@ -1,0 +1,110 @@
+[
+  {
+    "_id" : { "$oid" : "54c6a3cd1c265eb3a07d58b4"},
+    "className" : "com.groupon.jenkins.dynamic.build.DynamicProject",
+    "name" : "test_name",
+    "containerName" : "test_user",
+    "builders" : [ ],
+    "publishers" : [ ],
+    "buildWrappers" : [ ],
+    "scm" : {
+      "className" : "hudson.scm.NullSCM"
+    },
+    "canRoam" : false,
+    "disabled" : false,
+    "blockBuildWhenDownstreamBuilding" : false,
+    "blockBuildWhenUpstreamBuilding" : false,
+    "triggers" : [ ],
+    "concurrentBuild" : true,
+    "keepDependencies" : false,
+    "properties" : [
+      {
+        "className" : "hudson.model.ParametersDefinitionProperty",
+        "parameterDefinitions" : [
+          {
+            "className" : "com.groupon.jenkins.dynamic.build.GithubBranchParameterDefinition",
+            "githubRepoUrl" : "http://localhost/test_user/test_name",
+            "defaultValue" : "master",
+            "name" : "BRANCH"
+          }
+        ]
+      },
+      {
+        "className" : "com.groupon.jenkins.github.GithubRepoProperty",
+        "repoUrl" : "http://localhost/test_user/test_name"
+      },
+      {
+        "className" : "com.groupon.jenkins.dynamic.buildtype.BuildTypeProperty",
+        "buildType" : "com.groupon.jenkins.buildtype.install_packages.InstallPackagesBuild"
+      },
+      {
+        "className" : "com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty",
+        "branches" : [
+          "master"
+        ],
+        "branchTabs" : "master"
+      }
+    ],
+    "description" : "<a href=\"http://localhost/test_user/test_name\">http://localhost/test_user/test_name</a>"
+  },
+  {
+    "_id" : { "$oid" : "54c6a3d61c265eb3a07d58b6"},
+    "className" : "com.groupon.jenkins.dynamic.build.DynamicSubProject",
+    "name" : "script=unit",
+    "parentId" : { "$oid" : "54c6a3cd1c265eb3a07d58b4"},
+    "combination" : {
+      "script" : "unit"
+    },
+    "scm" : {
+      "className" : "hudson.scm.NullSCM"
+    },
+    "canRoam" : false,
+    "disabled" : false,
+    "blockBuildWhenDownstreamBuilding" : false,
+    "blockBuildWhenUpstreamBuilding" : false,
+    "triggers" : [ ],
+    "concurrentBuild" : false,
+    "keepDependencies" : false,
+    "properties" : [ ]
+  },
+  {
+    "_id" : { "$oid" : "54c6a3d61c265eb3a07d58b7"},
+    "className" : "com.groupon.jenkins.dynamic.build.DynamicSubProject",
+    "name" : "script=integration",
+    "parentId" : { "$oid" : "54c6a3cd1c265eb3a07d58b4"},
+    "combination" : {
+      "script" : "integration"
+    },
+    "scm" : {
+      "className" : "hudson.scm.NullSCM"
+    },
+    "canRoam" : false,
+    "disabled" : false,
+    "blockBuildWhenDownstreamBuilding" : false,
+    "blockBuildWhenUpstreamBuilding" : false,
+    "triggers" : [ ],
+    "concurrentBuild" : false,
+    "keepDependencies" : false,
+    "properties" : [ ]
+  },
+  {
+    "_id" : { "$oid" : "54c6a3db1c265eb3a07d58ba"},
+    "className" : "com.groupon.jenkins.dynamic.build.DynamicSubProject",
+    "name" : "script=post_build",
+    "parentId" : { "$oid" : "54c6a3cd1c265eb3a07d58b4"},
+    "combination" : {
+      "script" : "post_build"
+    },
+    "scm" : {
+      "className" : "hudson.scm.NullSCM"
+    },
+    "canRoam" : false,
+    "disabled" : false,
+    "blockBuildWhenDownstreamBuilding" : false,
+    "blockBuildWhenUpstreamBuilding" : false,
+    "triggers" : [ ],
+    "concurrentBuild" : false,
+    "keepDependencies" : false,
+    "properties" : [ ]
+  }
+]

@@ -1,0 +1,235 @@
+[
+  {
+    "_id" : { "$oid" : "54c6a3d41c265eb3a07d58b5"},
+    "className" : "com.groupon.jenkins.dynamic.build.DynamicBuild",
+    "state" : "COMPLETED",
+    "timestamp" : "2015-01-26T20:30:12.217Z",
+    "axisList" : [
+      {
+        "className" : "hudson.matrix.Axis",
+        "name" : "script",
+        "values" : [
+          "unit",
+          "integration",
+          "post_build"
+        ]
+      }
+    ],
+    "projectId" : { "$oid" : "54c6a3cd1c265eb3a07d58b4"},
+    "builtOn" : "",
+    "workspace" : "DotCi/work/jobs/test_user/jobs/test_name/workspace",
+    "hudsonVersion" : "1.567",
+    "scm" : {
+      "className" : "hudson.scm.NullChangeLogParser"
+    },
+    "culprits" : [ ],
+    "number" : 1,
+    "startTime" : 1422304212849,
+    "result" : "SUCCESS",
+    "description" : "<b>master</b>",
+    "duration" : 10135,
+    "charset" : "UTF-8",
+    "keepLog" : false,
+    "actions" : [
+      {
+        "className" : "hudson.model.ParametersAction",
+        "parameters" : [
+          {
+            "className" : "hudson.model.StringParameterValue",
+            "value" : "master",
+            "name" : "BRANCH"
+          }
+        ]
+      },
+      {
+        "className" : "hudson.model.CauseAction",
+        "causes" : [
+          {
+            "className" : "hudson.model.Cause$UserIdCause"
+          },
+          {
+            "className" : "com.groupon.jenkins.dynamic.build.cause.ManualBuildCause",
+            "branch" : {
+              "branch" : "master"
+            },
+            "sha" : "f43c56d7ed7b0ba7ea866d68fe63a74d08217a9a"
+          }
+        ]
+      },
+      {
+        "className" : "com.groupon.jenkins.dynamic.build.commithistory.CommitHistoryView"
+      }
+    ]
+  },
+  {
+    "_id" : { "$oid" : "54c6a3d61c265eb3a07d58b8"},
+    "className" : "com.groupon.jenkins.dynamic.build.DynamicSubBuild",
+    "state" : "COMPLETED",
+    "timestamp" : "2015-01-26T20:30:14.918Z",
+    "cause" : {
+      "className" : "com.groupon.jenkins.dynamic.build.cause.ManualBuildCause",
+      "branch" : {
+        "branch" : "master"
+      },
+      "sha" : "f43c56d7ed7b0ba7ea866d68fe63a74d08217a9a"
+    },
+    "projectId" : { "$oid" : "54c6a3d61c265eb3a07d58b6"},
+    "builtOn" : "",
+    "workspace" : "DotCi/work/jobs/test_user/jobs/test_name/workspace@2/script=unit",
+    "hudsonVersion" : "1.567",
+    "scm" : {
+      "className" : "hudson.scm.NullChangeLogParser"
+    },
+    "culprits" : [ ],
+    "number" : 1,
+    "startTime" : 1422304214928,
+    "result" : "SUCCESS",
+    "duration" : 2388,
+    "charset" : "UTF-8",
+    "keepLog" : false,
+    "actions" : [
+      {
+        "className" : "hudson.model.ParametersAction",
+        "parameters" : [
+          {
+            "className" : "hudson.model.StringParameterValue",
+            "value" : "master",
+            "name" : "BRANCH"
+          }
+        ]
+      },
+      {
+        "className" : "com.groupon.jenkins.dynamic.build.execution.SubBuildExecutionAction"
+      },
+      {
+        "className" : "com.groupon.jenkins.dynamic.build.DynamicSubProject$ParentBuildAction"
+      },
+      {
+        "className" : "hudson.model.CauseAction",
+        "causes" : [
+          {
+            "className" : "com.groupon.jenkins.dynamic.build.cause.ManualBuildCause",
+            "branch" : {
+              "branch" : "master"
+            },
+            "sha" : "f43c56d7ed7b0ba7ea866d68fe63a74d08217a9a"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id" : { "$oid" : "54c6a3d91c265eb3a07d58b9"},
+    "className" : "com.groupon.jenkins.dynamic.build.DynamicSubBuild",
+    "state" : "COMPLETED",
+    "timestamp" : "2015-01-26T20:30:17.352Z",
+    "cause" : {
+      "className" : "com.groupon.jenkins.dynamic.build.cause.ManualBuildCause",
+      "branch" : {
+        "branch" : "master"
+      },
+      "sha" : "f43c56d7ed7b0ba7ea866d68fe63a74d08217a9a"
+    },
+    "projectId" : { "$oid" : "54c6a3d61c265eb3a07d58b7"},
+    "builtOn" : "",
+    "workspace" : "DotCi/work/jobs/test_user/jobs/test_name/workspace@2/script=integration",
+    "hudsonVersion" : "1.567",
+    "scm" : {
+      "className" : "hudson.scm.NullChangeLogParser"
+    },
+    "culprits" : [ ],
+    "number" : 1,
+    "startTime" : 1422304217357,
+    "result" : "SUCCESS",
+    "duration" : 2023,
+    "charset" : "UTF-8",
+    "keepLog" : false,
+    "actions" : [
+      {
+        "className" : "hudson.model.ParametersAction",
+        "parameters" : [
+          {
+            "className" : "hudson.model.StringParameterValue",
+            "value" : "master",
+            "name" : "BRANCH"
+          }
+        ]
+      },
+      {
+        "className" : "com.groupon.jenkins.dynamic.build.execution.SubBuildExecutionAction"
+      },
+      {
+        "className" : "com.groupon.jenkins.dynamic.build.DynamicSubProject$ParentBuildAction"
+      },
+      {
+        "className" : "hudson.model.CauseAction",
+        "causes" : [
+          {
+            "className" : "com.groupon.jenkins.dynamic.build.cause.ManualBuildCause",
+            "branch" : {
+              "branch" : "master"
+            },
+            "sha" : "f43c56d7ed7b0ba7ea866d68fe63a74d08217a9a"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id" : { "$oid" : "54c6a3db1c265eb3a07d58bb"},
+    "className" : "com.groupon.jenkins.dynamic.build.DynamicSubBuild",
+    "state" : "COMPLETED",
+    "timestamp" : "2015-01-26T20:30:19.938Z",
+    "cause" : {
+      "className" : "com.groupon.jenkins.dynamic.build.cause.ManualBuildCause",
+      "branch" : {
+        "branch" : "master"
+      },
+      "sha" : "f43c56d7ed7b0ba7ea866d68fe63a74d08217a9a"
+    },
+    "projectId" : { "$oid" : "54c6a3db1c265eb3a07d58ba"},
+    "builtOn" : "",
+    "workspace" : "DotCi/work/jobs/test_user/jobs/test_name/workspace@2/script=post_build",
+    "hudsonVersion" : "1.567",
+    "scm" : {
+      "className" : "hudson.scm.NullChangeLogParser"
+    },
+    "culprits" : [ ],
+    "number" : 1,
+    "startTime" : 1422304219942,
+    "result" : "SUCCESS",
+    "duration" : 2078,
+    "charset" : "UTF-8",
+    "keepLog" : false,
+    "actions" : [
+      {
+        "className" : "hudson.model.ParametersAction",
+        "parameters" : [
+          {
+            "className" : "hudson.model.StringParameterValue",
+            "value" : "master",
+            "name" : "BRANCH"
+          }
+        ]
+      },
+      {
+        "className" : "com.groupon.jenkins.dynamic.build.execution.SubBuildExecutionAction"
+      },
+      {
+        "className" : "com.groupon.jenkins.dynamic.build.DynamicSubProject$ParentBuildAction"
+      },
+      {
+        "className" : "hudson.model.CauseAction",
+        "causes" : [
+          {
+            "className" : "com.groupon.jenkins.dynamic.build.cause.ManualBuildCause",
+            "branch" : {
+              "branch" : "master"
+            },
+            "sha" : "f43c56d7ed7b0ba7ea866d68fe63a74d08217a9a"
+          }
+        ]
+      }
+    ]
+  }
+]

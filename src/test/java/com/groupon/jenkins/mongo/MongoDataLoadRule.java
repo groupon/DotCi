@@ -25,6 +25,7 @@ THE SOFTWARE.
 package com.groupon.jenkins.mongo;
 
 import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -75,6 +76,10 @@ public class MongoDataLoadRule implements TestRule {
                         collection.insert((DBObject) bsonObject);
                     }
 
+                }
+
+                for(OrganizationContainer container : Jenkins.getInstance().getAllItems(OrganizationContainer.class)) {
+                    container.reloadItems();
                 }
 
                 base.evaluate();
