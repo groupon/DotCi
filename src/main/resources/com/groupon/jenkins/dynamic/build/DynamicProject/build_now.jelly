@@ -22,9 +22,26 @@
   ~ THE SOFTWARE.
   -->
 
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-  <div class="modal-content">
-    </div>
-</div>
-</div>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&amp;times;</span></button>
+    <h4 class="modal-title">Build</h4>
+  </div>
+  <form method="post" action="build" name="parameters">
+  <div class="modal-body">
+    <j:forEach var="parameterDefinition" items="${it.parameterDefinitions}">
+        <st:include it="${parameterDefinition}"
+                    page="${parameterDefinition.descriptor.valuePage}" />
+    </j:forEach>
+      <input type="hidden" name="statusCode" value="303" />
+      <input type="hidden" name="redirectTo" value="." />
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="submit" class="btn btn-primary">${%Build}</button>
+  </div>
+  </form>
+</j:jelly>
+

@@ -37,22 +37,16 @@ import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 import hudson.Extension;
 import hudson.PermalinkList;
 import hudson.matrix.Combination;
-import hudson.model.Descriptor;
-import hudson.model.DescriptorVisibilityFilter;
-import hudson.model.Item;
-import hudson.model.ItemGroup;
+import hudson.model.*;
+import hudson.model.Queue;
 import hudson.model.Queue.Task;
-import hudson.model.Saveable;
-import hudson.model.TopLevelItem;
 import hudson.util.CaseInsensitiveComparator;
 import hudson.util.CopyOnWriteMap;
 import hudson.widgets.HistoryWidget;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
+
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.Stapler;
@@ -180,6 +174,15 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
     protected String getCurrentBranch() {
         return (String) Stapler.getCurrentRequest().getSession().getAttribute("branchView" + getName());
+    }
+
+    public final void doBuildNow(StaplerRequest req, StaplerResponse rsp ) throws IOException, ServletException {
+        req.getView(this, "build_now.jelly").forward(req, rsp);
+
+    }
+    public List<ParameterDefinition> getParameterDefinitions(){
+        ParametersDefinitionProperty pp = getProperty(ParametersDefinitionProperty.class);
+        return pp.getParameterDefinitions();
     }
 
     @Override
