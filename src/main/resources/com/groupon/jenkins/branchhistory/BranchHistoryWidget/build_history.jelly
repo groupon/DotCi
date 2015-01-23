@@ -24,11 +24,7 @@ THE SOFTWARE.
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
   <j:set target="${it}" property="trimmed" value="${all==null}"/>
-    <table class="table table-box ">
+    <table id="dotCiBuildHistory" class="table table-box" data-first-build-number="${it.renderList.firstBuildNumber}" data-last-build-number="${it.renderList.lastBuildNumber}">
     <st:include page="entries.jelly" />
     </table>
-
-  <script defer="true">
-    updateBuildHistory("${it.baseUrl}/buildHistory/ajax",${it.nextBuildNumberToFetch});
-  </script>
 </j:jelly>

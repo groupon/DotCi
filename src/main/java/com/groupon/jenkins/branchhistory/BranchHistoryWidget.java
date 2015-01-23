@@ -33,10 +33,8 @@ import hudson.widgets.HistoryWidget;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import org.kohsuke.stapler.Header;
-import org.kohsuke.stapler.HttpResponses;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+
+import org.kohsuke.stapler.*;
 
 import javax.servlet.ServletException;
 
@@ -55,46 +53,20 @@ public class BranchHistoryWidget<T extends DbBackedBuild> extends BuildHistoryWi
         this.branch = branch;
     }
 
+    public void doAjax(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+        req.getView(this, "ajax_build_history.jelly").forward(req, rsp);
+    }
+
+    public Iterable<T> getAjaxList() {
+        StaplerRequest req = Stapler.getCurrentRequest();
+        int firstBuildNumber = Integer.parseInt(req.getParameter("firstBuildNumber"));
+        int lastBuildNumber = Integer.parseInt(req.getParameter("lastBuildNumber"));
+        return model.getBuildsInProgress(firstBuildNumber, lastBuildNumber);
+    }
+
     @Override
-    public void doAjax(StaplerRequest req, StaplerResponse rsp, @Header("n") String n) throws IOException, ServletException {
-
-        if (n == null) {
-            throw HttpResponses.error(SC_BAD_REQUEST, new IllegalArgumentException("Missing the 'n' HTTP header"));
-        }
-
-        rsp.setContentType("text/html;charset=UTF-8");
-
-        List<T> items = new LinkedList<T>();
-
-        String nn = null;
-
-        // TODO refactor getBuildsAfter and database query to be getBuildsAfterAndEqual
-        Iterable<T> builds =  model.getBuildsAfter(Integer.parseInt(n) - 1);
-        for (T t : builds) {
-            if (adapter.compare(t, n) >= 0) {
-                items.add(t);
-                if (adapter.isBuilding(t)) {
-                    nn = adapter.getKey(t);
-                }
-            } else {
-                break;
-            }
-        }
-
-        if (nn == null) {
-            if (items.isEmpty()) {
-                nn = n;
-            } else {
-                nn = adapter.getNextKey(adapter.getKey(items.get(0)));
-            }
-        }
-
-        baseList = items;
-        GReflectionUtils.setField(HistoryWidget.class, "firstTransientBuildKey", this, nn);
-
-        rsp.setHeader("n", nn);
-
-        req.getView(this, "ajaxBuildHistory.jelly").forward(req, rsp);
+    public Iterable<T> getRenderList() {
+        return this.baseList;
     }
 
     @Override

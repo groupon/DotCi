@@ -246,7 +246,7 @@ public class DynamicBuildRepository extends MongoRepository {
         DbBackedProject project = (DbBackedProject) build.getProject();
 
         Query<DbBackedBuild> query = getQuery(project);
-        filterBranch(branch,query);
+        if(branch != null)filterBranch(branch,query);
         DbBackedBuild previousBuild = query.
                 limit(1).
                 order("-number").
@@ -318,5 +318,17 @@ public class DynamicBuildRepository extends MongoRepository {
             GReflectionUtils.setField(Run.class, "project", build, project);
             build.postMorphiaLoad();
         }
+    }
+
+    public <T extends DbBackedBuild> Iterable<T> getBuildsInProgress(DbBackedProject project, String branch, int firstBuildNumber, int lastBuildNumber) {
+        Query<DbBackedBuild> query = getQuery(project);
+       if(branch !=null) filterBranch(branch,query);
+        //TODO: add this  for efficiency filter("state !=", "COMPLETED")
+        List<DbBackedBuild> builds = query.filter("number in", new Integer[]{firstBuildNumber, lastBuildNumber}).asList();
+        for(DbBackedBuild build : builds) {
+            associateProject(project, build);
+        }
+
+        return (Iterable<T>) builds;
     }
 }

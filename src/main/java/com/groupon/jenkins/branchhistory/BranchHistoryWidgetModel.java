@@ -84,6 +84,11 @@ class BranchHistoryWidgetModel<T extends DbBackedBuild> {
         return BranchHistoryWidget.MY_BUILDS_BRANCH.equals(this.branch);
     }
 
+
+    public Iterable<T> getBuildsInProgress(int firstBuildNumber, int lastBuildNumber) {
+        return filterSkipped(dynamicBuildRepository.<T> getBuildsInProgress((DbBackedProject) owner,branch,firstBuildNumber,lastBuildNumber));
+    }
+
     protected static class OffsetBuild<T> {
         private final T t;
         private final int offset;

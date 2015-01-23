@@ -24,6 +24,7 @@
 
 package com.groupon.jenkins.branchhistory;
 
+import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import java.util.Iterator;
 
@@ -37,5 +38,15 @@ public class MongoRunList<T extends DbBackedBuild> implements Iterable<T> {
     @Override
     public Iterator<T> iterator() {
         return model.getBaseList().iterator();
+    }
+    public int getLastBuildNumber(){
+        T firstBuild = Iterables.getFirst(this, null);
+        return firstBuild == null? 0 : firstBuild.getNumber();
+
+    }
+
+    public int getFirstBuildNumber(){
+        T lastBuild = Iterables.getLast(this, null);
+        return lastBuild == null? 0 : lastBuild.getNumber();
     }
 }

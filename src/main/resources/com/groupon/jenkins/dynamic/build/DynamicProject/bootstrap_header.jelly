@@ -41,6 +41,7 @@
     <link rel="stylesheet" href="${resURL}/plugin/DotCi/octicons/octicons.css"/>
     <link rel="stylesheet" href="${resURL}/plugin/DotCi/css/build_history_styling.css"/>
     <link rel="stylesheet" href="${resURL}/plugin/DotCi/css/dynamic_build.css"/>
+    <script src="${resURL}/plugin/DotCi/js/dotci_build_history.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.3.0/bootbox.min.js"></script>
 </l:header>
  </j:jelly>
