@@ -68,7 +68,8 @@ public class BranchHistoryWidget<T extends DbBackedBuild> extends BuildHistoryWi
 
         String nn = null;
 
-        Iterable<T> builds = model.getBuildsAfter(n);
+        // TODO refactor getBuildsAfter and database query to be getBuildsAfterAndEqual
+        Iterable<T> builds =  model.getBuildsAfter(Integer.parseInt(n) - 1);
         for (T t : builds) {
             if (adapter.compare(t, n) >= 0) {
                 items.add(t);
