@@ -40,9 +40,10 @@ public class MongoRunList<T extends DbBackedBuild> implements Iterable<T> {
         return model.getBaseList().iterator();
     }
     public int getLastBuildNumber(){
-        T firstBuild = Iterables.getFirst(this, null);
-        return firstBuild == null? 0 : firstBuild.getNumber();
-
+        //Paginate
+        //T firstBuild = Iterables.getFirst(this, null);
+        //return firstBuild == null? 0 : firstBuild.getNumber();
+        return -1;
     }
 
     public int getFirstBuildNumber(){

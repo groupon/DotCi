@@ -324,7 +324,12 @@ public class DynamicBuildRepository extends MongoRepository {
         Query<DbBackedBuild> query = getQuery(project);
        if(branch !=null) filterBranch(branch,query);
         //TODO: add this  for efficiency filter("state !=", "COMPLETED")
-        List<DbBackedBuild> builds = query.filter("number in", new Integer[]{firstBuildNumber, lastBuildNumber}).asList();
+        List<DbBackedBuild> builds;
+        if(lastBuildNumber > 0){
+            builds = query.filter("number in", new Integer[]{firstBuildNumber, lastBuildNumber}).asList();
+        }else{
+          builds = query.filter("number >=", lastBuildNumber).asList();
+        }
         for(DbBackedBuild build : builds) {
             associateProject(project, build);
         }

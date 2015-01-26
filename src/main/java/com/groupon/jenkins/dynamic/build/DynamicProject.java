@@ -50,6 +50,8 @@ import java.util.*;
 import jenkins.model.Jenkins;
 import jenkins.model.ParameterizedJobMixIn;
 import jenkins.util.TimeDuration;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
@@ -186,20 +188,40 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
     }
 
-    private void scheduleBuild(StaplerRequest req, StaplerResponse rsp) throws IOException {
+    private void scheduleBuild(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
         List<ParameterValue> values = new ArrayList<ParameterValue>();
-        for (ParameterDefinition d: getParameterDefinitions()) {
-            ParameterValue value = d.createValue(req);
-            if (value != null) {
-                values.add(value);
+
+        JSONObject formData = req.getSubmittedForm();
+        JSONArray a = JSONArray.fromObject(formData.get("parameter"));
+
+        for (Object o : a) {
+            JSONObject jo = (JSONObject) o;
+            String name = jo.getString("name");
+
+            ParameterDefinition d = getParameterDefinition(name);
+            if(d==null)
+                throw new IllegalArgumentException("No such parameter definition: " + name);
+            ParameterValue parameterValue = d.createValue(req, jo);
+            if (parameterValue != null) {
+                values.add(parameterValue);
+            } else {
+                throw new IllegalArgumentException("Cannot retrieve the parameter value: " + name);
             }
         }
+
         TimeDuration delay = new TimeDuration(getQuietPeriod());
 
         Queue.Item item = Jenkins.getInstance().getQueue().schedule2(
                 this, delay.getTime(), new ParametersAction(values), ParameterizedJobMixIn.getBuildCause(this, req)).getItem();
 
         rsp.sendRedirect(".");
+    }
+
+    private ParameterDefinition getParameterDefinition(String name) {
+        for (ParameterDefinition pd : getParameterDefinitions())
+            if (pd.getName().equals(name))
+                return pd;
+        return null;
     }
 
     public List<ParameterDefinition> getParameterDefinitions(){

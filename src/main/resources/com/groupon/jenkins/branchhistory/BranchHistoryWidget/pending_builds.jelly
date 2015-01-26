@@ -28,16 +28,15 @@
     <j:if test="${!pending.isEmpty()}">
         <j:forEach var="item" items="${queuedItems}" indexVar="i">
             <j:set var="id" value="${h.generateId()}"/>
-            <tr class="build-row build-pending transitive single-line" id="pending_build_${item.id}">
+            <j:set var="buildNumber" value="${queuedItems.size()==1 ? it.owner.nextBuildNumber : it.owner.nextBuildNumber+queuedItems.size()-i-1}"/>
+            <tr class="build-row build-pending transitive single-line" id="build_${buildNumber}">
                 <td class="build-row-cell">
                     <div class="pane build-name">
                         <div class="build-icon">
                             <l:icon class="icon-grey icon-sm"/>
                         </div>
-                        <!-- Don't use math unless needed, in case nextBuildNumber is not numeric -->
                         <div class="display-name">
-                            #${queuedItems.size()==1 ? it.owner.nextBuildNumber
-                               : it.owner.nextBuildNumber+queuedItems.size()-i-1}
+                            #${buildNumber}
                         </div>
                     </div>
                     <div class="pane build-details indent-multiline">
