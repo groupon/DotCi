@@ -35,12 +35,12 @@
                         </h3>
                     </div>
                     <div class="col-xs-3">
-                        <a  class="btn btn-default btn-sm" href="build?delay=0sec">
+                        <a  class="btn btn-success btn-sm" href="build?delay=0sec" id="build-now">
                             <i class="fa fa-rocket"></i> Build Now
                         </a>
                         </div>
                     <div class="col-xs-3">
-                        <a class="btn btn-default btn-sm" id="settings-button" href="configure"  style="">
+                        <a class="btn btn-default btn-sm " id="job-settings" href="configure"  style="">
                             <i class="fa fa-cog"></i> Settings</a>
                     </div>
 

@@ -1,5 +1,11 @@
-#settings-button{
-text-decoration: none;
+#job-settings{
 background-color:#a6adad;
-color: white
+color: white;
+text-decoration: none;
+decoration: none;
+}
+
+#build-now{
+text-decoration: none;
+decoration: none;
 }
