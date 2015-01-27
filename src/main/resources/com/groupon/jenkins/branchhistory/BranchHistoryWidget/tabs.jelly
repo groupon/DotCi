@@ -26,22 +26,20 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
     <ul class="nav  nav-tabs">
-        <li role="presentation" class="${it.branch == null?'active':''}"><a href="branchBuilds/all" style="text-decoration: none" ><i class="fa fa-users" style="color:grey"></i> All</a></li>
-        <li role="presentation" class="${it.branch == 'mine'?'active':''}"><a href="branchBuilds/mine" style="text-decoration: none"><span class="octicon octicon-person" style="color:grey"></span>mine</a></li>
+        <li role="presentation" class="${it.branch == null?'active':''}"><a href="branchBuilds/all" class="build-history-tab-button" ><i class="fa fa-users" style="color:grey"></i> All</a></li>
+        <li role="presentation" class="${it.branch == 'mine'?'active':''}"><a href="branchBuilds/mine" class="build-history-tab-button"><span class="octicon octicon-person" style="color:grey"></span>mine</a></li>
         <j:forEach var="s" items="${it.owner.branchTabs}">
             <li role="presentation" class="${it.branch == s?'active':''}" >
-                <a href="branchBuilds/${s}"  style="text-decoration: none">
+                <a href="branchBuilds/${s}"  class="build-history-tab-button" >
                     <span class="octicon octicon-git-branch" style="color:grey"></span>
                     ${s}
-                    <button  type="button" class="close"  aria-hidden="true" onclick="dotCiRemoveTab(event,'${s}')">
-                        <i class="fa fa-times pull-right" ></i>
-                    </button>
+                    <button class="close closeTab" type="button" onclick="dotCiRemoveTab(event,'${s}')" >×</button>
                 </a>
             </li>
         </j:forEach>
 
         <li role="presentation"  >
-            <a href="#" id="addNewTab"  style="text-decoration: none">
+            <a href="#" id="addNewTab"  class="build-history-tab-button" >
                 <span class="octicon octicon-plus"></span>
             </a>
         </li>
