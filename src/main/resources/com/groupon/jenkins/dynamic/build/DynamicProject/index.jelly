@@ -35,7 +35,7 @@
                         </h3>
                     </div>
                     <div class="col-xs-3">
-                        <a data-toggle="modal" class="btn btn-info" href="buildNow" data-target="#exampleModal">Build Now</a>
+                        <a  class="btn btn-default btn-sm" href="build?delay=0sec">Build Now</a>
                         </div>
                     <div class="col-xs-3">
                         <a class="btn btn-default btn-sm" id="settings-button" href="configure"  style="">
