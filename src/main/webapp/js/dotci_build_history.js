@@ -34,10 +34,29 @@ var dotCiRemoveTab = function(e) {
     window.location.href = 'buildHistory/removeTab?tab=' + tab;
 };
 
-jQuery(document).ready(function () {
-    setInterval(updateDotCiBuildHistory, 1000 * 5);//Every 5 seconds
+
+var dotCiSwitchTab = function(e) {
+    var $this = jQuery(this),
+        loadurl = $this.attr('href'),
+        targ = $this.attr('data-target');
+
+    jQuery.get(loadurl, function(data) {
+        jQuery(targ).html(data);
+    });
+    $this.tab('show');
+    //e.preventDefault();
+    return false;
+};
+
+
+
+
+jQuery(document).ready(function ($) {
+  //  setInterval(updateDotCiBuildHistory, 1000 * 5);//Every 5 seconds
     jQuery("#addNewTab").click(addNewDotCiTab);
     jQuery("#removeTab").click(dotCiRemoveTab);
+    jQuery('[data-toggle="tabajax"]').click(dotCiSwitchTab)
 });
+
 
 

@@ -23,54 +23,70 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.branchhistory;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
-import hudson.widgets.BuildHistoryWidget;
+import hudson.widgets.Widget;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import javax.servlet.ServletException;
+import javax.swing.plaf.basic.BasicHTML;
 import java.io.IOException;
 import java.util.Collections;
 
 
-public class BranchHistoryWidget<T extends DbBackedBuild> extends BuildHistoryWidget<T> {
+public class BranchHistoryWidget extends Widget{
+
 
     protected static final int BUILD_COUNT = 30;
     public static final String TAB_SELECTION = "tabSelection";
-    private final BranchHistoryWidgetModel<T> model;
-
-
-
-    public BranchHistoryWidget(DynamicProject owner,  hudson.widgets.HistoryWidget.Adapter<? super T> adapter, DynamicBuildRepository dynamicBuildRepository) {
-        super(owner, new MongoRunList<T>(new BranchHistoryWidgetModel<T>(owner, dynamicBuildRepository, getCurrentTab(owner))), adapter);
-        this.model = new BranchHistoryWidgetModel<T>(owner, dynamicBuildRepository, getCurrentTab(owner));
-    }
-
-
-
-
-    public void doAjax(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-        req.getView(this, "ajax_build_history.jelly").forward(req, rsp);
-    }
-
-    public Iterable<T> getAjaxList() {
-        StaplerRequest req = Stapler.getCurrentRequest();
-        int firstBuildNumber = Integer.parseInt(req.getParameter("firstBuildNumber"));
-        int lastBuildNumber = Integer.parseInt(req.getParameter("lastBuildNumber"));
-        return model.getBuildsInProgress(firstBuildNumber, lastBuildNumber);
-    }
+    private final DynamicProject project;
+    private final  DynamicBuildRepository dynamicBuildRepository;
+    private final Iterable<BuildHistoryTab> tabs;
+    private final BuildHistoryTab currentTab;
 
     @Override
-    public Iterable<T> getRenderList() {
-        return this.baseList;
+    public String getUrlName() {
+        return "buildHistory";
     }
+
+
+
+    public BranchHistoryWidget(DynamicProject project, DynamicBuildRepository dynamicBuildRepository) {
+        this.project = project;
+        this.dynamicBuildRepository = dynamicBuildRepository;
+        this.tabs = intializeTabs();
+        this.currentTab = getActiveTab(tabs);
+        currentTab.setActive();
+    }
+
+    public BranchHistoryWidget(DynamicProject project) {
+        this(project, SetupConfig.get().getDynamicBuildRepository());
+    }
+
+
+//    public void doAjax(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+//        req.getView(this, "ajax_build_history.jelly").forward(req, rsp);
+//    }
+//
+//    public Iterable<DynamicBuild> getAjaxList() {
+//        StaplerRequest req = Stapler.getCurrentRequest();
+//        int firstBuildNumber = Integer.parseInt(req.getParameter("firstBuildNumber"));
+//        int lastBuildNumber = Integer.parseInt(req.getParameter("lastBuildNumber"));
+//        return model.getBuildsInProgress(firstBuildNumber, lastBuildNumber);
+//    }
+
+
+
+
 
 
 
@@ -79,61 +95,68 @@ public class BranchHistoryWidget<T extends DbBackedBuild> extends BuildHistoryWi
     }
 
     public Iterable<BuildHistoryTab> getTabs(){
-        DynamicProjectBranchTabsProperty tabsProperty = getTabsProperty();
-        Iterable<BuildHistoryTab> tabs = BuildHistoryTab.getTabs(tabsProperty == null ? Collections.<String>emptyList() : tabsProperty.getBranches());
-        setActiveTab(tabs);
         return tabs;
     }
-    public void doSwitchTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        String tab  = req.getRestOfPath().replace("/","");
-        req.getSession().setAttribute(TAB_SELECTION + owner.getName(), tab);
-        rsp.forwardToPreviousPage(req);
+    public Iterable<BuildHistoryTab> intializeTabs(){
+        DynamicProjectBranchTabsProperty tabsProperty = getTabsProperty();
+        Iterable<BuildHistoryTab> tabs = BuildHistoryTab.getTabs(tabsProperty == null ? Collections.<String>emptyList() : tabsProperty.getBranches());
+        return tabs;
     }
 
-    public void doTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        String tab  = req.getParameter("branch");
+    public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
+        req.getSession().setAttribute(TAB_SELECTION + project.getName(), token);
+        return findTab(token);
+    }
+
+    private BuildHistoryTab findTab(final String tabUrl) {
+       return Iterables.find(tabs, new Predicate<BuildHistoryTab>() {
+           @Override
+           public boolean apply(BuildHistoryTab buildHistoryTab) {
+               return buildHistoryTab.getUrl().equals(tabUrl);
+           }
+       });
+    }
+
+    public void doAddTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+        String tab  = req.getParameter("tab");
         if(StringUtils.isNotEmpty(tab)){
             DynamicProjectBranchTabsProperty branchTabsProperty = getTabsProperty();
             if(branchTabsProperty == null){
                 branchTabsProperty =     new DynamicProjectBranchTabsProperty(tab);
-                ((DynamicProject)owner).addProperty(branchTabsProperty);
+                project.addProperty(branchTabsProperty);
             }else{
                 branchTabsProperty.addBranch(tab);
             }
-            ((DynamicProject)owner).save();
+            project.save();
         }
         rsp.forwardToPreviousPage(req);
     }
 
     public void doRemoveTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        String tab  = req.getParameter("branch");
+        String tab  = req.getParameter("tab");
         if(StringUtils.isNotEmpty(tab)){
             DynamicProjectBranchTabsProperty branchTabsProperty = getTabsProperty();
             branchTabsProperty.removeBranch(tab);
-            ((DynamicProject)owner).save();
+            project.save();
         }
-        req.getSession().removeAttribute(TAB_SELECTION + owner.getName());
+        req.getSession().removeAttribute(TAB_SELECTION + project.getName());
         rsp.forwardToPreviousPage(req);
     }
 
     private DynamicProjectBranchTabsProperty getTabsProperty() {
-        return  ((DynamicProject)owner).getProperty(DynamicProjectBranchTabsProperty.class);
+        return  project.getProperty(DynamicProjectBranchTabsProperty.class);
     }
 
-    private void setActiveTab(Iterable<BuildHistoryTab> tabs) {
-        String currentTab = getCurrentTab((DynamicProject) owner);
-        if(currentTab == null){
-            Iterables.get(tabs, 0).setActive();
-        }else{
-          for(BuildHistoryTab buildHistoryTab : tabs){
-              if(buildHistoryTab.getUrl().equals(currentTab)){
-                  buildHistoryTab.setActive();
-              }
-          }
+    private BuildHistoryTab getActiveTab(Iterable<BuildHistoryTab> tabs) {
+        for(BuildHistoryTab buildHistoryTab : tabs){
+            if(buildHistoryTab.getUrl().equals(getCurrentTab())){
+                return  buildHistoryTab;
+            }
         }
+        return  Iterables.get(tabs, 0);
     }
 
-    protected static String getCurrentTab(DynamicProject owner) {
-        return (String) Stapler.getCurrentRequest().getSession().getAttribute(TAB_SELECTION + owner.getName());
+    protected  String getCurrentTab() {
+        return (String) Stapler.getCurrentRequest().getSession().getAttribute(TAB_SELECTION + project.getName());
     }
 }

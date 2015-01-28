@@ -47,6 +47,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import hudson.widgets.Widget;
 import jenkins.model.Jenkins;
 import jenkins.model.ParameterizedJobMixIn;
 import jenkins.util.TimeDuration;
@@ -165,17 +166,12 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     }
 
 
-
     @Override
-    protected HistoryWidget createHistoryWidget() {
-        return new BranchHistoryWidget(
-                this,
-                HISTORY_ADAPTER,
-                SetupConfig.get().getDynamicBuildRepository()
-        );
+    public List<Widget> getWidgets() {
+        List<Widget> widgets = new ArrayList<Widget>();
+        widgets.add(new BranchHistoryWidget(this));
+        return widgets;
     }
-
-
 
     @Override
     public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {

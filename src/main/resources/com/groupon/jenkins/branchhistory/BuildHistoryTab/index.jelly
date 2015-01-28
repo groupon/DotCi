@@ -21,39 +21,7 @@
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   ~ THE SOFTWARE.
   -->
-
-
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-
-
-  <div role="tabpanel">
-
-    <ul class="nav  nav-tabs">
-      <j:forEach var="tab" items="${it.tabs}">
-        <li role="presentation" class="${tab.active?'active':''}">
-          <a href="buildHistory/${tab.url}" class="build-history-tab-button" data-target="#${tab.url}" data-toggle="tabajax" >
-            <span class="${tab.font} ${tab.state}" ></span>
-            ${tab.name}
-            <j:if test="${tab.removable}">
-              <button class="close closeTab" type="button" id="removeTab" data-name='${tab.name}' >×</button>
-            </j:if>
-
-          </a>
-        </li>
-      </j:forEach>
-      <li role="presentation"  >
-        <a href="#" id="addNewTab"  class="build-history-tab-button" >
-          <span class="octicon octicon-plus"></span>
-        </a>
-      </li>
-    </ul>
-
-    <div class="tab-content">
-      <j:forEach var="tab" items="${it.tabs}">
-        <div role="tabpanel" class="tab-pane ${tab.active?'active':''}" id="${tab.url}">${tab.name}</div>
-      </j:forEach>
-   </div>
-  </div>
-
+<h4>Meowlicious</h4>
 </j:jelly>
