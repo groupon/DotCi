@@ -32,7 +32,7 @@ public class BuildHistoryTab {
     private boolean active;
     private String url;
     private String font;
-    private String color;
+    private String state;
     private String name;
     private boolean removable;
     private static BuildHistoryTab getAll(){
@@ -46,10 +46,10 @@ public class BuildHistoryTab {
     private static BuildHistoryTab getBranch(String branch){
         return new BuildHistoryTab(branch,"octicon octicon-git-branch","grey",branch, true);
     }
-    public BuildHistoryTab(String url, String font, String color, String name, boolean removable) {
+    public BuildHistoryTab(String url, String font, String state, String name, boolean removable) {
         this.url = url;
         this.font = font;
-        this.color = color;
+        this.state = state;
         this.name = name;
         this.removable = removable;
     }
@@ -64,8 +64,8 @@ public class BuildHistoryTab {
         return font;
     }
 
-    public String getColor(){
-        return color;
+    public String getState(){
+        return state;
     }
     public String getName(){
         return name;
@@ -82,5 +82,9 @@ public class BuildHistoryTab {
             tabs.add(getBranch(branch));
         }
         return tabs;
+    }
+
+    public void setActive() {
+       this.active =true;
     }
 }

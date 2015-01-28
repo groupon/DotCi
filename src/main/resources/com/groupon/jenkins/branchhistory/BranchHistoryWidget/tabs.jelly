@@ -29,10 +29,10 @@
         <j:forEach var="tab" items="${it.tabs}">
         <li role="presentation" class="${tab.active?'active':''}">
             <a href="buildHistory/switchTab/${tab.url}" class="build-history-tab-button" >
-                <span class="${tab.font}" style="color:${tab.color}"></span>
+                <span class="${tab.font} ${tab.state}" ></span>
                  ${tab.name}
                 <j:if test="${tab.removable}">
-                    <button class="close closeTab" type="button" onclick="dotCiRemoveTab(event,'${tab.name}')" >×</button>
+                    <button class="close closeTab" type="button" id="removeTab" data-name='${tab.name}' >×</button>
                 </j:if>
 
             </a>
@@ -47,19 +47,6 @@
 
     <script>
 
-        jQuery( "#addNewTab" ).click(function() {
-        bootbox.prompt("Branch Regex", function(result) {
-        if(result != null){
-           window.location.href = 'addNewBranchTab?branch='+result;
-        }
-        });
-        });
-
-        function dotCiRemoveTab(e,tab){
-        e.preventDefault();
-        e.stopPropagation();
-          window.location.href = 'removeTab?branch='+tab;
-        }
     </script>
 
 </j:jelly>

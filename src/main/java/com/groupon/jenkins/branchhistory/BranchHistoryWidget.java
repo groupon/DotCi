@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.branchhistory;
 
+import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
@@ -42,54 +43,16 @@ import java.util.Collections;
 public class BranchHistoryWidget<T extends DbBackedBuild> extends BuildHistoryWidget<T> {
 
     protected static final int BUILD_COUNT = 30;
-    protected static final String MY_BUILDS_BRANCH = "mine";
+    public static final String TAB_SELECTION = "tabSelection";
     private final BranchHistoryWidgetModel<T> model;
 
 
-    protected static String getCurrentBranch(DynamicProject owner) {
-        return (String) Stapler.getCurrentRequest().getSession().getAttribute("branchView" + owner.getName());
-    }
 
     public BranchHistoryWidget(DynamicProject owner,  hudson.widgets.HistoryWidget.Adapter<? super T> adapter, DynamicBuildRepository dynamicBuildRepository) {
-        super(owner, new MongoRunList<T>(new BranchHistoryWidgetModel<T>(owner, dynamicBuildRepository, getCurrentBranch(owner))), adapter);
-        this.model = new BranchHistoryWidgetModel<T>(owner, dynamicBuildRepository, getCurrentBranch(owner));
+        super(owner, new MongoRunList<T>(new BranchHistoryWidgetModel<T>(owner, dynamicBuildRepository, getCurrentTab(owner))), adapter);
+        this.model = new BranchHistoryWidgetModel<T>(owner, dynamicBuildRepository, getCurrentTab(owner));
     }
 
-    public void doSwitchTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        String tab  = req.getRestOfPath().replace("/","");
-        req.getSession().setAttribute("tabSelection" + owner.getName(), tab);
-        rsp.forwardToPreviousPage(req);
-    }
-
-    public void doAddNewBranchTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        String tab  = req.getParameter("branch");
-        if(StringUtils.isNotEmpty(tab)){
-            DynamicProjectBranchTabsProperty branchTabsProperty = getTabsProperty();
-            if(branchTabsProperty == null){
-                branchTabsProperty =     new DynamicProjectBranchTabsProperty(tab);
-                ((DynamicProject)owner).addProperty(branchTabsProperty);
-            }else{
-                branchTabsProperty.addBranch(tab);
-            }
-            ((DynamicProject)owner).save();
-        }
-        rsp.forwardToPreviousPage(req);
-    }
-
-    public void doRemoveTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        String tab  = req.getParameter("branch");
-        if(StringUtils.isNotEmpty(tab)){
-            DynamicProjectBranchTabsProperty branchTabsProperty = getTabsProperty();
-            branchTabsProperty.removeBranch(tab);
-            ((DynamicProject)owner).save();
-        }
-        req.getSession().removeAttribute("branchView" + owner.getName());
-        rsp.forwardToPreviousPage(req);
-    }
-
-    private DynamicProjectBranchTabsProperty getTabsProperty() {
-        return  ((DynamicProject)owner).getProperty(DynamicProjectBranchTabsProperty.class);
-    }
 
 
 
@@ -117,6 +80,60 @@ public class BranchHistoryWidget<T extends DbBackedBuild> extends BuildHistoryWi
 
     public Iterable<BuildHistoryTab> getTabs(){
         DynamicProjectBranchTabsProperty tabsProperty = getTabsProperty();
-        return  BuildHistoryTab.getTabs(tabsProperty == null ? Collections.<String>emptyList():tabsProperty.getBranches());
+        Iterable<BuildHistoryTab> tabs = BuildHistoryTab.getTabs(tabsProperty == null ? Collections.<String>emptyList() : tabsProperty.getBranches());
+        setActiveTab(tabs);
+        return tabs;
+    }
+    public void doSwitchTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+        String tab  = req.getRestOfPath().replace("/","");
+        req.getSession().setAttribute(TAB_SELECTION + owner.getName(), tab);
+        rsp.forwardToPreviousPage(req);
+    }
+
+    public void doTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+        String tab  = req.getParameter("branch");
+        if(StringUtils.isNotEmpty(tab)){
+            DynamicProjectBranchTabsProperty branchTabsProperty = getTabsProperty();
+            if(branchTabsProperty == null){
+                branchTabsProperty =     new DynamicProjectBranchTabsProperty(tab);
+                ((DynamicProject)owner).addProperty(branchTabsProperty);
+            }else{
+                branchTabsProperty.addBranch(tab);
+            }
+            ((DynamicProject)owner).save();
+        }
+        rsp.forwardToPreviousPage(req);
+    }
+
+    public void doRemoveTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+        String tab  = req.getParameter("branch");
+        if(StringUtils.isNotEmpty(tab)){
+            DynamicProjectBranchTabsProperty branchTabsProperty = getTabsProperty();
+            branchTabsProperty.removeBranch(tab);
+            ((DynamicProject)owner).save();
+        }
+        req.getSession().removeAttribute(TAB_SELECTION + owner.getName());
+        rsp.forwardToPreviousPage(req);
+    }
+
+    private DynamicProjectBranchTabsProperty getTabsProperty() {
+        return  ((DynamicProject)owner).getProperty(DynamicProjectBranchTabsProperty.class);
+    }
+
+    private void setActiveTab(Iterable<BuildHistoryTab> tabs) {
+        String currentTab = getCurrentTab((DynamicProject) owner);
+        if(currentTab == null){
+            Iterables.get(tabs, 0).setActive();
+        }else{
+          for(BuildHistoryTab buildHistoryTab : tabs){
+              if(buildHistoryTab.getUrl().equals(currentTab)){
+                  buildHistoryTab.setActive();
+              }
+          }
+        }
+    }
+
+    protected static String getCurrentTab(DynamicProject owner) {
+        return (String) Stapler.getCurrentRequest().getSession().getAttribute(TAB_SELECTION + owner.getName());
     }
 }

@@ -67,7 +67,7 @@ class BranchHistoryWidgetModel<T extends DbBackedBuild> {
     }
 
     private boolean isMyBuilds() {
-        return BranchHistoryWidget.MY_BUILDS_BRANCH.equals(this.branch);
+        return false;// BranchHistoryWidget.MY_BUILDS_BRANCH.equals(this.branch);
     }
 
 
