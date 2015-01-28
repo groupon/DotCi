@@ -26,18 +26,18 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
     <ul class="nav  nav-tabs">
-        <li role="presentation" class="${it.branch == null?'active':''}"><a href="branchBuilds/all" class="build-history-tab-button" ><i class="fa fa-users" style="color:grey"></i> All</a></li>
-        <li role="presentation" class="${it.branch == 'mine'?'active':''}"><a href="branchBuilds/mine" class="build-history-tab-button"><span class="octicon octicon-person" style="color:grey"></span>mine</a></li>
-        <j:forEach var="s" items="${it.owner.branchTabs}">
-            <li role="presentation" class="${it.branch == s?'active':''}" >
-                <a href="branchBuilds/${s}"  class="build-history-tab-button" >
-                    <span class="octicon octicon-git-branch" style="color:grey"></span>
-                    ${s}
-                    <button class="close closeTab" type="button" onclick="dotCiRemoveTab(event,'${s}')" >×</button>
-                </a>
-            </li>
-        </j:forEach>
+        <j:forEach var="tab" items="${it.tabs}">
+        <li role="presentation" class="${tab.active?'active':''}">
+            <a href="buildHistory/switchTab/${tab.url}" class="build-history-tab-button" >
+                <span class="${tab.font}" style="color:${tab.color}"></span>
+                 ${tab.name}
+                <j:if test="${tab.removable}">
+                    <button class="close closeTab" type="button" onclick="dotCiRemoveTab(event,'${tab.name}')" >×</button>
+                </j:if>
 
+            </a>
+        </li>
+        </j:forEach>
         <li role="presentation"  >
             <a href="#" id="addNewTab"  class="build-history-tab-button" >
                 <span class="octicon octicon-plus"></span>

@@ -55,21 +55,7 @@ class BranchHistoryWidgetModel<T extends DbBackedBuild> {
         return filterSkipped(isMyBuilds() ? dynamicBuildRepository.<T> getCurrentUserBuilds(((DbBackedProject) owner), BranchHistoryWidget.BUILD_COUNT) : dynamicBuildRepository.<T> getLast((DbBackedProject) owner, BranchHistoryWidget.BUILD_COUNT, branch));
     }
 
-    public OffsetBuild<T> getNextBuildToFetch(Iterable<T> builds, HistoryWidget.Adapter<? super T> adapter) {
-        ArrayList<T> list = Lists.newArrayList(builds);
-        if (!list.isEmpty()) {
-            ListIterator<T> listIterator = list.listIterator(list.size());
 
-            while (listIterator.hasPrevious()) {
-                T record = listIterator.previous();
-                if (adapter.isBuilding(record))
-                    return new OffsetBuild<T>(record, 0);
-            }
-
-            return new OffsetBuild(list.get(0), 1);
-        }
-        return new OffsetBuild<T>(null, 0);
-    }
 
     private Iterable<T> filterSkipped(Iterable<T> builds) {
         return Iterables.filter(builds, new Predicate<T>() {
@@ -89,20 +75,4 @@ class BranchHistoryWidgetModel<T extends DbBackedBuild> {
         return filterSkipped(dynamicBuildRepository.<T> getBuildsInProgress((DbBackedProject) owner,branch,firstBuildNumber,lastBuildNumber));
     }
 
-    protected static class OffsetBuild<T> {
-        private final T t;
-        private final int offset;
-
-        public OffsetBuild(T t, int offset) {
-            this.t = t;
-            this.offset = offset;
-        }
-
-        public String getBuildNumber(HistoryWidget.Adapter<? super T> adapter) {
-            if (t == null) {
-                return "1";
-            }
-            return String.valueOf(Integer.valueOf(adapter.getKey(t)) + offset);
-        }
-    }
 }

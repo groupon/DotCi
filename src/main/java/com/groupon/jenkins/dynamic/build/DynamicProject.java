@@ -171,13 +171,8 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         return new BranchHistoryWidget(
                 this,
                 HISTORY_ADAPTER,
-                SetupConfig.get().getDynamicBuildRepository(),
-                getCurrentBranch()
+                SetupConfig.get().getDynamicBuildRepository()
         );
-    }
-
-    protected String getCurrentBranch() {
-        return (String) Stapler.getCurrentRequest().getSession().getAttribute("branchView" + getName());
     }
 
 
@@ -199,46 +194,11 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         return permalink;
     }
 
-    public void doBranchBuilds(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        String tab  = req.getRestOfPath().replace("/","");
-        handleBranchTabs(tab, req);
-        rsp.forwardToPreviousPage(req);
-    }
-
-    public void doAddNewBranchTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        String tab  = req.getParameter("branch");
-        if(StringUtils.isNotEmpty(tab)){
-            DynamicProjectBranchTabsProperty branchTabsProperty = getProperty(DynamicProjectBranchTabsProperty.class);
-            if(branchTabsProperty == null){
-               branchTabsProperty =     new DynamicProjectBranchTabsProperty(tab);
-               addProperty(branchTabsProperty);
-            }else{
-                branchTabsProperty.addBranch(tab);
-            }
-            save();
-        }
-        rsp.forwardToPreviousPage(req);
-    }
 
 
-    public void doRemoveTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        String tab  = req.getParameter("branch");
-        if(StringUtils.isNotEmpty(tab)){
-            DynamicProjectBranchTabsProperty branchTabsProperty = getProperty(DynamicProjectBranchTabsProperty.class);
-            branchTabsProperty.removeBranch(tab);
-            save();
-        }
-        req.getSession().removeAttribute("branchView" + getName());
-        rsp.forwardToPreviousPage(req);
-    }
 
-    private void handleBranchTabs(String branch, StaplerRequest req) {
-        if("all".equals(branch)){
-            req.getSession().removeAttribute("branchView" + this.getName());
-        }else{
-            req.getSession().setAttribute("branchView" + this.getName(), branch);
-        }
-    }
+
+
 
     @Override
     protected Class<DynamicBuild> getBuildClass() {
