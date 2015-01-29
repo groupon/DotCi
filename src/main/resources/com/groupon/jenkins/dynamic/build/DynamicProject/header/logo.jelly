@@ -22,15 +22,6 @@
   ~ THE SOFTWARE.
   -->
 
-<?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-    <j:forEach var="w" items="${it.widgets}">
-        <st:include it="${w}" page="index.jelly" />
-    </j:forEach>
-    <p:upstream-downstream />
-    <!--<script>-->
-        <!--jQuery( document ).ready(function() {-->
-          <!--jQuery('.fixedGridLayout #main-panel').css('margin-left', '0px');-->
-        <!--});-->
-    <!--</script>-->
-</j:jelly>
+<a id="jenkins-home-link" href="${rootURL}/">
+    <img id="jenkins-head-icon" src="${imagesURL}/headshot.png" alt="title" />
+</a>

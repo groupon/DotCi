@@ -22,15 +22,31 @@
   ~ THE SOFTWARE.
   -->
 
-<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-    <j:forEach var="w" items="${it.widgets}">
-        <st:include it="${w}" page="index.jelly" />
-    </j:forEach>
-    <p:upstream-downstream />
-    <!--<script>-->
-        <!--jQuery( document ).ready(function() {-->
-          <!--jQuery('.fixedGridLayout #main-panel').css('margin-left', '0px');-->
-        <!--});-->
-    <!--</script>-->
-</j:jelly>
+    <head>
+        <j:new var="h" className="hudson.Functions" /><!-- instead of JSP functions -->
+        ${h.initPageVariables(context)}
+        <title>${h.appendIfNotNull(title, ' [Jenkins]', 'Jenkins')}</title>
+        <link rel="shortcut icon" href="${resURL}/favicon.ico" type="image/vnd.microsoft.icon" />
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script>
+         jQuery.noConflict();
+    </script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/>
+
+    <!-- Optional theme -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"/>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="${resURL}/plugin/DotCi/octicons/octicons.css"/>
+    <link rel="stylesheet" href="${resURL}/plugin/DotCi/css/build_history_styling.css"/>
+    <link rel="stylesheet" href="${resURL}/plugin/DotCi/css/dynamic_build.css"/>
+    <script src="${resURL}/plugin/DotCi/js/dotci_build_history.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.3.0/bootbox.min.js"></script>
+        </head>
+ </j:jelly>

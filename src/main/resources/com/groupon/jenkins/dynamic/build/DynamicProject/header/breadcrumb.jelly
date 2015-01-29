@@ -22,15 +22,10 @@
   ~ THE SOFTWARE.
   -->
 
-<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-    <j:forEach var="w" items="${it.widgets}">
-        <st:include it="${w}" page="index.jelly" />
-    </j:forEach>
-    <p:upstream-downstream />
-    <!--<script>-->
-        <!--jQuery( document ).ready(function() {-->
-          <!--jQuery('.fixedGridLayout #main-panel').css('margin-left', '0px');-->
-        <!--});-->
-    <!--</script>-->
+<ul class="breadcrumb  navbar-nav">
+    <li><a href="${it.parent.parent.rootUrl}">Jenkins</a></li>
+    <li><a href="${it.parent.absoluteUrl}">${it.parent.name}</a></li>
+    <li class="active">${it.name}</li>
+</ul>
 </j:jelly>

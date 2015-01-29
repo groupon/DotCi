@@ -24,9 +24,9 @@
   -->
 
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-    <l:layout title="${it.displayName}${not empty it.parent.fullDisplayName?' ['+it.parent.fullDisplayName+']':''}">
-        <st:include page="bootstrap_header.jelly" />
-        <l:main-panel>
+        <st:include page="head.jelly" />
+       <body>
+           <st:include page="header/header.jelly" />
             <div class="container-fluid" >
                 <div class="row" >
                     <div class="col-xs-4">
@@ -51,12 +51,6 @@
                     </div>
                 </div>
             </div>
-        </l:main-panel>
-    </l:layout>
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-            </div>
-        </div>
-    </div>
+
+    </body>
 </j:jelly>
