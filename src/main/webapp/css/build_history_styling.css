@@ -12,10 +12,6 @@
  font-size: 18px;
 }
 
-.build-history-tab-button{
- text-decoration: none !important;
- decoration: none !important;
-}
 
 @table-outer-border-color: #b7c7cf;
 @table-head-border-separate-color: #d8e6ec;
