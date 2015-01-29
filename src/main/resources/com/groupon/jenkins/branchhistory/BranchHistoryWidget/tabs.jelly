@@ -36,7 +36,7 @@
             <span class="${tab.font} ${tab.state}" ></span>
             ${tab.name}
             <j:if test="${tab.removable}">
-              <button class="close closeTab" type="button" id="removeTab" data-name='${tab.name}' >×</button>
+              <button class="close closeTab" type="button" id="removeTab" data-name='${tab.name}' >x</button>
             </j:if>
 
           </a>
