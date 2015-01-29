@@ -32,7 +32,7 @@
     <ul class="nav  nav-tabs">
       <j:forEach var="tab" items="${it.tabs}">
         <li role="presentation" id="tab-${tab.url}" class="${tab.active?'active':''}">
-          <a href="buildHistory/${tab.url}" class="build-history-tab-button" data-target="#${tab.url}" data-toggle="tabajax" >
+          <a href="buildHistory/${tab.url}" class="build-history-tab-button " data-target="#${tab.url}" data-toggle="tab" >
             <span class="${tab.font} ${tab.state}" ></span>
             ${tab.name}
             <j:if test="${tab.removable}">

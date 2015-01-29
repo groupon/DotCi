@@ -35,10 +35,7 @@ var dotCiRemoveTab = function(e) {
 };
 
 
-var dotCiSwitchTab = function(e) {
-
-    e.preventDefault();
-    e.stopPropagation();
+var dotCiLoadTabData = function(e) {
     var $this = jQuery(this),
         loadurl = $this.attr('href'),
         targ = $this.attr('data-target');
@@ -46,7 +43,7 @@ var dotCiSwitchTab = function(e) {
     jQuery.get(loadurl, function(data) {
         jQuery(targ).html(data);
     });
-    $this.tab('show');
+   // $this.tab('show');
     return false;
 };
 
@@ -57,7 +54,7 @@ jQuery(document).ready(function ($) {
   //  setInterval(updateDotCiBuildHistory, 1000 * 5);//Every 5 seconds
     jQuery("#addNewTab").click(addNewDotCiTab);
     jQuery(".removeTab").click(dotCiRemoveTab);
-    jQuery('[data-toggle="tabajax"]').click(dotCiSwitchTab)
+    $('a[data-toggle="tab"]').on('shown.bs.tab',  dotCiLoadTabData)
 });
 
 
