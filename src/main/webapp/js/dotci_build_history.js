@@ -35,26 +35,25 @@ var dotCiRemoveTab = function(e) {
 };
 
 
-var dotCiLoadTabData = function(e) {
-    var $this = jQuery(this),
+function dotCiLoadTab(tab) {
+    var $this = jQuery(tab),
         loadurl = $this.attr('href'),
         targ = $this.attr('data-target');
 
-    jQuery.get(loadurl, function(data) {
+    jQuery.get(loadurl, function (data) {
         jQuery(targ).html(data);
     });
-   // $this.tab('show');
-    return false;
-};
-
-
-
+}
 
 jQuery(document).ready(function ($) {
-  //  setInterval(updateDotCiBuildHistory, 1000 * 5);//Every 5 seconds
+    //  setInterval(updateDotCiBuildHistory, 1000 * 5);//Every 5 seconds
     jQuery("#addNewTab").click(addNewDotCiTab);
     jQuery(".removeTab").click(dotCiRemoveTab);
-    $('a[data-toggle="tab"]').on('shown.bs.tab',  dotCiLoadTabData)
+    $('a[data-toggle="tab"]').on('shown.bs.tab',  function(e){
+        dotCiLoadTab(this)
+        return false;})
+    var activeTab = $('a[data-toggle="tab"]').filter(function(a){return $(this).parent().hasClass('active')});
+    dotCiLoadTab(activeTab);
 });
 
 
