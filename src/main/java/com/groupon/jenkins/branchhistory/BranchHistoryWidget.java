@@ -49,7 +49,6 @@ public class BranchHistoryWidget extends Widget{
     protected static final int BUILD_COUNT = 30;
     public static final String TAB_SELECTION = "tabSelection";
     private final DynamicProject project;
-    private final  DynamicBuildRepository dynamicBuildRepository;
     private final Iterable<BuildHistoryTab> tabs;
     private final BuildHistoryTab currentTab;
 
@@ -59,17 +58,11 @@ public class BranchHistoryWidget extends Widget{
     }
 
 
-
-    public BranchHistoryWidget(DynamicProject project, DynamicBuildRepository dynamicBuildRepository) {
+    public BranchHistoryWidget(DynamicProject project) {
         this.project = project;
-        this.dynamicBuildRepository = dynamicBuildRepository;
         this.tabs = intializeTabs();
         this.currentTab = getActiveTab(tabs);
         currentTab.setActive();
-    }
-
-    public BranchHistoryWidget(DynamicProject project) {
-        this(project, SetupConfig.get().getDynamicBuildRepository());
     }
 
 
@@ -98,8 +91,7 @@ public class BranchHistoryWidget extends Widget{
         return tabs;
     }
     public Iterable<BuildHistoryTab> intializeTabs(){
-        DynamicProjectBranchTabsProperty tabsProperty = getTabsProperty();
-        Iterable<BuildHistoryTab> tabs = BuildHistoryTab.getTabs(tabsProperty == null ? Collections.<String>emptyList() : tabsProperty.getBranches());
+        Iterable<BuildHistoryTab> tabs = BuildHistoryTab.getTabs(project);
         return tabs;
     }
 

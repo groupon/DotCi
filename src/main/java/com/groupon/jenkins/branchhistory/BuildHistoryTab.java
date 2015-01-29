@@ -24,7 +24,17 @@
 
 package com.groupon.jenkins.branchhistory;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.dynamic.build.DbBackedProject;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
+import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BuildHistoryTab {
@@ -35,25 +45,44 @@ public class BuildHistoryTab {
     private String state;
     private String name;
     private boolean removable;
-    private static BuildHistoryTab getAll(){
-        return new BuildHistoryTab("all","fa fa-users","grey","All", false);
+    private DynamicProject project;
+
+    private static BuildHistoryTab getAll(DynamicProject project){
+        return new BuildHistoryTab("all","fa fa-users","grey","All", false,project);
     }
 
-    private static BuildHistoryTab getMine(){
-        return new BuildHistoryTab("mine","octicon octicon-person","grey","mine", false);
+    private static BuildHistoryTab getMine(DynamicProject project){
+        return new BuildHistoryTab("mine","octicon octicon-person","grey","mine", false,project);
     }
 
-    private static BuildHistoryTab getBranch(String branch){
-        return new BuildHistoryTab(branch,"octicon octicon-git-branch","grey",branch, true);
+    private static BuildHistoryTab getBranch(String branch, DynamicProject project){
+        return new BuildHistoryTab(branch,"octicon octicon-git-branch","grey",branch, true,project);
     }
-    public BuildHistoryTab(String url, String font, String state, String name, boolean removable) {
+    public BuildHistoryTab(String url, String font, String state, String name, boolean removable, DynamicProject project) {
         this.url = url;
         this.font = font;
         this.state = state;
         this.name = name;
         this.removable = removable;
+        this.project = project;
+    }
+    private DynamicBuildRepository getDynamicBuildRepository(){
+        return SetupConfig.get().getDynamicBuildRepository();
     }
 
+    public Iterable<DynamicBuild> getBuilds() {
+        String branch = getUrl().equals("all")?null:getUrl();
+        return filterSkipped(isMyBuilds() ? getDynamicBuildRepository().<DynamicBuild>getCurrentUserBuilds(project, BranchHistoryWidget.BUILD_COUNT) : getDynamicBuildRepository().<DynamicBuild>getLast(project, BranchHistoryWidget.BUILD_COUNT, branch));
+    }
+
+    private Iterable<DynamicBuild> filterSkipped(Iterable<DynamicBuild> builds) {
+        return Iterables.filter(builds, new Predicate<DynamicBuild>() {
+            @Override
+            public boolean apply(DynamicBuild build) {
+                return !build.isSkipped();
+            }
+        });
+    }
     public boolean isActive(){
         return active;
     }
@@ -74,17 +103,30 @@ public class BuildHistoryTab {
         return removable;
     }
 
-    public static Iterable<BuildHistoryTab> getTabs(List<String> branches) {
+    private static Iterable<BuildHistoryTab> getTabs(List<String> branches,DynamicProject project) {
         ArrayList<BuildHistoryTab> tabs = new ArrayList<BuildHistoryTab>();
-        tabs.add(getAll());
-        tabs.add(getMine());
+        tabs.add(getAll(project));
+        tabs.add(getMine(project));
         for(String branch:branches){
-            tabs.add(getBranch(branch));
+            tabs.add(getBranch(branch,project));
         }
         return tabs;
     }
 
     public void setActive() {
        this.active =true;
+    }
+
+    public static Iterable<BuildHistoryTab> getTabs(DynamicProject project) {
+        DynamicProjectBranchTabsProperty tabsProperty = getTabsProperty(project);
+        List<String> branches = tabsProperty == null ? Collections.<String>emptyList() : tabsProperty.getBranches();
+        return getTabs(branches,project);
+    }
+    private static DynamicProjectBranchTabsProperty getTabsProperty(DynamicProject project) {
+        return  project.getProperty(DynamicProjectBranchTabsProperty.class);
+    }
+
+    public boolean isMyBuilds() {
+        return getName().equals("mine");
     }
 }

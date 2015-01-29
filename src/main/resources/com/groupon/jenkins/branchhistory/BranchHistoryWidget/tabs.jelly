@@ -36,13 +36,12 @@
             <span class="${tab.font} ${tab.state}" ></span>
             ${tab.name}
             <j:if test="${tab.removable}">
-              <button class="close closeTab" type="button" id="removeTab" data-name='${tab.name}' >x</button>
+              <button class="close closeTab removeTab" type="button"  data-name='${tab.name}' >x</button>
             </j:if>
-
           </a>
         </li>
       </j:forEach>
-      <li role="presentation"  >
+      <li role="presentation">
         <a href="#" id="addNewTab"  class="build-history-tab-button" >
           <span class="octicon octicon-plus"></span>
         </a>
@@ -53,7 +52,7 @@
       <j:forEach var="tab" items="${it.tabs}">
         <div role="tabpanel" class="tab-pane ${tab.active?'active':''}" id="${tab.url}">${tab.name}</div>
       </j:forEach>
-   </div>
+    </div>
   </div>
 
 </j:jelly>

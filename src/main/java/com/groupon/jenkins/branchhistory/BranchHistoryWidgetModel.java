@@ -71,6 +71,7 @@ class BranchHistoryWidgetModel<T extends DbBackedBuild> {
     }
 
 
+
     public Iterable<T> getBuildsInProgress(int firstBuildNumber, int lastBuildNumber) {
         return filterSkipped(dynamicBuildRepository.<T> getBuildsInProgress((DbBackedProject) owner,branch,firstBuildNumber,lastBuildNumber));
     }

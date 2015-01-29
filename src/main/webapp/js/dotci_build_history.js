@@ -56,7 +56,7 @@ var dotCiSwitchTab = function(e) {
 jQuery(document).ready(function ($) {
   //  setInterval(updateDotCiBuildHistory, 1000 * 5);//Every 5 seconds
     jQuery("#addNewTab").click(addNewDotCiTab);
-    jQuery("#removeTab").click(dotCiRemoveTab);
+    jQuery(".removeTab").click(dotCiRemoveTab);
     jQuery('[data-toggle="tabajax"]').click(dotCiSwitchTab)
 });
 

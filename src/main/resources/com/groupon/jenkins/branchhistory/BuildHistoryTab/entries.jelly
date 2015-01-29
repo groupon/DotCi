@@ -25,6 +25,6 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
   <st:include page="pending_builds.jelly" />
   <j:forEach var="build" items="${it.builds}">
-    <st:include page="entry.jelly" />
+    <st:include page="build_row.jelly" />
   </j:forEach>
 </j:jelly>
