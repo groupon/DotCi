@@ -23,18 +23,24 @@
   -->
 
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-<div class="col-xs-4">
-    <h3>${not empty it.parent.fullDisplayName?it.parent.fullDisplayName+'/':''}${it.displayName}
-        <a href="${it.githubRepoUrl}" style="color:grey"><span class="octicon octicon-mark-github"/> </a>
-    </h3>
-</div>
-<div class="col-xs-3">
-<a  class="btn btn-success btn-sm" href="build?delay=0sec" id="build-now">
-    <i class="fa fa-rocket"></i> Build Now
-</a>
-</div>
-<div class="col-xs-3">
-<a class="btn btn-default btn-sm " id="job-settings" href="configure"  style="">
-    <i class="fa fa-cog"></i> Settings</a>
-</div>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+          <a class ="navbar-brand" href="${it.githubRepoUrl}" style="color:grey">  ${not empty it.parent.fullDisplayName?it.parent.fullDisplayName+'/':''}${it.displayName}<span class="octicon octicon-mark-github"/> </a>
+      </div>
+
+      <ul class="nav navbar-nav navbar-left">
+        <li>
+        <a  href="build?delay=0sec" id="build-now">
+          <i class="fa fa-rocket"></i> Build Now
+        </a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+        <a  id="job-settings" href="configure"  style="">
+          <i class="fa fa-cog"></i> Settings</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
 </j:jelly>

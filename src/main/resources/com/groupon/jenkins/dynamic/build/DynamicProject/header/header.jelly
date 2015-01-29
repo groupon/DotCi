@@ -34,8 +34,6 @@
       </div>
 
       <st:include page="header/breadcrumb.jelly" />
-        <ul class="nav navbar-nav">
-        </ul>
         <ul class="nav navbar-nav navbar-right">
           <st:include page="header/login.jelly" />
         </ul>

@@ -28,7 +28,8 @@
     <body>
         <st:include page="header/header.jelly" />
         <div class="container-fluid" >
-                <st:include page="build_history.jelly" />
+            <st:include page="job_header.jelly" />
+            <st:include page="build_history.jelly" />
         </div>
 
     </body>
