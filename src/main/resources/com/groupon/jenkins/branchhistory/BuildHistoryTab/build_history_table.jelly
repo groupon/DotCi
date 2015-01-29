@@ -23,7 +23,19 @@ THE SOFTWARE.
 -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-    <table id="dotCiBuildHistory" class="table table-box" data-first-build-number="${it.renderList.firstBuildNumber}" data-last-build-number="${it.renderList.lastBuildNumber}">
-    <st:include page="entries.jelly" />
+    <table id="dotCiBuildHistory" class="table" data-first-build-number="${it.renderList.firstBuildNumber}" data-last-build-number="${it.renderList.lastBuildNumber}">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Message</th>
+                <th>Commit</th>
+                <th>Committer</th>
+                <th>Started</th>
+            </tr>
+        </thead>
+        <st:include page="pending_builds.jelly" />
+        <j:forEach var="build" items="${it.builds}">
+            <st:include page="build_row.jelly" />
+        </j:forEach>
     </table>
 </j:jelly>
