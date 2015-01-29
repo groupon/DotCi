@@ -36,6 +36,12 @@ var dotCiRemoveTab = function(e) {
 
 
 var dotCiSwitchTab = function(e) {
+
+    e.preventDefault();
+    e.stopPropagation();
+    Event.stop(e);
+    e.stopPropagation();
+    e.cancelBubble = true;
     var $this = jQuery(this),
         loadurl = $this.attr('href'),
         targ = $this.attr('data-target');
@@ -43,8 +49,8 @@ var dotCiSwitchTab = function(e) {
     jQuery.get(loadurl, function(data) {
         jQuery(targ).html(data);
     });
+    Element.Methods = {}
     $this.tab('show');
-    //e.preventDefault();
     return false;
 };
 
