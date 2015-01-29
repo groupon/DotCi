@@ -23,9 +23,18 @@
   -->
 
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-<ul class="breadcrumb ">
-    <li><a href="${it.parent.parent.rootUrl}">Jenkins</a></li>
-    <li><a href="${it.parent.absoluteUrl}">${it.parent.name}</a></li>
-    <li class="active">${it.name}</li>
-</ul>
+<div class="col-xs-4">
+    <h3>${not empty it.parent.fullDisplayName?it.parent.fullDisplayName+'/':''}${it.displayName}
+        <a href="${it.githubRepoUrl}" style="color:grey"><span class="octicon octicon-mark-github"/> </a>
+    </h3>
+</div>
+<div class="col-xs-3">
+<a  class="btn btn-success btn-sm" href="build?delay=0sec" id="build-now">
+    <i class="fa fa-rocket"></i> Build Now
+</a>
+</div>
+<div class="col-xs-3">
+<a class="btn btn-default btn-sm " id="job-settings" href="configure"  style="">
+    <i class="fa fa-cog"></i> Settings</a>
+</div>
 </j:jelly>

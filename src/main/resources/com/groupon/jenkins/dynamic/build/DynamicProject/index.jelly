@@ -24,33 +24,12 @@
   -->
 
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-        <st:include page="head.jelly" />
-       <body>
-           <st:include page="header/header.jelly" />
-            <div class="container-fluid" >
-                <div class="row" >
-                    <div class="col-xs-4">
-                        <h3>${not empty it.parent.fullDisplayName?it.parent.fullDisplayName+'/':''}${it.displayName}
-                            <a href="${it.githubRepoUrl}" style="color:grey"><span class="octicon octicon-mark-github"/> </a>
-                        </h3>
-                    </div>
-                    <div class="col-xs-3">
-                        <a  class="btn btn-success btn-sm" href="build?delay=0sec" id="build-now">
-                            <i class="fa fa-rocket"></i> Build Now
-                        </a>
-                        </div>
-                    <div class="col-xs-3">
-                        <a class="btn btn-default btn-sm " id="job-settings" href="configure"  style="">
-                            <i class="fa fa-cog"></i> Settings</a>
-                    </div>
-
-                </div>
-                <div class="row" >
-                    <div class="col-xs-12">
-                        <st:include page="main.jelly" />
-                    </div>
-                </div>
-            </div>
+    <st:include page="head.jelly" />
+    <body>
+        <st:include page="header/header.jelly" />
+        <div class="container-fluid" >
+                <st:include page="build_history.jelly" />
+        </div>
 
     </body>
 </j:jelly>

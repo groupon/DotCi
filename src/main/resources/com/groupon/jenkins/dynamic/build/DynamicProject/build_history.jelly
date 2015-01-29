@@ -27,10 +27,4 @@
     <j:forEach var="w" items="${it.widgets}">
         <st:include it="${w}" page="index.jelly" />
     </j:forEach>
-    <p:upstream-downstream />
-    <!--<script>-->
-        <!--jQuery( document ).ready(function() {-->
-          <!--jQuery('.fixedGridLayout #main-panel').css('margin-left', '0px');-->
-        <!--});-->
-    <!--</script>-->
 </j:jelly>
