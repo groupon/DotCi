@@ -45,7 +45,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("unchecked")
-public class BranchHistoryWidgetTest {
+public class JobHistoryWidgetTest {
 
     private DynamicBuildRepository buildRepo;
     private DynamicProject project;
@@ -64,7 +64,7 @@ public class BranchHistoryWidgetTest {
         DynamicBuild skippedBuild = newBuild().skipped().get();
         when(skippedBuild.isSkipped()).thenReturn(true);
         List<? extends DbBackedBuild> builds = list(skippedBuild, unSkippedBuild);
-        when(buildRepo.getLast(project, BranchHistoryWidget.BUILD_COUNT, null)).thenReturn((Iterable<DbBackedBuild>) builds);
+        when(buildRepo.getLast(project, JobHistoryWidget.BUILD_COUNT, null)).thenReturn((Iterable<DbBackedBuild>) builds);
         assertEquals(1, Iterables.size(historyWidget.getBaseList()));
         assertEquals(unSkippedBuild, Iterables.getOnlyElement(historyWidget.getBaseList()));
     }
@@ -77,7 +77,7 @@ public class BranchHistoryWidgetTest {
         DynamicBuild runningBuild2 = newBuild().building().get();
         List<? extends DbBackedBuild> builds = list(finishedBuild, runningBuild, finishedBuild2, runningBuild2);
         String buildId = String.valueOf(runningBuild2.getNumber());
-        when(buildRepo.getLast(project, BranchHistoryWidget.BUILD_COUNT, null)).thenReturn((Iterable<DbBackedBuild>) builds);
+        when(buildRepo.getLast(project, JobHistoryWidget.BUILD_COUNT, null)).thenReturn((Iterable<DbBackedBuild>) builds);
 
         assertEquals(buildId, historyWidget.getNextBuildToFetch((Iterable<DbBackedBuild>) builds, adapter).getBuildNumber(adapter));
 
@@ -91,7 +91,7 @@ public class BranchHistoryWidgetTest {
         List<? extends DbBackedBuild> builds = list(finishedBuild, finishedBuild2, finishedBuild3);
         String buildId = String.valueOf(finishedBuild.getNumber() + 1);
 
-        when(buildRepo.getLast(project, BranchHistoryWidget.BUILD_COUNT, null)).thenReturn((Iterable<DbBackedBuild>) builds);
+        when(buildRepo.getLast(project, JobHistoryWidget.BUILD_COUNT, null)).thenReturn((Iterable<DbBackedBuild>) builds);
 
         assertEquals(buildId, historyWidget.getNextBuildToFetch((Iterable<DbBackedBuild>) builds, adapter).getBuildNumber(adapter));
 
@@ -101,7 +101,7 @@ public class BranchHistoryWidgetTest {
     public void should_return_one_for_empty_build_list() {
         String buildId = "1";
         List<? extends DbBackedBuild> builds = Collections.emptyList();
-        when(buildRepo.getLast(project, BranchHistoryWidget.BUILD_COUNT, null)).thenReturn((Iterable<DbBackedBuild>) builds);
+        when(buildRepo.getLast(project, JobHistoryWidget.BUILD_COUNT, null)).thenReturn((Iterable<DbBackedBuild>) builds);
 
         assertEquals(buildId, historyWidget.getNextBuildToFetch((Iterable<DbBackedBuild>) builds, adapter).getBuildNumber(adapter));
 

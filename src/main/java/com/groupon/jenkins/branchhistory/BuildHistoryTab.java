@@ -40,9 +40,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BuildHistoryTab {
-
-    private boolean active;
+public class BuildHistoryTab extends HistoryTab {
     private String url;
     private String font;
     private String state;
@@ -75,7 +73,7 @@ public class BuildHistoryTab {
 
     public Iterable<BuildHistoryRow> getBuilds() {
         String branch = getUrl().equals("all")?null:getUrl();
-        Iterable<BuildHistoryRow> processedBuilds = Iterables.transform(filterSkipped(isMyBuilds() ? getDynamicBuildRepository().<DynamicBuild>getCurrentUserBuilds(project, BranchHistoryWidget.BUILD_COUNT) : getDynamicBuildRepository().<DynamicBuild>getLast(project, BranchHistoryWidget.BUILD_COUNT, branch)), getBuildTransformer());
+        Iterable<BuildHistoryRow> processedBuilds = Iterables.transform(filterSkipped(isMyBuilds() ? getDynamicBuildRepository().<DynamicBuild>getCurrentUserBuilds(project, JobHistoryWidget.BUILD_COUNT) : getDynamicBuildRepository().<DynamicBuild>getLast(project, JobHistoryWidget.BUILD_COUNT, branch)), getBuildTransformer());
         return Iterables.concat(getQueuedBuilds(),processedBuilds);
     }
 
@@ -86,7 +84,7 @@ public class BuildHistoryTab {
             int number = queuedItems.size() == 1 ? project.getNextBuildNumber() : project.getNextBuildNumber() + queuedItems.size() - i - 1;
             queuedBuilds.add(new QueuedBuildHistoryRow(queuedItems.get(i),number));
         }
-       return  queuedBuilds;
+        return  queuedBuilds;
     }
 
     private Function<DynamicBuild, BuildHistoryRow> getBuildTransformer() {
@@ -106,9 +104,7 @@ public class BuildHistoryTab {
             }
         });
     }
-    public boolean isActive(){
-        return active;
-    }
+
     public String getUrl(){
         return url;
     }
@@ -126,8 +122,8 @@ public class BuildHistoryTab {
         return removable;
     }
 
-    private static Iterable<BuildHistoryTab> getTabs(List<String> branches,DynamicProject project) {
-        ArrayList<BuildHistoryTab> tabs = new ArrayList<BuildHistoryTab>();
+    private static Iterable<HistoryTab> getTabs(List<String> branches,DynamicProject project) {
+        ArrayList<HistoryTab> tabs = new ArrayList<HistoryTab>();
         tabs.add(getAll(project));
         tabs.add(getMine(project));
         for(String branch:branches){
@@ -136,11 +132,9 @@ public class BuildHistoryTab {
         return tabs;
     }
 
-    public void setActive() {
-       this.active =true;
-    }
 
-    public static Iterable<BuildHistoryTab> getTabs(DynamicProject project) {
+
+    public static Iterable<HistoryTab> getTabs(DynamicProject project) {
         DynamicProjectBranchTabsProperty tabsProperty = getTabsProperty(project);
         List<String> branches = tabsProperty == null ? Collections.<String>emptyList() : tabsProperty.getBranches();
         return getTabs(branches,project);

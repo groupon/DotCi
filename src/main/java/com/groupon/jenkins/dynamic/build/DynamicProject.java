@@ -27,7 +27,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.branchhistory.BranchHistoryWidget;
+import com.groupon.jenkins.branchhistory.JobHistoryWidget;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.dynamic.buildtype.BuildTypeProperty;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
@@ -38,29 +38,20 @@ import hudson.Extension;
 import hudson.PermalinkList;
 import hudson.matrix.Combination;
 import hudson.model.*;
-import hudson.model.Queue;
 import hudson.model.Queue.Task;
 import hudson.util.CaseInsensitiveComparator;
 import hudson.util.CopyOnWriteMap;
-import hudson.widgets.HistoryWidget;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
 import hudson.widgets.Widget;
 import jenkins.model.Jenkins;
-import jenkins.model.ParameterizedJobMixIn;
-import jenkins.util.TimeDuration;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
-import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.mongodb.morphia.annotations.PostLoad;
 import org.mongodb.morphia.annotations.PrePersist;
-
-import javax.servlet.ServletException;
 
 public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild> implements TopLevelItem, Saveable, IdentifableItemGroup<DynamicSubProject> {
     private transient Map<String, DynamicSubProject> items;
@@ -169,7 +160,7 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     @Override
     public List<Widget> getWidgets() {
         List<Widget> widgets = new ArrayList<Widget>();
-        widgets.add(new BranchHistoryWidget(this));
+        widgets.add(new JobHistoryWidget(this));
         return widgets;
     }
 

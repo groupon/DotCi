@@ -37,14 +37,14 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 
-public class BranchHistoryWidget extends Widget{
+public class JobHistoryWidget extends Widget{
 
 
     protected static final int BUILD_COUNT = 30;
     public static final String TAB_SELECTION = "tabSelection";
     private final DynamicProject project;
-    private final Iterable<BuildHistoryTab> tabs;
-    private final BuildHistoryTab currentTab;
+    private final Iterable<HistoryTab> tabs;
+    private final HistoryTab currentTab;
 
     @Override
     public String getUrlName() {
@@ -52,18 +52,18 @@ public class BranchHistoryWidget extends Widget{
     }
 
 
-    public BranchHistoryWidget(DynamicProject project) {
+    public JobHistoryWidget(DynamicProject project) {
         this.project = project;
         this.tabs = intializeTabs();
         this.currentTab = getActiveTab(tabs);
         currentTab.setActive();
     }
 
-    public Iterable<BuildHistoryTab> getTabs(){
+    public Iterable<HistoryTab> getTabs(){
         return tabs;
     }
-    public Iterable<BuildHistoryTab> intializeTabs(){
-        Iterable<BuildHistoryTab> tabs = BuildHistoryTab.getTabs(project);
+    public Iterable<HistoryTab> intializeTabs(){
+        Iterable<HistoryTab> tabs = BuildHistoryTab.getTabs(project);
         return tabs;
     }
 
@@ -72,11 +72,11 @@ public class BranchHistoryWidget extends Widget{
         return findTab(token);
     }
 
-    private BuildHistoryTab findTab(final String tabUrl) {
-       return Iterables.find(tabs, new Predicate<BuildHistoryTab>() {
+    private HistoryTab findTab(final String tabUrl) {
+       return Iterables.find(tabs, new Predicate<HistoryTab>() {
            @Override
-           public boolean apply(BuildHistoryTab buildHistoryTab) {
-               return buildHistoryTab.getUrl().equals(tabUrl);
+           public boolean apply(HistoryTab historyTab) {
+               return historyTab.getUrl().equals(tabUrl);
            }
        });
     }
@@ -111,10 +111,10 @@ public class BranchHistoryWidget extends Widget{
         return  project.getProperty(DynamicProjectBranchTabsProperty.class);
     }
 
-    private BuildHistoryTab getActiveTab(Iterable<BuildHistoryTab> tabs) {
-        for(BuildHistoryTab buildHistoryTab : tabs){
-            if(buildHistoryTab.getUrl().equals(getCurrentTab())){
-                return  buildHistoryTab;
+    private HistoryTab getActiveTab(Iterable<HistoryTab> tabs) {
+        for(HistoryTab historyTab : tabs){
+            if(historyTab.getUrl().equals(getCurrentTab())){
+                return historyTab;
             }
         }
         return  Iterables.get(tabs, 0);
