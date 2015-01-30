@@ -24,6 +24,7 @@
 
 package com.groupon.jenkins.branchhistory;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
@@ -70,9 +71,18 @@ public class BuildHistoryTab {
         return SetupConfig.get().getDynamicBuildRepository();
     }
 
-    public Iterable<DynamicBuild> getBuilds() {
+    public Iterable<BuildHistoryRow> getBuilds() {
         String branch = getUrl().equals("all")?null:getUrl();
-        return filterSkipped(isMyBuilds() ? getDynamicBuildRepository().<DynamicBuild>getCurrentUserBuilds(project, BranchHistoryWidget.BUILD_COUNT) : getDynamicBuildRepository().<DynamicBuild>getLast(project, BranchHistoryWidget.BUILD_COUNT, branch));
+        return Iterables.transform(filterSkipped(isMyBuilds() ? getDynamicBuildRepository().<DynamicBuild>getCurrentUserBuilds(project, BranchHistoryWidget.BUILD_COUNT) : getDynamicBuildRepository().<DynamicBuild>getLast(project, BranchHistoryWidget.BUILD_COUNT, branch)), getBuildTransformer());
+    }
+
+    private Function<DynamicBuild, BuildHistoryRow> getBuildTransformer() {
+        return new Function<DynamicBuild, BuildHistoryRow>() {
+            @Override
+            public BuildHistoryRow apply(DynamicBuild dynamicBuild) {
+                return new BuildHistoryRow(dynamicBuild);
+            }
+        };
     }
 
     private Iterable<DynamicBuild> filterSkipped(Iterable<DynamicBuild> builds) {

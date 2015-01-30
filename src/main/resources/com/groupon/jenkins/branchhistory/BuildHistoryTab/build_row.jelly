@@ -27,23 +27,23 @@ THE SOFTWARE.
 -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-    <tr id="build_${build.number}" class="${build.state} ${build.result}">
+    <tr id="build_${build.number}" class="build-${build.result}">
         <td>
-            <span class="fa fa-fw " ></span>
+            <span class="fa fa-fw ${build.icon}" ></span>
             <a href="${build.number}">
-                ${build.number}
+                &amp;nbsp;${build.number}
             </a>
         </td>
         <td>
-            <j:out value="${app.markupFormatter.translate(build.cause.commitInfo.message)}"/>
+            ${build.message}
         </td>
         <td>
-            <a  href="${build.cause.commitInfo.commitUrl}" >
-                ${build.cause.commitInfo.displayString}
+            <a  href="${build.commitUrl}" >
+                ${build.commitDisplayString}
             </a>
         </td>
         <td>
-            ${build.cause.commitInfo.committer}
+            ${build.committer}
         </td>
         <td >
             ${build.displayTime}

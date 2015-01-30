@@ -3,19 +3,30 @@
  font-size: 18px;
 }
 
-tr.ABORTED{
- background-color:lightgrey;
+tr.build-ABORTED{
+ /*background-color: dimgrey;*/
 }
-tr.SUCCESS{
- background-color: lightgreen;
+tr.build-SUCCESS{
+ background-color: #fafffa;
 }
 
-tr.FAILURE{
+tr.build-FAILURE{
  background-color:snow ;
 }
 
-tr.BUILDING{
+tr.build-IN_PROGRESS{
  background-color: #fffcf4 ;
 }
 
-
+.fa-circle-o-notch{
+ color:#E7D100 ;
+}
+.fa-check {
+ color: #038035;
+}
+.fa-times {
+ color:#c00;
+}
+.fa-ban{
+ color:#666;
+}
