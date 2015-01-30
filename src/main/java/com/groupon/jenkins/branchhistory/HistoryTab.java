@@ -35,4 +35,7 @@ public abstract  class HistoryTab {
     }
 
     public abstract String getUrl();
+    public abstract String getName();
+
+    public abstract boolean isRemovable();
 }

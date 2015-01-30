@@ -118,6 +118,7 @@ public class BuildHistoryTab extends HistoryTab {
     public String getName(){
         return name;
     }
+    @Override
     public boolean isRemovable(){
         return removable;
     }

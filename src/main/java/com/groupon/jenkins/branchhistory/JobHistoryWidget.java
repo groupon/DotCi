@@ -25,6 +25,7 @@ package com.groupon.jenkins.branchhistory;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
 import hudson.widgets.Widget;
@@ -64,7 +65,7 @@ public class JobHistoryWidget extends Widget{
     }
     public Iterable<HistoryTab> intializeTabs(){
         Iterable<HistoryTab> tabs = BuildHistoryTab.getTabs(project);
-        return tabs;
+        return Iterables.concat(tabs, Lists.newArrayList(new JobStatisticsTab(project)));
     }
 
     public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {

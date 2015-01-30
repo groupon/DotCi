@@ -24,11 +24,7 @@ THE SOFTWARE.
 package com.groupon.jenkins.dynamic.build.repository;
 
 import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.dynamic.build.CurrentBuildState;
-import com.groupon.jenkins.dynamic.build.DbBackedBuild;
-import com.groupon.jenkins.dynamic.build.DbBackedProject;
-import com.groupon.jenkins.dynamic.build.DbBackedRunList;
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.*;
 import com.groupon.jenkins.mongo.BuildInfo;
 import com.groupon.jenkins.mongo.MongoRepository;
 import com.groupon.jenkins.mongo.MongoRunMap;
@@ -37,6 +33,8 @@ import hudson.model.Result;
 import hudson.model.Run;
 import hudson.util.RunList;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -320,6 +318,17 @@ public class DynamicBuildRepository extends MongoRepository {
         }
     }
 
+
+    public List<DbBackedBuild> getBuilds(DynamicProject project, String branch, Calendar startDate, Calendar endDate){
+        Query<DbBackedBuild> query = getQuery(project);
+        if(branch !=null) filterBranch(branch,query);
+        List<DbBackedBuild> builds = getQuery(project).filter("startTime <", endDate.getTimeInMillis()).filter("startTime >", startDate.getTimeInMillis()).asList();
+        for(DbBackedBuild build : builds) {
+            associateProject(project, build);
+        }
+        return builds;
+
+    }
     public <T extends DbBackedBuild> Iterable<T> getBuildsInProgress(DbBackedProject project, String branch, int firstBuildNumber, int lastBuildNumber) {
         Query<DbBackedBuild> query = getQuery(project);
        if(branch !=null) filterBranch(branch,query);
