@@ -33,7 +33,9 @@
         <st:include page="header/logo.jelly" />
       </div>
 
+      <ul class="nav navbar-nav navbar-left">
       <st:include page="header/breadcrumb.jelly" />
+      </ul>
         <ul class="nav navbar-nav navbar-right">
           <st:include page="header/login.jelly" />
         </ul>

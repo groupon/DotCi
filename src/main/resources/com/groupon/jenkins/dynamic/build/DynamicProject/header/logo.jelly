@@ -23,7 +23,5 @@
   -->
 
 <a id="jenkins-home-link" href="${rootURL}/">
-  <a class="navbar-brand" href="#">
     <img id="jenkins-head-icon" src="${imagesURL}/headshot.png" alt="title" />
-    </a>
 </a>
