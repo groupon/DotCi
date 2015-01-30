@@ -26,48 +26,62 @@ package com.groupon.jenkins.branchhistory;
 
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import hudson.model.Result;
+import jenkins.model.Jenkins;
 
-public enum  RowStyling {
-    IN_PROGRESS("#fffcf4", "fa-circle-o-notch fa-spin","#E7D100"),
-    SUCCESS("#fafffa", "fa-check","#038035"),
-    FAILURE("snow","fa-times","#c00"),
-    ABORTED("#fdfdfd","fa-ban","#666")
-    ;
+import java.io.IOException;
 
-    RowStyling(String backgroundColor, String statusIconFont, String statusIconFontColor) {
-        this.backgroundColor = backgroundColor;
-        this.statusIconFont = statusIconFont;
-        this.statusIconFontColor = statusIconFontColor;
+public class ProcessedBuildHistoryRow extends BuildHistoryRow {
+    private DynamicBuild build;
+
+    public ProcessedBuildHistoryRow(DynamicBuild build){
+        this.build = build;
     }
 
-    public String getBackgroundColor() {
-        return backgroundColor;
+    @Override
+    public int getNumber(){
+        return build.getNumber();
     }
-
-    public String getStatusIconFont() {
-        return statusIconFont;
-    }
-
-    public String getStatusIconFontColor() {
-        return statusIconFontColor;
-    }
-
-    private String backgroundColor;
-    private String statusIconFont;
-    private String statusIconFontColor;
-
-    public static RowStyling get(DynamicBuild build) {
+    @Override
+    public String getResult(){
         if(build.isBuilding()){
-            return RowStyling.IN_PROGRESS;
+            return "IN_PROGRESS";
+        }
+        return build.getResult().toString();
+    }
+    @Override
+    public String getIcon(){
+
+        if(build.isBuilding()){
+            return "fa-circle-o-notch fa-spin";
         }
         if( Result.SUCCESS.equals( build.getResult())){
-            return RowStyling.SUCCESS;
+            return "fa-check";
 
         }
         if(Result.FAILURE.equals(build.getResult())){
-            return RowStyling.FAILURE;
+            return "fa-times" ;
         }
-        return RowStyling.ABORTED;
+        return"fa-ban" ;
+    }
+    @Override
+    public String getMessage() throws IOException {
+        return Jenkins.getInstance().getMarkupFormatter().translate(build.getCause().getCommitInfo().getMessage())     ;
+    }
+    @Override
+    public String getCommitUrl(){
+        return build.getCause().getCommitInfo().getCommitUrl();
     }
 
+    @Override
+    public String getCommitDisplayString(){
+        return build.getCause().getCommitInfo().getDisplayString();
+    }
+    @Override
+    public String getCommitter(){
+        return build.getCause().getCommitInfo().getCommitter();
+    }
+    @Override
+    public String getDisplayTime(){
+        return  build.getDisplayTime();
+    }
 }

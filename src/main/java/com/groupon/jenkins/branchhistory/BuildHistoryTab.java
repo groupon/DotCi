@@ -27,16 +27,17 @@ package com.groupon.jenkins.branchhistory;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DbBackedProject;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
+import hudson.model.Queue;
+import jenkins.model.Jenkins;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class BuildHistoryTab {
 
@@ -73,14 +74,25 @@ public class BuildHistoryTab {
 
     public Iterable<BuildHistoryRow> getBuilds() {
         String branch = getUrl().equals("all")?null:getUrl();
-        return Iterables.transform(filterSkipped(isMyBuilds() ? getDynamicBuildRepository().<DynamicBuild>getCurrentUserBuilds(project, BranchHistoryWidget.BUILD_COUNT) : getDynamicBuildRepository().<DynamicBuild>getLast(project, BranchHistoryWidget.BUILD_COUNT, branch)), getBuildTransformer());
+        Iterable<BuildHistoryRow> processedBuilds = Iterables.transform(filterSkipped(isMyBuilds() ? getDynamicBuildRepository().<DynamicBuild>getCurrentUserBuilds(project, BranchHistoryWidget.BUILD_COUNT) : getDynamicBuildRepository().<DynamicBuild>getLast(project, BranchHistoryWidget.BUILD_COUNT, branch)), getBuildTransformer());
+        return Iterables.concat(getQueuedBuilds(),processedBuilds);
+    }
+
+    private Iterable<BuildHistoryRow> getQueuedBuilds() {
+        ArrayList<BuildHistoryRow> queuedBuilds = new ArrayList<BuildHistoryRow>();
+        final List<Queue.Item> queuedItems = getQueuedItems();
+        for(int i=0 ; i < queuedItems.size(); i++){
+            int number = queuedItems.size() == 1 ? project.getNextBuildNumber() : project.getNextBuildNumber() + queuedItems.size() - i - 1;
+            queuedBuilds.add(new QueuedBuildHistoryRow(queuedItems.get(i),number));
+        }
+       return  queuedBuilds;
     }
 
     private Function<DynamicBuild, BuildHistoryRow> getBuildTransformer() {
         return new Function<DynamicBuild, BuildHistoryRow>() {
             @Override
             public BuildHistoryRow apply(DynamicBuild dynamicBuild) {
-                return new BuildHistoryRow(dynamicBuild);
+                return new ProcessedBuildHistoryRow(dynamicBuild);
             }
         };
     }
@@ -139,4 +151,24 @@ public class BuildHistoryTab {
     public boolean isMyBuilds() {
         return getName().equals("mine");
     }
+
+    public List<Queue.Item> getQueuedItems() {
+        LinkedList<Queue.Item> list = new LinkedList<Queue.Item>();
+        for (Queue.Item item : Jenkins.getInstance().getQueue().getApproximateItemsQuickly()) {
+            if (item.task == project) {
+                list.addFirst(item);
+            }
+        }
+        return list;
+    }
+    //    public void doAjax(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+//        req.getView(this, "ajax_build_history.jelly").forward(req, rsp);
+//    }
+//
+//    public Iterable<DynamicBuild> getAjaxList() {
+//        StaplerRequest req = Stapler.getCurrentRequest();
+//        int firstBuildNumber = Integer.parseInt(req.getParameter("firstBuildNumber"));
+//        int lastBuildNumber = Integer.parseInt(req.getParameter("lastBuildNumber"));
+//        return model.getBuildsInProgress(firstBuildNumber, lastBuildNumber);
+//    }
 }

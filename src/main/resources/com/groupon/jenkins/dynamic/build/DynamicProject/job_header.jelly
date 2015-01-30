@@ -26,7 +26,7 @@
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
-          <a class ="navbar-brand" href="${it.githubRepoUrl}" style="color:grey">  ${not empty it.parent.fullDisplayName?it.parent.fullDisplayName+'/':''}${it.displayName}<span class="octicon octicon-mark-github"/> </a>
+          <a class ="navbar-brand" href="${it.githubRepoUrl}" style="color:grey">  ${not empty it.parent.fullDisplayName?it.parent.fullDisplayName+'/':''}${it.displayName}<span class=" octicon octicon-mark-github"/> </a>
       </div>
 
       <ul class="nav navbar-nav navbar-left">

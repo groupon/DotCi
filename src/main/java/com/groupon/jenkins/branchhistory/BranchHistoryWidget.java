@@ -66,16 +66,6 @@ public class BranchHistoryWidget extends Widget{
     }
 
 
-//    public void doAjax(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-//        req.getView(this, "ajax_build_history.jelly").forward(req, rsp);
-//    }
-//
-//    public Iterable<DynamicBuild> getAjaxList() {
-//        StaplerRequest req = Stapler.getCurrentRequest();
-//        int firstBuildNumber = Integer.parseInt(req.getParameter("firstBuildNumber"));
-//        int lastBuildNumber = Integer.parseInt(req.getParameter("lastBuildNumber"));
-//        return model.getBuildsInProgress(firstBuildNumber, lastBuildNumber);
-//    }
 
 
 
@@ -83,9 +73,7 @@ public class BranchHistoryWidget extends Widget{
 
 
 
-    public RowStyling getRowStyling(DynamicBuild dynamicBuild){
-        return RowStyling.get(dynamicBuild);
-    }
+
 
     public Iterable<BuildHistoryTab> getTabs(){
         return tabs;

@@ -33,7 +33,7 @@ THE SOFTWARE.
                 <th>Started</th>
             </tr>
         </thead>
-        <st:include page="pending_builds.jelly" />
+        <!--<st:include page="pending_builds.jelly" />-->
         <j:forEach var="build" items="${it.builds}">
             <st:include page="build_row.jelly" />
         </j:forEach>

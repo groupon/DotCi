@@ -24,28 +24,56 @@
 
 package com.groupon.jenkins.branchhistory;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import hudson.model.Queue;
-import hudson.model.Result;
-import jenkins.model.Jenkins;
 
 import java.io.IOException;
 
-public abstract class BuildHistoryRow {
+public class QueuedBuildHistoryRow extends BuildHistoryRow {
+    private Queue.Item item;
+    private int number;
 
-    public abstract int getNumber();
+    public QueuedBuildHistoryRow(Queue.Item item, int number) {
+        this.item = item;
+        this.number = number;
+    }
 
-    public abstract String getResult();
+    @Override
+    public int getNumber() {
+        return number;
+    }
 
-    public abstract String getIcon();
+    @Override
+    public String getResult() {
+        return "QUEUED";
+    }
 
-    public abstract String getMessage() throws IOException;
+    @Override
+    public String getIcon() {
+        return "fa-paper-plane-o";
+    }
 
-    public abstract String getCommitUrl();
+    @Override
+    public String getMessage() throws IOException {
+        return "Pending " + item.getCausesDescription();
+    }
 
-    public abstract String getCommitDisplayString();
+    @Override
+    public String getCommitUrl() {
+        return "-";
+    }
 
-    public abstract String getCommitter();
+    @Override
+    public String getCommitDisplayString() {
+        return "-";
+    }
 
-    public abstract String getDisplayTime();
+    @Override
+    public String getCommitter() {
+        return item.getCauseOfBlockage().getShortDescription();
+    }
+
+    @Override
+    public String getDisplayTime() {
+        return "-";
+    }
 }
