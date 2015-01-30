@@ -42,6 +42,7 @@ function dotCiLoadTab(tab) {
 
     jQuery.get(loadurl, function (data) {
         jQuery(targ).html(data);
+        $('tr.SUCCESS > td > span.fa').addClass('fa-check')
     });
 }
 

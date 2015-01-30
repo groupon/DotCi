@@ -3,6 +3,19 @@
  font-size: 18px;
 }
 
+tr.ABORTED{
+ background-color:lightgrey;
+}
+tr.SUCCESS{
+ background-color: lightgreen;
+}
 
-@table-outer-border-color: #b7c7cf;
-@table-head-border-separate-color: #d8e6ec;
+tr.FAILURE{
+ background-color:snow ;
+}
+
+tr.BUILDING{
+ background-color: #fffcf4 ;
+}
+
+

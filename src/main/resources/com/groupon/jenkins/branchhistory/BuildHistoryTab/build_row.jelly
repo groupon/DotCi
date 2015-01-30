@@ -27,13 +27,10 @@ THE SOFTWARE.
 -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-    <j:set var="link" value="${it.baseUrl}/${build.number}/" />
-    <tr id="build_${build.number}" style="background-state:${it.getRowStyling(build).backgroundColor}">
+    <tr id="build_${build.number}" class="${build.state} ${build.result}">
         <td>
-            <span class="fa fa-fw ${it.getRowStyling(build).statusIconFont}" style="state:${it.getRowStyling(build).statusIconFontColor}"></span>
-            <st:nbsp/>
-            <st:nbsp/>
-            <a href="${link}" style="state:${it.getRowStyling(build).statusIconFontColor}">
+            <span class="fa fa-fw " ></span>
+            <a href="${build.number}">
                 ${build.number}
             </a>
         </td>
