@@ -25,12 +25,8 @@ package com.groupon.jenkins.branchhistory;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.dynamic.build.DbBackedBuild;
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
-import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import hudson.widgets.Widget;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.Stapler;
@@ -38,9 +34,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import javax.servlet.ServletException;
-import javax.swing.plaf.basic.BasicHTML;
 import java.io.IOException;
-import java.util.Collections;
 
 
 public class BranchHistoryWidget extends Widget{
@@ -64,16 +58,6 @@ public class BranchHistoryWidget extends Widget{
         this.currentTab = getActiveTab(tabs);
         currentTab.setActive();
     }
-
-
-
-
-
-
-
-
-
-
 
     public Iterable<BuildHistoryTab> getTabs(){
         return tabs;

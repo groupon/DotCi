@@ -27,9 +27,7 @@ package com.groupon.jenkins.branchhistory;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.dynamic.build.DbBackedProject;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
@@ -37,7 +35,10 @@ import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import hudson.model.Queue;
 import jenkins.model.Jenkins;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 public class BuildHistoryTab {
 

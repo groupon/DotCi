@@ -24,11 +24,6 @@
 
 package com.groupon.jenkins.branchhistory;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import hudson.model.Queue;
-import hudson.model.Result;
-import jenkins.model.Jenkins;
-
 import java.io.IOException;
 
 public abstract class BuildHistoryRow {

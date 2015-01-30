@@ -26,6 +26,7 @@ package com.groupon.jenkins.branchhistory;
 
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.dynamic.build.DbBackedBuild;
+
 import java.util.Iterator;
 
 public class MongoRunList<T extends DbBackedBuild> implements Iterable<T> {
