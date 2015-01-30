@@ -54,7 +54,7 @@ public class QueuedBuildHistoryRow extends BuildHistoryRow {
 
     @Override
     public String getMessage() throws IOException {
-        return "Pending " + item.getCausesDescription();
+        return "Pending " + item.getInQueueForString();
     }
 
     @Override
