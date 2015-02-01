@@ -23,16 +23,23 @@
   -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-  <h3>Build Time Trend for master branch <small> Last 30 days </small></h3>
-  <div id="chart"></div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h5>Build Time Trend : <b><span class="octicon octicon-git-branch"></span> master</b>  <small> Last 30 days </small> </h5>
+    </div>
+
+    <div class="panel-body">
+      <div id="chart"></div>
+    </div>
+  </div>
   <script>
-     var buildTimes = ${it.buildTimes};
+    var buildTimes = ${it.buildTimes};
     var chart = c3.generate({
       bindto: '#chart',
       data: {
         x: 'x',
         columns: [
-           buildTimes['buildNumbers'],
+          buildTimes['buildNumbers'],
           buildTimes['buildTimes']
         ]
       }

@@ -30,3 +30,7 @@ tr.build-IN_PROGRESS{
 .fa-ban{
  color:#666;
 }
+.table-borderless td,
+.table-borderless th{
+ border: 0 !important
+}

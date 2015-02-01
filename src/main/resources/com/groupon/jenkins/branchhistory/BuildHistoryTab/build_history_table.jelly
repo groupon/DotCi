@@ -23,7 +23,7 @@ THE SOFTWARE.
 -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-    <table id="dotCiBuildHistory" class="table table-condensed" data-first-build-number="${it.renderList.firstBuildNumber}" data-last-build-number="${it.renderList.lastBuildNumber}">
+    <table id="dotCiBuildHistory" class="table table-condensed table-bordered table-borderless" data-first-build-number="${it.renderList.firstBuildNumber}" data-last-build-number="${it.renderList.lastBuildNumber}">
         <thead>
             <tr>
                 <th>#</th>

@@ -45,5 +45,9 @@
         <link rel="stylesheet" href="${resURL}/plugin/DotCi/css/c3.min.css"/>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
         <script src="${resURL}/plugin/DotCi/js/c3.min.js"></script>
+
+        <link rel="stylesheet" href="${resURL}/plugin/DotCi/css/jasny-bootstrap.min.css"/>
+        <script src="${resURL}/plugin/DotCi/js/jasny-bootstrap.min.js"></script>
+
     </head>
 </j:jelly>
