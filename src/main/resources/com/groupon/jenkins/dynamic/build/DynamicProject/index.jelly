@@ -23,22 +23,18 @@
   ~ THE SOFTWARE.
   -->
 
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-    <st:include page="head.jelly" />
-    <body>
-        <st:include page="header/header.jelly" />
-        <div class="container-fluid" >
-            <div class="row">
-                <div class="col-md-12">
-                    <st:include page="job_header.jelly" />
-                </div>
+<!DOCTYPE html>
+<html lang="en">
+    <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+        <st:include page="head.jelly" />
+        <body>
+            <st:include page="header/header.jelly" />
+            <div class="container" >
+                
+                <st:include page="job_header.jelly" />
+                <st:include page="build_history.jelly" />
             </div>
-            <div class="row spacer">
-                <div class="col-md-12">
-                    <st:include page="build_history.jelly" />
-                </div>
-            </div>
-        </div>
 
-    </body>
-</j:jelly>
+        </body>
+    </j:jelly>
+</html>

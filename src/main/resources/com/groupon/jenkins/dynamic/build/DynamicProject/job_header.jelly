@@ -26,7 +26,6 @@
 
   <j:set var="configurable" value="${it.hasPermission(it.CONFIGURE)? '':'disabled'}"/>
 
-  <div class="container-fluid">
     <div class="row">
       <div class="col-md-3">
         <a class="btn btn-primary btn-labeled" href="${it.githubRepoUrl}"> <span class=" btn-label octicon octicon-mark-github"/>   ${not empty it.parent.fullDisplayName?it.parent.fullDisplayName+'/':''}${it.displayName}</a>
@@ -50,7 +49,7 @@
         </div>
       </div>
     </div>
-  </div>
+
   <script>
     $("#delete-project").click(function(e){
       e.preventDefault();
