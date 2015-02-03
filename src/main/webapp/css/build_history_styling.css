@@ -55,3 +55,8 @@ tr.build-IN_PROGRESS{
  background-color: dimgrey;
  /*color:#E7D100 ;*/
 }
+
+.breadcrumb {
+ background-color: #222;
+ border-color: #080808;
+}
