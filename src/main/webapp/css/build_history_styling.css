@@ -38,3 +38,20 @@ tr.build-IN_PROGRESS{
 .spacer {
  margin-top: 40px;
 }
+
+.last-build-status.red {
+ color:#c00;
+}
+
+.last-build-status.blue {
+ color: #038035;
+}
+
+.last-build-status.yellow {
+ color:#E7D100 ;
+}
+
+.last-build-status.grey {
+ background-color: dimgrey;
+ /*color:#E7D100 ;*/
+}

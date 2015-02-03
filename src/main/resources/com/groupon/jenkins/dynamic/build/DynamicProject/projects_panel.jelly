@@ -22,18 +22,17 @@
   ~ THE SOFTWARE.
   -->
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-  <div class="panel panel-default">
+  <div class="panel panel-info">
     <div class="panel-heading">
-      <h3 class="panel-title">Projects</h3>
+      <h3 class="panel-title">Recent Projects</h3>
     </div>
-    <div class="panel-body">
-      <div class="list-group">
-        <j:forEach var="project" items="${it.recentProjects}">
-        <a href="${project.absoluteUrl}" class="list-group-item ${project == it? 'active':''}">
-          <h6 class="list-group-item-heading">${project.name}</h6>
-        </a>
-        </j:forEach>
-      </div>
-    </div>
+    <ul class="list-group">
+      <j:forEach var="project" items="${it.recentProjects}">
+        <li class="list-group-item  ">
+          <a href="${project.absoluteUrl}" > ${project.fullName}  </a>
+          <a href="${project.lastBuild.absoluteUrl}" ><i class="fa fa-dot-circle-o last-build-status ${project.lastBuild.iconColor} pull-right"></i> </a>
+        </li>
+      </j:forEach>
+    </ul>
   </div>
 </j:jelly>
