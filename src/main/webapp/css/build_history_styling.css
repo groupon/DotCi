@@ -51,7 +51,7 @@ tr.build-IN_PROGRESS{
  color:#E7D100 ;
 }
 
-.last-build-status.grey {
+.last-build-status.aborted {
  background-color: dimgrey;
  /*color:#E7D100 ;*/
 }
