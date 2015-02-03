@@ -57,6 +57,12 @@ public class JobStatisticsTab extends HistoryTab {
     public boolean isRemovable() {
         return false;
     }
+
+    @Override
+    public String getFontIcon() {
+        return "fa fa-bar-chart";
+    }
+
     public String getBuildTimes() throws IOException {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, -1);

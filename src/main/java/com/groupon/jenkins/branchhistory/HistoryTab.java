@@ -38,4 +38,6 @@ public abstract  class HistoryTab {
     public abstract String getName();
 
     public abstract boolean isRemovable();
+
+    public abstract String getFontIcon();
 }

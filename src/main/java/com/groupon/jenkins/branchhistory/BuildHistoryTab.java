@@ -108,7 +108,7 @@ public class BuildHistoryTab extends HistoryTab {
     public String getUrl(){
         return url;
     }
-    public String getFont(){
+    public String getFontIcon(){
         return font;
     }
 
