@@ -76,4 +76,9 @@ public class QueuedBuildHistoryRow extends BuildHistoryRow {
     public String getDisplayTime() {
         return "-";
     }
+
+    @Override
+    public String getDuration() {
+        return "-"  ;
+    }
 }

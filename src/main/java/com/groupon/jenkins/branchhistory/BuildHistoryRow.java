@@ -43,4 +43,6 @@ public abstract class BuildHistoryRow {
     public abstract String getCommitter();
 
     public abstract String getDisplayTime();
+    public abstract String getDuration();
+
 }

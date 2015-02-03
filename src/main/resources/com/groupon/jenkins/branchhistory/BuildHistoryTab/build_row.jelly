@@ -48,6 +48,10 @@ THE SOFTWARE.
         <td >
             ${build.displayTime}
         </td>
+
+        <td >
+            ${build.duration}
+        </td>
     </tr>
 
     <!---->

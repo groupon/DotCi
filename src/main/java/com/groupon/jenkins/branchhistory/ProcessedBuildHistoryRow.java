@@ -84,4 +84,9 @@ public class ProcessedBuildHistoryRow extends BuildHistoryRow {
     public String getDisplayTime(){
         return  build.getDisplayTime();
     }
+
+    @Override
+    public String getDuration() {
+        return build.getDurationString();
+    }
 }
