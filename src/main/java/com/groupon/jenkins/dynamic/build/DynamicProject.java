@@ -25,6 +25,7 @@ package com.groupon.jenkins.dynamic.build;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.branchhistory.JobHistoryWidget;
@@ -48,10 +49,14 @@ import java.util.*;
 
 import hudson.widgets.Widget;
 import jenkins.model.Jenkins;
+import net.sf.json.JSONSerializer;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.export.Flavor;
 import org.mongodb.morphia.annotations.PostLoad;
 import org.mongodb.morphia.annotations.PrePersist;
+
+import javax.servlet.ServletException;
 
 public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild> implements TopLevelItem, Saveable, IdentifableItemGroup<DynamicSubProject> {
     private transient Map<String, DynamicSubProject> items;
@@ -269,5 +274,11 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     @Override
     public DynamicBuild getLastBuild() {
         return super.getLastBuild();
+    }
+
+    @Override
+    public void doDoDelete(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+        rsp.setHeader("Location",getParent().getAbsoluteUrl());
+        delete();
     }
 }

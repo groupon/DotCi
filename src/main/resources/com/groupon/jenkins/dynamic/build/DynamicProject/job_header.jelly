@@ -28,15 +28,34 @@
       <div class="col-md-3">
         <a class ="navbar-brand" href="${it.githubRepoUrl}" style="color:grey">  ${not empty it.parent.fullDisplayName?it.parent.fullDisplayName+'/':''}${it.displayName}<span class=" octicon octicon-mark-github"/> </a>
       </div>
-        <div class="col-md-7">
-          <a  href="build?delay=0sec" id="build-now" class="btn btn-success  btn-sm btn-labeled">
-            <span class="btn-label"> <i class="fa fa-rocket"></i> </span>Build Now
-          </a>
-          </div>
-        <div class="col-md-2">
-          <a  id="job-settings" href="configure"  class="btn  btn-default btn-sm btn-labeled">
-            <span class="btn-label"> <i class="fa fa-cog"></i> </span> Settings</a>
-          </div>
+      <div class="col-md-7">
+        <a  href="build?delay=0sec" id="build-now" class="btn btn-success  btn-sm btn-labeled">
+          <span class="btn-label"> <i class="fa fa-rocket"></i> </span>Build Now
+        </a>
+      </div>
+      <div class="col-md-2">
+        <div class="btn-group">
+          <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <span class="btn-label"> <i class="fa fa-cog"></i> </span> Settings <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="configure">Configure</a></li>
+            <li><a id="delete-project" href="doDelete">Delete</a></li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
+  <script>
+    $("#delete-project").click(function(e){
+      e.preventDefault();
+      return bootbox.confirm("Are you sure?", function(result) {
+        if(result){
+          $.post(window.location + jQuery(e.target).attr("href"), function(data, textStatus,xhr) {
+                   window.location.href = xhr.getResponseHeader("Location");
+          });
+        }
+      })
+    });
+  </script>
 </j:jelly>
