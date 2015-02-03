@@ -28,8 +28,16 @@
     <body>
         <st:include page="header/header.jelly" />
         <div class="container-fluid" >
-            <st:include page="job_header.jelly" />
-            <st:include page="build_history.jelly" />
+            <div class="row">
+                <div class="col-md-12">
+                    <st:include page="job_header.jelly" />
+                </div>
+            </div>
+            <div class="row spacer">
+                <div class="col-md-12">
+                    <st:include page="build_history.jelly" />
+                </div>
+            </div>
         </div>
 
     </body>

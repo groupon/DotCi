@@ -34,3 +34,7 @@ tr.build-IN_PROGRESS{
 .table-borderless th{
  border: 0 !important
 }
+
+.spacer {
+ margin-top: 40px;
+}
