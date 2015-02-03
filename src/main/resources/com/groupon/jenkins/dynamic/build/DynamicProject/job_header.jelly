@@ -23,6 +23,9 @@
   -->
 
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+
+  <j:set var="configurable" value="${it.hasPermission(it.CONFIGURE)? '':'disabled'}"/>
+
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-3">
@@ -35,12 +38,14 @@
       </div>
       <div class="col-md-2">
         <div class="btn-group">
-          <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+          <button type="button" class="${configurable} btn btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
             <span class="btn-label"> <i class="fa fa-cog"></i> </span> Settings <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" role="menu">
-            <li><a href="configure">Configure</a></li>
-            <li><a id="delete-project" href="doDelete">Delete</a></li>
+            <li><a href="configure"><i class="fa fa-wrench"></i>Configure</a></li>
+            <li><a id="delete-project" href="doDelete">
+              <i class="fa fa-trash-o"></i>
+              Delete</a></li>
           </ul>
         </div>
       </div>
