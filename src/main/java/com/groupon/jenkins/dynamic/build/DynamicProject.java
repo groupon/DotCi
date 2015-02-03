@@ -278,7 +278,19 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
     @Override
     public void doDoDelete(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        rsp.setHeader("Location",getParent().getAbsoluteUrl());
+        rsp.setHeader("Location", getParent().getAbsoluteUrl());
         delete();
+    }
+
+    public Iterable<DynamicProject> getRecentProjects(){
+        Set<DynamicProject> projects  = new HashSet<DynamicProject>();
+        Iterable<DynamicBuild> builds = dynamicBuildRepository.getLastBuildsForUser(getCurrentUser(), 20);
+        for(DynamicBuild build : builds){
+          projects.add(build.getParent());
+        }
+        return projects;
+    }
+    private String getCurrentUser() {
+        return Jenkins.getAuthentication().getName();
     }
 }
