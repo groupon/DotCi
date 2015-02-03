@@ -24,9 +24,6 @@
 
 package com.groupon.jenkins.branchhistory;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
@@ -50,7 +47,7 @@ public class JobStatisticsTab extends HistoryTab {
 
     @Override
     public String getName() {
-        return "Statistics";
+        return "Metrics";
     }
 
     @Override
@@ -66,7 +63,7 @@ public class JobStatisticsTab extends HistoryTab {
     public String getBuildTimes() throws IOException {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, -1);
-        List<DbBackedBuild> builds = SetupConfig.get().getDynamicBuildRepository().getBuilds(project, "master",  cal,Calendar.getInstance());;
+        List<DbBackedBuild> builds = SetupConfig.get().getDynamicBuildRepository().getSuccessfulBuilds(project, "master", cal, Calendar.getInstance());;
         //Map<String,Object> buildTimes = new HashMap<String,Object>();
         List<Object> buildNumbers = new ArrayList<Object> ();
         buildNumbers.add("x");

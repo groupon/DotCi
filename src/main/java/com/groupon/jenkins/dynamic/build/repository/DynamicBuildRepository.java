@@ -319,9 +319,10 @@ public class DynamicBuildRepository extends MongoRepository {
     }
 
 
-    public List<DbBackedBuild> getBuilds(DynamicProject project, String branch, Calendar startDate, Calendar endDate){
+    public List<DbBackedBuild> getSuccessfulBuilds(DynamicProject project, String branch, Calendar startDate, Calendar endDate){
         Query<DbBackedBuild> query = getQuery(project);
         if(branch !=null) filterBranch(branch,query);
+        query.filter("result","SUCCESS");
         List<DbBackedBuild> builds = getQuery(project).filter("startTime <", endDate.getTimeInMillis()).filter("startTime >", startDate.getTimeInMillis()).asList();
         for(DbBackedBuild build : builds) {
             associateProject(project, build);
