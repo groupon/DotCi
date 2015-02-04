@@ -1,0 +1,47 @@
+#
+#The MIT License (MIT)
+#
+#Copyright (c) 2014, Groupon, Inc.
+#
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+#
+#The above copyright notice and this permission notice shall be included in
+#all copies or substantial portions of the Software.
+#
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#THE SOFTWARE.
+#
+parent_template: install_packages
+environment:
+  language: fig
+  vars:
+    DOCKER_IMAGE: '<% out<< JOB_NAME.replaceAll('-','_').replaceAll('^','docker.registry/') %>'
+    DOCKER_TAG: '<% if (DOTCI_PULL_REQUEST || DOTCI_BRANCH == "master") { %>latest<% } else { %>$DOTCI_BRANCH<% } %>'
+
+build:
+  info:
+    - docker --version
+    - fig --version
+  run:
+    - awk '/^FROM /{system("docker pull "\$2)}' Dockerfile
+    - docker build -t $DOCKER_IMAGE:$DOCKER_TAG .
+
+    - fig -p $BUILD_TAG pull --allow-insecure-ssl # https://github.com/docker/fig/issues/158
+    - fig -p $BUILD_TAG build
+    - fig -p $BUILD_TAG up
+    - EXIT_CODE=`fig -p $BUILD_TAG ps 2>/dev/null | grep Exit | sed 's/.*Exit //g' | awk '{n=n+\$1}END{print n}'`
+    - fig -p $BUILD_TAG kill
+    - fig -p $BUILD_TAG rm --force
+    - '[ $EXIT_CODE -eq 0 ] || exit $EXIT_CODE' # https://github.com/docker/fig/issues/683
+
+    - docker push $DOCKER_IMAGE:$DOCKER_TAG
