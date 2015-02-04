@@ -45,4 +45,7 @@ public abstract class BuildHistoryRow {
     public abstract String getDisplayTime();
     public abstract String getDuration();
 
+    public abstract boolean isCancelable();
+    public abstract String getCancelUrl();
+
 }

@@ -45,6 +45,11 @@ function dotCiLoadTab(tab) {
     });
 }
 
+
+function dotCiCancelBuild(url){
+        $.post(url);
+    return false;
+}
 jQuery(document).ready(function ($) {
     //  setInterval(updateDotCiBuildHistory, 1000 * 5);//Every 5 seconds
     jQuery("#addNewTab").click(addNewDotCiTab);
@@ -55,6 +60,8 @@ jQuery(document).ready(function ($) {
     var activeTab = $('a[data-toggle="tab"]').filter(function(a){return $(this).parent().hasClass('active')});
     dotCiLoadTab(activeTab);
 });
+
+
 
 
 

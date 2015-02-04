@@ -33,6 +33,10 @@ THE SOFTWARE.
             <a href="${build.number}">
                 &amp;nbsp;${build.number}
             </a>
+
+            <j:if test="${build.cancelable}">
+                <a class="close cancel-build" type="button"  href="#" onclick="dotCiCancelBuild('${rootURL}/${build.cancelUrl}')" >x</a>
+            </j:if>
         </td>
         <td>
             ${build.message}

@@ -81,4 +81,14 @@ public class QueuedBuildHistoryRow extends BuildHistoryRow {
     public String getDuration() {
         return "-"  ;
     }
+
+    @Override
+    public boolean isCancelable() {
+        return true;
+    }
+
+    @Override
+    public String getCancelUrl() {
+        return "/queue/cancelItem?id="+item.id;
+    }
 }

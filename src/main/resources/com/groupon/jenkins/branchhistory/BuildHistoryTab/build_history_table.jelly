@@ -23,7 +23,9 @@ THE SOFTWARE.
 -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-    <table id="dotCiBuildHistory" class="table table-condensed table-bordered table-borderless" data-first-build-number="${it.renderList.firstBuildNumber}" data-last-build-number="${it.renderList.lastBuildNumber}">
+    <j:new var="h" className="hudson.Functions" /><!-- instead of JSP functions -->
+    ${h.initPageVariables(context)}
+    <table  class="table table-bordered table-borderless build-history-table" data-first-build-number="${it.renderList.firstBuildNumber}" data-last-build-number="${it.renderList.lastBuildNumber}">
         <thead>
             <tr>
                 <th>#</th>
@@ -34,7 +36,6 @@ THE SOFTWARE.
                 <th>Duration</th>
             </tr>
         </thead>
-        <!--<st:include page="pending_builds.jelly" />-->
         <j:forEach var="build" items="${it.builds}">
             <st:include page="build_row.jelly" />
         </j:forEach>

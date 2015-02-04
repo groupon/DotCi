@@ -89,4 +89,14 @@ public class ProcessedBuildHistoryRow extends BuildHistoryRow {
     public String getDuration() {
         return build.getDurationString();
     }
+
+    @Override
+    public boolean isCancelable() {
+        return build.isBuilding();
+    }
+
+    @Override
+    public String getCancelUrl() {
+        return build.getUrl() + "/stop";
+    }
 }

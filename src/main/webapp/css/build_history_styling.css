@@ -50,6 +50,9 @@ tr.build-IN_PROGRESS{
 .last-build-status.yellow {
  color:#E7D100 ;
 }
+.last-build-status.notbuilt_anime {
+ color:#E7D100 ;
+}
 
 .last-build-status.aborted {
  color: dimgrey;
