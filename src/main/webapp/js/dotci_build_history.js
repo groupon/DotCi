@@ -1,5 +1,5 @@
 var updateDotCiBuildHistory = function () {
-    var buildHistoryTable = jQuery('#dotCiBuildHistory');
+    var buildHistoryTable = $($(".build-history-table").filter(":visible"))
     var firstBuildNumber = buildHistoryTable.attr('data-first-build-number');
     var lastBuildNumber = buildHistoryTable.attr('data-last-build-number');
     jQuery.ajax({
@@ -51,7 +51,7 @@ function dotCiCancelBuild(url){
     return false;
 }
 jQuery(document).ready(function ($) {
-    //  setInterval(updateDotCiBuildHistory, 1000 * 5);//Every 5 seconds
+   // setInterval(updateDotCiBuildHistory, 1000 * 5);//Every 5 seconds
     jQuery("#addNewTab").click(addNewDotCiTab);
     jQuery(".removeTab").click(dotCiRemoveTab);
     $('a[data-toggle="tab"]').on('shown.bs.tab',  function(e){
