@@ -154,11 +154,18 @@ public class Payload {
         return new GithubLogEntry(commit.get("message").toString(), commit.get("url").toString(), commit.get("id").toString(),affectedPaths);
     }
 
-    public String getCommitter() {
+    public String getCommitterName() {
         if(isPullRequest()){
             return null;
         }
         return  payloadJson.getJSONObject("head_commit").getJSONObject("committer").getString("name");
+    }
+
+    public String getCommitterEmail() {
+        if(isPullRequest()){
+            return null;
+        }
+        return  payloadJson.getJSONObject("head_commit").getJSONObject("committer").getString("email");
     }
 
     public String getCommitMessage() {

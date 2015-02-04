@@ -25,9 +25,18 @@ package com.groupon.jenkins.dynamic.build.cause;
 
 import com.groupon.jenkins.git.GitBranch;
 import com.groupon.jenkins.github.Payload;
+import com.jcraft.jsch.jce.MD5;
 import hudson.model.Cause;
+
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.github.GHCommit;
 
@@ -64,15 +73,17 @@ public abstract class BuildCause extends Cause {
 
 
     public static class CommitInfo{
+        private final String committerEmail;
         private String message;
-        private String committer;
+        private String committerName;
         private String branch;
         private String sha;
         private String commitUrl;
         public CommitInfo(GHCommit commit, GitBranch branch){
             this.sha = commit.getSHA1();
             this.message = commit.getCommitShortInfo().getMessage();
-            this.committer = commit.getCommitShortInfo().getCommitter().getName();
+            this.committerName = commit.getCommitShortInfo().getCommitter().getName();
+            this.committerEmail= commit.getCommitShortInfo().getCommitter().getEmail();
             this.commitUrl = commit.getOwner().getUrl()+"/commit/"+sha;
             this.branch = branch.toString();
         }
@@ -80,7 +91,8 @@ public abstract class BuildCause extends Cause {
         public CommitInfo(Payload payload) {
             this.sha = payload.getSha();
             this.message = payload.getCommitMessage();
-            this.committer = payload.getCommitter();
+            this.committerName = payload.getCommitterName();
+            this.committerEmail = payload.getCommitterEmail();
             this.commitUrl = payload.getDiffUrl();
             this.branch = payload.getBranch();
         }
@@ -89,19 +101,26 @@ public abstract class BuildCause extends Cause {
             return commitUrl;
         }
 
-        public String getDisplayString(){
-           return sha.substring(0,7) + "(" + branch+")";
+        public String getShortSha(){
+            return sha.substring(0,7);
         }
 
         public String getMessage(){
             return StringUtils.abbreviate(message, 50);
         }
 
-        public  String getCommitter(){
-           return committer;
+        public  String getCommitterName(){
+            return committerName;
         }
 
-
+        public String getBranch() {
+            return branch;
+        }
+        public String getEmailDigest(){
+            if(StringUtils.isEmpty(committerEmail)) return null;
+            byte[] md5 = DigestUtils.md5(committerEmail);
+            return  new BigInteger(1,md5).toString(16);
+        }
     }
 
 }

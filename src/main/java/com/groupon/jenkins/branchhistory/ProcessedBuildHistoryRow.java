@@ -25,6 +25,7 @@
 package com.groupon.jenkins.branchhistory;
 
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import hudson.model.Result;
 import jenkins.model.Jenkins;
 
@@ -63,23 +64,13 @@ public class ProcessedBuildHistoryRow extends BuildHistoryRow {
         }
         return"fa-ban" ;
     }
-    @Override
-    public String getMessage() throws IOException {
-        return Jenkins.getInstance().getMarkupFormatter().translate(build.getCause().getCommitInfo().getMessage())     ;
-    }
-    @Override
-    public String getCommitUrl(){
-        return build.getCause().getCommitInfo().getCommitUrl();
-    }
 
     @Override
-    public String getCommitDisplayString(){
-        return build.getCause().getCommitInfo().getDisplayString();
+    public BuildCause.CommitInfo getCommit() {
+        return build.getCause().getCommitInfo();
     }
-    @Override
-    public String getCommitter(){
-        return build.getCause().getCommitInfo().getCommitter();
-    }
+
+
     @Override
     public String getDisplayTime(){
         return  build.getDisplayTime();

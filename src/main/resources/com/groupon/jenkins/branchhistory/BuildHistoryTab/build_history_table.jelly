@@ -25,19 +25,25 @@ THE SOFTWARE.
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
     <j:new var="h" className="hudson.Functions" /><!-- instead of JSP functions -->
     ${h.initPageVariables(context)}
-    <table  class="table table-bordered table-borderless build-history-table">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Message</th>
-                <th>Commit</th>
-                <th>Committer</th>
-                <th>Started</th>
-                <th>Duration</th>
-            </tr>
-        </thead>
+    <div class="list-group">
         <j:forEach var="build" items="${it.builds}">
             <st:include page="build_row.jelly" />
         </j:forEach>
-    </table>
+
+    </div>
+    <!--<table  class="table table-bordered table-borderless build-history-table">-->
+        <!--<thead>-->
+            <!--<tr>-->
+                <!--<th>#</th>-->
+                <!--<th>Message</th>-->
+                <!--<th>Commit</th>-->
+                <!--<th>Committer</th>-->
+                <!--<th>Started</th>-->
+                <!--<th>Duration</th>-->
+            <!--</tr>-->
+        <!--</thead>-->
+        <!--<j:forEach var="build" items="${it.builds}">-->
+            <!--<st:include page="build_row.jelly" />-->
+        <!--</j:forEach>-->
+    <!--</table>-->
 </j:jelly>

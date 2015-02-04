@@ -2,19 +2,22 @@
  margin: -2px 0 0 10px;
  font-size: 18px;
 }
+.with-space{
+ margin-right:4px;
+}
 
-tr.build-ABORTED{
+.list-group-item.build-ABORTED{
  /*background-color: dimgrey;*/
 }
-tr.build-SUCCESS{
+.list-group-item.build-SUCCESS{
  background-color: #fafffa;
 }
 
-tr.build-FAILURE{
+.list-group-item.build-FAILURE{
  background-color:snow ;
 }
 
-tr.build-IN_PROGRESS{
+.list-group-item.build-IN_PROGRESS{
  background-color: #fffcf4 ;
 }
 

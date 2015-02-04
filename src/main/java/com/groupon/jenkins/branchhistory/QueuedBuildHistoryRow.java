@@ -24,6 +24,7 @@
 
 package com.groupon.jenkins.branchhistory;
 
+import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import hudson.model.Queue;
 
 import java.io.IOException;
@@ -53,24 +54,10 @@ public class QueuedBuildHistoryRow extends BuildHistoryRow {
     }
 
     @Override
-    public String getMessage() throws IOException {
-        return "Pending " + item.getInQueueForString();
+    public BuildCause.CommitInfo getCommit() {
+        return null;
     }
 
-    @Override
-    public String getCommitUrl() {
-        return "-";
-    }
-
-    @Override
-    public String getCommitDisplayString() {
-        return "-";
-    }
-
-    @Override
-    public String getCommitter() {
-        return item.getCauseOfBlockage().getShortDescription();
-    }
 
     @Override
     public String getDisplayTime() {

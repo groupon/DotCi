@@ -61,6 +61,12 @@ jQuery(document).ready(function ($) {
     dotCiLoadTab(activeTab);
 });
 
+function dotciGoto(e,x){
+    e.preventDefault();
+    window.location =  x;
+    return false;
+}
+
 
 
 

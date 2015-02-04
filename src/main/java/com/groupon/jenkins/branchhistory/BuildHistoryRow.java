@@ -24,23 +24,19 @@
 
 package com.groupon.jenkins.branchhistory;
 
+import com.groupon.jenkins.dynamic.build.cause.BuildCause;
+
 import java.io.IOException;
 
 public abstract class BuildHistoryRow {
 
     public abstract int getNumber();
-
     public abstract String getResult();
-
     public abstract String getIcon();
 
-    public abstract String getMessage() throws IOException;
 
-    public abstract String getCommitUrl();
+    public abstract BuildCause.CommitInfo getCommit();
 
-    public abstract String getCommitDisplayString();
-
-    public abstract String getCommitter();
 
     public abstract String getDisplayTime();
     public abstract String getDuration();
