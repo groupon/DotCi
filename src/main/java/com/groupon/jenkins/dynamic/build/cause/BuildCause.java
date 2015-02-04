@@ -73,7 +73,7 @@ public abstract class BuildCause extends Cause {
 
 
     public static class CommitInfo{
-        private final String committerEmail;
+        private  String committerEmail;
         private String message;
         private String committerName;
         private String branch;
@@ -86,6 +86,11 @@ public abstract class BuildCause extends Cause {
             this.committerEmail= commit.getCommitShortInfo().getCommitter().getEmail();
             this.commitUrl = commit.getOwner().getUrl()+"/commit/"+sha;
             this.branch = branch.toString();
+        }
+
+        public CommitInfo(String message, String committerName) {
+            this.message = message;
+            this.committerName = committerName;
         }
 
         public CommitInfo(Payload payload) {
