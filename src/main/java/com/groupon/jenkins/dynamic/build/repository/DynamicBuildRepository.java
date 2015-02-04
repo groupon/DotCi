@@ -323,7 +323,7 @@ public class DynamicBuildRepository extends MongoRepository {
         Query<DbBackedBuild> query = getQuery(project);
         if(branch !=null) filterBranch(branch,query);
         query.filter("result","SUCCESS");
-        List<DbBackedBuild> builds = getQuery(project).filter("startTime <", endDate.getTimeInMillis()).filter("startTime >", startDate.getTimeInMillis()).asList();
+        List<DbBackedBuild> builds = query.filter("startTime <", endDate.getTimeInMillis()).filter("startTime >", startDate.getTimeInMillis()).asList();
         for(DbBackedBuild build : builds) {
             associateProject(project, build);
         }
