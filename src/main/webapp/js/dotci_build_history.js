@@ -46,12 +46,13 @@ function dotCiLoadTab(tab) {
 }
 
 
-function dotCiCancelBuild(url){
-        $.post(url);
+function dotCiCancelBuild(e,url){
+    e.preventDefault();
+    $.post(url);
     return false;
 }
 jQuery(document).ready(function ($) {
-   // setInterval(updateDotCiBuildHistory, 1000 * 5);//Every 5 seconds
+    // setInterval(updateDotCiBuildHistory, 1000 * 5);//Every 5 seconds
     jQuery("#addNewTab").click(addNewDotCiTab);
     jQuery(".removeTab").click(dotCiRemoveTab);
     $('a[data-toggle="tab"]').on('shown.bs.tab',  function(e){
