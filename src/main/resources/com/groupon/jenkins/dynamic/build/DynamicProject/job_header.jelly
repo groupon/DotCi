@@ -28,7 +28,8 @@
 
     <div class="row">
       <div class="col-md-3">
-        <a class="btn btn-primary btn-labeled" href="${it.githubRepoUrl}"> <span class=" btn-label octicon octicon-mark-github"/>   ${not empty it.parent.fullDisplayName?it.parent.fullDisplayName+'/':''}${it.displayName}</a>
+        <a class="btn btn-primary btn-labeled with-space" href="${it.githubRepoUrl}"> <span class=" btn-label octicon octicon-mark-github"/>   ${not empty it.parent.fullDisplayName?it.parent.fullDisplayName+'/':''}${it.displayName}</a>
+        <em>Default Branch:</em> <mark>master</mark>
       </div>
       <div class="col-md-7">
         <a  href="build?delay=0sec" id="build-now" class="btn btn-success  btn-sm btn-labeled">
