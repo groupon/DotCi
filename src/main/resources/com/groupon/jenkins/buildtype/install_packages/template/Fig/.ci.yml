@@ -39,7 +39,7 @@ build:
     - fig -p $BUILD_TAG pull --allow-insecure-ssl # https://github.com/docker/fig/issues/158
     - fig -p $BUILD_TAG build
     - fig -p $BUILD_TAG up
-    - EXIT_CODE=`fig -p $BUILD_TAG ps 2>/dev/null | grep Exit | sed 's/.*Exit //g' | awk '{n=n+\$1}END{print n}'`
+    - EXIT_CODE=`awk '/^test/{gsub(/:\$/,"");print}' fig.yml | xargs fig -p $BUILD_TAG ps 2>/dev/null | grep Exit | sed 's/.*Exit //g' | awk '{n=n+\$1}END{print n}'`
     - fig -p $BUILD_TAG kill
     - fig -p $BUILD_TAG rm --force
     - '[ $EXIT_CODE -eq 0 ] || exit $EXIT_CODE' # https://github.com/docker/fig/issues/683
