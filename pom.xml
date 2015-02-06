@@ -41,7 +41,13 @@ THE SOFTWARE.
             <url>http://opensource.org/licenses/MIT</url>
         </license>
     </licenses>
-
+    <developers>
+        <developer>
+            <id>sgaddipati</id>
+            <name>Surya Gaddipati</name>
+            <email>surya.gaddipati@gmail.com</email>
+        </developer>
+    </developers>
     <description> Github integration, build management through .ci.yml, environment management though docker. </description>
     <url>https://github.com/groupon/DotCi</url>
     <scm>
