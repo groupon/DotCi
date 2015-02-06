@@ -24,6 +24,7 @@
 parent_template: install_packages
 environment:
   language: docker
+  language_versions: 1.4.1
   vars:
     DOCKER_IMAGE: '<% out<< JOB_NAME.replaceAll('-','_').replaceAll('^','docker.registry/') %>'
     DOCKER_TAG: '<% if (DOTCI_PULL_REQUEST || DOTCI_BRANCH == "master") { %>latest<% } else { %>$DOTCI_BRANCH<% } %>'
