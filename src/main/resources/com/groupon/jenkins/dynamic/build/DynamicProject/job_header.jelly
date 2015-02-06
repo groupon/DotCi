@@ -26,30 +26,29 @@
 
   <j:set var="configurable" value="${it.hasPermission(it.CONFIGURE)? '':'disabled'}"/>
 
-    <div class="row">
-      <div class="col-md-3">
+  <div class="row">
+    <div class="col-md-5">
         <a class="btn btn-primary btn-labeled with-space" href="${it.githubRepoUrl}"> <span class=" btn-label octicon octicon-mark-github"/>   ${not empty it.parent.fullDisplayName?it.parent.fullDisplayName+'/':''}${it.displayName}</a>
-        <em>Default Branch:</em> <mark>master</mark>
-      </div>
-      <div class="col-md-7">
-        <a  href="build?delay=0sec" id="build-now" class="btn btn-success  btn-sm btn-labeled">
-          <i class="btn-label fa fa-rocket"></i> Build Now
-        </a>
-      </div>
-      <div class="col-md-2">
-        <div class="btn-group">
-          <button type="button" class="${configurable} btn btn-sm dropdown-toggle btn-labeled" data-toggle="dropdown" aria-expanded="false">
-            <i class="btn-label fa fa-cog"></i>  Settings <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" role="menu">
-            <li><a class="btn-sm" href="configure"><i class="btn-label fa fa-wrench"></i>Configure</a></li>
-            <li><a class="btn-sm"  id="delete-project" href="doDelete">
-              <i class="btn-label fa fa-trash-o"></i>
-              Delete</a></li>
-          </ul>
-        </div>
+    </div>
+    <div class="col-md-5">
+      <a  href="build?delay=0sec" id="build-now" class="btn btn-success  btn-sm btn-labeled">
+        <i class="btn-label fa fa-rocket"></i> Build Now
+      </a>
+    </div>
+    <div class="col-md-2">
+      <div class="btn-group">
+        <button type="button" class="${configurable} btn btn-sm dropdown-toggle btn-labeled" data-toggle="dropdown" aria-expanded="false">
+          <i class="btn-label fa fa-cog"></i>  Settings <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li><a class="btn-sm" href="configure"><i class="btn-label fa fa-wrench"></i>Configure</a></li>
+          <li><a class="btn-sm"  id="delete-project" href="doDelete">
+            <i class="btn-label fa fa-trash-o"></i>
+            Delete</a></li>
+        </ul>
       </div>
     </div>
+  </div>
 
   <script>
     $("#delete-project").click(function(e){
@@ -57,7 +56,7 @@
       return bootbox.confirm("Are you sure?", function(result) {
         if(result){
           $.post(window.location + jQuery(e.target).attr("href"), function(data, textStatus,xhr) {
-                   window.location.href = xhr.getResponseHeader("Location");
+            window.location.href = xhr.getResponseHeader("Location");
           });
         }
       })
