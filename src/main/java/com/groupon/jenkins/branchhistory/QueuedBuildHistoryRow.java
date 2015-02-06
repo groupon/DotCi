@@ -55,7 +55,7 @@ public class QueuedBuildHistoryRow extends BuildHistoryRow {
 
     @Override
     public BuildCause.CommitInfo getCommit() {
-        return new BuildCause.CommitInfo("Queued: " + item.getWhy(),item.getCausesDescription());
+        return new BuildCause.CommitInfo("Queued: " + item.getWhy(),item.getInQueueForString());
     }
 
 
