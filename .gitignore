@@ -1,4 +1,5 @@
 target/
+.module-cache
 work/
 .idea
 .DS_Store
