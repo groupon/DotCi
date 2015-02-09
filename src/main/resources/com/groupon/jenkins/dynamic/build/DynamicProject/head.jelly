@@ -48,5 +48,8 @@
         <link rel="stylesheet" href="${resURL}/plugin/DotCi/css/jasny-bootstrap.min.css"/>
         <script src="${resURL}/plugin/DotCi/js/jasny-bootstrap.min.js"></script>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.js"></script>
+        <script src="${resURL}/plugin/DotCi/js/recent_projects.js"></script>
+
     </head>
 </j:jelly>

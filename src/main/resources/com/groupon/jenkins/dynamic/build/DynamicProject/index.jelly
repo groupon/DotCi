@@ -32,7 +32,7 @@
             <div class="container-fluid" >
                 <div class="row">
                     <div class="col-md-3">
-                        <st:include page="projects_panel.jelly" />
+                        <div id="recent-projects"/>
                     </div>
                     <div class="col-md-9">
                         <st:include page="job_header.jelly" />
