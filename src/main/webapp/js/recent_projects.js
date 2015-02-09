@@ -50,7 +50,9 @@ $(function() {
             return {recentProjects: []};
         },
         componentDidMount: function() {
-          //make ajax call here
+            $.getJSON( $('#rootURL').attr('data-url') + this.props.url, function( data ) {
+                this.setState({recentProjects: data});
+            }.bind(this));
         },
         render: function(){
             var recentProjects = this.state.recentProjects.map(function (project) {

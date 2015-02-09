@@ -282,15 +282,4 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         delete();
     }
 
-    public Iterable<DynamicProject> getRecentProjects(){
-        Set<DynamicProject> projects  = new HashSet<DynamicProject>();
-        Iterable<DynamicBuild> builds = dynamicBuildRepository.getLastBuildsForUser(getCurrentUser(), 20);
-        for(DynamicBuild build : builds){
-          projects.add(build.getParent());
-        }
-        return projects;
-    }
-    private String getCurrentUser() {
-        return Jenkins.getAuthentication().getName();
-    }
 }
