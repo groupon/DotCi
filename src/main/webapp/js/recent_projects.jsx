@@ -37,20 +37,32 @@ $(function() {
     var RecentProject = React.createClass({
         render: function(){
             return (
-            <li className="list-group-item">
-                <a href={this.props.url}> {this.props.name}  </a>
-            </li>
+                <li className="list-group-item">
+                    <a href={this.props.url}> {this.props.name}  </a>
+                </li>
             );
         }
     });
 
     var RecentProjectsWidget = React.createClass({
+
+        getInitialState: function() {
+            return {recentProjects: []};
+        },
+        componentDidMount: function() {
+          //make ajax call here
+        },
         render: function(){
+            var recentProjects = this.state.recentProjects.map(function (project) {
+                return (
+                    <RecentProject url={project.url} name ={project.name}/>
+                );
+            });
             return (
                 <div className="panel panel-info">
                     <RecentProjectsHeader/>
                     <ul className="list-group">
-                        <RecentProject url="/meow" name ="project1"/>
+                    {recentProjects}
                     </ul>
                 </div>
             );
@@ -59,7 +71,7 @@ $(function() {
 
 
     React.render(
-        <RecentProjectsWidget/>,
+        <RecentProjectsWidget url="/recentProjects"/>,
         document.getElementById('recent-projects')
     );
 
