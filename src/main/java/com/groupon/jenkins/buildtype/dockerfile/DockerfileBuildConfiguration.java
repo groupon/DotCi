@@ -66,7 +66,7 @@ public class DockerfileBuildConfiguration extends DockerBuildConfiguration {
     @Override
     protected String getRunCommand(Combination combination) {
         String builtImageTagName = UUID.randomUUID().toString().replaceAll("-", "");
-        String buildImageCommand = dockerCommand("build").flag("t", builtImageTag).args( ".").get();
+        String buildImageCommand = dockerCommand("build").flag("t", builtImageTagName).args( ".").get();
         ShellCommands buildCommands = new ShellCommands();
         buildCommands.add(buildImageCommand);
 
