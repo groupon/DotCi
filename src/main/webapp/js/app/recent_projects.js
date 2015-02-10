@@ -62,7 +62,7 @@ define([
         }
     });
 
-    var RecentProjectsWidget = React.createClass({displayName: "RecentProjectsWidget",
+    return RecentProjectsWidget = React.createClass({displayName: "RecentProjectsWidget",
         getInitialState: function() {
             return {recentProjects: []};
         },
@@ -87,5 +87,4 @@ define([
             );
         }
     });
-    return React;
 });

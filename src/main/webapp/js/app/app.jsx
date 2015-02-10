@@ -23,15 +23,16 @@
  */
 
 define([
-    'jquery','recent_projects'
-], function($){
+    'jquery','reactjs','recent_projects'
+], function($,React,RecentProjectsWidget){
     return {
         initialize: function(){
-            //React.render(
-            //    <RecentProjectsWidget url= {rootURL+ "/recentProjects"}/>,
-            //    document.getElementById('recent-projects')
-            //);
-            console.log("meow2")
+            $(function(){
+                React.render(
+                    <RecentProjectsWidget url= {rootURL+ "/recentProjects"}/>,
+                    document.getElementById('recent-projects')
+                );
+            })
         }
     };
 });
