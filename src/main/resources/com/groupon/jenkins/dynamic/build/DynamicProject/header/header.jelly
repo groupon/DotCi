@@ -24,20 +24,22 @@
 
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
 
-  <j:new var="h" className="hudson.Functions" /><!-- instead of JSP functions -->
+  <j:new var="h" className="hudson.Functions" />
   ${h.initPageVariables(context)}
-  <div id="rootURL" data-url="${rootURL}"/>
+  <script>
+      rootURL = '${rootURL}'
+  </script>
   <nav class="navbar navbar-inverse">
-      <div class="navbar-header">
-        <st:include page="header/logo.jelly" />
-      </div>
+    <div class="navbar-header">
+      <st:include page="header/logo.jelly" />
+    </div>
 
-      <ul class="nav navbar-nav navbar-left">
-        <st:include page="header/breadcrumb.jelly" />
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <st:include page="header/login.jelly" />
-      </ul>
+    <ul class="nav navbar-nav navbar-left">
+      <st:include page="header/breadcrumb.jelly" />
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <st:include page="header/login.jelly" />
+    </ul>
   </nav>
 
 

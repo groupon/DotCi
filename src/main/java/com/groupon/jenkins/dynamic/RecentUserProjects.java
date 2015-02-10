@@ -37,9 +37,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Extension
 public class RecentUserProjects  implements RootAction{
@@ -60,17 +58,32 @@ public class RecentUserProjects  implements RootAction{
 
     public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException {
         rsp.setContentType("application/json");
+        Map<DynamicProject, List<DynamicBuild>> recentProjects = getRecentProjects();
+        List<Map<String, Object>> output = new ArrayList<Map<String, Object>>();
+        for(DynamicProject project: recentProjects.keySet()){
+            HashMap<String, Object> projectMap = new HashMap<String, Object>();
+            projectMap.put("name",project.getFullName());
+            projectMap.put("url",project.getUrl());
+            //List<Map<String,String>>
+        }
         String json = JSONSerializer.toJSON(Arrays.asList(ImmutableMap.of("name","meow1","url","/meow"))).toString(0);
         rsp.getOutputStream().write(json.getBytes());
         rsp.flushBuffer();
     }
-    public Iterable<DynamicProject> getRecentProjects(){
-        Set<DynamicProject> projects  = new HashSet<DynamicProject>();
+    public Map<DynamicProject, List<DynamicBuild>> getRecentProjects(){
+        Map<DynamicProject,List<DynamicBuild>> recentProjects = new HashMap<DynamicProject, List<DynamicBuild>>();
         Iterable<DynamicBuild> builds = getDynamicBuildRepository().getLastBuildsForUser(getCurrentUser(), 20);
         for(DynamicBuild build : builds){
-            projects.add(build.getParent());
+            if(recentProjects.containsKey(build.getParent())){
+                List<DynamicBuild> parentBuilds = recentProjects.get(build.getParent());
+                parentBuilds.add(build);
+            }else{
+                ArrayList<DynamicBuild> parentBuilds = new ArrayList<DynamicBuild>();
+                parentBuilds.add(build);
+                recentProjects.put(build.getParent(),parentBuilds);
+            }
         }
-        return projects;
+        return recentProjects;
     }
 
     private DynamicBuildRepository getDynamicBuildRepository() {

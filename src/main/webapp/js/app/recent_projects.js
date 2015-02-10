@@ -1,4 +1,5 @@
 /*
+
  * The MIT License (MIT)
  *
  * Copyright (c) 2014, Groupon, Inc.
@@ -21,7 +22,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-$(function() {
+define([
+    'jquery','reactjs'
+], function($,React){
+    var BuildIcon =React.createClass({displayName: "BuildIcon",
+        render: function() {
+            var buildIcon ;
+            switch(this.props.state){
+                case 'SUCCESS': buildIcon = "fa-check"; break;
+                case 'FAILURE': buildIcon = "fa-times"; break;
+                case 'BUILDING': buildIcon = "fa-circle-o-notch fa-spin"; break;
+                case 'ABORTED': buildIcon = "fa-ban"; break;
+            }
+            return (
+                React.createElement("span", {className: "fa fa-fw " + buildIcon})
+            );
+        }
+    });
 
     var RecentProjectsHeader = React.createClass({displayName: "RecentProjectsHeader",
         render: function() {
@@ -38,19 +55,19 @@ $(function() {
         render: function(){
             return (
                 React.createElement("li", {className: "list-group-item"}, 
-                    React.createElement("a", {href: this.props.url}, " ", this.props.name, "  ")
+                    React.createElement("a", {href: this.props.url}, " ", this.props.name, "  "), 
+                    React.createElement(BuildIcon, {state: "ABORTED"})
                 )
             );
         }
     });
 
     var RecentProjectsWidget = React.createClass({displayName: "RecentProjectsWidget",
-
         getInitialState: function() {
             return {recentProjects: []};
         },
         componentDidMount: function() {
-            $.getJSON( $('#rootURL').attr('data-url') + this.props.url, function( data ) {
+            $.getJSON(  this.props.url, function( data ) {
                 this.setState({recentProjects: data});
             }.bind(this));
         },
@@ -69,15 +86,6 @@ $(function() {
                 )
             );
         }
-    })
-
-
-    React.render(
-        React.createElement(RecentProjectsWidget, {url: "/recentProjects"}),
-        document.getElementById('recent-projects')
-    );
-
-
-
-
+    });
+    return React;
 });

@@ -51,15 +51,15 @@
   </div>
 
   <script>
-    $("#delete-project").click(function(e){
-      e.preventDefault();
-      return bootbox.confirm("Are you sure?", function(result) {
-        if(result){
-          $.post(window.location + jQuery(e.target).attr("href"), function(data, textStatus,xhr) {
-            window.location.href = xhr.getResponseHeader("Location");
-          });
-        }
-      })
-    });
+    //$("#delete-project").click(function(e){
+    //  e.preventDefault();
+    //  return bootbox.confirm("Are you sure?", function(result) {
+    //    if(result){
+    //      $.post(window.location + jQuery(e.target).attr("href"), function(data, textStatus,xhr) {
+    //        window.location.href = xhr.getResponseHeader("Location");
+    //      });
+    //    }
+    //  })
+    //});
   </script>
 </j:jelly>
