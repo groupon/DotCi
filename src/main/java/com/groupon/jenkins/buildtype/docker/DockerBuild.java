@@ -45,6 +45,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -121,7 +122,10 @@ public abstract class DockerBuild extends BuildType implements SubBuildRunner {
         try{
             buildResult = new ShellScriptRunner(buildExecutionContext, listener).runScript(buildConfiguration.toShellCommands(combination));
         }finally {
-            new ShellScriptRunner(buildExecutionContext,listener).runScript(new ShellCommands().addAll(buildConfiguration.getLinkCleanupCommands()));
+            Stack<String> cleanupCmds = buildConfiguration.getLinkCleanupCommands();
+            if(cleanupCmds.size() > 0){
+                new ShellScriptRunner(buildExecutionContext,listener).runScript(new ShellCommands().addAll(cleanupCmds));
+            }
         }
         return buildResult;
     }
