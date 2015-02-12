@@ -22,22 +22,18 @@
  * THE SOFTWARE.
  */
 
-define([
-    'jquery','reactjs','recent_projects','build_history'
-], function($,React,RecentProjectsWidget){
-    return {
-        initialize: function(){
-            $(function(){
-                React.render(
-                    React.createElement(RecentProjectsWidget, {url: rootURL+ "/recentProjects"}),
-                    document.getElementById('recent-projects')
-                );
+package com.groupon.jenkins.util;
 
-                React.render(
-                    React.createElement(BuildHistory, {url: "./buildHistory"}),
-                    document.getElementById('build-history')
-                );
-            })
-        }
-    };
-});
+import net.sf.json.JSONSerializer;
+import org.kohsuke.stapler.StaplerResponse;
+
+import java.io.IOException;
+
+public class JsonResponse {
+    public static void  render(StaplerResponse rsp, Object output) throws IOException {
+        String json = JSONSerializer.toJSON(output).toString(0);
+        rsp.getOutputStream().write(json.getBytes());
+        rsp.setContentType("application/json;charset=UTF-8");
+        rsp.flushBuffer();
+    }
+}

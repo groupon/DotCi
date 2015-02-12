@@ -29,6 +29,7 @@ import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
+import com.groupon.jenkins.util.JsonResponse;
 import hudson.Extension;
 import hudson.model.RootAction;
 import jenkins.model.Jenkins;
@@ -40,7 +41,7 @@ import java.io.IOException;
 import java.util.*;
 
 @Extension
-public class RecentUserProjects  implements RootAction{
+public class RecentProjects implements RootAction{
     @Override
     public String getIconFileName() {
         return null;
@@ -66,9 +67,9 @@ public class RecentUserProjects  implements RootAction{
             projectMap.put("url",project.getUrl());
             //List<Map<String,String>>
         }
-        String json = JSONSerializer.toJSON(Arrays.asList(ImmutableMap.of("name","meow1","url","/meow"))).toString(0);
-        rsp.getOutputStream().write(json.getBytes());
-        rsp.flushBuffer();
+        List<ImmutableMap<String, String>> responseOuput = Arrays.asList(ImmutableMap.of("name", "meow1", "url", "/meow"));
+        JsonResponse.render(rsp,responseOuput);
+
     }
     public Map<DynamicProject, List<DynamicBuild>> getRecentProjects(){
         Map<DynamicProject,List<DynamicBuild>> recentProjects = new HashMap<DynamicProject, List<DynamicBuild>>();

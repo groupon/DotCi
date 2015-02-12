@@ -23,7 +23,7 @@
  */
 
 define([
-    'jquery','reactjs','recent_projects'
+    'jquery','reactjs','recent_projects','build_history'
 ], function($,React,RecentProjectsWidget){
     return {
         initialize: function(){
@@ -31,6 +31,11 @@ define([
                 React.render(
                     <RecentProjectsWidget url= {rootURL+ "/recentProjects"}/>,
                     document.getElementById('recent-projects')
+                );
+
+                React.render(
+                    <BuildHistory url= { "./buildHistory"}/>,
+                    document.getElementById('build-history')
                 );
             })
         }

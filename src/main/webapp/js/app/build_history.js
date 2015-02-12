@@ -23,21 +23,22 @@
  */
 
 define([
-    'jquery','reactjs','recent_projects','build_history'
-], function($,React,RecentProjectsWidget){
-    return {
-        initialize: function(){
-            $(function(){
-                React.render(
-                    React.createElement(RecentProjectsWidget, {url: rootURL+ "/recentProjects"}),
-                    document.getElementById('recent-projects')
-                );
+   'reactjs'
+], function(React){
 
-                React.render(
-                    React.createElement(BuildHistory, {url: "./buildHistory"}),
-                    document.getElementById('build-history')
-                );
-            })
+    return BuildHistory = React.createClass({displayName: "BuildHistory",
+        getInitialState: function() {
+            return {recentProjects: []};
+        },
+        componentDidMount1: function() {
+            $.getJSON(  this.props.url, function( data ) {
+                this.setState({recentProjects: data});
+            }.bind(this));
+        },
+        render: function(){
+            return (
+                React.createElement("h1", null, "Meow")
+            );
         }
-    };
+    });
 });
