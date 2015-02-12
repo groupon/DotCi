@@ -28,7 +28,16 @@ define([
     var Tab = React.createClass({displayName: "Tab",
         render: function(){
             return (
-             React.createElement("h1", null, "sdfsa")
+            //<li role="presentation"  class="{tab.active?'active':''}">
+            //    <a href="buildHistory/{this.props.url}" class="build-history-tab-button " data-target="#${tab.url}" data-toggle="tab" >
+            //        <span class="${tab.fontIcon} ${tab.state}" ></span>
+            //        ${tab.name}
+            //        <j:if test="${tab.removable}">
+            //            <button class="close closeTab removeTab" type="button"  data-name='${tab.name}' >x</button>
+            //        </j:if>
+            //    </a>
+            //</li>
+                React.createElement("h1", null, "asdfas")
             );
         }
     });

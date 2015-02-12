@@ -36,30 +36,6 @@
         <link rel="stylesheet" href="${resURL}/plugin/DotCi/octicons/octicons.css"/>
         <link rel="stylesheet" href="${resURL}/plugin/DotCi/css/build_history_styling.css"/>
 
-        <script  src="${resURL}/plugin/DotCi/js/lib/require.js"></script>
-        <script  src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
-        <script>
-            requirejs.config({
-                "baseUrl": "${resURL}/plugin/DotCi/js/app",
-                shim : {
-                    "bootstrap" : { "deps" :['jquery'] },
-                    "underscore": {
-                        exports: '_'
-                    }
-                },
-                "paths": {
-                    "app": "app",
-                    "jquery": "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min",
-                    "bootstrap": "//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
-                    "reactjs": "//fb.me/react-0.12.2.min"
-                }
-            });
-
-            require([
-                'app',
-            ], function(App){
-                App.initialize();
-            });
-        </script>
+        <script  src="${resURL}/plugin/DotCi/js/dotci.js"></script>
     </head>
 </j:jelly>

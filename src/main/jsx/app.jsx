@@ -22,22 +22,12 @@
  * THE SOFTWARE.
  */
 
-define([
-    'jquery','reactjs','recent_projects/recent_projects','job/job'
-], function($,React,RecentProjectsWidget){
-    return {
-        initialize: function(){
-            $(function(){
-                React.render(
-                    <RecentProjectsWidget url= {rootURL+ "/recentProjects"}/>,
-                    document.getElementById('recent-projects')
-                );
 
-                React.render(
-                    <Job/>,
-                    document.getElementById('job-info')
-                );
-            })
-        }
-    };
-});
+var React = require("jquery");
+module.exports = {
+    initialize: function() {
+        console.log("meow1324")
+        console.log(_)
+    }
+}
+
