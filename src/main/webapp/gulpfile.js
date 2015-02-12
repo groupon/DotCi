@@ -3,7 +3,7 @@ var browserify = require('browserify'),
     gulp = require('gulp'),
     source = require('vinyl-source-stream'),
     sourceFile = './js/main.js',
-    destFolder = './js/',
+    destFolder = './',
     destFile = './js/dotci.js';
  
 gulp.task('browserify', function() {
