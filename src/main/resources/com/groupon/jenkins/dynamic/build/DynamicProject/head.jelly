@@ -37,11 +37,15 @@
         <link rel="stylesheet" href="${resURL}/plugin/DotCi/css/build_history_styling.css"/>
 
         <script  src="${resURL}/plugin/DotCi/js/lib/require.js"></script>
+        <script  src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
         <script>
             requirejs.config({
                 "baseUrl": "${resURL}/plugin/DotCi/js/app",
                 shim : {
-                    "bootstrap" : { "deps" :['jquery'] }
+                    "bootstrap" : { "deps" :['jquery'] },
+                    "underscore": {
+                        exports: '_'
+                    }
                 },
                 "paths": {
                     "app": "app",

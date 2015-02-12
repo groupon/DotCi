@@ -28,21 +28,36 @@ define([
     var Tab = React.createClass({
         render: function(){
             return (
-             <h1>sdfsa</h1>
+            <li role="presentation"  class="{tab.active?'active':''}">
+                <a href="buildHistory/{this.props.url}" class="build-history-tab-button " data-target="#${tab.url}" data-toggle="tab" >
+                    <span class="${tab.fontIcon} ${tab.state}" ></span>
+                    ${tab.name}
+                    <j:if test="${tab.removable}">
+                        <button class="close closeTab removeTab" type="button"  data-name='${tab.name}' >x</button>
+                    </j:if>
+                </a>
+            </li>
             );
         }
     });
 
     return JobTabs = React.createClass({
+        getInitialState: function() {
+            return {tabs: {}};
+        },
         componentDidMount: function() {
             $.getJSON(  this.props.url, function( data ) {
-                this.setState({recentProjects: data});
+                this.setState({tabs: data});
             }.bind(this));
         },
         render: function(){
+            var tabs = _.map(this.state.tabs, function(tab,url){
+                return ( <Tab url={url} name ={tab}/> );
+            });
             return (
                 <div role="tabpanel">
                     <ul class="nav nav-tabs">
+                    {tabs}
                     </ul>
                 </div>
             );

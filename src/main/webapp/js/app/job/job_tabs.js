@@ -34,15 +34,22 @@ define([
     });
 
     return JobTabs = React.createClass({displayName: "JobTabs",
+        getInitialState: function() {
+            return {tabs: {}};
+        },
         componentDidMount: function() {
             $.getJSON(  this.props.url, function( data ) {
-                this.setState({recentProjects: data});
+                this.setState({tabs: data});
             }.bind(this));
         },
         render: function(){
+            var tabs = _.map(this.state.tabs, function(tab,url){
+                return ( React.createElement(Tab, {url: url, name: tab}) );
+            });
             return (
                 React.createElement("div", {role: "tabpanel"}, 
-                    React.createElement("ul", {class: "nav nav-tabs"}
+                    React.createElement("ul", {class: "nav nav-tabs"}, 
+                    tabs
                     )
                 )
             );
