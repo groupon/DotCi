@@ -27,11 +27,10 @@ var React = require("react");
 var $ = require("jquery");
 module.exports = {
     initialize: function() {
-        console.log("meow1324")
         $(function(){
 
             React.render(
-                <h1>asdfas</h1>,
+                <h1>meow</h1>,
                 document.getElementById('recent-projects')
             );
         });

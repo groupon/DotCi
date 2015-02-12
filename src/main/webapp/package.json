@@ -12,7 +12,11 @@
     "browserify": "latest",
     "watchify": "latest",
     "react-tools": "latest",
-    "gulp": "3.7.0",
+    "gulp": "latest",
+"gulp-uglify": "latest",
+"gulp-html-replace": "latest",
+"gulp-streamify": "latest",
+"reactify": "latest",
     "vinyl-source-stream": "latest"
   },
   "scripts": {
