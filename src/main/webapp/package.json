@@ -11,12 +11,12 @@
   "devDependencies": {
     "browserify": "latest",
     "watchify": "latest",
-    "react-tools": "latest"
+    "react-tools": "latest",
+    "gulp": "3.7.0",
+    "vinyl-source-stream": "latest"
   },
   "scripts": {
-    "build-js": "browserify main.js -o dotci.js -d",
-    "watch-js": "watchify main.js -o dotci.js -d",
-    "watch-jsx": "jsx --extension jsx --watch ../../jsx/ app/"
+    "watch-jsx": "jsx --extension jsx --watch ../jsx/ js/app/"
   }
 
 }

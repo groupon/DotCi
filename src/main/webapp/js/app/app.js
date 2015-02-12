@@ -23,11 +23,18 @@
  */
 
 
-var React = require("jquery");
+var React = require("react");
+var $ = require("jquery");
 module.exports = {
     initialize: function() {
         console.log("meow1324")
-        console.log(_)
+        $(function(){
+
+            React.render(
+                React.createElement("h1", null, "asdfas"),
+                document.getElementById('recent-projects')
+            );
+        });
     }
 }
 

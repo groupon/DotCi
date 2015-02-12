@@ -22,69 +22,69 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-define([
-    'jquery','reactjs'
-], function($,React){
-    var BuildIcon =React.createClass({displayName: "BuildIcon",
-        render: function() {
-            var buildIcon ;
-            switch(this.props.state){
-                case 'SUCCESS': buildIcon = "fa-check"; break;
-                case 'FAILURE': buildIcon = "fa-times"; break;
-                case 'BUILDING': buildIcon = "fa-circle-o-notch fa-spin"; break;
-                case 'ABORTED': buildIcon = "fa-ban"; break;
-            }
-            return (
-                React.createElement("span", {className: "fa fa-fw " + buildIcon})
-            );
+var React = require("react");
+var $ = require("jquery")
+var BuildIcon =React.createClass({displayName: "BuildIcon",
+    render: function() {
+        var buildIcon ;
+        switch(this.props.state){
+            case 'SUCCESS': buildIcon = "fa-check"; break;
+            case 'FAILURE': buildIcon = "fa-times"; break;
+            case 'BUILDING': buildIcon = "fa-circle-o-notch fa-spin"; break;
+            case 'ABORTED': buildIcon = "fa-ban"; break;
         }
-    });
-
-    var RecentProjectsHeader = React.createClass({displayName: "RecentProjectsHeader",
-        render: function() {
-            return (
-                React.createElement("div", {className: "panel-heading"}, 
-                    React.createElement("h3", {className: "panel-title"}, "Recent Projects")
-                )
-            );
-        }
-    });
-
-
-    var RecentProject = React.createClass({displayName: "RecentProject",
-        render: function(){
-            return (
-                React.createElement("li", {className: "list-group-item"}, 
-                    React.createElement("a", {href: this.props.url}, " ", this.props.name, "  "), 
-                    React.createElement(BuildIcon, {state: "ABORTED"})
-                )
-            );
-        }
-    });
-
-    return RecentProjectsWidget = React.createClass({displayName: "RecentProjectsWidget",
-        getInitialState: function() {
-            return {recentProjects: []};
-        },
-        componentDidMount: function() {
-            $.getJSON(  this.props.url, function( data ) {
-                this.setState({recentProjects: data});
-            }.bind(this));
-        },
-        render: function(){
-            var recentProjects = this.state.recentProjects.map(function (project) {
-                return (
-                    React.createElement(RecentProject, {url: project.url, name: project.name})
-                );
-            });
-            return (
-                React.createElement("div", {className: "panel panel-info"}, 
-                    React.createElement(RecentProjectsHeader, null), 
-                    React.createElement("ul", {className: "list-group"}, 
-                    recentProjects
-                    )
-                )
-            );
-        }
-    });
+        return (
+            React.createElement("span", {className: "fa fa-fw " + buildIcon})
+        );
+    }
 });
+
+var RecentProjectsHeader = React.createClass({displayName: "RecentProjectsHeader",
+    render: function() {
+        return (
+            React.createElement("div", {className: "panel-heading"}, 
+                React.createElement("h3", {className: "panel-title"}, "Recent Projects")
+            )
+        );
+    }
+});
+
+
+var RecentProject = React.createClass({displayName: "RecentProject",
+    render: function(){
+        return (
+            React.createElement("li", {className: "list-group-item"}, 
+                React.createElement("a", {href: this.props.url}, " ", this.props.name, "  "), 
+                React.createElement(BuildIcon, {state: "ABORTED"})
+            )
+        );
+    }
+});
+
+RecentProjectsWidget = React.createClass({displayName: "RecentProjectsWidget",
+    getInitialState: function() {
+        return {recentProjects: []};
+    },
+    componentDidMount: function() {
+        $.getJSON(  this.props.url, function( data ) {
+            this.setState({recentProjects: data});
+        }.bind(this));
+    },
+    render: function(){
+        var recentProjects = this.state.recentProjects.map(function (project) {
+            return (
+                React.createElement(RecentProject, {url: project.url, name: project.name})
+            );
+        });
+        return (
+            React.createElement("div", {className: "panel panel-info"}, 
+                React.createElement(RecentProjectsHeader, null), 
+                React.createElement("ul", {className: "list-group"}, 
+                    recentProjects
+                )
+            )
+        );
+    }
+});
+
+module.exports = RecentProjectsWidget;
