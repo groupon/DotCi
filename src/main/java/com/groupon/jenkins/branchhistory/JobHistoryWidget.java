@@ -28,6 +28,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
+import com.groupon.jenkins.util.JsonResponse;
 import hudson.widgets.Widget;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.Stapler;
@@ -36,6 +37,8 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 
 
 public class JobHistoryWidget extends Widget{
@@ -58,6 +61,14 @@ public class JobHistoryWidget extends Widget{
         this.tabs = intializeTabs();
         this.currentTab = getActiveTab(tabs);
         currentTab.setActive();
+    }
+
+    public void doIndex( StaplerRequest req, StaplerResponse rsp) throws IOException {
+        HashMap<String, String> tabUrls = new HashMap<String, String>();
+        for(HistoryTab tab: tabs){
+            tabUrls.put(tab.getName(),tab.getUrl());
+        }
+        JsonResponse.render(rsp, tabUrls);
     }
 
     public Iterable<HistoryTab> getTabs(){

@@ -29,12 +29,12 @@ define([
         initialize: function(){
             $(function(){
                 React.render(
-                    React.createElement(RecentProjectsWidget, {url: rootURL+ "/recentProjects"}),
+                    <RecentProjectsWidget url= {rootURL+ "/recentProjects"}/>,
                     document.getElementById('recent-projects')
                 );
 
                 React.render(
-                    React.createElement(Job, null),
+                    <Job/>,
                     document.getElementById('job-info')
                 );
             })

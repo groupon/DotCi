@@ -38,7 +38,7 @@
                         <st:include page="job_header.jelly" />
                         <div class="row spacer">
                             <div class="col-md-12">
-                                <div id="build-history"/>
+                                <div id="job-info"/>
                             </div>
                         </div>
                     </div>

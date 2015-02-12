@@ -23,21 +23,21 @@
  */
 
 define([
-    'jquery','reactjs','recent_projects','build_history'
-], function($,React,RecentProjectsWidget){
-    return {
-        initialize: function(){
-            $(function(){
-                React.render(
-                    <RecentProjectsWidget url= {rootURL+ "/recentProjects"}/>,
-                    document.getElementById('recent-projects')
-                );
-
-                React.render(
-                    <BuildHistory url= { "./buildHistory"}/>,
-                    document.getElementById('build-history')
-                );
-            })
+    'reactjs','job/job_tabs'
+], function(React,JobTabs){
+    return Job = React.createClass({displayName: "Job",
+        getInitialState: function() {
+            return {recentProjects: []};
+        },
+        componentDidMount1: function() {
+            $.getJSON(  this.props.url, function( data ) {
+                this.setState({recentProjects: data});
+            }.bind(this));
+        },
+        render: function(){
+            return (
+                React.createElement(JobTabs, {url: "./buildHistory"})
+            );
         }
-    };
+    });
 });
