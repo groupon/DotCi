@@ -1,5 +1,5 @@
 module.exports = {
-    entry: "src/main/webapp/js/main.js",
+    entry: "./target/js/app.js",
     output: {
         path: "src/main/webapp/js",
         filename: "dotci.js"

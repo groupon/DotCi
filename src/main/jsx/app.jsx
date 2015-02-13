@@ -28,8 +28,7 @@ var $ = require("jquery");
 $(function(){
 
     React.render(
-        <h1>surya</h1>,
+        <h1>this works !!</h1>,
         document.getElementById('recent-projects')
     );
 });
-

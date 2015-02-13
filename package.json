@@ -16,10 +16,15 @@
 "gulp-webpack-build": "latest",
 "webpack-dev-server": "latest",
 "jest-cli": "^0.2.2"
-
+  },
+"jest": {
+    "rootDir": "./src/main/jsx",
+    "unmockedModulePathPatterns": [
+      "react"
+    ]
   },
   "scripts": {
-    "watch-jsx": "jsx --extension jsx --watch ../../jsx/ app/",
+    "watch-jsx": "jsx --extension jsx --watch src/main/jsx/ target/js/",
     "test" : "jest"
   }
 

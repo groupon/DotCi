@@ -12,7 +12,7 @@ gulp.task("default", ["build-dev"]);
 // Disadvantage: Requests are not blocked until bundle is available,
 //               can serve an old app on refresh
 gulp.task("build-dev", ["webpack:build-dev"], function() {
-	gulp.watch(["app/**/*"], ["webpack:build-dev"]);
+	gulp.watch(["target/js/**/*"], ["webpack:build-dev"]);
 });
 
 // Production build
