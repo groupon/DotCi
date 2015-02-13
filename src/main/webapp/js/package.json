@@ -14,12 +14,13 @@
 "gulp-util": "latest",
 "webpack": "latest",
 "gulp-webpack-build": "latest",
-"webpack-dev-server": "latest"
-
+"webpack-dev-server": "latest",
+"jest-cli": "^0.2.2"
 
   },
   "scripts": {
-    "watch-jsx": "jsx --extension jsx --watch ../jsx/ js/app/"
+    "watch-jsx": "jsx --extension jsx --watch ../../jsx/ app/",
+    "test" : "jest"
   }
 
 }
