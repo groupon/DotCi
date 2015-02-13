@@ -9,15 +9,14 @@
     "jquery": "latest"
   },
   "devDependencies": {
-    "browserify": "latest",
-    "watchify": "latest",
     "react-tools": "latest",
     "gulp": "latest",
-"gulp-uglify": "latest",
-"gulp-html-replace": "latest",
-"gulp-streamify": "latest",
-"reactify": "latest",
-    "vinyl-source-stream": "latest"
+"gulp-util": "latest",
+"webpack": "latest",
+"gulp-webpack-build": "latest",
+"webpack-dev-server": "latest"
+
+
   },
   "scripts": {
     "watch-jsx": "jsx --extension jsx --watch ../jsx/ js/app/"

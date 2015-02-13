@@ -30,7 +30,7 @@ module.exports = {
         $(function(){
 
             React.render(
-                <h1>meow</h1>,
+                <h1>meow1</h1>,
                 document.getElementById('recent-projects')
             );
         });

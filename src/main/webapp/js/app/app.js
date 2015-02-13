@@ -30,7 +30,7 @@ module.exports = {
         $(function(){
 
             React.render(
-                React.createElement("h1", null, "meow"),
+                React.createElement("h1", null, "meow1"),
                 document.getElementById('recent-projects')
             );
         });
