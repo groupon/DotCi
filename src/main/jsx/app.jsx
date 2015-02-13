@@ -25,15 +25,11 @@
 
 var React = require("react");
 var $ = require("jquery");
-module.exports = {
-    initialize: function() {
-        $(function(){
+$(function(){
 
-            React.render(
-                <h1>surya</h1>,
-                document.getElementById('recent-projects')
-            );
-        });
-    }
-}
+    React.render(
+        <h1>surya</h1>,
+        document.getElementById('recent-projects')
+    );
+});
 
