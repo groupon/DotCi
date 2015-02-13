@@ -5,7 +5,7 @@ var WebpackDevServer = require("webpack-dev-server");
 var webpackConfig = require("./webpack.config.js");
 
 // The development server (the recommended option for development)
-gulp.task("default", ["webpack-dev-server"]);
+gulp.task("default", ["build-dev"]);
 
 // Build and watch cycle (another option for development)
 // Advantage: No server required, can run app from filesystem

@@ -1,7 +1,7 @@
 module.exports = {
-    entry: "./main.js",
+    entry: "../webapp/js/main.js",
     output: {
-        path: __dirname,
+        path: "../webapp/js",
         filename: "dotci.js"
     },
     module: {
