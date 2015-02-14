@@ -15,7 +15,10 @@
     "webpack": "latest",
     "gulp-webpack-build": "latest",
     "webpack-dev-server": "latest",
+    "6to5-loader": "latest",
+    "6to5": "latest",
     "jest-cli": "^0.2.2"
+
   },
   "jest": {
     "rootDir": "./target/js",
