@@ -28,7 +28,7 @@ var $ = require("jquery");
 $(function(){
 
     React.render(
-        <h1>this works !!</h1>,
+        <h1>this workssss meow !!</h1>,
         document.getElementById('recent-projects')
     );
 });
