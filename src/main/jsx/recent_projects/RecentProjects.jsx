@@ -24,20 +24,7 @@
  */
 import React from "react";
 import $ from "jquery";
-let BuildIcon =React.createClass({
-    render: function() {
-        var buildIcon ;
-        switch(this.props.state){
-            case 'SUCCESS': buildIcon = "fa-check"; break;
-            case 'FAILURE': buildIcon = "fa-times"; break;
-            case 'BUILDING': buildIcon = "fa-circle-o-notch fa-spin"; break;
-            case 'ABORTED': buildIcon = "fa-ban"; break;
-        }
-        return (
-            <span className={"fa fa-fw " + buildIcon} />
-        );
-    }
-});
+import BuildIcon from "../components/BuildIcon"
 
 let RecentProjectsHeader = React.createClass({
     render: function() {
@@ -61,7 +48,7 @@ let RecentProject = React.createClass({
     }
 });
 
-let RecentProjectsWidget = React.createClass({
+export default React.createClass({
     getInitialState: function() {
         return {recentProjects: []};
     },
@@ -87,4 +74,3 @@ let RecentProjectsWidget = React.createClass({
     }
 });
 
-module.exports = RecentProjectsWidget;
