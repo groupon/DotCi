@@ -22,9 +22,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var React = require("react");
-var $ = require("jquery")
-var BuildIcon =React.createClass({
+import React from "react";
+import $ from "jquery";
+let BuildIcon =React.createClass({
     render: function() {
         var buildIcon ;
         switch(this.props.state){
@@ -39,7 +39,7 @@ var BuildIcon =React.createClass({
     }
 });
 
-var RecentProjectsHeader = React.createClass({
+let RecentProjectsHeader = React.createClass({
     render: function() {
         return (
             <div className="panel-heading">
@@ -50,7 +50,7 @@ var RecentProjectsHeader = React.createClass({
 });
 
 
-var RecentProject = React.createClass({
+let RecentProject = React.createClass({
     render: function(){
         return (
             <li className="list-group-item">
@@ -61,14 +61,14 @@ var RecentProject = React.createClass({
     }
 });
 
-RecentProjectsWidget = React.createClass({
+let RecentProjectsWidget = React.createClass({
     getInitialState: function() {
         return {recentProjects: []};
     },
     componentDidMount: function() {
-        $.getJSON(  this.props.url, function( data ) {
-            this.setState({recentProjects: data});
-        }.bind(this));
+        //$.getJSON(  this.props.url, function( data ) {
+        //    this.setState({recentProjects: data});
+        //}.bind(this));
     },
     render: function(){
         var recentProjects = this.state.recentProjects.map(function (project) {

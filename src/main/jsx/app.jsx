@@ -25,10 +25,11 @@
 
 import React from "react";
 import $ from "jquery";
-$(function(){
+import RecentProjects from "./recent_projects/RecentProjects"
+$(() => {
 
     React.render(
-        <h1>this workssss meow !!</h1>,
+        <RecentProjects url="/recentProjects"/>,
         document.getElementById('recent-projects')
     );
 });
