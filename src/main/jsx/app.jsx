@@ -29,7 +29,7 @@ import RecentProjects from "./recent_projects/RecentProjects"
 $(() => {
 
     React.render(
-        <RecentProjects url="/recentProjects"/>,
+        <RecentProjects/>,
         document.getElementById('recent-projects')
     );
 });

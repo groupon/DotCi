@@ -26,19 +26,19 @@ import React from "react";
 import $ from "jquery";
 import BuildIcon from "../components/BuildIcon"
 
-let RecentProjectsHeader = React.createClass({
-    render: function() {
+class RecentProjectsHeader extends React.Component{
+    render(){
         return (
             <div className="panel-heading">
                 <h3 className="panel-title">Recent Projects</h3>
             </div>
         );
     }
-});
+};
 
 
-let RecentProject = React.createClass({
-    render: function(){
+class RecentProject extends React.Component{
+    render(){
         return (
             <li className="list-group-item">
                 <a href={this.props.url}> {this.props.name}  </a>
@@ -46,18 +46,19 @@ let RecentProject = React.createClass({
             </li>
         );
     }
-});
+};
 
-export default React.createClass({
-    getInitialState: function() {
-        return {recentProjects: []};
-    },
-    componentDidMount: function() {
+export default class RecentProjectsWiget extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state  = {recentProjects: []};
+    }
+    componentDidMount() {
         //$.getJSON(  this.props.url, function( data ) {
         //    this.setState({recentProjects: data});
         //}.bind(this));
-    },
-    render: function(){
+    }
+    render(){
         var recentProjects = this.state.recentProjects.map(function (project) {
             return (
                 <RecentProject url={project.url} name ={project.name}/>
@@ -72,5 +73,5 @@ export default React.createClass({
             </div>
         );
     }
-});
+};
 

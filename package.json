@@ -4,8 +4,7 @@
   "author": "Surya Gaddipati",
   "description": "DotCi frontend",
   "dependencies": {
-    "underscore": "latest",
-    "react": "0.12.2",
+    "react": "0.13.0-beta.1",
     "jquery": "latest"
   },
   "devDependencies": {
@@ -29,7 +28,7 @@
   },
   "scripts": {
 
-    "watch-jsx": "jsx --extension jsx --watch src/main/jsx/ target/js/",
+    "watch-jsx": "jsx --extension jsx --harmony --watch src/main/jsx/ target/js/",
     "test" : "jest"
   }
 
