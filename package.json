@@ -14,8 +14,9 @@
     "webpack": "latest",
     "gulp-webpack-build": "latest",
     "webpack-dev-server": "latest",
-    "6to5-loader": "latest",
-    "6to5": "latest",
+    "babel-loader": "latest",
+    "babel": "latest",
+    "babel-core": "latest",
     "jest-cli": "^0.2.2"
 
   },
