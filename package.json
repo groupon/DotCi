@@ -28,7 +28,7 @@
   },
   "scripts": {
 
-    "watch-jsx": "jsx --extension jsx --harmony --watch src/main/jsx/ target/js/",
+    "watch-jsx": "jsx --extension jsx --watch src/main/jsx/ target/js/",
     "test" : "jest"
   }
 

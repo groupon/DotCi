@@ -77,7 +77,7 @@
 	
 	var $ = _interopRequire(__webpack_require__(154));
 	
-	var RecentProjects = _interopRequire(__webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./recent_projects/RecentProjects\""); e.code = 'MODULE_NOT_FOUND'; throw e; }())));
+	var RecentProjects = _interopRequire(__webpack_require__(155));
 	
 	$(function () {
 	    React.render(React.createElement(RecentProjects, null), document.getElementById("recent-projects"));
@@ -29020,6 +29020,192 @@
 	
 	}));
 
+
+/***/ },
+/* 155 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+	
+	var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+	
+	var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+	
+	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+	
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+	
+	/*
+	
+	 * The MIT License (MIT)
+	 *
+	 * Copyright (c) 2014, Groupon, Inc.
+	 *
+	 * Permission is hereby granted, free of charge, to any person obtaining a copy
+	 * of this software and associated documentation files (the "Software"), to deal
+	 * in the Software without restriction, including without limitation the rights
+	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	 * copies of the Software, and to permit persons to whom the Software is
+	 * furnished to do so, subject to the following conditions:
+	 *
+	 * The above copyright notice and this permission notice shall be included in
+	 * all copies or substantial portions of the Software.
+	 *
+	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	 * THE SOFTWARE.
+	 */
+	var React = _interopRequire(__webpack_require__(1));
+	
+	var $ = _interopRequire(__webpack_require__(154));
+	
+	var BuildIcon = _interopRequire(__webpack_require__(156));
+	
+	var RecentProjectsHeader = (function (_React$Component) {
+	    function RecentProjectsHeader() {
+	        _classCallCheck(this, RecentProjectsHeader);
+	
+	        if (_React$Component != null) {
+	            _React$Component.apply(this, arguments);
+	        }
+	    }
+	
+	    _inherits(RecentProjectsHeader, _React$Component);
+	
+	    _prototypeProperties(RecentProjectsHeader, null, {
+	        render: {
+	            value: function render() {
+	                return React.createElement("div", { className: "panel-heading" }, React.createElement("h3", { className: "panel-title" }, "Recent Projects"));
+	            },
+	            writable: true,
+	            configurable: true
+	        }
+	    });
+	
+	    return RecentProjectsHeader;
+	})(React.Component);
+	
+	;
+	
+	
+	var RecentProject = (function (_React$Component2) {
+	    function RecentProject() {
+	        _classCallCheck(this, RecentProject);
+	
+	        if (_React$Component2 != null) {
+	            _React$Component2.apply(this, arguments);
+	        }
+	    }
+	
+	    _inherits(RecentProject, _React$Component2);
+	
+	    _prototypeProperties(RecentProject, null, {
+	        render: {
+	            value: function render() {
+	                return React.createElement("li", { className: "list-group-item" }, React.createElement("a", { href: this.props.url }, " ", this.props.name, "  "), React.createElement(BuildIcon, { state: "ABORTED" }));
+	            },
+	            writable: true,
+	            configurable: true
+	        }
+	    });
+	
+	    return RecentProject;
+	})(React.Component);
+	
+	;
+	
+	var RecentProjectsWiget = (function (_React$Component3) {
+	    function RecentProjectsWiget(props) {
+	        _classCallCheck(this, RecentProjectsWiget);
+	
+	        _get(Object.getPrototypeOf(RecentProjectsWiget.prototype), "constructor", this).call(this, props);
+	        this.state = { recentProjects: [] };
+	    }
+	
+	    _inherits(RecentProjectsWiget, _React$Component3);
+	
+	    _prototypeProperties(RecentProjectsWiget, null, {
+	        componentDidMount: {
+	            value: function componentDidMount() {},
+	            writable: true,
+	            configurable: true
+	        },
+	        render: {
+	            value: function render() {
+	                var recentProjects = this.state.recentProjects.map(function (project) {
+	                    return React.createElement(RecentProject, { url: project.url, name: project.name });
+	                });
+	                return React.createElement("div", { className: "panel panel-info" }, React.createElement(RecentProjectsHeader, null), React.createElement("ul", { className: "list-group" }, recentProjects));
+	            },
+	            writable: true,
+	            configurable: true
+	        }
+	    });
+	
+	    return RecentProjectsWiget;
+	})(React.Component);
+	
+	module.exports = RecentProjectsWiget;
+	//$.getJSON(  this.props.url, function( data ) {
+	//    this.setState({recentProjects: data});
+	//}.bind(this));
+
+/***/ },
+/* 156 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+	
+	/*
+	 * The MIT License (MIT)
+	 *
+	 * Copyright (c) 2014, Groupon, Inc.
+	 *
+	 * Permission is hereby granted, free of charge, to any person obtaining a copy
+	 * of this software and associated documentation files (the "Software"), to deal
+	 * in the Software without restriction, including without limitation the rights
+	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	 * copies of the Software, and to permit persons to whom the Software is
+	 * furnished to do so, subject to the following conditions:
+	 *
+	 * The above copyright notice and this permission notice shall be included in
+	 * all copies or substantial portions of the Software.
+	 *
+	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	 * THE SOFTWARE.
+	 */
+	var React = _interopRequire(__webpack_require__(1));
+	
+	module.exports = React.createClass({
+	    displayName: "BuildIcon",
+	    render: function () {
+	        var buildIcon;
+	        switch (this.props.state) {
+	            case "SUCCESS":
+	                buildIcon = "fa-check";break;
+	            case "FAILURE":
+	                buildIcon = "fa-times";break;
+	            case "BUILDING":
+	                buildIcon = "fa-circle-o-notch fa-spin";break;
+	            case "ABORTED":
+	                buildIcon = "fa-ban";break;
+	        }
+	        return React.createElement("span", { className: "fa fa-fw " + buildIcon });
+	    }
+	});
 
 /***/ }
 /******/ ])
