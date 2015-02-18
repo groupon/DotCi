@@ -26,10 +26,10 @@ import { Actions } from 'flummox';
 import {recentProjects} from "../api/RecentProjectsApi"
 
 export default class AppActions extends Actions {
-    loadRecentProjects(){
-     return this.initialLoad(recentProjects());
+    getRecentProjects(){
+      this.initialLoadRecentProjects(recentProjects());
     }
-    initialLoad(recentProjects) {
+    initialLoadRecentProjects(recentProjects) {
         return recentProjects;
     }
 

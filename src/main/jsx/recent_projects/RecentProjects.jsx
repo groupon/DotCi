@@ -23,8 +23,8 @@
  * THE SOFTWARE.
  */
 import React from "react";
-import $ from "jquery";
 import BuildIcon from "../components/BuildIcon"
+import FluxComponent from 'flummox/component';
 
 class RecentProjectsHeader extends React.Component{
     render(){
@@ -48,18 +48,12 @@ class RecentProject extends React.Component{
     }
 };
 
-export default class RecentProjectsWiget extends React.Component{
+class RecentProjectsWidget extends React.Component{
     constructor(props) {
         super(props);
-        this.state  = {recentProjects: []};
-    }
-    componentDidMount() {
-        //$.getJSON(  this.props.url, function( data ) {
-        //    this.setState({recentProjects: data});
-        //}.bind(this));
     }
     render(){
-        var recentProjects = this.state.recentProjects.map(function (project) {
+        var recentProjects = this.props.recentProjects.map(function (project) {
             return (
                 <RecentProject url={project.url} name ={project.name}/>
             );
@@ -74,4 +68,13 @@ export default class RecentProjectsWiget extends React.Component{
         );
     }
 };
+export default class RecentProjectsView extends React.Component{
+    render(){
+        return (
+            <FluxComponent connectToStores={['recentProjects']} flux={this.props.flux}>
+                <RecentProjectsWidget/>
+            </FluxComponent>
+        )
+    }
+}
 

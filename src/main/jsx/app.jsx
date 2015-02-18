@@ -25,11 +25,14 @@
 
 import React from "react";
 import $ from "jquery";
+import Flux from "./Flux";
 import RecentProjects from "./recent_projects/RecentProjects"
 $(() => {
-
+    let flux = new Flux();
+    let actions = flux.getActions('app');
+    actions.getRecentProjects();
     React.render(
-        <RecentProjects/>,
+        <RecentProjects flux={flux} />,
         document.getElementById('recent-projects')
     );
 });

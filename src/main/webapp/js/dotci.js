@@ -77,10 +77,15 @@
 	
 	var $ = _interopRequire(__webpack_require__(154));
 	
-	var RecentProjects = _interopRequire(__webpack_require__(155));
+	var Flux = _interopRequire(__webpack_require__(155));
+	
+	var RecentProjects = _interopRequire(__webpack_require__(168));
 	
 	$(function () {
-	    React.render(React.createElement(RecentProjects, null), document.getElementById("recent-projects"));
+	    var flux = new Flux();
+	    var actions = flux.getActions("app");
+	    actions.getRecentProjects();
+	    React.render(React.createElement(RecentProjects, { flux: flux }), document.getElementById("recent-projects"));
 	});
 
 /***/ },
@@ -29031,6 +29036,1505 @@
 	
 	var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 	
+	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+	
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+	
+	var Flummox = _interopRequire(__webpack_require__(156));
+	
+	var AppActions = _interopRequire(__webpack_require__(165));
+	
+	var RecentProjectsStore = _interopRequire(__webpack_require__(167));
+	
+	var Flux = (function (Flummox) {
+	    function Flux() {
+	        _classCallCheck(this, Flux);
+	
+	        _get(Object.getPrototypeOf(Flux.prototype), "constructor", this).call(this);
+	        this.createActions("app", AppActions);
+	        this.createStore("recentProjects", RecentProjectsStore, this);
+	    }
+	
+	    _inherits(Flux, Flummox);
+	
+	    return Flux;
+	})(Flummox);
+	
+	module.exports = Flux;
+
+/***/ },
+/* 156 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Flux
+	 *
+	 * The main Flux class.
+	 */
+	
+	"use strict";
+	
+	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+	
+	var _applyConstructor = function (Constructor, args) { var instance = Object.create(Constructor.prototype); var result = Constructor.apply(instance, args); return result != null && (typeof result == "object" || typeof result == "function") ? result : instance; };
+	
+	var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+	
+	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+	
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+	
+	var Store = _interopRequire(__webpack_require__(157));
+	
+	var Actions = _interopRequire(__webpack_require__(160));
+	
+	var Dispatcher = __webpack_require__(162).Dispatcher;
+	var EventEmitter = _interopRequire(__webpack_require__(158));
+	
+	var Flux = (function (EventEmitter) {
+	  function Flux() {
+	    _classCallCheck(this, Flux);
+	
+	    this.dispatcher = new Dispatcher();
+	
+	    this._stores = {};
+	    this._actions = {};
+	
+	    this.getConstants = this.getActionIds;
+	
+	    // Aliases
+	    this.dehydrate = this.serialize;
+	    this.hydrate = this.deserialize;
+	  }
+	
+	  _inherits(Flux, EventEmitter);
+	
+	  _prototypeProperties(Flux, null, {
+	    createStore: {
+	      value: function createStore(key, _Store) {
+	        for (var _len = arguments.length, constructorArgs = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+	          constructorArgs[_key - 2] = arguments[_key];
+	        }
+	
+	        if (!(_Store.prototype instanceof Store)) {
+	          var className = getClassName(_Store);
+	
+	          throw new Error("You've attempted to create a store from the class " + className + ", which " + "does not have the base Store class in its prototype chain. Make sure " + ("you're using the `extends` keyword: `class " + className + " extends ") + "Store { ... }`");
+	        }
+	
+	        if (this._stores.hasOwnProperty(key) && this._stores[key]) {
+	          throw new Error("You've attempted to create multiple stores with key " + key + ". Keys must " + "be unique.");
+	        }
+	
+	        var store = _applyConstructor(_Store, constructorArgs);
+	        var token = this.dispatcher.register(store.handler.bind(store));
+	
+	        store._waitFor = this.waitFor.bind(this);
+	        store._token = token;
+	
+	        this._stores[key] = store;
+	
+	        return store;
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    getStore: {
+	      value: function getStore(key) {
+	        return this._stores.hasOwnProperty(key) ? this._stores[key] : undefined;
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    createActions: {
+	      value: function createActions(key, _Actions) {
+	        for (var _len = arguments.length, constructorArgs = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+	          constructorArgs[_key - 2] = arguments[_key];
+	        }
+	
+	        if (!(_Actions.prototype instanceof Actions) && _Actions !== Actions) {
+	          var className = getClassName(_Actions);
+	
+	          throw new Error("You've attempted to create actions from the class " + className + ", which " + "does not have the base Actions class in its prototype chain. Make " + ("sure you're using the `extends` keyword: `class " + className + " ") + "extends Actions { ... }`");
+	        }
+	
+	        if (this._actions.hasOwnProperty(key) && this._actions[key]) {
+	          throw new Error("You've attempted to create multiple actions with key " + key + ". Keys " + "must be unique.");
+	        }
+	
+	        var actions = _applyConstructor(_Actions, constructorArgs);
+	        actions.dispatch = this.dispatch.bind(this);
+	        actions.dispatchAsync = this.dispatchAsync.bind(this);
+	
+	        this._actions[key] = actions;
+	
+	        return actions;
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    getActions: {
+	      value: function getActions(key) {
+	        return this._actions.hasOwnProperty(key) ? this._actions[key] : undefined;
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    getActionIds: {
+	      value: function getActionIds(key) {
+	        var actions = this.getActions(key);
+	
+	        if (!actions) {
+	          return;
+	        }return actions.getConstants();
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    dispatch: {
+	      value: function dispatch(actionId, body, actionArgs) {
+	        this.dispatcher.dispatch({ actionId: actionId, body: body });
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    dispatchAsync: {
+	      value: function dispatchAsync(actionId, promise, actionArgs) {
+	        var _this = this;
+	        var payload = {
+	          actionId: actionId,
+	          async: "begin" };
+	
+	        if (actionArgs) payload.actionArgs = actionArgs;
+	
+	        this.dispatcher.dispatch(payload);
+	
+	        return promise.then(function (body) {
+	          _this.dispatcher.dispatch({
+	            actionId: actionId,
+	            body: body,
+	            async: "success"
+	          });
+	        }, function (error) {
+	          _this.dispatcher.dispatch({
+	            actionId: actionId,
+	            error: error,
+	            async: "failure" });
+	
+	          return Promise.reject(error);
+	        });
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    waitFor: {
+	      value: function waitFor(tokensOrStores) {
+	        if (!Array.isArray(tokensOrStores)) tokensOrStores = [tokensOrStores];
+	
+	        var ensureIsToken = function (tokenOrStore) {
+	          return tokenOrStore instanceof Store ? tokenOrStore._token : tokenOrStore;
+	        };
+	
+	        var tokens = tokensOrStores.map(ensureIsToken);
+	
+	        this.dispatcher.waitFor(tokens);
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    serialize: {
+	      value: function serialize() {
+	        var stateTree = {};
+	
+	        for (var key in this._stores) {
+	          if (!this._stores.hasOwnProperty(key)) continue;
+	
+	          var store = this._stores[key];
+	
+	          var serialize = store.constructor.serialize;
+	
+	          if (typeof serialize !== "function") continue;
+	
+	          var serializedStoreState = serialize(store.state);
+	
+	          if (typeof serializedStoreState !== "string") {
+	            var className = store.constructor.name;
+	
+	            console.warn("The store with key '" + key + "' was not serialized because the static " + ("method `" + className + ".serialize()` returned a non-string with type ") + ("'" + typeof serializedStoreState + "'."));
+	          }
+	
+	          stateTree[key] = serializedStoreState;
+	
+	          if (typeof store.constructor.deserialize !== "function") {
+	            var className = store.constructor.name;
+	
+	            console.warn("The class `" + className + "` has a `serialize()` method, but no " + "corresponding `deserialize()` method.");
+	          }
+	        }
+	
+	        return JSON.stringify(stateTree);
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    deserialize: {
+	      value: function deserialize(serializedState) {
+	        var stateMap = undefined;
+	
+	        try {
+	          stateMap = JSON.parse(serializedState);
+	        } catch (error) {
+	          var className = this.constructor.name;
+	
+	          throw new Error("Invalid value passed to `" + className + "#deserialize()`: " + ("" + serializedState));
+	        }
+	
+	        for (var key in this._stores) {
+	          if (!this._stores.hasOwnProperty(key)) continue;
+	
+	          var store = this._stores[key];
+	
+	          var deserialize = store.constructor.deserialize;
+	
+	          if (typeof deserialize !== "function") continue;
+	
+	          var storeStateString = stateMap[key];
+	          var storeState = deserialize(storeStateString);
+	
+	          store.replaceState(storeState);
+	
+	          if (typeof store.constructor.serialize !== "function") {
+	            var className = store.constructor.name;
+	
+	            console.warn("The class `" + className + "` has a `deserialize()` method, but no " + "corresponding `serialize()` method.");
+	          }
+	        }
+	      },
+	      writable: true,
+	      configurable: true
+	    }
+	  });
+	
+	  return Flux;
+	})(EventEmitter);
+	
+	exports["default"] = Flux;
+	
+	
+	function getClassName(Class) {
+	  return Class.prototype.constructor.name;
+	}
+	
+	var Flummox = Flux;
+	
+	exports.Flux = Flux;
+	exports.Flummox = Flummox;
+	exports.Store = Store;
+	exports.Actions = Actions;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uL3NyYy9GbHV4LmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7OztBQU1BLFlBQVksQ0FBQzs7Ozs7Ozs7Ozs7O0lBRU4sS0FBSywyQkFBTSxTQUFTOztJQUNwQixPQUFPLDJCQUFNLFdBQVc7O0lBQ3RCLFVBQVUsV0FBUSxNQUFNLEVBQXhCLFVBQVU7SUFDWixZQUFZLDJCQUFNLGVBQWU7O0lBRW5CLElBQUksY0FBUyxZQUFZO0FBRWpDLFdBRlEsSUFBSTswQkFBSixJQUFJOztBQUdyQixRQUFJLENBQUMsVUFBVSxHQUFHLElBQUksVUFBVSxFQUFFLENBQUM7O0FBRW5DLFFBQUksQ0FBQyxPQUFPLEdBQUcsRUFBRSxDQUFDO0FBQ2xCLFFBQUksQ0FBQyxRQUFRLEdBQUcsRUFBRSxDQUFDOztBQUVuQixRQUFJLENBQUMsWUFBWSxHQUFHLElBQUksQ0FBQyxZQUFZLENBQUM7OztBQUd0QyxRQUFJLENBQUMsU0FBUyxHQUFHLElBQUksQ0FBQyxTQUFTLENBQUM7QUFDaEMsUUFBSSxDQUFDLE9BQU8sR0FBRyxJQUFJLENBQUMsV0FBVyxDQUFDO0dBQ2pDOztZQWJrQixJQUFJLEVBQVMsWUFBWTs7dUJBQXpCLElBQUk7QUFldkIsZUFBVzthQUFBLHFCQUFDLEdBQUcsRUFBRSxNQUFNLEVBQXNCOzBDQUFqQixlQUFlO0FBQWYseUJBQWU7OztBQUV6QyxZQUFJLEVBQUUsTUFBTSxDQUFDLFNBQVMsWUFBWSxLQUFLLENBQUEsQUFBQyxFQUFFO0FBQ3hDLGNBQUksU0FBUyxHQUFHLFlBQVksQ0FBQyxNQUFNLENBQUMsQ0FBQzs7QUFFckMsZ0JBQU0sSUFBSSxLQUFLLENBQ2IsdURBQXFELFNBQVMsdUZBQ1Msb0RBQ3RCLFNBQVMsZUFBVyxtQkFDcEQsQ0FDbEIsQ0FBQztTQUNIOztBQUVELFlBQUksSUFBSSxDQUFDLE9BQU8sQ0FBQyxjQUFjLENBQUMsR0FBRyxDQUFDLElBQUksSUFBSSxDQUFDLE9BQU8sQ0FBQyxHQUFHLENBQUMsRUFBRTtBQUN6RCxnQkFBTSxJQUFJLEtBQUssQ0FDYix5REFBdUQsR0FBRyxnQ0FDOUMsQ0FDYixDQUFDO1NBQ0g7O0FBRUQsWUFBSSxLQUFLLHFCQUFPLE1BQU0sRUFBSSxlQUFlLENBQUMsQ0FBQztBQUMzQyxZQUFJLEtBQUssR0FBRyxJQUFJLENBQUMsVUFBVSxDQUFDLFFBQVEsQ0FBQyxLQUFLLENBQUMsT0FBTyxDQUFDLElBQUksQ0FBQyxLQUFLLENBQUMsQ0FBQyxDQUFDOztBQUVoRSxhQUFLLENBQUMsUUFBUSxHQUFHLElBQUksQ0FBQyxPQUFPLENBQUMsSUFBSSxDQUFDLElBQUksQ0FBQyxDQUFDO0FBQ3pDLGFBQUssQ0FBQyxNQUFNLEdBQUcsS0FBSyxDQUFDOztBQUVyQixZQUFJLENBQUMsT0FBTyxDQUFDLEdBQUcsQ0FBQyxHQUFHLEtBQUssQ0FBQzs7QUFFMUIsZUFBTyxLQUFLLENBQUM7T0FDZDs7OztBQUVELFlBQVE7YUFBQSxrQkFBQyxHQUFHLEVBQUU7QUFDWixlQUFPLElBQUksQ0FBQyxPQUFPLENBQUMsY0FBYyxDQUFDLEdBQUcsQ0FBQyxHQUFHLElBQUksQ0FBQyxPQUFPLENBQUMsR0FBRyxDQUFDLEdBQUcsU0FBUyxDQUFDO09BQ3pFOzs7O0FBRUQsaUJBQWE7YUFBQSx1QkFBQyxHQUFHLEVBQUUsUUFBUSxFQUFzQjswQ0FBakIsZUFBZTtBQUFmLHlCQUFlOzs7QUFFN0MsWUFBSSxFQUFFLFFBQVEsQ0FBQyxTQUFTLFlBQVksT0FBTyxDQUFBLEFBQUMsSUFBSSxRQUFRLEtBQUssT0FBTyxFQUFFO0FBQ3BFLGNBQUksU0FBUyxHQUFHLFlBQVksQ0FBQyxRQUFRLENBQUMsQ0FBQzs7QUFFdkMsZ0JBQU0sSUFBSSxLQUFLLENBQ2IsdURBQXFELFNBQVMsb0ZBQ00seURBQ2QsU0FBUyxPQUFHLDZCQUN2QyxDQUM1QixDQUFDO1NBQ0g7O0FBRUQsWUFBSSxJQUFJLENBQUMsUUFBUSxDQUFDLGNBQWMsQ0FBQyxHQUFHLENBQUMsSUFBSSxJQUFJLENBQUMsUUFBUSxDQUFDLEdBQUcsQ0FBQyxFQUFFO0FBQzNELGdCQUFNLElBQUksS0FBSyxDQUNiLDBEQUF3RCxHQUFHLGdDQUMxQyxDQUNsQixDQUFDO1NBQ0g7O0FBRUQsWUFBSSxPQUFPLHFCQUFPLFFBQVEsRUFBSSxlQUFlLENBQUMsQ0FBQztBQUMvQyxlQUFPLENBQUMsUUFBUSxHQUFHLElBQUksQ0FBQyxRQUFRLENBQUMsSUFBSSxDQUFDLElBQUksQ0FBQyxDQUFDO0FBQzVDLGVBQU8sQ0FBQyxhQUFhLEdBQUcsSUFBSSxDQUFDLGFBQWEsQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLENBQUM7O0FBRXRELFlBQUksQ0FBQyxRQUFRLENBQUMsR0FBRyxDQUFDLEdBQUcsT0FBTyxDQUFDOztBQUU3QixlQUFPLE9BQU8sQ0FBQztPQUNoQjs7OztBQUVELGNBQVU7YUFBQSxvQkFBQyxHQUFHLEVBQUU7QUFDZCxlQUFPLElBQUksQ0FBQyxRQUFRLENBQUMsY0FBYyxDQUFDLEdBQUcsQ0FBQyxHQUFHLElBQUksQ0FBQyxRQUFRLENBQUMsR0FBRyxDQUFDLEdBQUcsU0FBUyxDQUFDO09BQzNFOzs7O0FBRUQsZ0JBQVk7YUFBQSxzQkFBQyxHQUFHLEVBQUU7QUFDaEIsWUFBSSxPQUFPLEdBQUcsSUFBSSxDQUFDLFVBQVUsQ0FBQyxHQUFHLENBQUMsQ0FBQzs7QUFFbkMsWUFBSSxDQUFDLE9BQU87QUFBRSxpQkFBTztTQUFBLEFBRXJCLE9BQU8sT0FBTyxDQUFDLFlBQVksRUFBRSxDQUFDO09BQy9COzs7O0FBRUQsWUFBUTthQUFBLGtCQUFDLFFBQVEsRUFBRSxJQUFJLEVBQUUsVUFBVSxFQUFFO0FBQ25DLFlBQUksQ0FBQyxVQUFVLENBQUMsUUFBUSxDQUFDLEVBQUUsUUFBUSxFQUFSLFFBQVEsRUFBRSxJQUFJLEVBQUosSUFBSSxFQUFFLENBQUMsQ0FBQztPQUM5Qzs7OztBQUVELGlCQUFhO2FBQUEsdUJBQUMsUUFBUSxFQUFFLE9BQU8sRUFBRSxVQUFVLEVBQUU7O0FBQzNDLFlBQUksT0FBTyxHQUFHO0FBQ1osa0JBQVEsRUFBUixRQUFRO0FBQ1IsZUFBSyxFQUFFLE9BQU8sRUFDZixDQUFDOztBQUVGLFlBQUksVUFBVSxFQUFFLE9BQU8sQ0FBQyxVQUFVLEdBQUcsVUFBVSxDQUFDOztBQUVoRCxZQUFJLENBQUMsVUFBVSxDQUFDLFFBQVEsQ0FBQyxPQUFPLENBQUMsQ0FBQzs7QUFFbEMsZUFBTyxPQUFPLENBQUMsSUFBSSxDQUNqQixVQUFBLElBQUksRUFBSTtBQUNOLGdCQUFLLFVBQVUsQ0FBQyxRQUFRLENBQUM7QUFDdkIsb0JBQVEsRUFBUixRQUFRO0FBQ1IsZ0JBQUksRUFBSixJQUFJO0FBQ0osaUJBQUssRUFBRSxTQUFTO1dBQ2pCLENBQUMsQ0FBQztTQUNKLEVBQ0QsVUFBQSxLQUFLLEVBQUk7QUFDUCxnQkFBSyxVQUFVLENBQUMsUUFBUSxDQUFDO0FBQ3ZCLG9CQUFRLEVBQVIsUUFBUTtBQUNSLGlCQUFLLEVBQUwsS0FBSztBQUNMLGlCQUFLLEVBQUUsU0FBUyxFQUNqQixDQUFDLENBQUM7O0FBRUgsaUJBQU8sT0FBTyxDQUFDLE1BQU0sQ0FBQyxLQUFLLENBQUMsQ0FBQztTQUM5QixDQUNGLENBQUM7T0FDSDs7OztBQUVELFdBQU87YUFBQSxpQkFBQyxjQUFjLEVBQUU7QUFFdEIsWUFBSSxDQUFDLEtBQUssQ0FBQyxPQUFPLENBQUMsY0FBYyxDQUFDLEVBQUUsY0FBYyxHQUFHLENBQUMsY0FBYyxDQUFDLENBQUM7O0FBRXRFLFlBQUksYUFBYSxHQUFHLFVBQUEsWUFBWSxFQUFJO0FBQ2xDLGlCQUFPLFlBQVksWUFBWSxLQUFLLEdBQ2hDLFlBQVksQ0FBQyxNQUFNLEdBQ25CLFlBQVksQ0FBQztTQUNsQixDQUFDOztBQUVGLFlBQUksTUFBTSxHQUFHLGNBQWMsQ0FBQyxHQUFHLENBQUMsYUFBYSxDQUFDLENBQUM7O0FBRS9DLFlBQUksQ0FBQyxVQUFVLENBQUMsT0FBTyxDQUFDLE1BQU0sQ0FBQyxDQUFDO09BQ2pDOzs7O0FBRUQsYUFBUzthQUFBLHFCQUFHO0FBQ1YsWUFBSSxTQUFTLEdBQUcsRUFBRSxDQUFDOztBQUVuQixhQUFLLElBQUksR0FBRyxJQUFJLElBQUksQ0FBQyxPQUFPLEVBQUU7QUFDNUIsY0FBSSxDQUFDLElBQUksQ0FBQyxPQUFPLENBQUMsY0FBYyxDQUFDLEdBQUcsQ0FBQyxFQUFFLFNBQVM7O0FBRWhELGNBQUksS0FBSyxHQUFHLElBQUksQ0FBQyxPQUFPLENBQUMsR0FBRyxDQUFDLENBQUM7O0FBRTlCLGNBQUksU0FBUyxHQUFHLEtBQUssQ0FBQyxXQUFXLENBQUMsU0FBUyxDQUFDOztBQUU1QyxjQUFJLE9BQU8sU0FBUyxLQUFLLFVBQVUsRUFBRSxTQUFTOztBQUU5QyxjQUFJLG9CQUFvQixHQUFHLFNBQVMsQ0FBQyxLQUFLLENBQUMsS0FBSyxDQUFDLENBQUM7O0FBRWxELGNBQUksT0FBTyxvQkFBb0IsS0FBSyxRQUFRLEVBQUU7QUFDNUMsZ0JBQUksU0FBUyxHQUFHLEtBQUssQ0FBQyxXQUFXLENBQUMsSUFBSSxDQUFDOztBQUV2QyxtQkFBTyxDQUFDLElBQUksQ0FDVix5QkFBdUIsR0FBRyw4REFDZCxTQUFTLG9EQUFpRCxVQUNsRSxPQUFPLG9CQUFvQixRQUFJLENBQ3BDLENBQUM7V0FDSDs7QUFFRCxtQkFBUyxDQUFDLEdBQUcsQ0FBQyxHQUFHLG9CQUFvQixDQUFDOztBQUV0QyxjQUFJLE9BQU8sS0FBSyxDQUFDLFdBQVcsQ0FBQyxXQUFXLEtBQUssVUFBVSxFQUFFO0FBQ3ZELGdCQUFJLFNBQVMsR0FBRyxLQUFLLENBQUMsV0FBVyxDQUFDLElBQUksQ0FBQzs7QUFFdkMsbUJBQU8sQ0FBQyxJQUFJLENBQ1YsZ0JBQWUsU0FBUyxvRkFDaUIsQ0FDMUMsQ0FBQztXQUNIO1NBRUY7O0FBRUQsZUFBTyxJQUFJLENBQUMsU0FBUyxDQUFDLFNBQVMsQ0FBQyxDQUFDO09BQ2xDOzs7O0FBRUQsZUFBVzthQUFBLHFCQUFDLGVBQWUsRUFBRTtBQUMzQixZQUFJLFFBQVEsWUFBQSxDQUFDOztBQUViLFlBQUk7QUFDRixrQkFBUSxHQUFHLElBQUksQ0FBQyxLQUFLLENBQUMsZUFBZSxDQUFDLENBQUM7U0FDeEMsQ0FBQyxPQUFPLEtBQUssRUFBRTtBQUNkLGNBQUksU0FBUyxHQUFHLElBQUksQ0FBQyxXQUFXLENBQUMsSUFBSSxDQUFDOztBQUV0QyxnQkFBTSxJQUFJLEtBQUssQ0FDYiw4QkFBNkIsU0FBUywrQkFDbkMsZUFBZSxDQUFFLENBQ3JCLENBQUM7U0FDSDs7QUFFRCxhQUFLLElBQUksR0FBRyxJQUFJLElBQUksQ0FBQyxPQUFPLEVBQUU7QUFDNUIsY0FBSSxDQUFDLElBQUksQ0FBQyxPQUFPLENBQUMsY0FBYyxDQUFDLEdBQUcsQ0FBQyxFQUFFLFNBQVM7O0FBRWhELGNBQUksS0FBSyxHQUFHLElBQUksQ0FBQyxPQUFPLENBQUMsR0FBRyxDQUFDLENBQUM7O0FBRTlCLGNBQUksV0FBVyxHQUFHLEtBQUssQ0FBQyxXQUFXLENBQUMsV0FBVyxDQUFDOztBQUVoRCxjQUFJLE9BQU8sV0FBVyxLQUFLLFVBQVUsRUFBRSxTQUFTOztBQUVoRCxjQUFJLGdCQUFnQixHQUFHLFFBQVEsQ0FBQyxHQUFHLENBQUMsQ0FBQztBQUNyQyxjQUFJLFVBQVUsR0FBRyxXQUFXLENBQUMsZ0JBQWdCLENBQUMsQ0FBQzs7QUFFL0MsZUFBSyxDQUFDLFlBQVksQ0FBQyxVQUFVLENBQUMsQ0FBQzs7QUFFL0IsY0FBSSxPQUFPLEtBQUssQ0FBQyxXQUFXLENBQUMsU0FBUyxLQUFLLFVBQVUsRUFBRTtBQUNyRCxnQkFBSSxTQUFTLEdBQUcsS0FBSyxDQUFDLFdBQVcsQ0FBQyxJQUFJLENBQUM7O0FBRXZDLG1CQUFPLENBQUMsSUFBSSxDQUNWLGdCQUFlLFNBQVMsb0ZBQ2UsQ0FDeEMsQ0FBQztXQUNIO1NBQ0Y7T0FDRjs7Ozs7O1NBek5rQixJQUFJO0dBQVMsWUFBWTs7cUJBQXpCLElBQUk7OztBQTZOekIsU0FBUyxZQUFZLENBQUMsS0FBSyxFQUFFO0FBQzNCLFNBQU8sS0FBSyxDQUFDLFNBQVMsQ0FBQyxXQUFXLENBQUMsSUFBSSxDQUFDO0NBQ3pDOztBQUVELElBQUksT0FBTyxHQUFHLElBQUksQ0FBQzs7UUFHakIsSUFBSSxHQUFKLElBQUk7UUFDSixPQUFPLEdBQVAsT0FBTztRQUNQLEtBQUssR0FBTCxLQUFLO1FBQ0wsT0FBTyxHQUFQLE9BQU8iLCJmaWxlIjoic3JjL0ZsdXguanMiLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIEZsdXhcbiAqXG4gKiBUaGUgbWFpbiBGbHV4IGNsYXNzLlxuICovXG5cbid1c2Ugc3RyaWN0JztcblxuaW1wb3J0IFN0b3JlIGZyb20gJy4vU3RvcmUnO1xuaW1wb3J0IEFjdGlvbnMgZnJvbSAnLi9BY3Rpb25zJztcbmltcG9ydCB7IERpc3BhdGNoZXIgfSBmcm9tICdmbHV4JztcbmltcG9ydCBFdmVudEVtaXR0ZXIgZnJvbSAnZXZlbnRlbWl0dGVyMyc7XG5cbmV4cG9ydCBkZWZhdWx0IGNsYXNzIEZsdXggZXh0ZW5kcyBFdmVudEVtaXR0ZXIge1xuXG4gIGNvbnN0cnVjdG9yKCkge1xuICAgIHRoaXMuZGlzcGF0Y2hlciA9IG5ldyBEaXNwYXRjaGVyKCk7XG5cbiAgICB0aGlzLl9zdG9yZXMgPSB7fTtcbiAgICB0aGlzLl9hY3Rpb25zID0ge307XG5cbiAgICB0aGlzLmdldENvbnN0YW50cyA9IHRoaXMuZ2V0QWN0aW9uSWRzO1xuXG4gICAgLy8gQWxpYXNlc1xuICAgIHRoaXMuZGVoeWRyYXRlID0gdGhpcy5zZXJpYWxpemU7XG4gICAgdGhpcy5oeWRyYXRlID0gdGhpcy5kZXNlcmlhbGl6ZTtcbiAgfVxuXG4gIGNyZWF0ZVN0b3JlKGtleSwgX1N0b3JlLCAuLi5jb25zdHJ1Y3RvckFyZ3MpIHtcblxuICAgIGlmICghKF9TdG9yZS5wcm90b3R5cGUgaW5zdGFuY2VvZiBTdG9yZSkpIHtcbiAgICAgIGxldCBjbGFzc05hbWUgPSBnZXRDbGFzc05hbWUoX1N0b3JlKTtcblxuICAgICAgdGhyb3cgbmV3IEVycm9yKFxuICAgICAgICBgWW91J3ZlIGF0dGVtcHRlZCB0byBjcmVhdGUgYSBzdG9yZSBmcm9tIHRoZSBjbGFzcyAke2NsYXNzTmFtZX0sIHdoaWNoIGBcbiAgICAgICsgYGRvZXMgbm90IGhhdmUgdGhlIGJhc2UgU3RvcmUgY2xhc3MgaW4gaXRzIHByb3RvdHlwZSBjaGFpbi4gTWFrZSBzdXJlIGBcbiAgICAgICsgYHlvdSdyZSB1c2luZyB0aGUgXFxgZXh0ZW5kc1xcYCBrZXl3b3JkOiBcXGBjbGFzcyAke2NsYXNzTmFtZX0gZXh0ZW5kcyBgXG4gICAgICArIGBTdG9yZSB7IC4uLiB9XFxgYFxuICAgICAgKTtcbiAgICB9XG5cbiAgICBpZiAodGhpcy5fc3RvcmVzLmhhc093blByb3BlcnR5KGtleSkgJiYgdGhpcy5fc3RvcmVzW2tleV0pIHtcbiAgICAgIHRocm93IG5ldyBFcnJvcihcbiAgICAgICAgYFlvdSd2ZSBhdHRlbXB0ZWQgdG8gY3JlYXRlIG11bHRpcGxlIHN0b3JlcyB3aXRoIGtleSAke2tleX0uIEtleXMgbXVzdCBgXG4gICAgICArIGBiZSB1bmlxdWUuYFxuICAgICAgKTtcbiAgICB9XG5cbiAgICBsZXQgc3RvcmUgPSBuZXcgX1N0b3JlKC4uLmNvbnN0cnVjdG9yQXJncyk7XG4gICAgbGV0IHRva2VuID0gdGhpcy5kaXNwYXRjaGVyLnJlZ2lzdGVyKHN0b3JlLmhhbmRsZXIuYmluZChzdG9yZSkpO1xuXG4gICAgc3RvcmUuX3dhaXRGb3IgPSB0aGlzLndhaXRGb3IuYmluZCh0aGlzKTtcbiAgICBzdG9yZS5fdG9rZW4gPSB0b2tlbjtcblxuICAgIHRoaXMuX3N0b3Jlc1trZXldID0gc3RvcmU7XG5cbiAgICByZXR1cm4gc3RvcmU7XG4gIH1cblxuICBnZXRTdG9yZShrZXkpIHtcbiAgICByZXR1cm4gdGhpcy5fc3RvcmVzLmhhc093blByb3BlcnR5KGtleSkgPyB0aGlzLl9zdG9yZXNba2V5XSA6IHVuZGVmaW5lZDtcbiAgfVxuXG4gIGNyZWF0ZUFjdGlvbnMoa2V5LCBfQWN0aW9ucywgLi4uY29uc3RydWN0b3JBcmdzKSB7XG5cbiAgICBpZiAoIShfQWN0aW9ucy5wcm90b3R5cGUgaW5zdGFuY2VvZiBBY3Rpb25zKSAmJiBfQWN0aW9ucyAhPT0gQWN0aW9ucykge1xuICAgICAgbGV0IGNsYXNzTmFtZSA9IGdldENsYXNzTmFtZShfQWN0aW9ucyk7XG5cbiAgICAgIHRocm93IG5ldyBFcnJvcihcbiAgICAgICAgYFlvdSd2ZSBhdHRlbXB0ZWQgdG8gY3JlYXRlIGFjdGlvbnMgZnJvbSB0aGUgY2xhc3MgJHtjbGFzc05hbWV9LCB3aGljaCBgXG4gICAgICArIGBkb2VzIG5vdCBoYXZlIHRoZSBiYXNlIEFjdGlvbnMgY2xhc3MgaW4gaXRzIHByb3RvdHlwZSBjaGFpbi4gTWFrZSBgXG4gICAgICArIGBzdXJlIHlvdSdyZSB1c2luZyB0aGUgXFxgZXh0ZW5kc1xcYCBrZXl3b3JkOiBcXGBjbGFzcyAke2NsYXNzTmFtZX0gYFxuICAgICAgKyBgZXh0ZW5kcyBBY3Rpb25zIHsgLi4uIH1cXGBgXG4gICAgICApO1xuICAgIH1cblxuICAgIGlmICh0aGlzLl9hY3Rpb25zLmhhc093blByb3BlcnR5KGtleSkgJiYgdGhpcy5fYWN0aW9uc1trZXldKSB7XG4gICAgICB0aHJvdyBuZXcgRXJyb3IoXG4gICAgICAgIGBZb3UndmUgYXR0ZW1wdGVkIHRvIGNyZWF0ZSBtdWx0aXBsZSBhY3Rpb25zIHdpdGgga2V5ICR7a2V5fS4gS2V5cyBgXG4gICAgICArIGBtdXN0IGJlIHVuaXF1ZS5gXG4gICAgICApO1xuICAgIH1cblxuICAgIGxldCBhY3Rpb25zID0gbmV3IF9BY3Rpb25zKC4uLmNvbnN0cnVjdG9yQXJncyk7XG4gICAgYWN0aW9ucy5kaXNwYXRjaCA9IHRoaXMuZGlzcGF0Y2guYmluZCh0aGlzKTtcbiAgICBhY3Rpb25zLmRpc3BhdGNoQXN5bmMgPSB0aGlzLmRpc3BhdGNoQXN5bmMuYmluZCh0aGlzKTtcblxuICAgIHRoaXMuX2FjdGlvbnNba2V5XSA9IGFjdGlvbnM7XG5cbiAgICByZXR1cm4gYWN0aW9ucztcbiAgfVxuXG4gIGdldEFjdGlvbnMoa2V5KSB7XG4gICAgcmV0dXJuIHRoaXMuX2FjdGlvbnMuaGFzT3duUHJvcGVydHkoa2V5KSA/IHRoaXMuX2FjdGlvbnNba2V5XSA6IHVuZGVmaW5lZDtcbiAgfVxuXG4gIGdldEFjdGlvbklkcyhrZXkpIHtcbiAgICBsZXQgYWN0aW9ucyA9IHRoaXMuZ2V0QWN0aW9ucyhrZXkpO1xuXG4gICAgaWYgKCFhY3Rpb25zKSByZXR1cm47XG5cbiAgICByZXR1cm4gYWN0aW9ucy5nZXRDb25zdGFudHMoKTtcbiAgfVxuXG4gIGRpc3BhdGNoKGFjdGlvbklkLCBib2R5LCBhY3Rpb25BcmdzKSB7XG4gICAgdGhpcy5kaXNwYXRjaGVyLmRpc3BhdGNoKHsgYWN0aW9uSWQsIGJvZHkgfSk7XG4gIH1cblxuICBkaXNwYXRjaEFzeW5jKGFjdGlvbklkLCBwcm9taXNlLCBhY3Rpb25BcmdzKSB7XG4gICAgbGV0IHBheWxvYWQgPSB7XG4gICAgICBhY3Rpb25JZCxcbiAgICAgIGFzeW5jOiAnYmVnaW4nLFxuICAgIH07XG5cbiAgICBpZiAoYWN0aW9uQXJncykgcGF5bG9hZC5hY3Rpb25BcmdzID0gYWN0aW9uQXJncztcblxuICAgIHRoaXMuZGlzcGF0Y2hlci5kaXNwYXRjaChwYXlsb2FkKTtcblxuICAgIHJldHVybiBwcm9taXNlLnRoZW4oXG4gICAgICBib2R5ID0+IHtcbiAgICAgICAgdGhpcy5kaXNwYXRjaGVyLmRpc3BhdGNoKHtcbiAgICAgICAgICBhY3Rpb25JZCxcbiAgICAgICAgICBib2R5LFxuICAgICAgICAgIGFzeW5jOiAnc3VjY2VzcydcbiAgICAgICAgfSk7XG4gICAgICB9LFxuICAgICAgZXJyb3IgPT4ge1xuICAgICAgICB0aGlzLmRpc3BhdGNoZXIuZGlzcGF0Y2goe1xuICAgICAgICAgIGFjdGlvbklkLFxuICAgICAgICAgIGVycm9yLFxuICAgICAgICAgIGFzeW5jOiAnZmFpbHVyZScsXG4gICAgICAgIH0pO1xuXG4gICAgICAgIHJldHVybiBQcm9taXNlLnJlamVjdChlcnJvcik7XG4gICAgICB9XG4gICAgKTtcbiAgfVxuXG4gIHdhaXRGb3IodG9rZW5zT3JTdG9yZXMpIHtcblxuICAgIGlmICghQXJyYXkuaXNBcnJheSh0b2tlbnNPclN0b3JlcykpIHRva2Vuc09yU3RvcmVzID0gW3Rva2Vuc09yU3RvcmVzXTtcblxuICAgIGxldCBlbnN1cmVJc1Rva2VuID0gdG9rZW5PclN0b3JlID0+IHtcbiAgICAgIHJldHVybiB0b2tlbk9yU3RvcmUgaW5zdGFuY2VvZiBTdG9yZVxuICAgICAgICA/IHRva2VuT3JTdG9yZS5fdG9rZW5cbiAgICAgICAgOiB0b2tlbk9yU3RvcmU7XG4gICAgfTtcblxuICAgIGxldCB0b2tlbnMgPSB0b2tlbnNPclN0b3Jlcy5tYXAoZW5zdXJlSXNUb2tlbik7XG5cbiAgICB0aGlzLmRpc3BhdGNoZXIud2FpdEZvcih0b2tlbnMpO1xuICB9XG5cbiAgc2VyaWFsaXplKCkge1xuICAgIGxldCBzdGF0ZVRyZWUgPSB7fTtcblxuICAgIGZvciAobGV0IGtleSBpbiB0aGlzLl9zdG9yZXMpIHtcbiAgICAgIGlmICghdGhpcy5fc3RvcmVzLmhhc093blByb3BlcnR5KGtleSkpIGNvbnRpbnVlO1xuXG4gICAgICBsZXQgc3RvcmUgPSB0aGlzLl9zdG9yZXNba2V5XTtcblxuICAgICAgbGV0IHNlcmlhbGl6ZSA9IHN0b3JlLmNvbnN0cnVjdG9yLnNlcmlhbGl6ZTtcblxuICAgICAgaWYgKHR5cGVvZiBzZXJpYWxpemUgIT09ICdmdW5jdGlvbicpIGNvbnRpbnVlO1xuXG4gICAgICBsZXQgc2VyaWFsaXplZFN0b3JlU3RhdGUgPSBzZXJpYWxpemUoc3RvcmUuc3RhdGUpO1xuXG4gICAgICBpZiAodHlwZW9mIHNlcmlhbGl6ZWRTdG9yZVN0YXRlICE9PSAnc3RyaW5nJykge1xuICAgICAgICBsZXQgY2xhc3NOYW1lID0gc3RvcmUuY29uc3RydWN0b3IubmFtZTtcblxuICAgICAgICBjb25zb2xlLndhcm4oXG4gICAgICAgICAgYFRoZSBzdG9yZSB3aXRoIGtleSAnJHtrZXl9JyB3YXMgbm90IHNlcmlhbGl6ZWQgYmVjYXVzZSB0aGUgc3RhdGljIGBcbiAgICAgICAgKyBgbWV0aG9kIFxcYCR7Y2xhc3NOYW1lfS5zZXJpYWxpemUoKVxcYCByZXR1cm5lZCBhIG5vbi1zdHJpbmcgd2l0aCB0eXBlIGBcbiAgICAgICAgKyBgJyR7dHlwZW9mIHNlcmlhbGl6ZWRTdG9yZVN0YXRlfScuYFxuICAgICAgICApO1xuICAgICAgfVxuXG4gICAgICBzdGF0ZVRyZWVba2V5XSA9IHNlcmlhbGl6ZWRTdG9yZVN0YXRlO1xuXG4gICAgICBpZiAodHlwZW9mIHN0b3JlLmNvbnN0cnVjdG9yLmRlc2VyaWFsaXplICE9PSAnZnVuY3Rpb24nKSB7XG4gICAgICAgIGxldCBjbGFzc05hbWUgPSBzdG9yZS5jb25zdHJ1Y3Rvci5uYW1lO1xuXG4gICAgICAgIGNvbnNvbGUud2FybihcbiAgICAgICAgICBgVGhlIGNsYXNzIFxcYCR7Y2xhc3NOYW1lfVxcYCBoYXMgYSBcXGBzZXJpYWxpemUoKVxcYCBtZXRob2QsIGJ1dCBubyBgXG4gICAgICAgICsgYGNvcnJlc3BvbmRpbmcgXFxgZGVzZXJpYWxpemUoKVxcYCBtZXRob2QuYFxuICAgICAgICApO1xuICAgICAgfVxuXG4gICAgfVxuXG4gICAgcmV0dXJuIEpTT04uc3RyaW5naWZ5KHN0YXRlVHJlZSk7XG4gIH1cblxuICBkZXNlcmlhbGl6ZShzZXJpYWxpemVkU3RhdGUpIHtcbiAgICBsZXQgc3RhdGVNYXA7XG5cbiAgICB0cnkge1xuICAgICAgc3RhdGVNYXAgPSBKU09OLnBhcnNlKHNlcmlhbGl6ZWRTdGF0ZSk7XG4gICAgfSBjYXRjaCAoZXJyb3IpIHtcbiAgICAgIGxldCBjbGFzc05hbWUgPSB0aGlzLmNvbnN0cnVjdG9yLm5hbWU7XG5cbiAgICAgIHRocm93IG5ldyBFcnJvcihcbiAgICAgICAgYEludmFsaWQgdmFsdWUgcGFzc2VkIHRvIFxcYCR7Y2xhc3NOYW1lfSNkZXNlcmlhbGl6ZSgpXFxgOiBgXG4gICAgICArIGAke3NlcmlhbGl6ZWRTdGF0ZX1gXG4gICAgICApO1xuICAgIH1cblxuICAgIGZvciAobGV0IGtleSBpbiB0aGlzLl9zdG9yZXMpIHtcbiAgICAgIGlmICghdGhpcy5fc3RvcmVzLmhhc093blByb3BlcnR5KGtleSkpIGNvbnRpbnVlO1xuXG4gICAgICBsZXQgc3RvcmUgPSB0aGlzLl9zdG9yZXNba2V5XTtcblxuICAgICAgbGV0IGRlc2VyaWFsaXplID0gc3RvcmUuY29uc3RydWN0b3IuZGVzZXJpYWxpemU7XG5cbiAgICAgIGlmICh0eXBlb2YgZGVzZXJpYWxpemUgIT09ICdmdW5jdGlvbicpIGNvbnRpbnVlO1xuXG4gICAgICBsZXQgc3RvcmVTdGF0ZVN0cmluZyA9IHN0YXRlTWFwW2tleV07XG4gICAgICBsZXQgc3RvcmVTdGF0ZSA9IGRlc2VyaWFsaXplKHN0b3JlU3RhdGVTdHJpbmcpO1xuXG4gICAgICBzdG9yZS5yZXBsYWNlU3RhdGUoc3RvcmVTdGF0ZSk7XG5cbiAgICAgIGlmICh0eXBlb2Ygc3RvcmUuY29uc3RydWN0b3Iuc2VyaWFsaXplICE9PSAnZnVuY3Rpb24nKSB7XG4gICAgICAgIGxldCBjbGFzc05hbWUgPSBzdG9yZS5jb25zdHJ1Y3Rvci5uYW1lO1xuXG4gICAgICAgIGNvbnNvbGUud2FybihcbiAgICAgICAgICBgVGhlIGNsYXNzIFxcYCR7Y2xhc3NOYW1lfVxcYCBoYXMgYSBcXGBkZXNlcmlhbGl6ZSgpXFxgIG1ldGhvZCwgYnV0IG5vIGBcbiAgICAgICAgKyBgY29ycmVzcG9uZGluZyBcXGBzZXJpYWxpemUoKVxcYCBtZXRob2QuYFxuICAgICAgICApO1xuICAgICAgfVxuICAgIH1cbiAgfVxuXG59XG5cbmZ1bmN0aW9uIGdldENsYXNzTmFtZShDbGFzcykge1xuICByZXR1cm4gQ2xhc3MucHJvdG90eXBlLmNvbnN0cnVjdG9yLm5hbWU7XG59XG5cbmxldCBGbHVtbW94ID0gRmx1eDtcblxuZXhwb3J0IHtcbiAgRmx1eCxcbiAgRmx1bW1veCxcbiAgU3RvcmUsXG4gIEFjdGlvbnMsXG59O1xuIl19
+
+/***/ },
+/* 157 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Store
+	 *
+	 * Stores hold application state. They respond to actions sent by the dispatcher
+	 * and broadcast change events to listeners, so they can grab the latest data.
+	 * The key thing to remember is that the only way stores receive information
+	 * from the outside world is via the dispatcher.
+	 */
+	
+	"use strict";
+	
+	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+	
+	var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+	
+	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+	
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+	
+	var EventEmitter = _interopRequire(__webpack_require__(158));
+	
+	var assign = _interopRequire(__webpack_require__(159));
+	
+	var Store = (function (EventEmitter) {
+	  /**
+	   * Stores are initialized with a reference
+	   * @type {Object}
+	   */
+	  function Store() {
+	    _classCallCheck(this, Store);
+	
+	    this.state = undefined;
+	
+	    this._handlers = {};
+	    this._asyncHandlers = {};
+	  }
+	
+	  _inherits(Store, EventEmitter);
+	
+	  _prototypeProperties(Store, null, {
+	    getState: {
+	
+	      /**
+	       * Return a (shallow) copy of the store's internal state, so that it is
+	       * protected from mutation by the consumer.
+	       * @returns {object}
+	       */
+	      value: function getState() {
+	        return assign({}, this.state);
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    setState: {
+	      value: function setState(newState) {
+	        if (typeof this.state === "undefined") this.state = {};
+	
+	        if (this._isHandlingDispatch) {
+	          this._pendingState = assign(this._pendingState, newState);
+	          this._emitChangeAfterHandlingDispatch = true;
+	        } else {
+	          console.warn("Store#setState() called from outside an action handler. This is likely " + "a mistake. Flux stores should manage their own state.");
+	
+	          this.state = assign({}, this.state, newState);
+	          this.emit("change");
+	        }
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    replaceState: {
+	      value: function replaceState(newState) {
+	        if (typeof this.state === "undefined") this.state = {};
+	
+	        if (this._isHandlingDispatch) {
+	          this._pendingState = assign({}, newState);
+	          this._emitChangeAfterHandlingDispatch = true;
+	        } else {
+	          this.state = assign({}, newState);
+	          this.emit("change");
+	        }
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    register: {
+	      value: function register(actionId, handler) {
+	        actionId = ensureActionId(actionId);
+	
+	        if (typeof handler !== "function") {
+	          return;
+	        }this._handlers[actionId] = handler.bind(this);
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    registerAsync: {
+	      value: function registerAsync(actionId, beginHandler, successHandler, failureHandler) {
+	        actionId = ensureActionId(actionId);
+	
+	        var asyncHandlers = {
+	          begin: beginHandler,
+	          success: successHandler,
+	          failure: failureHandler };
+	
+	        for (var key in asyncHandlers) {
+	          if (!asyncHandlers.hasOwnProperty(key)) continue;
+	
+	          var handler = asyncHandlers[key];
+	
+	          if (typeof handler === "function") {
+	            asyncHandlers[key] = handler.bind(this);
+	          } else {
+	            delete asyncHandlers[key];
+	          }
+	        }
+	
+	        this._asyncHandlers[actionId] = asyncHandlers;
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    waitFor: {
+	      value: function waitFor(tokensOrStores) {
+	        this._waitFor(tokensOrStores);
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    handler: {
+	      value: function handler(payload) {
+	        var body = payload.body;
+	        var actionId = payload.actionId;
+	        var _async = payload.async;
+	        var actionArgs = payload.actionArgs;
+	        var error = payload.error;
+	
+	
+	        var _handler = this._handlers[actionId];
+	        var _asyncHandler = this._asyncHandlers[actionId] && this._asyncHandlers[actionId][_async];
+	
+	        if (_async) {
+	          switch (_async) {
+	            case "begin":
+	              if (typeof _asyncHandler === "function") {
+	                this._performHandler.apply(this, [_asyncHandler].concat(actionArgs));
+	              }
+	              return;
+	            case "failure":
+	              if (typeof _asyncHandler === "function") {
+	                this._performHandler(_asyncHandler, error);
+	              }
+	              return;
+	            case "success":
+	              if (typeof _asyncHandler === "function") {
+	                _handler = _asyncHandler;
+	              }
+	              break;
+	            default:
+	              return;
+	          }
+	        }
+	
+	        if (typeof _handler !== "function") {
+	          return;
+	        }this._performHandler(_handler, body);
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    _performHandler: {
+	      value: function _performHandler(_handler) {
+	        for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	          args[_key - 1] = arguments[_key];
+	        }
+	
+	        this._isHandlingDispatch = true;
+	        this._pendingState = assign({}, this.state);
+	        this._emitChangeAfterHandlingDispatch = false;
+	
+	        try {
+	          _handler.apply(this, args);
+	        } finally {
+	          if (this._emitChangeAfterHandlingDispatch) {
+	            this.state = this._pendingState;
+	            this.emit("change");
+	          }
+	
+	          this._isHandlingDispatch = false;
+	          this._pendingState = {};
+	          this._emitChangeAfterHandlingDispatch = false;
+	        }
+	      },
+	      writable: true,
+	      configurable: true
+	    }
+	  });
+	
+	  return Store;
+	})(EventEmitter);
+	
+	module.exports = Store;
+	
+	
+	function ensureActionId(actionOrActionId) {
+	  return typeof actionOrActionId === "function" ? actionOrActionId._id : actionOrActionId;
+	}
+	//# sourceMappingURL=data:application/json;base64,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S0FBSzs7O0FBbUoxQixTQUFTLGNBQWMsQ0FBQyxnQkFBZ0IsRUFBRTtBQUN4QyxTQUFPLE9BQU8sZ0JBQWdCLEtBQUssVUFBVSxHQUN6QyxnQkFBZ0IsQ0FBQyxHQUFHLEdBQ3BCLGdCQUFnQixDQUFDO0NBQ3RCIiwiZmlsZSI6InNyYy9TdG9yZS5qcyIsInNvdXJjZXNDb250ZW50IjpbIi8qKlxuICogU3RvcmVcbiAqXG4gKiBTdG9yZXMgaG9sZCBhcHBsaWNhdGlvbiBzdGF0ZS4gVGhleSByZXNwb25kIHRvIGFjdGlvbnMgc2VudCBieSB0aGUgZGlzcGF0Y2hlclxuICogYW5kIGJyb2FkY2FzdCBjaGFuZ2UgZXZlbnRzIHRvIGxpc3RlbmVycywgc28gdGhleSBjYW4gZ3JhYiB0aGUgbGF0ZXN0IGRhdGEuXG4gKiBUaGUga2V5IHRoaW5nIHRvIHJlbWVtYmVyIGlzIHRoYXQgdGhlIG9ubHkgd2F5IHN0b3JlcyByZWNlaXZlIGluZm9ybWF0aW9uXG4gKiBmcm9tIHRoZSBvdXRzaWRlIHdvcmxkIGlzIHZpYSB0aGUgZGlzcGF0Y2hlci5cbiAqL1xuXG4ndXNlIHN0cmljdCc7XG5cbmltcG9ydCBFdmVudEVtaXR0ZXIgZnJvbSAnZXZlbnRlbWl0dGVyMyc7XG5pbXBvcnQgYXNzaWduIGZyb20gJ29iamVjdC1hc3NpZ24nO1xuXG5leHBvcnQgZGVmYXVsdCBjbGFzcyBTdG9yZSBleHRlbmRzIEV2ZW50RW1pdHRlciB7XG5cbiAgLyoqXG4gICAqIFN0b3JlcyBhcmUgaW5pdGlhbGl6ZWQgd2l0aCBhIHJlZmVyZW5jZVxuICAgKiBAdHlwZSB7T2JqZWN0fVxuICAgKi9cbiAgY29uc3RydWN0b3IoKSB7XG4gICAgdGhpcy5zdGF0ZSA9IHVuZGVmaW5lZDtcblxuICAgIHRoaXMuX2hhbmRsZXJzID0ge307XG4gICAgdGhpcy5fYXN5bmNIYW5kbGVycyA9IHt9O1xuICB9XG5cbiAgLyoqXG4gICAqIFJldHVybiBhIChzaGFsbG93KSBjb3B5IG9mIHRoZSBzdG9yZSdzIGludGVybmFsIHN0YXRlLCBzbyB0aGF0IGl0IGlzXG4gICAqIHByb3RlY3RlZCBmcm9tIG11dGF0aW9uIGJ5IHRoZSBjb25zdW1lci5cbiAgICogQHJldHVybnMge29iamVjdH1cbiAgICovXG4gIGdldFN0YXRlKCkge1xuICAgIHJldHVybiBhc3NpZ24oe30sIHRoaXMuc3RhdGUpO1xuICB9XG5cbiAgc2V0U3RhdGUobmV3U3RhdGUpIHtcbiAgICBpZiAodHlwZW9mIHRoaXMuc3RhdGUgPT09ICd1bmRlZmluZWQnKSB0aGlzLnN0YXRlID0ge307XG5cbiAgICBpZiAodGhpcy5faXNIYW5kbGluZ0Rpc3BhdGNoKSB7XG4gICAgICB0aGlzLl9wZW5kaW5nU3RhdGUgPSBhc3NpZ24odGhpcy5fcGVuZGluZ1N0YXRlLCBuZXdTdGF0ZSk7XG4gICAgICB0aGlzLl9lbWl0Q2hhbmdlQWZ0ZXJIYW5kbGluZ0Rpc3BhdGNoID0gdHJ1ZTtcbiAgICB9IGVsc2Uge1xuICAgICAgY29uc29sZS53YXJuKFxuICAgICAgICAnU3RvcmUjc2V0U3RhdGUoKSBjYWxsZWQgZnJvbSBvdXRzaWRlIGFuIGFjdGlvbiBoYW5kbGVyLiBUaGlzIGlzIGxpa2VseSAnXG4gICAgICArICdhIG1pc3Rha2UuIEZsdXggc3RvcmVzIHNob3VsZCBtYW5hZ2UgdGhlaXIgb3duIHN0YXRlLidcbiAgICAgICk7XG5cbiAgICAgIHRoaXMuc3RhdGUgPSBhc3NpZ24oe30sIHRoaXMuc3RhdGUsIG5ld1N0YXRlKTtcbiAgICAgIHRoaXMuZW1pdCgnY2hhbmdlJyk7XG4gICAgfVxuICB9XG5cbiAgcmVwbGFjZVN0YXRlKG5ld1N0YXRlKSB7XG4gICAgaWYgKHR5cGVvZiB0aGlzLnN0YXRlID09PSAndW5kZWZpbmVkJykgdGhpcy5zdGF0ZSA9IHt9O1xuXG4gICAgaWYgKHRoaXMuX2lzSGFuZGxpbmdEaXNwYXRjaCkge1xuICAgICAgdGhpcy5fcGVuZGluZ1N0YXRlID0gYXNzaWduKHt9LCBuZXdTdGF0ZSk7XG4gICAgICB0aGlzLl9lbWl0Q2hhbmdlQWZ0ZXJIYW5kbGluZ0Rpc3BhdGNoID0gdHJ1ZTtcbiAgICB9IGVsc2Uge1xuICAgICAgdGhpcy5zdGF0ZSA9IGFzc2lnbih7fSwgbmV3U3RhdGUpO1xuICAgICAgdGhpcy5lbWl0KCdjaGFuZ2UnKTtcbiAgICB9XG4gIH1cblxuICByZWdpc3RlcihhY3Rpb25JZCwgaGFuZGxlcikge1xuICAgIGFjdGlvbklkID0gZW5zdXJlQWN0aW9uSWQoYWN0aW9uSWQpO1xuXG4gICAgaWYgKHR5cGVvZiBoYW5kbGVyICE9PSAnZnVuY3Rpb24nKSByZXR1cm47XG5cbiAgICB0aGlzLl9oYW5kbGVyc1thY3Rpb25JZF0gPSBoYW5kbGVyLmJpbmQodGhpcyk7XG4gIH1cblxuICByZWdpc3RlckFzeW5jKGFjdGlvbklkLCBiZWdpbkhhbmRsZXIsIHN1Y2Nlc3NIYW5kbGVyLCBmYWlsdXJlSGFuZGxlcikge1xuICAgIGFjdGlvbklkID0gZW5zdXJlQWN0aW9uSWQoYWN0aW9uSWQpO1xuXG4gICAgbGV0IGFzeW5jSGFuZGxlcnMgPSB7XG4gICAgICBiZWdpbjogYmVnaW5IYW5kbGVyLFxuICAgICAgc3VjY2Vzczogc3VjY2Vzc0hhbmRsZXIsXG4gICAgICBmYWlsdXJlOiBmYWlsdXJlSGFuZGxlcixcbiAgICB9O1xuXG4gICAgZm9yIChsZXQga2V5IGluIGFzeW5jSGFuZGxlcnMpIHtcbiAgICAgIGlmICghYXN5bmNIYW5kbGVycy5oYXNPd25Qcm9wZXJ0eShrZXkpKSBjb250aW51ZTtcblxuICAgICAgbGV0IGhhbmRsZXIgPSBhc3luY0hhbmRsZXJzW2tleV07XG5cbiAgICAgIGlmICh0eXBlb2YgaGFuZGxlciA9PT0gJ2Z1bmN0aW9uJykge1xuICAgICAgICBhc3luY0hhbmRsZXJzW2tleV0gPSBoYW5kbGVyLmJpbmQodGhpcyk7XG4gICAgICB9IGVsc2Uge1xuICAgICAgICBkZWxldGUgYXN5bmNIYW5kbGVyc1trZXldO1xuICAgICAgfVxuICAgIH1cblxuICAgIHRoaXMuX2FzeW5jSGFuZGxlcnNbYWN0aW9uSWRdID0gYXN5bmNIYW5kbGVycztcbiAgfVxuXG4gIHdhaXRGb3IodG9rZW5zT3JTdG9yZXMpIHtcbiAgICB0aGlzLl93YWl0Rm9yKHRva2Vuc09yU3RvcmVzKTtcbiAgfVxuXG4gIGhhbmRsZXIocGF5bG9hZCkge1xuICAgIGxldCB7XG4gICAgICBib2R5LFxuICAgICAgYWN0aW9uSWQsXG4gICAgICBhc3luYzogX2FzeW5jLFxuICAgICAgYWN0aW9uQXJncyxcbiAgICAgIGVycm9yXG4gICAgfSA9IHBheWxvYWQ7XG5cbiAgICBsZXQgX2hhbmRsZXIgPSB0aGlzLl9oYW5kbGVyc1thY3Rpb25JZF07XG4gICAgbGV0IF9hc3luY0hhbmRsZXIgPSB0aGlzLl9hc3luY0hhbmRsZXJzW2FjdGlvbklkXVxuICAgICAgJiYgdGhpcy5fYXN5bmNIYW5kbGVyc1thY3Rpb25JZF1bX2FzeW5jXTtcblxuICAgIGlmIChfYXN5bmMpIHtcbiAgICAgIHN3aXRjaCAoX2FzeW5jKSB7XG4gICAgICAgIGNhc2UgJ2JlZ2luJzpcbiAgICAgICAgICBpZiAodHlwZW9mIF9hc3luY0hhbmRsZXIgPT09ICdmdW5jdGlvbicpIHtcbiAgICAgICAgICAgIHRoaXMuX3BlcmZvcm1IYW5kbGVyLmFwcGx5KHRoaXMsIFtfYXN5bmNIYW5kbGVyXS5jb25jYXQoYWN0aW9uQXJncykpO1xuICAgICAgICAgIH1cbiAgICAgICAgICByZXR1cm47XG4gICAgICAgIGNhc2UgJ2ZhaWx1cmUnOlxuICAgICAgICAgIGlmICh0eXBlb2YgX2FzeW5jSGFuZGxlciA9PT0gJ2Z1bmN0aW9uJykge1xuICAgICAgICAgICAgdGhpcy5fcGVyZm9ybUhhbmRsZXIoX2FzeW5jSGFuZGxlciwgZXJyb3IpO1xuICAgICAgICAgIH1cbiAgICAgICAgICByZXR1cm47XG4gICAgICAgIGNhc2UgJ3N1Y2Nlc3MnOlxuICAgICAgICAgIGlmICh0eXBlb2YgX2FzeW5jSGFuZGxlciA9PT0gJ2Z1bmN0aW9uJykge1xuICAgICAgICAgICAgX2hhbmRsZXIgPSBfYXN5bmNIYW5kbGVyO1xuICAgICAgICAgIH1cbiAgICAgICAgICBicmVhaztcbiAgICAgICAgZGVmYXVsdDpcbiAgICAgICAgICByZXR1cm47XG4gICAgICB9XG4gICAgfVxuXG4gICAgaWYgKHR5cGVvZiBfaGFuZGxlciAhPT0gJ2Z1bmN0aW9uJykgcmV0dXJuO1xuICAgIHRoaXMuX3BlcmZvcm1IYW5kbGVyKF9oYW5kbGVyLCBib2R5KTtcbiAgfVxuXG4gIF9wZXJmb3JtSGFuZGxlcihfaGFuZGxlciwgLi4uYXJncykge1xuICAgIHRoaXMuX2lzSGFuZGxpbmdEaXNwYXRjaCA9IHRydWU7XG4gICAgdGhpcy5fcGVuZGluZ1N0YXRlID0gYXNzaWduKHt9LCB0aGlzLnN0YXRlKTtcbiAgICB0aGlzLl9lbWl0Q2hhbmdlQWZ0ZXJIYW5kbGluZ0Rpc3BhdGNoID0gZmFsc2U7XG5cbiAgICB0cnkge1xuICAgICAgX2hhbmRsZXIuYXBwbHkodGhpcywgYXJncyk7XG4gICAgfSBmaW5hbGx5IHtcblxuICAgICAgaWYgKHRoaXMuX2VtaXRDaGFuZ2VBZnRlckhhbmRsaW5nRGlzcGF0Y2gpIHtcbiAgICAgICAgdGhpcy5zdGF0ZSA9IHRoaXMuX3BlbmRpbmdTdGF0ZTtcbiAgICAgICAgdGhpcy5lbWl0KCdjaGFuZ2UnKTtcbiAgICAgIH1cblxuICAgICAgdGhpcy5faXNIYW5kbGluZ0Rpc3BhdGNoID0gZmFsc2U7XG4gICAgICB0aGlzLl9wZW5kaW5nU3RhdGUgPSB7fTtcbiAgICAgIHRoaXMuX2VtaXRDaGFuZ2VBZnRlckhhbmRsaW5nRGlzcGF0Y2ggPSBmYWxzZTtcbiAgICB9XG4gIH1cbn1cblxuZnVuY3Rpb24gZW5zdXJlQWN0aW9uSWQoYWN0aW9uT3JBY3Rpb25JZCkge1xuICByZXR1cm4gdHlwZW9mIGFjdGlvbk9yQWN0aW9uSWQgPT09ICdmdW5jdGlvbidcbiAgICA/IGFjdGlvbk9yQWN0aW9uSWQuX2lkXG4gICAgOiBhY3Rpb25PckFjdGlvbklkO1xufVxuIl19
+
+/***/ },
+/* 158 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	/**
+	 * Representation of a single EventEmitter function.
+	 *
+	 * @param {Function} fn Event handler to be called.
+	 * @param {Mixed} context Context for function execution.
+	 * @param {Boolean} once Only emit once
+	 * @api private
+	 */
+	function EE(fn, context, once) {
+	  this.fn = fn;
+	  this.context = context;
+	  this.once = once || false;
+	}
+	
+	/**
+	 * Minimal EventEmitter interface that is molded against the Node.js
+	 * EventEmitter interface.
+	 *
+	 * @constructor
+	 * @api public
+	 */
+	function EventEmitter() { /* Nothing to set */ }
+	
+	/**
+	 * Holds the assigned EventEmitters by name.
+	 *
+	 * @type {Object}
+	 * @private
+	 */
+	EventEmitter.prototype._events = undefined;
+	
+	/**
+	 * Return a list of assigned event listeners.
+	 *
+	 * @param {String} event The events that should be listed.
+	 * @returns {Array}
+	 * @api public
+	 */
+	EventEmitter.prototype.listeners = function listeners(event) {
+	  if (!this._events || !this._events[event]) return [];
+	  if (this._events[event].fn) return [this._events[event].fn];
+	
+	  for (var i = 0, l = this._events[event].length, ee = new Array(l); i < l; i++) {
+	    ee[i] = this._events[event][i].fn;
+	  }
+	
+	  return ee;
+	};
+	
+	/**
+	 * Emit an event to all registered event listeners.
+	 *
+	 * @param {String} event The name of the event.
+	 * @returns {Boolean} Indication if we've emitted an event.
+	 * @api public
+	 */
+	EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
+	  if (!this._events || !this._events[event]) return false;
+	
+	  var listeners = this._events[event]
+	    , len = arguments.length
+	    , args
+	    , i;
+	
+	  if ('function' === typeof listeners.fn) {
+	    if (listeners.once) this.removeListener(event, listeners.fn, true);
+	
+	    switch (len) {
+	      case 1: return listeners.fn.call(listeners.context), true;
+	      case 2: return listeners.fn.call(listeners.context, a1), true;
+	      case 3: return listeners.fn.call(listeners.context, a1, a2), true;
+	      case 4: return listeners.fn.call(listeners.context, a1, a2, a3), true;
+	      case 5: return listeners.fn.call(listeners.context, a1, a2, a3, a4), true;
+	      case 6: return listeners.fn.call(listeners.context, a1, a2, a3, a4, a5), true;
+	    }
+	
+	    for (i = 1, args = new Array(len -1); i < len; i++) {
+	      args[i - 1] = arguments[i];
+	    }
+	
+	    listeners.fn.apply(listeners.context, args);
+	  } else {
+	    var length = listeners.length
+	      , j;
+	
+	    for (i = 0; i < length; i++) {
+	      if (listeners[i].once) this.removeListener(event, listeners[i].fn, true);
+	
+	      switch (len) {
+	        case 1: listeners[i].fn.call(listeners[i].context); break;
+	        case 2: listeners[i].fn.call(listeners[i].context, a1); break;
+	        case 3: listeners[i].fn.call(listeners[i].context, a1, a2); break;
+	        default:
+	          if (!args) for (j = 1, args = new Array(len -1); j < len; j++) {
+	            args[j - 1] = arguments[j];
+	          }
+	
+	          listeners[i].fn.apply(listeners[i].context, args);
+	      }
+	    }
+	  }
+	
+	  return true;
+	};
+	
+	/**
+	 * Register a new EventListener for the given event.
+	 *
+	 * @param {String} event Name of the event.
+	 * @param {Functon} fn Callback function.
+	 * @param {Mixed} context The context of the function.
+	 * @api public
+	 */
+	EventEmitter.prototype.on = function on(event, fn, context) {
+	  var listener = new EE(fn, context || this);
+	
+	  if (!this._events) this._events = {};
+	  if (!this._events[event]) this._events[event] = listener;
+	  else {
+	    if (!this._events[event].fn) this._events[event].push(listener);
+	    else this._events[event] = [
+	      this._events[event], listener
+	    ];
+	  }
+	
+	  return this;
+	};
+	
+	/**
+	 * Add an EventListener that's only called once.
+	 *
+	 * @param {String} event Name of the event.
+	 * @param {Function} fn Callback function.
+	 * @param {Mixed} context The context of the function.
+	 * @api public
+	 */
+	EventEmitter.prototype.once = function once(event, fn, context) {
+	  var listener = new EE(fn, context || this, true);
+	
+	  if (!this._events) this._events = {};
+	  if (!this._events[event]) this._events[event] = listener;
+	  else {
+	    if (!this._events[event].fn) this._events[event].push(listener);
+	    else this._events[event] = [
+	      this._events[event], listener
+	    ];
+	  }
+	
+	  return this;
+	};
+	
+	/**
+	 * Remove event listeners.
+	 *
+	 * @param {String} event The event we want to remove.
+	 * @param {Function} fn The listener that we need to find.
+	 * @param {Boolean} once Only remove once listeners.
+	 * @api public
+	 */
+	EventEmitter.prototype.removeListener = function removeListener(event, fn, once) {
+	  if (!this._events || !this._events[event]) return this;
+	
+	  var listeners = this._events[event]
+	    , events = [];
+	
+	  if (fn) {
+	    if (listeners.fn && (listeners.fn !== fn || (once && !listeners.once))) {
+	      events.push(listeners);
+	    }
+	    if (!listeners.fn) for (var i = 0, length = listeners.length; i < length; i++) {
+	      if (listeners[i].fn !== fn || (once && !listeners[i].once)) {
+	        events.push(listeners[i]);
+	      }
+	    }
+	  }
+	
+	  //
+	  // Reset the array, or remove it completely if we have no more listeners.
+	  //
+	  if (events.length) {
+	    this._events[event] = events.length === 1 ? events[0] : events;
+	  } else {
+	    delete this._events[event];
+	  }
+	
+	  return this;
+	};
+	
+	/**
+	 * Remove all listeners or only the listeners for the specified event.
+	 *
+	 * @param {String} event The event want to remove all listeners for.
+	 * @api public
+	 */
+	EventEmitter.prototype.removeAllListeners = function removeAllListeners(event) {
+	  if (!this._events) return this;
+	
+	  if (event) delete this._events[event];
+	  else this._events = {};
+	
+	  return this;
+	};
+	
+	//
+	// Alias methods names because people roll like that.
+	//
+	EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
+	EventEmitter.prototype.addListener = EventEmitter.prototype.on;
+	
+	//
+	// This function doesn't apply anymore.
+	//
+	EventEmitter.prototype.setMaxListeners = function setMaxListeners() {
+	  return this;
+	};
+	
+	//
+	// Expose the module.
+	//
+	EventEmitter.EventEmitter = EventEmitter;
+	EventEmitter.EventEmitter2 = EventEmitter;
+	EventEmitter.EventEmitter3 = EventEmitter;
+	
+	//
+	// Expose the module.
+	//
+	module.exports = EventEmitter;
+
+
+/***/ },
+/* 159 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function ToObject(val) {
+		if (val == null) {
+			throw new TypeError('Object.assign cannot be called with null or undefined');
+		}
+	
+		return Object(val);
+	}
+	
+	module.exports = Object.assign || function (target, source) {
+		var from;
+		var keys;
+		var to = ToObject(target);
+	
+		for (var s = 1; s < arguments.length; s++) {
+			from = arguments[s];
+			keys = Object.keys(Object(from));
+	
+			for (var i = 0; i < keys.length; i++) {
+				to[keys[i]] = from[keys[i]];
+			}
+		}
+	
+		return to;
+	};
+
+
+/***/ },
+/* 160 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Actions
+	 *
+	 * Instances of the Actions class represent a set of actions. (In Flux parlance,
+	 * these might be more accurately denoted as Action Creators, while Action
+	 * refers to the payload sent to the dispatcher, but this is... confusing. We
+	 * will use Action to mean the function you call to trigger a dispatch.)
+	 *
+	 * Create actions by extending from the base Actions class and adding methods.
+	 * All methods on the prototype (except the constructor) will be
+	 * converted into actions. The return value of an action is used as the body
+	 * of the payload sent to the dispatcher.
+	 */
+	
+	"use strict";
+	
+	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+	
+	var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+	
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+	
+	var uniqueId = _interopRequire(__webpack_require__(161));
+	
+	var Actions = (function () {
+	  function Actions() {
+	    _classCallCheck(this, Actions);
+	
+	    this._baseId = uniqueId();
+	
+	    var methodNames = this._getActionMethodNames();
+	    for (var i = 0; i < methodNames.length; i++) {
+	      var methodName = methodNames[i];
+	      this._wrapAction(methodName);
+	    }
+	
+	    this.getConstants = this.getActionIds;
+	  }
+	
+	  _prototypeProperties(Actions, null, {
+	    getActionIds: {
+	      value: function getActionIds() {
+	        var _this = this;
+	        return this._getActionMethodNames().reduce(function (result, actionName) {
+	          result[actionName] = _this[actionName]._id;
+	          return result;
+	        }, {});
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    _getActionMethodNames: {
+	      value: function _getActionMethodNames(instance) {
+	        var _this = this;
+	        return Object.getOwnPropertyNames(this.constructor.prototype).filter(function (name) {
+	          return name !== "constructor" && typeof _this[name] === "function";
+	        });
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    _wrapAction: {
+	      value: function _wrapAction(methodName) {
+	        var _this = this;
+	        var originalMethod = this[methodName];
+	        var actionId = this._createActionId(methodName);
+	
+	        var action = function () {
+	          for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	          }
+	
+	          var body = originalMethod.apply(_this, args);
+	
+	          if (isPromise(body)) {
+	            var promise = body;
+	            return _this._dispatchAsync(actionId, promise, args, methodName);
+	          } else {
+	            return _this._dispatch(actionId, body, args, methodName);
+	          }
+	        };
+	
+	        action._id = actionId;
+	
+	        this[methodName] = action;
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    _createActionId: {
+	
+	      /**
+	       * Create unique string constant for an action method, using
+	       * @param {string} methodName - Name of the action method
+	       */
+	      value: function _createActionId(methodName) {
+	        return "" + this._baseId + "-" + methodName;
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    _dispatch: {
+	      value: function _dispatch(actionId, body, args, methodName) {
+	        if (!this.dispatch) throw new ReferenceError("You've attempted to perform the action " + ("" + this.constructor.name + "#" + methodName + ", but it hasn't been added ") + "to a Flux instance.");
+	
+	        if (typeof body === "undefined") {
+	          return;
+	        }this.dispatch(actionId, body, args);
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    _dispatchAsync: {
+	      value: function _dispatchAsync(actionId, promise, args, methodName) {
+	        if (!this.dispatchAsync) throw new ReferenceError("You've attempted to perform the asynchronous action " + ("" + this.constructor.name + "#" + methodName + ", but it hasn't been added ") + "to a Flux instance.");
+	
+	        return this.dispatchAsync(actionId, promise, args);
+	      },
+	      writable: true,
+	      configurable: true
+	    }
+	  });
+	
+	  return Actions;
+	})();
+	
+	module.exports = Actions;
+	
+	
+	function isPromise(value) {
+	  return value && typeof value.then === "function";
+	}
+	//# sourceMappingURL=data:application/json;base64,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LElBQUksQ0FBQyxRQUFRLENBQUMsUUFBUSxFQUFFLElBQUksRUFBRSxJQUFJLENBQUMsQ0FBQztPQUNyQzs7OztBQUVELGtCQUFjO2FBQUEsd0JBQUMsUUFBUSxFQUFFLE9BQU8sRUFBRSxJQUFJLEVBQUUsVUFBVSxFQUFFO0FBQ2xELFlBQUksQ0FBQyxJQUFJLENBQUMsYUFBYSxFQUFFLE1BQU0sSUFBSSxjQUFjLENBQy9DLCtEQUNHLElBQUksQ0FBQyxXQUFXLENBQUMsSUFBSSxTQUFJLFVBQVUsaUNBQTZCLHdCQUM5QyxDQUN0QixDQUFDOztBQUVGLGVBQU8sSUFBSSxDQUFDLGFBQWEsQ0FBQyxRQUFRLEVBQUUsT0FBTyxFQUFFLElBQUksQ0FBQyxDQUFDO09BQ3BEOzs7Ozs7U0E5RWtCLE9BQU87OztpQkFBUCxPQUFPOzs7QUFrRjVCLFNBQVMsU0FBUyxDQUFDLEtBQUssRUFBRTtBQUN4QixTQUFPLEtBQUssSUFBSSxPQUFPLEtBQUssQ0FBQyxJQUFJLEtBQUssVUFBVSxDQUFDO0NBQ2xEIiwiZmlsZSI6InNyYy9BY3Rpb25zLmpzIiwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBBY3Rpb25zXG4gKlxuICogSW5zdGFuY2VzIG9mIHRoZSBBY3Rpb25zIGNsYXNzIHJlcHJlc2VudCBhIHNldCBvZiBhY3Rpb25zLiAoSW4gRmx1eCBwYXJsYW5jZSxcbiAqIHRoZXNlIG1pZ2h0IGJlIG1vcmUgYWNjdXJhdGVseSBkZW5vdGVkIGFzIEFjdGlvbiBDcmVhdG9ycywgd2hpbGUgQWN0aW9uXG4gKiByZWZlcnMgdG8gdGhlIHBheWxvYWQgc2VudCB0byB0aGUgZGlzcGF0Y2hlciwgYnV0IHRoaXMgaXMuLi4gY29uZnVzaW5nLiBXZVxuICogd2lsbCB1c2UgQWN0aW9uIHRvIG1lYW4gdGhlIGZ1bmN0aW9uIHlvdSBjYWxsIHRvIHRyaWdnZXIgYSBkaXNwYXRjaC4pXG4gKlxuICogQ3JlYXRlIGFjdGlvbnMgYnkgZXh0ZW5kaW5nIGZyb20gdGhlIGJhc2UgQWN0aW9ucyBjbGFzcyBhbmQgYWRkaW5nIG1ldGhvZHMuXG4gKiBBbGwgbWV0aG9kcyBvbiB0aGUgcHJvdG90eXBlIChleGNlcHQgdGhlIGNvbnN0cnVjdG9yKSB3aWxsIGJlXG4gKiBjb252ZXJ0ZWQgaW50byBhY3Rpb25zLiBUaGUgcmV0dXJuIHZhbHVlIG9mIGFuIGFjdGlvbiBpcyB1c2VkIGFzIHRoZSBib2R5XG4gKiBvZiB0aGUgcGF5bG9hZCBzZW50IHRvIHRoZSBkaXNwYXRjaGVyLlxuICovXG5cbid1c2Ugc3RyaWN0JztcblxuaW1wb3J0IHVuaXF1ZUlkIGZyb20gJ3VuaXF1ZWlkJztcblxuZXhwb3J0IGRlZmF1bHQgY2xhc3MgQWN0aW9ucyB7XG5cbiAgY29uc3RydWN0b3IoKSB7XG5cbiAgICB0aGlzLl9iYXNlSWQgPSB1bmlxdWVJZCgpO1xuXG4gICAgbGV0IG1ldGhvZE5hbWVzID0gdGhpcy5fZ2V0QWN0aW9uTWV0aG9kTmFtZXMoKTtcbiAgICBmb3IgKGxldCBpID0gMDsgaSA8IG1ldGhvZE5hbWVzLmxlbmd0aDsgaSsrKSB7XG4gICAgICBsZXQgbWV0aG9kTmFtZSA9IG1ldGhvZE5hbWVzW2ldO1xuICAgICAgdGhpcy5fd3JhcEFjdGlvbihtZXRob2ROYW1lKTtcbiAgICB9XG5cbiAgICB0aGlzLmdldENvbnN0YW50cyA9IHRoaXMuZ2V0QWN0aW9uSWRzO1xuICB9XG5cbiAgZ2V0QWN0aW9uSWRzKCkge1xuICAgIHJldHVybiB0aGlzLl9nZXRBY3Rpb25NZXRob2ROYW1lcygpLnJlZHVjZSgocmVzdWx0LCBhY3Rpb25OYW1lKSA9PiB7XG4gICAgICByZXN1bHRbYWN0aW9uTmFtZV0gPSB0aGlzW2FjdGlvbk5hbWVdLl9pZDtcbiAgICAgIHJldHVybiByZXN1bHQ7XG4gICAgfSwge30pO1xuICB9XG5cbiAgX2dldEFjdGlvbk1ldGhvZE5hbWVzKGluc3RhbmNlKSB7XG4gICAgcmV0dXJuIE9iamVjdC5nZXRPd25Qcm9wZXJ0eU5hbWVzKHRoaXMuY29uc3RydWN0b3IucHJvdG90eXBlKVxuICAgICAgLmZpbHRlcihuYW1lID0+XG4gICAgICAgIG5hbWUgIT09ICdjb25zdHJ1Y3RvcicgJiZcbiAgICAgICAgdHlwZW9mIHRoaXNbbmFtZV0gPT09ICdmdW5jdGlvbidcbiAgICAgICk7XG4gIH1cblxuICBfd3JhcEFjdGlvbihtZXRob2ROYW1lKSB7XG4gICAgbGV0IG9yaWdpbmFsTWV0aG9kID0gdGhpc1ttZXRob2ROYW1lXTtcbiAgICBsZXQgYWN0aW9uSWQgPSB0aGlzLl9jcmVhdGVBY3Rpb25JZChtZXRob2ROYW1lKTtcblxuICAgIGxldCBhY3Rpb24gPSAoLi4uYXJncykgPT4ge1xuICAgICAgbGV0IGJvZHkgPSBvcmlnaW5hbE1ldGhvZC5hcHBseSh0aGlzLCBhcmdzKTtcblxuICAgICAgaWYgKGlzUHJvbWlzZShib2R5KSkge1xuICAgICAgICBsZXQgcHJvbWlzZSA9IGJvZHk7XG4gICAgICAgIHJldHVybiB0aGlzLl9kaXNwYXRjaEFzeW5jKGFjdGlvbklkLCBwcm9taXNlLCBhcmdzLCBtZXRob2ROYW1lKTtcbiAgICAgIH0gZWxzZSB7XG4gICAgICAgIHJldHVybiB0aGlzLl9kaXNwYXRjaChhY3Rpb25JZCwgYm9keSwgYXJncywgbWV0aG9kTmFtZSk7XG4gICAgICB9XG4gICAgfTtcblxuICAgIGFjdGlvbi5faWQgPSBhY3Rpb25JZDtcblxuICAgIHRoaXNbbWV0aG9kTmFtZV0gPSBhY3Rpb247XG4gIH1cblxuICAvKipcbiAgICogQ3JlYXRlIHVuaXF1ZSBzdHJpbmcgY29uc3RhbnQgZm9yIGFuIGFjdGlvbiBtZXRob2QsIHVzaW5nXG4gICAqIEBwYXJhbSB7c3RyaW5nfSBtZXRob2ROYW1lIC0gTmFtZSBvZiB0aGUgYWN0aW9uIG1ldGhvZFxuICAgKi9cbiAgX2NyZWF0ZUFjdGlvbklkKG1ldGhvZE5hbWUpIHtcbiAgICByZXR1cm4gYCR7dGhpcy5fYmFzZUlkfS0ke21ldGhvZE5hbWV9YDtcbiAgfVxuXG4gIF9kaXNwYXRjaChhY3Rpb25JZCwgYm9keSwgYXJncywgbWV0aG9kTmFtZSkge1xuICAgIGlmICghdGhpcy5kaXNwYXRjaCkgdGhyb3cgbmV3IFJlZmVyZW5jZUVycm9yKFxuICAgICAgYFlvdSd2ZSBhdHRlbXB0ZWQgdG8gcGVyZm9ybSB0aGUgYWN0aW9uIGBcbiAgICArIGAke3RoaXMuY29uc3RydWN0b3IubmFtZX0jJHttZXRob2ROYW1lfSwgYnV0IGl0IGhhc24ndCBiZWVuIGFkZGVkIGBcbiAgICArIGB0byBhIEZsdXggaW5zdGFuY2UuYFxuICAgICk7XG5cbiAgICBpZiAodHlwZW9mIGJvZHkgPT09ICd1bmRlZmluZWQnKSByZXR1cm47XG5cbiAgICB0aGlzLmRpc3BhdGNoKGFjdGlvbklkLCBib2R5LCBhcmdzKTtcbiAgfVxuXG4gIF9kaXNwYXRjaEFzeW5jKGFjdGlvbklkLCBwcm9taXNlLCBhcmdzLCBtZXRob2ROYW1lKSB7XG4gICAgaWYgKCF0aGlzLmRpc3BhdGNoQXN5bmMpIHRocm93IG5ldyBSZWZlcmVuY2VFcnJvcihcbiAgICAgIGBZb3UndmUgYXR0ZW1wdGVkIHRvIHBlcmZvcm0gdGhlIGFzeW5jaHJvbm91cyBhY3Rpb24gYFxuICAgICsgYCR7dGhpcy5jb25zdHJ1Y3Rvci5uYW1lfSMke21ldGhvZE5hbWV9LCBidXQgaXQgaGFzbid0IGJlZW4gYWRkZWQgYFxuICAgICsgYHRvIGEgRmx1eCBpbnN0YW5jZS5gXG4gICAgKTtcblxuICAgIHJldHVybiB0aGlzLmRpc3BhdGNoQXN5bmMoYWN0aW9uSWQsIHByb21pc2UsIGFyZ3MpO1xuICB9XG5cbn1cblxuZnVuY3Rpb24gaXNQcm9taXNlKHZhbHVlKSB7XG4gIHJldHVybiB2YWx1ZSAmJiB0eXBlb2YgdmFsdWUudGhlbiA9PT0gJ2Z1bmN0aW9uJztcbn1cbiJdfQ==
+
+/***/ },
+/* 161 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	
+	var count = 0;
+	
+	/**
+	 * Generate a unique ID.
+	 *
+	 * Optionally pass a prefix to prepend, a suffix to append, or a
+	 * multiplier to use on the ID.
+	 *
+	 * ```js
+	 * uniqueId(); //=> '25'
+	 *
+	 * uniqueId({prefix: 'apple_'});
+	 * //=> 'apple_10'
+	 *
+	 * uniqueId({suffix: '_orange'});
+	 * //=> '10_orange'
+	 *
+	 * uniqueId({multiplier: 5});
+	 * //=> 5, 10, 15, 20...
+	 * ```
+	 *
+	 * To reset the `id` to zero, do `id.reset()`.
+	 *
+	 * @param  {Object} `options` Optionally pass a `prefix`, `suffix` and/or `multiplier.
+	 * @return {String} The unique id.
+	 * @api public
+	 */
+	
+	var id = module.exports = function (options) {
+	  options = options || {};
+	
+	  var prefix = options.prefix;
+	  var suffix = options.suffix;
+	
+	  var id = ++count * (options.multiplier || 1);
+	
+	  if (prefix == null) {
+	    prefix = '';
+	  }
+	
+	  if (suffix == null) {
+	    suffix = '';
+	  }
+	
+	  return String(prefix) + id + String(suffix);
+	};
+	
+	
+	id.reset = function() {
+	  return count = 0;
+	};
+
+/***/ },
+/* 162 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 */
+	
+	module.exports.Dispatcher = __webpack_require__(163)
+
+
+/***/ },
+/* 163 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+	 * Copyright (c) 2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule Dispatcher
+	 * @typechecks
+	 */
+	
+	"use strict";
+	
+	var invariant = __webpack_require__(164);
+	
+	var _lastID = 1;
+	var _prefix = 'ID_';
+	
+	/**
+	 * Dispatcher is used to broadcast payloads to registered callbacks. This is
+	 * different from generic pub-sub systems in two ways:
+	 *
+	 *   1) Callbacks are not subscribed to particular events. Every payload is
+	 *      dispatched to every registered callback.
+	 *   2) Callbacks can be deferred in whole or part until other callbacks have
+	 *      been executed.
+	 *
+	 * For example, consider this hypothetical flight destination form, which
+	 * selects a default city when a country is selected:
+	 *
+	 *   var flightDispatcher = new Dispatcher();
+	 *
+	 *   // Keeps track of which country is selected
+	 *   var CountryStore = {country: null};
+	 *
+	 *   // Keeps track of which city is selected
+	 *   var CityStore = {city: null};
+	 *
+	 *   // Keeps track of the base flight price of the selected city
+	 *   var FlightPriceStore = {price: null}
+	 *
+	 * When a user changes the selected city, we dispatch the payload:
+	 *
+	 *   flightDispatcher.dispatch({
+	 *     actionType: 'city-update',
+	 *     selectedCity: 'paris'
+	 *   });
+	 *
+	 * This payload is digested by `CityStore`:
+	 *
+	 *   flightDispatcher.register(function(payload) {
+	 *     if (payload.actionType === 'city-update') {
+	 *       CityStore.city = payload.selectedCity;
+	 *     }
+	 *   });
+	 *
+	 * When the user selects a country, we dispatch the payload:
+	 *
+	 *   flightDispatcher.dispatch({
+	 *     actionType: 'country-update',
+	 *     selectedCountry: 'australia'
+	 *   });
+	 *
+	 * This payload is digested by both stores:
+	 *
+	 *    CountryStore.dispatchToken = flightDispatcher.register(function(payload) {
+	 *     if (payload.actionType === 'country-update') {
+	 *       CountryStore.country = payload.selectedCountry;
+	 *     }
+	 *   });
+	 *
+	 * When the callback to update `CountryStore` is registered, we save a reference
+	 * to the returned token. Using this token with `waitFor()`, we can guarantee
+	 * that `CountryStore` is updated before the callback that updates `CityStore`
+	 * needs to query its data.
+	 *
+	 *   CityStore.dispatchToken = flightDispatcher.register(function(payload) {
+	 *     if (payload.actionType === 'country-update') {
+	 *       // `CountryStore.country` may not be updated.
+	 *       flightDispatcher.waitFor([CountryStore.dispatchToken]);
+	 *       // `CountryStore.country` is now guaranteed to be updated.
+	 *
+	 *       // Select the default city for the new country
+	 *       CityStore.city = getDefaultCityForCountry(CountryStore.country);
+	 *     }
+	 *   });
+	 *
+	 * The usage of `waitFor()` can be chained, for example:
+	 *
+	 *   FlightPriceStore.dispatchToken =
+	 *     flightDispatcher.register(function(payload) {
+	 *       switch (payload.actionType) {
+	 *         case 'country-update':
+	 *           flightDispatcher.waitFor([CityStore.dispatchToken]);
+	 *           FlightPriceStore.price =
+	 *             getFlightPriceStore(CountryStore.country, CityStore.city);
+	 *           break;
+	 *
+	 *         case 'city-update':
+	 *           FlightPriceStore.price =
+	 *             FlightPriceStore(CountryStore.country, CityStore.city);
+	 *           break;
+	 *     }
+	 *   });
+	 *
+	 * The `country-update` payload will be guaranteed to invoke the stores'
+	 * registered callbacks in order: `CountryStore`, `CityStore`, then
+	 * `FlightPriceStore`.
+	 */
+	
+	  function Dispatcher() {
+	    this.$Dispatcher_callbacks = {};
+	    this.$Dispatcher_isPending = {};
+	    this.$Dispatcher_isHandled = {};
+	    this.$Dispatcher_isDispatching = false;
+	    this.$Dispatcher_pendingPayload = null;
+	  }
+	
+	  /**
+	   * Registers a callback to be invoked with every dispatched payload. Returns
+	   * a token that can be used with `waitFor()`.
+	   *
+	   * @param {function} callback
+	   * @return {string}
+	   */
+	  Dispatcher.prototype.register=function(callback) {
+	    var id = _prefix + _lastID++;
+	    this.$Dispatcher_callbacks[id] = callback;
+	    return id;
+	  };
+	
+	  /**
+	   * Removes a callback based on its token.
+	   *
+	   * @param {string} id
+	   */
+	  Dispatcher.prototype.unregister=function(id) {
+	    invariant(
+	      this.$Dispatcher_callbacks[id],
+	      'Dispatcher.unregister(...): `%s` does not map to a registered callback.',
+	      id
+	    );
+	    delete this.$Dispatcher_callbacks[id];
+	  };
+	
+	  /**
+	   * Waits for the callbacks specified to be invoked before continuing execution
+	   * of the current callback. This method should only be used by a callback in
+	   * response to a dispatched payload.
+	   *
+	   * @param {array<string>} ids
+	   */
+	  Dispatcher.prototype.waitFor=function(ids) {
+	    invariant(
+	      this.$Dispatcher_isDispatching,
+	      'Dispatcher.waitFor(...): Must be invoked while dispatching.'
+	    );
+	    for (var ii = 0; ii < ids.length; ii++) {
+	      var id = ids[ii];
+	      if (this.$Dispatcher_isPending[id]) {
+	        invariant(
+	          this.$Dispatcher_isHandled[id],
+	          'Dispatcher.waitFor(...): Circular dependency detected while ' +
+	          'waiting for `%s`.',
+	          id
+	        );
+	        continue;
+	      }
+	      invariant(
+	        this.$Dispatcher_callbacks[id],
+	        'Dispatcher.waitFor(...): `%s` does not map to a registered callback.',
+	        id
+	      );
+	      this.$Dispatcher_invokeCallback(id);
+	    }
+	  };
+	
+	  /**
+	   * Dispatches a payload to all registered callbacks.
+	   *
+	   * @param {object} payload
+	   */
+	  Dispatcher.prototype.dispatch=function(payload) {
+	    invariant(
+	      !this.$Dispatcher_isDispatching,
+	      'Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.'
+	    );
+	    this.$Dispatcher_startDispatching(payload);
+	    try {
+	      for (var id in this.$Dispatcher_callbacks) {
+	        if (this.$Dispatcher_isPending[id]) {
+	          continue;
+	        }
+	        this.$Dispatcher_invokeCallback(id);
+	      }
+	    } finally {
+	      this.$Dispatcher_stopDispatching();
+	    }
+	  };
+	
+	  /**
+	   * Is this Dispatcher currently dispatching.
+	   *
+	   * @return {boolean}
+	   */
+	  Dispatcher.prototype.isDispatching=function() {
+	    return this.$Dispatcher_isDispatching;
+	  };
+	
+	  /**
+	   * Call the callback stored with the given id. Also do some internal
+	   * bookkeeping.
+	   *
+	   * @param {string} id
+	   * @internal
+	   */
+	  Dispatcher.prototype.$Dispatcher_invokeCallback=function(id) {
+	    this.$Dispatcher_isPending[id] = true;
+	    this.$Dispatcher_callbacks[id](this.$Dispatcher_pendingPayload);
+	    this.$Dispatcher_isHandled[id] = true;
+	  };
+	
+	  /**
+	   * Set up bookkeeping needed when dispatching.
+	   *
+	   * @param {object} payload
+	   * @internal
+	   */
+	  Dispatcher.prototype.$Dispatcher_startDispatching=function(payload) {
+	    for (var id in this.$Dispatcher_callbacks) {
+	      this.$Dispatcher_isPending[id] = false;
+	      this.$Dispatcher_isHandled[id] = false;
+	    }
+	    this.$Dispatcher_pendingPayload = payload;
+	    this.$Dispatcher_isDispatching = true;
+	  };
+	
+	  /**
+	   * Clear bookkeeping used for dispatching.
+	   *
+	   * @internal
+	   */
+	  Dispatcher.prototype.$Dispatcher_stopDispatching=function() {
+	    this.$Dispatcher_pendingPayload = null;
+	    this.$Dispatcher_isDispatching = false;
+	  };
+	
+	
+	module.exports = Dispatcher;
+
+
+/***/ },
+/* 164 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule invariant
+	 */
+	
+	"use strict";
+	
+	/**
+	 * Use invariant() to assert state which your program assumes to be true.
+	 *
+	 * Provide sprintf-style format (only %s is supported) and arguments
+	 * to provide information about what broke and what you were
+	 * expecting.
+	 *
+	 * The invariant message will be stripped in production, but the invariant
+	 * will remain to ensure logic does not differ in production.
+	 */
+	
+	var invariant = function(condition, format, a, b, c, d, e, f) {
+	  if (false) {
+	    if (format === undefined) {
+	      throw new Error('invariant requires an error message argument');
+	    }
+	  }
+	
+	  if (!condition) {
+	    var error;
+	    if (format === undefined) {
+	      error = new Error(
+	        'Minified exception occurred; use the non-minified dev environment ' +
+	        'for the full error message and additional helpful warnings.'
+	      );
+	    } else {
+	      var args = [a, b, c, d, e, f];
+	      var argIndex = 0;
+	      error = new Error(
+	        'Invariant Violation: ' +
+	        format.replace(/%s/g, function() { return args[argIndex++]; })
+	      );
+	    }
+	
+	    error.framesToPop = 1; // we don't care about invariant's own frame
+	    throw error;
+	  }
+	};
+	
+	module.exports = invariant;
+
+
+/***/ },
+/* 165 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+	
+	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+	
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+	
+	/*
+	 * The MIT License (MIT)
+	 *
+	 * Copyright (c) 2014, Groupon, Inc.
+	 *
+	 * Permission is hereby granted, free of charge, to any person obtaining a copy
+	 * of this software and associated documentation files (the "Software"), to deal
+	 * in the Software without restriction, including without limitation the rights
+	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	 * copies of the Software, and to permit persons to whom the Software is
+	 * furnished to do so, subject to the following conditions:
+	 *
+	 * The above copyright notice and this permission notice shall be included in
+	 * all copies or substantial portions of the Software.
+	 *
+	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	 * THE SOFTWARE.
+	 */
+	
+	var Actions = __webpack_require__(156).Actions;
+	var recentProjects = __webpack_require__(166).recentProjects;
+	var AppActions = (function (Actions) {
+	    function AppActions() {
+	        _classCallCheck(this, AppActions);
+	
+	        if (Actions != null) {
+	            Actions.apply(this, arguments);
+	        }
+	    }
+	
+	    _inherits(AppActions, Actions);
+	
+	    _prototypeProperties(AppActions, null, {
+	        getRecentProjects: {
+	            value: function getRecentProjects() {
+	                this.initialLoadRecentProjects(recentProjects());
+	            },
+	            writable: true,
+	            configurable: true
+	        },
+	        initialLoadRecentProjects: {
+	            value: function initialLoadRecentProjects(recentProjects) {
+	                return recentProjects;
+	            },
+	            writable: true,
+	            configurable: true
+	        }
+	    });
+	
+	    return AppActions;
+	})(Actions);
+	
+	module.exports = AppActions;
+
+/***/ },
+/* 166 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	/*
+	 * The MIT License (MIT)
+	 *
+	 * Copyright (c) 2014, Groupon, Inc.
+	 *
+	 * Permission is hereby granted, free of charge, to any person obtaining a copy
+	 * of this software and associated documentation files (the "Software"), to deal
+	 * in the Software without restriction, including without limitation the rights
+	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	 * copies of the Software, and to permit persons to whom the Software is
+	 * furnished to do so, subject to the following conditions:
+	 *
+	 * The above copyright notice and this permission notice shall be included in
+	 * all copies or substantial portions of the Software.
+	 *
+	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	 * THE SOFTWARE.
+	 */
+	
+	exports.recentProjects = recentProjects;
+	function recentProjects() {
+	  return [{ name: "meow", url: "url" }];
+	}
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+/***/ },
+/* 167 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+	 * The MIT License (MIT)
+	 *
+	 * Copyright (c) 2014, Groupon, Inc.
+	 *
+	 * Permission is hereby granted, free of charge, to any person obtaining a copy
+	 * of this software and associated documentation files (the "Software"), to deal
+	 * in the Software without restriction, including without limitation the rights
+	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	 * copies of the Software, and to permit persons to whom the Software is
+	 * furnished to do so, subject to the following conditions:
+	 *
+	 * The above copyright notice and this permission notice shall be included in
+	 * all copies or substantial portions of the Software.
+	 *
+	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	 * THE SOFTWARE.
+	 */
+	
+	"use strict";
+	var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+	
+	var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+	
+	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+	
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+	
+	var Store = __webpack_require__(156).Store;
+	var RecentProjectsStore = (function (Store) {
+	    function RecentProjectsStore(flux) {
+	        _classCallCheck(this, RecentProjectsStore);
+	
+	        _get(Object.getPrototypeOf(RecentProjectsStore.prototype), "constructor", this).call(this);
+	        var actionIds = flux.getActionIds("app");
+	        this.register(actionIds.initialLoadRecentProjects, this.handleInitialLoad);
+	        this.state = {};
+	    }
+	
+	    _inherits(RecentProjectsStore, Store);
+	
+	    _prototypeProperties(RecentProjectsStore, null, {
+	        handleInitialLoad: {
+	            value: function handleInitialLoad(recentProjects) {
+	                this.setState({ recentProjects: recentProjects });
+	            },
+	            writable: true,
+	            configurable: true
+	        },
+	        recentProjects: {
+	            value: function recentProjects() {
+	                return this.getState();
+	            },
+	            writable: true,
+	            configurable: true
+	        }
+	    });
+	
+	    return RecentProjectsStore;
+	})(Store);
+	
+	module.exports = RecentProjectsStore;
+
+/***/ },
+/* 168 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+	
+	var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+	
 	var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
 	
 	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
@@ -29063,9 +30567,9 @@
 	 */
 	var React = _interopRequire(__webpack_require__(1));
 	
-	var $ = _interopRequire(__webpack_require__(154));
+	var BuildIcon = _interopRequire(__webpack_require__(169));
 	
-	var BuildIcon = _interopRequire(__webpack_require__(156));
+	var FluxComponent = _interopRequire(__webpack_require__(170));
 	
 	var RecentProjectsHeader = (function (_React$Component) {
 	    function RecentProjectsHeader() {
@@ -29120,25 +30624,19 @@
 	
 	;
 	
-	var RecentProjectsWiget = (function (_React$Component3) {
-	    function RecentProjectsWiget(props) {
-	        _classCallCheck(this, RecentProjectsWiget);
+	var RecentProjectsWidget = (function (_React$Component3) {
+	    function RecentProjectsWidget(props) {
+	        _classCallCheck(this, RecentProjectsWidget);
 	
-	        _get(Object.getPrototypeOf(RecentProjectsWiget.prototype), "constructor", this).call(this, props);
-	        this.state = { recentProjects: [] };
+	        _get(Object.getPrototypeOf(RecentProjectsWidget.prototype), "constructor", this).call(this, props);
 	    }
 	
-	    _inherits(RecentProjectsWiget, _React$Component3);
+	    _inherits(RecentProjectsWidget, _React$Component3);
 	
-	    _prototypeProperties(RecentProjectsWiget, null, {
-	        componentDidMount: {
-	            value: function componentDidMount() {},
-	            writable: true,
-	            configurable: true
-	        },
+	    _prototypeProperties(RecentProjectsWidget, null, {
 	        render: {
 	            value: function render() {
-	                var recentProjects = this.state.recentProjects.map(function (project) {
+	                var recentProjects = this.props.recentProjects.map(function (project) {
 	                    return React.createElement(RecentProject, { url: project.url, name: project.name });
 	                });
 	                return React.createElement("div", { className: "panel panel-info" }, React.createElement(RecentProjectsHeader, null), React.createElement("ul", { className: "list-group" }, recentProjects));
@@ -29148,16 +30646,38 @@
 	        }
 	    });
 	
-	    return RecentProjectsWiget;
+	    return RecentProjectsWidget;
 	})(React.Component);
 	
-	module.exports = RecentProjectsWiget;
-	//$.getJSON(  this.props.url, function( data ) {
-	//    this.setState({recentProjects: data});
-	//}.bind(this));
+	;
+	var RecentProjectsView = (function (_React$Component4) {
+	    function RecentProjectsView() {
+	        _classCallCheck(this, RecentProjectsView);
+	
+	        if (_React$Component4 != null) {
+	            _React$Component4.apply(this, arguments);
+	        }
+	    }
+	
+	    _inherits(RecentProjectsView, _React$Component4);
+	
+	    _prototypeProperties(RecentProjectsView, null, {
+	        render: {
+	            value: function render() {
+	                return React.createElement(FluxComponent, { connectToStores: ["recentProjects"], flux: this.props.flux }, React.createElement(RecentProjectsWidget, null));
+	            },
+	            writable: true,
+	            configurable: true
+	        }
+	    });
+	
+	    return RecentProjectsView;
+	})(React.Component);
+	
+	module.exports = RecentProjectsView;
 
 /***/ },
-/* 156 */
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -29206,6 +30726,2355 @@
 	        return React.createElement("span", { className: "fa fa-fw " + buildIcon });
 	    }
 	});
+
+/***/ },
+/* 170 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(171);
+
+
+/***/ },
+/* 171 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Flux Component
+	 *
+	 * Component form of FluxMixin. Uses FluxMixin as part of its implementation,
+	 * so requires a flux instance to be provided as either context or a prop.
+	 *
+	 * Like FluxMixin, children are given access to the flux instance via
+	 * `context.flux`. Use this near the top of your app hierarchy and all children
+	 * will have easy access to the flux instance (including, of course, other
+	 * Flux components!):
+	 *
+	 * <FluxComponent flux={flux}>
+	 *    ...the rest of your app
+	 * </FluxComponent>
+	 *
+	 * Now any child can access the flux instance again like this:
+	 *
+	 * <FluxComponent>
+	 *    ...children
+	 * </FluxComponent>
+	 *
+	 * We don't need the flux prop this time because flux is already part of
+	 * the context.
+	 *
+	 * Additionally, immediate children are given a `flux` prop.
+	 *
+	 * The component has an optional prop `connectToStores`, which is -- you guessed
+	 * it -- passed directly to FluxMixin's `connectToStores()` function and
+	 * set as the initial state. The component's state is injected as props to
+	 * child components.
+	 *
+	 * The practical upshot of all this is that FluxMixin, state changes, and
+	 * context are now simply implementation details. Among other things, this means
+	 * you can write your components as plain ES6 classes. Here's an example:
+	 *
+	 * class ParentComponent extends React.Component {
+	 *
+	 *   render() {
+	 *     <FluxComponent connectToStore="fooStore">
+	 *       <ChildComponent />
+	 *     </FluxComponent>
+	 *   }
+	 *
+	 * }
+	 *
+	 * ChildComponent in this example has prop `flux` containing the flux instance,
+	 * and props that sync with each of the state keys of fooStore.
+	 */
+	
+	"use strict";
+	
+	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+	
+	var React = _interopRequire(__webpack_require__(172));
+	
+	var FluxMixin = _interopRequire(__webpack_require__(190));
+	
+	var assign = _interopRequire(__webpack_require__(159));
+	
+	var FluxComponent = React.createClass({
+	  displayName: "FluxComponent",
+	
+	
+	  mixins: [FluxMixin()],
+	
+	  getInitialState: function getInitialState() {
+	    return this.connectToStores(this.props.connectToStores);
+	  },
+	
+	  render: function render() {
+	    var _this = this;
+	    if (!this.props.children) {
+	      return null;
+	    }var children = React.Children.map(this.props.children, function (child) {
+	      return React.addons.cloneWithProps(child, assign({
+	        key: child.key || undefined,
+	        flux: _this.flux }, _this.state));
+	    });
+	
+	    return React.createElement(
+	      "span",
+	      null,
+	      children
+	    );
+	  }
+	
+	});
+	
+	module.exports = FluxComponent;
+	//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9hZGRvbnMvRmx1eENvbXBvbmVudC5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBaURBLFlBQVksQ0FBQzs7OztJQUVOLEtBQUssMkJBQU0sY0FBYzs7SUFDekIsU0FBUywyQkFBTSxhQUFhOztJQUM1QixNQUFNLDJCQUFNLGVBQWU7O0FBRWxDLElBQUksYUFBYSxHQUFHLEtBQUssQ0FBQyxXQUFXLENBQUM7Ozs7QUFFcEMsUUFBTSxFQUFFLENBQUMsU0FBUyxFQUFFLENBQUM7O0FBRXJCLGlCQUFlLEVBQUEsMkJBQUc7QUFDaEIsV0FBTyxJQUFJLENBQUMsZUFBZSxDQUFDLElBQUksQ0FBQyxLQUFLLENBQUMsZUFBZSxDQUFDLENBQUM7R0FDekQ7O0FBRUQsUUFBTSxFQUFBLGtCQUFHOztBQUNQLFFBQUksQ0FBQyxJQUFJLENBQUMsS0FBSyxDQUFDLFFBQVE7QUFBRSxhQUFPLElBQUksQ0FBQztLQUFBLEFBRXRDLElBQUksUUFBUSxHQUFHLEtBQUssQ0FBQyxRQUFRLENBQUMsR0FBRyxDQUFDLElBQUksQ0FBQyxLQUFLLENBQUMsUUFBUSxFQUFFLFVBQUEsS0FBSzthQUMxRCxLQUFLLENBQUMsTUFBTSxDQUFDLGNBQWMsQ0FBQyxLQUFLLEVBQUUsTUFBTSxDQUFDO0FBQ3hDLFdBQUcsRUFBRSxLQUFLLENBQUMsR0FBRyxJQUFJLFNBQVM7QUFDM0IsWUFBSSxFQUFFLE1BQUssSUFBSSxFQUNoQixFQUFFLE1BQUssS0FBSyxDQUFDLENBQUM7S0FBQSxDQUNoQixDQUFDOztBQUVGLFdBQU87OztNQUFPLFFBQVE7S0FBUSxDQUFDO0dBQ2hDOztDQUVGLENBQUMsQ0FBQzs7aUJBRVksYUFBYSIsImZpbGUiOiJzcmMvYWRkb25zL0ZsdXhDb21wb25lbnQuanMiLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIEZsdXggQ29tcG9uZW50XG4gKlxuICogQ29tcG9uZW50IGZvcm0gb2YgRmx1eE1peGluLiBVc2VzIEZsdXhNaXhpbiBhcyBwYXJ0IG9mIGl0cyBpbXBsZW1lbnRhdGlvbixcbiAqIHNvIHJlcXVpcmVzIGEgZmx1eCBpbnN0YW5jZSB0byBiZSBwcm92aWRlZCBhcyBlaXRoZXIgY29udGV4dCBvciBhIHByb3AuXG4gKlxuICogTGlrZSBGbHV4TWl4aW4sIGNoaWxkcmVuIGFyZSBnaXZlbiBhY2Nlc3MgdG8gdGhlIGZsdXggaW5zdGFuY2UgdmlhXG4gKiBgY29udGV4dC5mbHV4YC4gVXNlIHRoaXMgbmVhciB0aGUgdG9wIG9mIHlvdXIgYXBwIGhpZXJhcmNoeSBhbmQgYWxsIGNoaWxkcmVuXG4gKiB3aWxsIGhhdmUgZWFzeSBhY2Nlc3MgdG8gdGhlIGZsdXggaW5zdGFuY2UgKGluY2x1ZGluZywgb2YgY291cnNlLCBvdGhlclxuICogRmx1eCBjb21wb25lbnRzISk6XG4gKlxuICogPEZsdXhDb21wb25lbnQgZmx1eD17Zmx1eH0+XG4gKiAgICAuLi50aGUgcmVzdCBvZiB5b3VyIGFwcFxuICogPC9GbHV4Q29tcG9uZW50PlxuICpcbiAqIE5vdyBhbnkgY2hpbGQgY2FuIGFjY2VzcyB0aGUgZmx1eCBpbnN0YW5jZSBhZ2FpbiBsaWtlIHRoaXM6XG4gKlxuICogPEZsdXhDb21wb25lbnQ+XG4gKiAgICAuLi5jaGlsZHJlblxuICogPC9GbHV4Q29tcG9uZW50PlxuICpcbiAqIFdlIGRvbid0IG5lZWQgdGhlIGZsdXggcHJvcCB0aGlzIHRpbWUgYmVjYXVzZSBmbHV4IGlzIGFscmVhZHkgcGFydCBvZlxuICogdGhlIGNvbnRleHQuXG4gKlxuICogQWRkaXRpb25hbGx5LCBpbW1lZGlhdGUgY2hpbGRyZW4gYXJlIGdpdmVuIGEgYGZsdXhgIHByb3AuXG4gKlxuICogVGhlIGNvbXBvbmVudCBoYXMgYW4gb3B0aW9uYWwgcHJvcCBgY29ubmVjdFRvU3RvcmVzYCwgd2hpY2ggaXMgLS0geW91IGd1ZXNzZWRcbiAqIGl0IC0tIHBhc3NlZCBkaXJlY3RseSB0byBGbHV4TWl4aW4ncyBgY29ubmVjdFRvU3RvcmVzKClgIGZ1bmN0aW9uIGFuZFxuICogc2V0IGFzIHRoZSBpbml0aWFsIHN0YXRlLiBUaGUgY29tcG9uZW50J3Mgc3RhdGUgaXMgaW5qZWN0ZWQgYXMgcHJvcHMgdG9cbiAqIGNoaWxkIGNvbXBvbmVudHMuXG4gKlxuICogVGhlIHByYWN0aWNhbCB1cHNob3Qgb2YgYWxsIHRoaXMgaXMgdGhhdCBGbHV4TWl4aW4sIHN0YXRlIGNoYW5nZXMsIGFuZFxuICogY29udGV4dCBhcmUgbm93IHNpbXBseSBpbXBsZW1lbnRhdGlvbiBkZXRhaWxzLiBBbW9uZyBvdGhlciB0aGluZ3MsIHRoaXMgbWVhbnNcbiAqIHlvdSBjYW4gd3JpdGUgeW91ciBjb21wb25lbnRzIGFzIHBsYWluIEVTNiBjbGFzc2VzLiBIZXJlJ3MgYW4gZXhhbXBsZTpcbiAqXG4gKiBjbGFzcyBQYXJlbnRDb21wb25lbnQgZXh0ZW5kcyBSZWFjdC5Db21wb25lbnQge1xuICpcbiAqICAgcmVuZGVyKCkge1xuICogICAgIDxGbHV4Q29tcG9uZW50IGNvbm5lY3RUb1N0b3JlPVwiZm9vU3RvcmVcIj5cbiAqICAgICAgIDxDaGlsZENvbXBvbmVudCAvPlxuICogICAgIDwvRmx1eENvbXBvbmVudD5cbiAqICAgfVxuICpcbiAqIH1cbiAqXG4gKiBDaGlsZENvbXBvbmVudCBpbiB0aGlzIGV4YW1wbGUgaGFzIHByb3AgYGZsdXhgIGNvbnRhaW5pbmcgdGhlIGZsdXggaW5zdGFuY2UsXG4gKiBhbmQgcHJvcHMgdGhhdCBzeW5jIHdpdGggZWFjaCBvZiB0aGUgc3RhdGUga2V5cyBvZiBmb29TdG9yZS5cbiAqL1xuXG4ndXNlIHN0cmljdCc7XG5cbmltcG9ydCBSZWFjdCBmcm9tICdyZWFjdC9hZGRvbnMnO1xuaW1wb3J0IEZsdXhNaXhpbiBmcm9tICcuL0ZsdXhNaXhpbic7XG5pbXBvcnQgYXNzaWduIGZyb20gJ29iamVjdC1hc3NpZ24nO1xuXG5sZXQgRmx1eENvbXBvbmVudCA9IFJlYWN0LmNyZWF0ZUNsYXNzKHtcblxuICBtaXhpbnM6IFtGbHV4TWl4aW4oKV0sXG5cbiAgZ2V0SW5pdGlhbFN0YXRlKCkge1xuICAgIHJldHVybiB0aGlzLmNvbm5lY3RUb1N0b3Jlcyh0aGlzLnByb3BzLmNvbm5lY3RUb1N0b3Jlcyk7XG4gIH0sXG5cbiAgcmVuZGVyKCkge1xuICAgIGlmICghdGhpcy5wcm9wcy5jaGlsZHJlbikgcmV0dXJuIG51bGw7XG5cbiAgICBsZXQgY2hpbGRyZW4gPSBSZWFjdC5DaGlsZHJlbi5tYXAodGhpcy5wcm9wcy5jaGlsZHJlbiwgY2hpbGQgPT5cbiAgICAgIFJlYWN0LmFkZG9ucy5jbG9uZVdpdGhQcm9wcyhjaGlsZCwgYXNzaWduKHtcbiAgICAgICAga2V5OiBjaGlsZC5rZXkgfHwgdW5kZWZpbmVkLFxuICAgICAgICBmbHV4OiB0aGlzLmZsdXgsXG4gICAgICB9LCB0aGlzLnN0YXRlKSlcbiAgICApO1xuXG4gICAgcmV0dXJuIDxzcGFuPntjaGlsZHJlbn08L3NwYW4+O1xuICB9XG5cbn0pO1xuXG5leHBvcnQgZGVmYXVsdCBGbHV4Q29tcG9uZW50O1xuIl19
+
+/***/ },
+/* 172 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(173);
+
+
+/***/ },
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactWithAddons
+	 */
+	
+	/**
+	 * This module exists purely in the open source project, and is meant as a way
+	 * to create a separate standalone build of React. This build has "addons", or
+	 * functionality we've built and think might be useful but doesn't have a good
+	 * place to live inside React core.
+	 */
+	
+	'use strict';
+	
+	var LinkedStateMixin = __webpack_require__(174);
+	var React = __webpack_require__(2);
+	var ReactComponentWithPureRenderMixin =
+	  __webpack_require__(177);
+	var ReactCSSTransitionGroup = __webpack_require__(178);
+	var ReactTransitionGroup = __webpack_require__(179);
+	var ReactUpdates = __webpack_require__(30);
+	
+	var cx = __webpack_require__(187);
+	var cloneWithProps = __webpack_require__(181);
+	var update = __webpack_require__(188);
+	
+	React.addons = {
+	  CSSTransitionGroup: ReactCSSTransitionGroup,
+	  LinkedStateMixin: LinkedStateMixin,
+	  PureRenderMixin: ReactComponentWithPureRenderMixin,
+	  TransitionGroup: ReactTransitionGroup,
+	
+	  batchedUpdates: ReactUpdates.batchedUpdates,
+	  classSet: cx,
+	  cloneWithProps: cloneWithProps,
+	  update: update
+	};
+	
+	if ("production" !== process.env.NODE_ENV) {
+	  React.addons.Perf = __webpack_require__(147);
+	  React.addons.TestUtils = __webpack_require__(189);
+	}
+	
+	module.exports = React;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule LinkedStateMixin
+	 * @typechecks static-only
+	 */
+	
+	'use strict';
+	
+	var ReactLink = __webpack_require__(175);
+	var ReactStateSetters = __webpack_require__(176);
+	
+	/**
+	 * A simple mixin around ReactLink.forState().
+	 */
+	var LinkedStateMixin = {
+	  /**
+	   * Create a ReactLink that's linked to part of this component's state. The
+	   * ReactLink will have the current value of this.state[key] and will call
+	   * setState() when a change is requested.
+	   *
+	   * @param {string} key state key to update. Note: you may want to use keyOf()
+	   * if you're using Google Closure Compiler advanced mode.
+	   * @return {ReactLink} ReactLink instance linking to the state.
+	   */
+	  linkState: function(key) {
+	    return new ReactLink(
+	      this.state[key],
+	      ReactStateSetters.createStateKeySetter(this, key)
+	    );
+	  }
+	};
+	
+	module.exports = LinkedStateMixin;
+
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactLink
+	 * @typechecks static-only
+	 */
+	
+	'use strict';
+	
+	/**
+	 * ReactLink encapsulates a common pattern in which a component wants to modify
+	 * a prop received from its parent. ReactLink allows the parent to pass down a
+	 * value coupled with a callback that, when invoked, expresses an intent to
+	 * modify that value. For example:
+	 *
+	 * React.createClass({
+	 *   getInitialState: function() {
+	 *     return {value: ''};
+	 *   },
+	 *   render: function() {
+	 *     var valueLink = new ReactLink(this.state.value, this._handleValueChange);
+	 *     return <input valueLink={valueLink} />;
+	 *   },
+	 *   this._handleValueChange: function(newValue) {
+	 *     this.setState({value: newValue});
+	 *   }
+	 * });
+	 *
+	 * We have provided some sugary mixins to make the creation and
+	 * consumption of ReactLink easier; see LinkedValueUtils and LinkedStateMixin.
+	 */
+	
+	var React = __webpack_require__(2);
+	
+	/**
+	 * @param {*} value current value of the link
+	 * @param {function} requestChange callback to request a change
+	 */
+	function ReactLink(value, requestChange) {
+	  this.value = value;
+	  this.requestChange = requestChange;
+	}
+	
+	/**
+	 * Creates a PropType that enforces the ReactLink API and optionally checks the
+	 * type of the value being passed inside the link. Example:
+	 *
+	 * MyComponent.propTypes = {
+	 *   tabIndexLink: ReactLink.PropTypes.link(React.PropTypes.number)
+	 * }
+	 */
+	function createLinkTypeChecker(linkType) {
+	  var shapes = {
+	    value: typeof linkType === 'undefined' ?
+	      React.PropTypes.any.isRequired :
+	      linkType.isRequired,
+	    requestChange: React.PropTypes.func.isRequired
+	  };
+	  return React.PropTypes.shape(shapes);
+	}
+	
+	ReactLink.PropTypes = {
+	  link: createLinkTypeChecker
+	};
+	
+	module.exports = ReactLink;
+
+
+/***/ },
+/* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactStateSetters
+	 */
+	
+	'use strict';
+	
+	var ReactStateSetters = {
+	  /**
+	   * Returns a function that calls the provided function, and uses the result
+	   * of that to set the component's state.
+	   *
+	   * @param {ReactCompositeComponent} component
+	   * @param {function} funcReturningState Returned callback uses this to
+	   *                                      determine how to update state.
+	   * @return {function} callback that when invoked uses funcReturningState to
+	   *                    determined the object literal to setState.
+	   */
+	  createStateSetter: function(component, funcReturningState) {
+	    return function(a, b, c, d, e, f) {
+	      var partialState = funcReturningState.call(component, a, b, c, d, e, f);
+	      if (partialState) {
+	        component.setState(partialState);
+	      }
+	    };
+	  },
+	
+	  /**
+	   * Returns a single-argument callback that can be used to update a single
+	   * key in the component's state.
+	   *
+	   * Note: this is memoized function, which makes it inexpensive to call.
+	   *
+	   * @param {ReactCompositeComponent} component
+	   * @param {string} key The key in the state that you should update.
+	   * @return {function} callback of 1 argument which calls setState() with
+	   *                    the provided keyName and callback argument.
+	   */
+	  createStateKeySetter: function(component, key) {
+	    // Memoize the setters.
+	    var cache = component.__keySetters || (component.__keySetters = {});
+	    return cache[key] || (cache[key] = createStateKeySetter(component, key));
+	  }
+	};
+	
+	function createStateKeySetter(component, key) {
+	  // Partial state is allocated outside of the function closure so it can be
+	  // reused with every call, avoiding memory allocation when this function
+	  // is called.
+	  var partialState = {};
+	  return function stateKeySetter(value) {
+	    partialState[key] = value;
+	    component.setState(partialState);
+	  };
+	}
+	
+	ReactStateSetters.Mixin = {
+	  /**
+	   * Returns a function that calls the provided function, and uses the result
+	   * of that to set the component's state.
+	   *
+	   * For example, these statements are equivalent:
+	   *
+	   *   this.setState({x: 1});
+	   *   this.createStateSetter(function(xValue) {
+	   *     return {x: xValue};
+	   *   })(1);
+	   *
+	   * @param {function} funcReturningState Returned callback uses this to
+	   *                                      determine how to update state.
+	   * @return {function} callback that when invoked uses funcReturningState to
+	   *                    determined the object literal to setState.
+	   */
+	  createStateSetter: function(funcReturningState) {
+	    return ReactStateSetters.createStateSetter(this, funcReturningState);
+	  },
+	
+	  /**
+	   * Returns a single-argument callback that can be used to update a single
+	   * key in the component's state.
+	   *
+	   * For example, these statements are equivalent:
+	   *
+	   *   this.setState({x: 1});
+	   *   this.createStateKeySetter('x')(1);
+	   *
+	   * Note: this is memoized function, which makes it inexpensive to call.
+	   *
+	   * @param {string} key The key in the state that you should update.
+	   * @return {function} callback of 1 argument which calls setState() with
+	   *                    the provided keyName and callback argument.
+	   */
+	  createStateKeySetter: function(key) {
+	    return ReactStateSetters.createStateKeySetter(this, key);
+	  }
+	};
+	
+	module.exports = ReactStateSetters;
+
+
+/***/ },
+/* 177 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	* @providesModule ReactComponentWithPureRenderMixin
+	*/
+	
+	'use strict';
+	
+	var shallowEqual = __webpack_require__(134);
+	
+	/**
+	 * If your React component's render function is "pure", e.g. it will render the
+	 * same result given the same props and state, provide this Mixin for a
+	 * considerable performance boost.
+	 *
+	 * Most React components have pure render functions.
+	 *
+	 * Example:
+	 *
+	 *   var ReactComponentWithPureRenderMixin =
+	 *     require('ReactComponentWithPureRenderMixin');
+	 *   React.createClass({
+	 *     mixins: [ReactComponentWithPureRenderMixin],
+	 *
+	 *     render: function() {
+	 *       return <div className={this.props.className}>foo</div>;
+	 *     }
+	 *   });
+	 *
+	 * Note: This only checks shallow equality for props and state. If these contain
+	 * complex data structures this mixin may have false-negatives for deeper
+	 * differences. Only mixin to components which have simple props and state, or
+	 * use `forceUpdate()` when you know deep data structures have changed.
+	 */
+	var ReactComponentWithPureRenderMixin = {
+	  shouldComponentUpdate: function(nextProps, nextState) {
+	    return !shallowEqual(this.props, nextProps) ||
+	           !shallowEqual(this.state, nextState);
+	  }
+	};
+	
+	module.exports = ReactComponentWithPureRenderMixin;
+
+
+/***/ },
+/* 178 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @typechecks
+	 * @providesModule ReactCSSTransitionGroup
+	 */
+	
+	'use strict';
+	
+	var React = __webpack_require__(2);
+	
+	var assign = __webpack_require__(19);
+	
+	var ReactTransitionGroup = React.createFactory(
+	  __webpack_require__(179)
+	);
+	var ReactCSSTransitionGroupChild = React.createFactory(
+	  __webpack_require__(184)
+	);
+	
+	var ReactCSSTransitionGroup = React.createClass({
+	  displayName: 'ReactCSSTransitionGroup',
+	
+	  propTypes: {
+	    transitionName: React.PropTypes.string.isRequired,
+	    transitionAppear: React.PropTypes.bool,
+	    transitionEnter: React.PropTypes.bool,
+	    transitionLeave: React.PropTypes.bool
+	  },
+	
+	  getDefaultProps: function() {
+	    return {
+	      transitionAppear: false,
+	      transitionEnter: true,
+	      transitionLeave: true
+	    };
+	  },
+	
+	  _wrapChild: function(child) {
+	    // We need to provide this childFactory so that
+	    // ReactCSSTransitionGroupChild can receive updates to name, enter, and
+	    // leave while it is leaving.
+	    return ReactCSSTransitionGroupChild(
+	      {
+	        name: this.props.transitionName,
+	        appear: this.props.transitionAppear,
+	        enter: this.props.transitionEnter,
+	        leave: this.props.transitionLeave
+	      },
+	      child
+	    );
+	  },
+	
+	  render: function() {
+	    return (
+	      ReactTransitionGroup(
+	        assign({}, this.props, {childFactory: this._wrapChild})
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = ReactCSSTransitionGroup;
+
+
+/***/ },
+/* 179 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactTransitionGroup
+	 */
+	
+	'use strict';
+	
+	var React = __webpack_require__(2);
+	var ReactTransitionChildMapping = __webpack_require__(180);
+	
+	var assign = __webpack_require__(19);
+	var cloneWithProps = __webpack_require__(181);
+	var emptyFunction = __webpack_require__(10);
+	
+	var ReactTransitionGroup = React.createClass({
+	  displayName: 'ReactTransitionGroup',
+	
+	  propTypes: {
+	    component: React.PropTypes.any,
+	    childFactory: React.PropTypes.func
+	  },
+	
+	  getDefaultProps: function() {
+	    return {
+	      component: 'span',
+	      childFactory: emptyFunction.thatReturnsArgument
+	    };
+	  },
+	
+	  getInitialState: function() {
+	    return {
+	      children: ReactTransitionChildMapping.getChildMapping(this.props.children)
+	    };
+	  },
+	
+	  componentWillMount: function() {
+	    this.currentlyTransitioningKeys = {};
+	    this.keysToEnter = [];
+	    this.keysToLeave = [];
+	  },
+	
+	  componentDidMount: function() {
+	    var initialChildMapping = this.state.children;
+	    for (var key in initialChildMapping) {
+	      if (initialChildMapping[key]) {
+	        this.performAppear(key);
+	      }
+	    }
+	  },
+	
+	  componentWillReceiveProps: function(nextProps) {
+	    var nextChildMapping = ReactTransitionChildMapping.getChildMapping(
+	      nextProps.children
+	    );
+	    var prevChildMapping = this.state.children;
+	
+	    this.setState({
+	      children: ReactTransitionChildMapping.mergeChildMappings(
+	        prevChildMapping,
+	        nextChildMapping
+	      )
+	    });
+	
+	    var key;
+	
+	    for (key in nextChildMapping) {
+	      var hasPrev = prevChildMapping && prevChildMapping.hasOwnProperty(key);
+	      if (nextChildMapping[key] && !hasPrev &&
+	          !this.currentlyTransitioningKeys[key]) {
+	        this.keysToEnter.push(key);
+	      }
+	    }
+	
+	    for (key in prevChildMapping) {
+	      var hasNext = nextChildMapping && nextChildMapping.hasOwnProperty(key);
+	      if (prevChildMapping[key] && !hasNext &&
+	          !this.currentlyTransitioningKeys[key]) {
+	        this.keysToLeave.push(key);
+	      }
+	    }
+	
+	    // If we want to someday check for reordering, we could do it here.
+	  },
+	
+	  componentDidUpdate: function() {
+	    var keysToEnter = this.keysToEnter;
+	    this.keysToEnter = [];
+	    keysToEnter.forEach(this.performEnter);
+	
+	    var keysToLeave = this.keysToLeave;
+	    this.keysToLeave = [];
+	    keysToLeave.forEach(this.performLeave);
+	  },
+	
+	  performAppear: function(key) {
+	    this.currentlyTransitioningKeys[key] = true;
+	
+	    var component = this.refs[key];
+	
+	    if (component.componentWillAppear) {
+	      component.componentWillAppear(
+	        this._handleDoneAppearing.bind(this, key)
+	      );
+	    } else {
+	      this._handleDoneAppearing(key);
+	    }
+	  },
+	
+	  _handleDoneAppearing: function(key) {
+	    var component = this.refs[key];
+	    if (component.componentDidAppear) {
+	      component.componentDidAppear();
+	    }
+	
+	    delete this.currentlyTransitioningKeys[key];
+	
+	    var currentChildMapping = ReactTransitionChildMapping.getChildMapping(
+	      this.props.children
+	    );
+	
+	    if (!currentChildMapping || !currentChildMapping.hasOwnProperty(key)) {
+	      // This was removed before it had fully appeared. Remove it.
+	      this.performLeave(key);
+	    }
+	  },
+	
+	  performEnter: function(key) {
+	    this.currentlyTransitioningKeys[key] = true;
+	
+	    var component = this.refs[key];
+	
+	    if (component.componentWillEnter) {
+	      component.componentWillEnter(
+	        this._handleDoneEntering.bind(this, key)
+	      );
+	    } else {
+	      this._handleDoneEntering(key);
+	    }
+	  },
+	
+	  _handleDoneEntering: function(key) {
+	    var component = this.refs[key];
+	    if (component.componentDidEnter) {
+	      component.componentDidEnter();
+	    }
+	
+	    delete this.currentlyTransitioningKeys[key];
+	
+	    var currentChildMapping = ReactTransitionChildMapping.getChildMapping(
+	      this.props.children
+	    );
+	
+	    if (!currentChildMapping || !currentChildMapping.hasOwnProperty(key)) {
+	      // This was removed before it had fully entered. Remove it.
+	      this.performLeave(key);
+	    }
+	  },
+	
+	  performLeave: function(key) {
+	    this.currentlyTransitioningKeys[key] = true;
+	
+	    var component = this.refs[key];
+	    if (component.componentWillLeave) {
+	      component.componentWillLeave(this._handleDoneLeaving.bind(this, key));
+	    } else {
+	      // Note that this is somewhat dangerous b/c it calls setState()
+	      // again, effectively mutating the component before all the work
+	      // is done.
+	      this._handleDoneLeaving(key);
+	    }
+	  },
+	
+	  _handleDoneLeaving: function(key) {
+	    var component = this.refs[key];
+	
+	    if (component.componentDidLeave) {
+	      component.componentDidLeave();
+	    }
+	
+	    delete this.currentlyTransitioningKeys[key];
+	
+	    var currentChildMapping = ReactTransitionChildMapping.getChildMapping(
+	      this.props.children
+	    );
+	
+	    if (currentChildMapping && currentChildMapping.hasOwnProperty(key)) {
+	      // This entered again before it fully left. Add it again.
+	      this.performEnter(key);
+	    } else {
+	      var newChildren = assign({}, this.state.children);
+	      delete newChildren[key];
+	      this.setState({children: newChildren});
+	    }
+	  },
+	
+	  render: function() {
+	    // TODO: we could get rid of the need for the wrapper node
+	    // by cloning a single child
+	    var childrenToRender = {};
+	    for (var key in this.state.children) {
+	      var child = this.state.children[key];
+	      if (child) {
+	        // You may need to apply reactive updates to a child as it is leaving.
+	        // The normal React way to do it won't work since the child will have
+	        // already been removed. In case you need this behavior you can provide
+	        // a childFactory function to wrap every child, even the ones that are
+	        // leaving.
+	        childrenToRender[key] = cloneWithProps(
+	          this.props.childFactory(child),
+	          {ref: key}
+	        );
+	      }
+	    }
+	    return React.createElement(
+	      this.props.component,
+	      this.props,
+	      childrenToRender
+	    );
+	  }
+	});
+	
+	module.exports = ReactTransitionGroup;
+
+
+/***/ },
+/* 180 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @typechecks static-only
+	 * @providesModule ReactTransitionChildMapping
+	 */
+	
+	'use strict';
+	
+	var ReactChildren = __webpack_require__(14);
+	
+	var ReactTransitionChildMapping = {
+	  /**
+	   * Given `this.props.children`, return an object mapping key to child. Just
+	   * simple syntactic sugar around ReactChildren.map().
+	   *
+	   * @param {*} children `this.props.children`
+	   * @return {object} Mapping of key to child
+	   */
+	  getChildMapping: function(children) {
+	    return ReactChildren.map(children, function(child) {
+	      return child;
+	    });
+	  },
+	
+	  /**
+	   * When you're adding or removing children some may be added or removed in the
+	   * same render pass. We want to show *both* since we want to simultaneously
+	   * animate elements in and out. This function takes a previous set of keys
+	   * and a new set of keys and merges them with its best guess of the correct
+	   * ordering. In the future we may expose some of the utilities in
+	   * ReactMultiChild to make this easy, but for now React itself does not
+	   * directly have this concept of the union of prevChildren and nextChildren
+	   * so we implement it here.
+	   *
+	   * @param {object} prev prev children as returned from
+	   * `ReactTransitionChildMapping.getChildMapping()`.
+	   * @param {object} next next children as returned from
+	   * `ReactTransitionChildMapping.getChildMapping()`.
+	   * @return {object} a key set that contains all keys in `prev` and all keys
+	   * in `next` in a reasonable order.
+	   */
+	  mergeChildMappings: function(prev, next) {
+	    prev = prev || {};
+	    next = next || {};
+	
+	    function getValueForKey(key) {
+	      if (next.hasOwnProperty(key)) {
+	        return next[key];
+	      } else {
+	        return prev[key];
+	      }
+	    }
+	
+	    // For each key of `next`, the list of keys to insert before that key in
+	    // the combined list
+	    var nextKeysPending = {};
+	
+	    var pendingKeys = [];
+	    for (var prevKey in prev) {
+	      if (next.hasOwnProperty(prevKey)) {
+	        if (pendingKeys.length) {
+	          nextKeysPending[prevKey] = pendingKeys;
+	          pendingKeys = [];
+	        }
+	      } else {
+	        pendingKeys.push(prevKey);
+	      }
+	    }
+	
+	    var i;
+	    var childMapping = {};
+	    for (var nextKey in next) {
+	      if (nextKeysPending.hasOwnProperty(nextKey)) {
+	        for (i = 0; i < nextKeysPending[nextKey].length; i++) {
+	          var pendingNextKey = nextKeysPending[nextKey][i];
+	          childMapping[nextKeysPending[nextKey][i]] = getValueForKey(
+	            pendingNextKey
+	          );
+	        }
+	      }
+	      childMapping[nextKey] = getValueForKey(nextKey);
+	    }
+	
+	    // Finally, add the keys which didn't appear before any key in `next`
+	    for (i = 0; i < pendingKeys.length; i++) {
+	      childMapping[pendingKeys[i]] = getValueForKey(pendingKeys[i]);
+	    }
+	
+	    return childMapping;
+	  }
+	};
+	
+	module.exports = ReactTransitionChildMapping;
+
+
+/***/ },
+/* 181 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @typechecks
+	 * @providesModule cloneWithProps
+	 */
+	
+	'use strict';
+	
+	var ReactElement = __webpack_require__(17);
+	var ReactPropTransferer = __webpack_require__(182);
+	
+	var keyOf = __webpack_require__(38);
+	var warning = __webpack_require__(9);
+	
+	var CHILDREN_PROP = keyOf({children: null});
+	
+	/**
+	 * Sometimes you want to change the props of a child passed to you. Usually
+	 * this is to add a CSS class.
+	 *
+	 * @param {object} child child component you'd like to clone
+	 * @param {object} props props you'd like to modify. className and style will be
+	 * merged automatically.
+	 * @return {object} a clone of child with props merged in.
+	 */
+	function cloneWithProps(child, props) {
+	  if ("production" !== process.env.NODE_ENV) {
+	    ("production" !== process.env.NODE_ENV ? warning(
+	      !child.ref,
+	      'You are calling cloneWithProps() on a child with a ref. This is ' +
+	      'dangerous because you\'re creating a new child which will not be ' +
+	      'added as a ref to its parent.'
+	    ) : null);
+	  }
+	
+	  var newProps = ReactPropTransferer.mergeProps(props, child.props);
+	
+	  // Use `child.props.children` if it is provided.
+	  if (!newProps.hasOwnProperty(CHILDREN_PROP) &&
+	      child.props.hasOwnProperty(CHILDREN_PROP)) {
+	    newProps.children = child.props.children;
+	  }
+	
+	  // The current API doesn't retain _owner and _context, which is why this
+	  // doesn't use ReactElement.cloneAndReplaceProps.
+	  return ReactElement.createElement(child.type, newProps);
+	}
+	
+	module.exports = cloneWithProps;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+
+/***/ },
+/* 182 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactPropTransferer
+	 */
+	
+	'use strict';
+	
+	var assign = __webpack_require__(19);
+	var emptyFunction = __webpack_require__(10);
+	var joinClasses = __webpack_require__(183);
+	
+	/**
+	 * Creates a transfer strategy that will merge prop values using the supplied
+	 * `mergeStrategy`. If a prop was previously unset, this just sets it.
+	 *
+	 * @param {function} mergeStrategy
+	 * @return {function}
+	 */
+	function createTransferStrategy(mergeStrategy) {
+	  return function(props, key, value) {
+	    if (!props.hasOwnProperty(key)) {
+	      props[key] = value;
+	    } else {
+	      props[key] = mergeStrategy(props[key], value);
+	    }
+	  };
+	}
+	
+	var transferStrategyMerge = createTransferStrategy(function(a, b) {
+	  // `merge` overrides the first object's (`props[key]` above) keys using the
+	  // second object's (`value`) keys. An object's style's existing `propA` would
+	  // get overridden. Flip the order here.
+	  return assign({}, b, a);
+	});
+	
+	/**
+	 * Transfer strategies dictate how props are transferred by `transferPropsTo`.
+	 * NOTE: if you add any more exceptions to this list you should be sure to
+	 * update `cloneWithProps()` accordingly.
+	 */
+	var TransferStrategies = {
+	  /**
+	   * Never transfer `children`.
+	   */
+	  children: emptyFunction,
+	  /**
+	   * Transfer the `className` prop by merging them.
+	   */
+	  className: createTransferStrategy(joinClasses),
+	  /**
+	   * Transfer the `style` prop (which is an object) by merging them.
+	   */
+	  style: transferStrategyMerge
+	};
+	
+	/**
+	 * Mutates the first argument by transferring the properties from the second
+	 * argument.
+	 *
+	 * @param {object} props
+	 * @param {object} newProps
+	 * @return {object}
+	 */
+	function transferInto(props, newProps) {
+	  for (var thisKey in newProps) {
+	    if (!newProps.hasOwnProperty(thisKey)) {
+	      continue;
+	    }
+	
+	    var transferStrategy = TransferStrategies[thisKey];
+	
+	    if (transferStrategy && TransferStrategies.hasOwnProperty(thisKey)) {
+	      transferStrategy(props, thisKey, newProps[thisKey]);
+	    } else if (!props.hasOwnProperty(thisKey)) {
+	      props[thisKey] = newProps[thisKey];
+	    }
+	  }
+	  return props;
+	}
+	
+	/**
+	 * ReactPropTransferer are capable of transferring props to another component
+	 * using a `transferPropsTo` method.
+	 *
+	 * @class ReactPropTransferer
+	 */
+	var ReactPropTransferer = {
+	
+	  /**
+	   * Merge two props objects using TransferStrategies.
+	   *
+	   * @param {object} oldProps original props (they take precedence)
+	   * @param {object} newProps new props to merge in
+	   * @return {object} a new object containing both sets of props merged.
+	   */
+	  mergeProps: function(oldProps, newProps) {
+	    return transferInto(assign({}, oldProps), newProps);
+	  }
+	
+	};
+	
+	module.exports = ReactPropTransferer;
+
+
+/***/ },
+/* 183 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule joinClasses
+	 * @typechecks static-only
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Combines multiple className strings into one.
+	 * http://jsperf.com/joinclasses-args-vs-array
+	 *
+	 * @param {...?string} classes
+	 * @return {string}
+	 */
+	function joinClasses(className/*, ... */) {
+	  if (!className) {
+	    className = '';
+	  }
+	  var nextClass;
+	  var argLength = arguments.length;
+	  if (argLength > 1) {
+	    for (var ii = 1; ii < argLength; ii++) {
+	      nextClass = arguments[ii];
+	      if (nextClass) {
+	        className = (className ? className + ' ' : '') + nextClass;
+	      }
+	    }
+	  }
+	  return className;
+	}
+	
+	module.exports = joinClasses;
+
+
+/***/ },
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @typechecks
+	 * @providesModule ReactCSSTransitionGroupChild
+	 */
+	
+	'use strict';
+	
+	var React = __webpack_require__(2);
+	
+	var CSSCore = __webpack_require__(185);
+	var ReactTransitionEvents = __webpack_require__(186);
+	
+	var onlyChild = __webpack_require__(153);
+	
+	// We don't remove the element from the DOM until we receive an animationend or
+	// transitionend event. If the user screws up and forgets to add an animation
+	// their node will be stuck in the DOM forever, so we detect if an animation
+	// does not start and if it doesn't, we just call the end listener immediately.
+	var TICK = 17;
+	var NO_EVENT_TIMEOUT = 5000;
+	
+	var noEventListener = null;
+	
+	
+	if ("production" !== process.env.NODE_ENV) {
+	  noEventListener = function() {
+	    console.warn(
+	      'transition(): tried to perform an animation without ' +
+	      'an animationend or transitionend event after timeout (' +
+	      NO_EVENT_TIMEOUT + 'ms). You should either disable this ' +
+	      'transition in JS or add a CSS animation/transition.'
+	    );
+	  };
+	}
+	
+	var ReactCSSTransitionGroupChild = React.createClass({
+	  displayName: 'ReactCSSTransitionGroupChild',
+	
+	  transition: function(animationType, finishCallback) {
+	    var node = this.getDOMNode();
+	    var className = this.props.name + '-' + animationType;
+	    var activeClassName = className + '-active';
+	    var noEventTimeout = null;
+	
+	    var endListener = function(e) {
+	      if (e && e.target !== node) {
+	        return;
+	      }
+	      if ("production" !== process.env.NODE_ENV) {
+	        clearTimeout(noEventTimeout);
+	      }
+	
+	      CSSCore.removeClass(node, className);
+	      CSSCore.removeClass(node, activeClassName);
+	
+	      ReactTransitionEvents.removeEndEventListener(node, endListener);
+	
+	      // Usually this optional callback is used for informing an owner of
+	      // a leave animation and telling it to remove the child.
+	      if (finishCallback) {
+	        finishCallback();
+	      }
+	    };
+	
+	    ReactTransitionEvents.addEndEventListener(node, endListener);
+	
+	    CSSCore.addClass(node, className);
+	
+	    // Need to do this to actually trigger a transition.
+	    this.queueClass(activeClassName);
+	
+	    if ("production" !== process.env.NODE_ENV) {
+	      noEventTimeout = setTimeout(noEventListener, NO_EVENT_TIMEOUT);
+	    }
+	  },
+	
+	  queueClass: function(className) {
+	    this.classNameQueue.push(className);
+	
+	    if (!this.timeout) {
+	      this.timeout = setTimeout(this.flushClassNameQueue, TICK);
+	    }
+	  },
+	
+	  flushClassNameQueue: function() {
+	    if (this.isMounted()) {
+	      this.classNameQueue.forEach(
+	        CSSCore.addClass.bind(CSSCore, this.getDOMNode())
+	      );
+	    }
+	    this.classNameQueue.length = 0;
+	    this.timeout = null;
+	  },
+	
+	  componentWillMount: function() {
+	    this.classNameQueue = [];
+	  },
+	
+	  componentWillUnmount: function() {
+	    if (this.timeout) {
+	      clearTimeout(this.timeout);
+	    }
+	  },
+	
+	  componentWillAppear: function(done) {
+	    if (this.props.appear) {
+	      this.transition('appear', done);
+	    } else {
+	      done();
+	    }
+	  },
+	
+	  componentWillEnter: function(done) {
+	    if (this.props.enter) {
+	      this.transition('enter', done);
+	    } else {
+	      done();
+	    }
+	  },
+	
+	  componentWillLeave: function(done) {
+	    if (this.props.leave) {
+	      this.transition('leave', done);
+	    } else {
+	      done();
+	    }
+	  },
+	
+	  render: function() {
+	    return onlyChild(this.props.children);
+	  }
+	});
+	
+	module.exports = ReactCSSTransitionGroupChild;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule CSSCore
+	 * @typechecks
+	 */
+	
+	var invariant = __webpack_require__(5);
+	
+	/**
+	 * The CSSCore module specifies the API (and implements most of the methods)
+	 * that should be used when dealing with the display of elements (via their
+	 * CSS classes and visibility on screen. It is an API focused on mutating the
+	 * display and not reading it as no logical state should be encoded in the
+	 * display of elements.
+	 */
+	
+	var CSSCore = {
+	
+	  /**
+	   * Adds the class passed in to the element if it doesn't already have it.
+	   *
+	   * @param {DOMElement} element the element to set the class on
+	   * @param {string} className the CSS className
+	   * @return {DOMElement} the element passed in
+	   */
+	  addClass: function(element, className) {
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      !/\s/.test(className),
+	      'CSSCore.addClass takes only a single class name. "%s" contains ' +
+	      'multiple classes.', className
+	    ) : invariant(!/\s/.test(className)));
+	
+	    if (className) {
+	      if (element.classList) {
+	        element.classList.add(className);
+	      } else if (!CSSCore.hasClass(element, className)) {
+	        element.className = element.className + ' ' + className;
+	      }
+	    }
+	    return element;
+	  },
+	
+	  /**
+	   * Removes the class passed in from the element
+	   *
+	   * @param {DOMElement} element the element to set the class on
+	   * @param {string} className the CSS className
+	   * @return {DOMElement} the element passed in
+	   */
+	  removeClass: function(element, className) {
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      !/\s/.test(className),
+	      'CSSCore.removeClass takes only a single class name. "%s" contains ' +
+	      'multiple classes.', className
+	    ) : invariant(!/\s/.test(className)));
+	
+	    if (className) {
+	      if (element.classList) {
+	        element.classList.remove(className);
+	      } else if (CSSCore.hasClass(element, className)) {
+	        element.className = element.className
+	          .replace(new RegExp('(^|\\s)' + className + '(?:\\s|$)', 'g'), '$1')
+	          .replace(/\s+/g, ' ') // multiple spaces to one
+	          .replace(/^\s*|\s*$/g, ''); // trim the ends
+	      }
+	    }
+	    return element;
+	  },
+	
+	  /**
+	   * Helper to add or remove a class from an element based on a condition.
+	   *
+	   * @param {DOMElement} element the element to set the class on
+	   * @param {string} className the CSS className
+	   * @param {*} bool condition to whether to add or remove the class
+	   * @return {DOMElement} the element passed in
+	   */
+	  conditionClass: function(element, className, bool) {
+	    return (bool ? CSSCore.addClass : CSSCore.removeClass)(element, className);
+	  },
+	
+	  /**
+	   * Tests whether the element has the class specified.
+	   *
+	   * @param {DOMNode|DOMWindow} element the element to set the class on
+	   * @param {string} className the CSS className
+	   * @return {boolean} true if the element has the class, false if not
+	   */
+	  hasClass: function(element, className) {
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      !/\s/.test(className),
+	      'CSS.hasClass takes only a single class name.'
+	    ) : invariant(!/\s/.test(className)));
+	    if (element.classList) {
+	      return !!className && element.classList.contains(className);
+	    }
+	    return (' ' + element.className + ' ').indexOf(' ' + className + ' ') > -1;
+	  }
+	
+	};
+	
+	module.exports = CSSCore;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactTransitionEvents
+	 */
+	
+	'use strict';
+	
+	var ExecutionEnvironment = __webpack_require__(46);
+	
+	/**
+	 * EVENT_NAME_MAP is used to determine which event fired when a
+	 * transition/animation ends, based on the style property used to
+	 * define that event.
+	 */
+	var EVENT_NAME_MAP = {
+	  transitionend: {
+	    'transition': 'transitionend',
+	    'WebkitTransition': 'webkitTransitionEnd',
+	    'MozTransition': 'mozTransitionEnd',
+	    'OTransition': 'oTransitionEnd',
+	    'msTransition': 'MSTransitionEnd'
+	  },
+	
+	  animationend: {
+	    'animation': 'animationend',
+	    'WebkitAnimation': 'webkitAnimationEnd',
+	    'MozAnimation': 'mozAnimationEnd',
+	    'OAnimation': 'oAnimationEnd',
+	    'msAnimation': 'MSAnimationEnd'
+	  }
+	};
+	
+	var endEvents = [];
+	
+	function detectEvents() {
+	  var testEl = document.createElement('div');
+	  var style = testEl.style;
+	
+	  // On some platforms, in particular some releases of Android 4.x,
+	  // the un-prefixed "animation" and "transition" properties are defined on the
+	  // style object but the events that fire will still be prefixed, so we need
+	  // to check if the un-prefixed events are useable, and if not remove them
+	  // from the map
+	  if (!('AnimationEvent' in window)) {
+	    delete EVENT_NAME_MAP.animationend.animation;
+	  }
+	
+	  if (!('TransitionEvent' in window)) {
+	    delete EVENT_NAME_MAP.transitionend.transition;
+	  }
+	
+	  for (var baseEventName in EVENT_NAME_MAP) {
+	    var baseEvents = EVENT_NAME_MAP[baseEventName];
+	    for (var styleName in baseEvents) {
+	      if (styleName in style) {
+	        endEvents.push(baseEvents[styleName]);
+	        break;
+	      }
+	    }
+	  }
+	}
+	
+	if (ExecutionEnvironment.canUseDOM) {
+	  detectEvents();
+	}
+	
+	// We use the raw {add|remove}EventListener() call because EventListener
+	// does not know how to remove event listeners and we really should
+	// clean up. Also, these events are not triggered in older browsers
+	// so we should be A-OK here.
+	
+	function addEventListener(node, eventName, eventListener) {
+	  node.addEventListener(eventName, eventListener, false);
+	}
+	
+	function removeEventListener(node, eventName, eventListener) {
+	  node.removeEventListener(eventName, eventListener, false);
+	}
+	
+	var ReactTransitionEvents = {
+	  addEndEventListener: function(node, eventListener) {
+	    if (endEvents.length === 0) {
+	      // If CSS transitions are not supported, trigger an "end animation"
+	      // event immediately.
+	      window.setTimeout(eventListener, 0);
+	      return;
+	    }
+	    endEvents.forEach(function(endEvent) {
+	      addEventListener(node, endEvent, eventListener);
+	    });
+	  },
+	
+	  removeEndEventListener: function(node, eventListener) {
+	    if (endEvents.length === 0) {
+	      return;
+	    }
+	    endEvents.forEach(function(endEvent) {
+	      removeEventListener(node, endEvent, eventListener);
+	    });
+	  }
+	};
+	
+	module.exports = ReactTransitionEvents;
+
+
+/***/ },
+/* 187 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule cx
+	 */
+	
+	/**
+	 * This function is used to mark string literals representing CSS class names
+	 * so that they can be transformed statically. This allows for modularization
+	 * and minification of CSS class names.
+	 *
+	 * In static_upstream, this function is actually implemented, but it should
+	 * eventually be replaced with something more descriptive, and the transform
+	 * that is used in the main stack should be ported for use elsewhere.
+	 *
+	 * @param string|object className to modularize, or an object of key/values.
+	 *                      In the object case, the values are conditions that
+	 *                      determine if the className keys should be included.
+	 * @param [string ...]  Variable list of classNames in the string case.
+	 * @return string       Renderable space-separated CSS className.
+	 */
+	function cx(classNames) {
+	  if (typeof classNames == 'object') {
+	    return Object.keys(classNames).filter(function(className) {
+	      return classNames[className];
+	    }).join(' ');
+	  } else {
+	    return Array.prototype.join.call(arguments, ' ');
+	  }
+	}
+	
+	module.exports = cx;
+
+
+/***/ },
+/* 188 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule update
+	 */
+	
+	'use strict';
+	
+	var assign = __webpack_require__(19);
+	var keyOf = __webpack_require__(38);
+	var invariant = __webpack_require__(5);
+	
+	function shallowCopy(x) {
+	  if (Array.isArray(x)) {
+	    return x.concat();
+	  } else if (x && typeof x === 'object') {
+	    return assign(new x.constructor(), x);
+	  } else {
+	    return x;
+	  }
+	}
+	
+	var COMMAND_PUSH = keyOf({$push: null});
+	var COMMAND_UNSHIFT = keyOf({$unshift: null});
+	var COMMAND_SPLICE = keyOf({$splice: null});
+	var COMMAND_SET = keyOf({$set: null});
+	var COMMAND_MERGE = keyOf({$merge: null});
+	var COMMAND_APPLY = keyOf({$apply: null});
+	
+	var ALL_COMMANDS_LIST = [
+	  COMMAND_PUSH,
+	  COMMAND_UNSHIFT,
+	  COMMAND_SPLICE,
+	  COMMAND_SET,
+	  COMMAND_MERGE,
+	  COMMAND_APPLY
+	];
+	
+	var ALL_COMMANDS_SET = {};
+	
+	ALL_COMMANDS_LIST.forEach(function(command) {
+	  ALL_COMMANDS_SET[command] = true;
+	});
+	
+	function invariantArrayCase(value, spec, command) {
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    Array.isArray(value),
+	    'update(): expected target of %s to be an array; got %s.',
+	    command,
+	    value
+	  ) : invariant(Array.isArray(value)));
+	  var specValue = spec[command];
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    Array.isArray(specValue),
+	    'update(): expected spec of %s to be an array; got %s. ' +
+	    'Did you forget to wrap your parameter in an array?',
+	    command,
+	    specValue
+	  ) : invariant(Array.isArray(specValue)));
+	}
+	
+	function update(value, spec) {
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    typeof spec === 'object',
+	    'update(): You provided a key path to update() that did not contain one ' +
+	    'of %s. Did you forget to include {%s: ...}?',
+	    ALL_COMMANDS_LIST.join(', '),
+	    COMMAND_SET
+	  ) : invariant(typeof spec === 'object'));
+	
+	  if (spec.hasOwnProperty(COMMAND_SET)) {
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      Object.keys(spec).length === 1,
+	      'Cannot have more than one key in an object with %s',
+	      COMMAND_SET
+	    ) : invariant(Object.keys(spec).length === 1));
+	
+	    return spec[COMMAND_SET];
+	  }
+	
+	  var nextValue = shallowCopy(value);
+	
+	  if (spec.hasOwnProperty(COMMAND_MERGE)) {
+	    var mergeObj = spec[COMMAND_MERGE];
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      mergeObj && typeof mergeObj === 'object',
+	      'update(): %s expects a spec of type \'object\'; got %s',
+	      COMMAND_MERGE,
+	      mergeObj
+	    ) : invariant(mergeObj && typeof mergeObj === 'object'));
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      nextValue && typeof nextValue === 'object',
+	      'update(): %s expects a target of type \'object\'; got %s',
+	      COMMAND_MERGE,
+	      nextValue
+	    ) : invariant(nextValue && typeof nextValue === 'object'));
+	    assign(nextValue, spec[COMMAND_MERGE]);
+	  }
+	
+	  if (spec.hasOwnProperty(COMMAND_PUSH)) {
+	    invariantArrayCase(value, spec, COMMAND_PUSH);
+	    spec[COMMAND_PUSH].forEach(function(item) {
+	      nextValue.push(item);
+	    });
+	  }
+	
+	  if (spec.hasOwnProperty(COMMAND_UNSHIFT)) {
+	    invariantArrayCase(value, spec, COMMAND_UNSHIFT);
+	    spec[COMMAND_UNSHIFT].forEach(function(item) {
+	      nextValue.unshift(item);
+	    });
+	  }
+	
+	  if (spec.hasOwnProperty(COMMAND_SPLICE)) {
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      Array.isArray(value),
+	      'Expected %s target to be an array; got %s',
+	      COMMAND_SPLICE,
+	      value
+	    ) : invariant(Array.isArray(value)));
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      Array.isArray(spec[COMMAND_SPLICE]),
+	      'update(): expected spec of %s to be an array of arrays; got %s. ' +
+	      'Did you forget to wrap your parameters in an array?',
+	      COMMAND_SPLICE,
+	      spec[COMMAND_SPLICE]
+	    ) : invariant(Array.isArray(spec[COMMAND_SPLICE])));
+	    spec[COMMAND_SPLICE].forEach(function(args) {
+	      ("production" !== process.env.NODE_ENV ? invariant(
+	        Array.isArray(args),
+	        'update(): expected spec of %s to be an array of arrays; got %s. ' +
+	        'Did you forget to wrap your parameters in an array?',
+	        COMMAND_SPLICE,
+	        spec[COMMAND_SPLICE]
+	      ) : invariant(Array.isArray(args)));
+	      nextValue.splice.apply(nextValue, args);
+	    });
+	  }
+	
+	  if (spec.hasOwnProperty(COMMAND_APPLY)) {
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      typeof spec[COMMAND_APPLY] === 'function',
+	      'update(): expected spec of %s to be a function; got %s.',
+	      COMMAND_APPLY,
+	      spec[COMMAND_APPLY]
+	    ) : invariant(typeof spec[COMMAND_APPLY] === 'function'));
+	    nextValue = spec[COMMAND_APPLY](nextValue);
+	  }
+	
+	  for (var k in spec) {
+	    if (!(ALL_COMMANDS_SET.hasOwnProperty(k) && ALL_COMMANDS_SET[k])) {
+	      nextValue[k] = update(value[k], spec[k]);
+	    }
+	  }
+	
+	  return nextValue;
+	}
+	
+	module.exports = update;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+
+/***/ },
+/* 189 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactTestUtils
+	 */
+	
+	'use strict';
+	
+	var EventConstants = __webpack_require__(12);
+	var EventPluginHub = __webpack_require__(53);
+	var EventPropagators = __webpack_require__(92);
+	var React = __webpack_require__(2);
+	var ReactElement = __webpack_require__(17);
+	var ReactBrowserEventEmitter = __webpack_require__(52);
+	var ReactCompositeComponent = __webpack_require__(72);
+	var ReactInstanceHandles = __webpack_require__(23);
+	var ReactInstanceMap = __webpack_require__(29);
+	var ReactMount = __webpack_require__(60);
+	var ReactUpdates = __webpack_require__(30);
+	var SyntheticEvent = __webpack_require__(95);
+	
+	var assign = __webpack_require__(19);
+	
+	var topLevelTypes = EventConstants.topLevelTypes;
+	
+	function Event(suffix) {}
+	
+	/**
+	 * @class ReactTestUtils
+	 */
+	
+	/**
+	 * Todo: Support the entire DOM.scry query syntax. For now, these simple
+	 * utilities will suffice for testing purposes.
+	 * @lends ReactTestUtils
+	 */
+	var ReactTestUtils = {
+	  renderIntoDocument: function(instance) {
+	    var div = document.createElement('div');
+	    // None of our tests actually require attaching the container to the
+	    // DOM, and doing so creates a mess that we rely on test isolation to
+	    // clean up, so we're going to stop honoring the name of this method
+	    // (and probably rename it eventually) if no problems arise.
+	    // document.documentElement.appendChild(div);
+	    return React.render(instance, div);
+	  },
+	
+	  isElement: function(element) {
+	    return ReactElement.isValidElement(element);
+	  },
+	
+	  isElementOfType: function(inst, convenienceConstructor) {
+	    return (
+	      ReactElement.isValidElement(inst) &&
+	      inst.type === convenienceConstructor
+	    );
+	  },
+	
+	  isDOMComponent: function(inst) {
+	    // TODO: Fix this heuristic. It's just here because composites can currently
+	    // pretend to be DOM components.
+	    return !!(inst && inst.getDOMNode && inst.tagName);
+	  },
+	
+	  isDOMComponentElement: function(inst) {
+	    return !!(inst &&
+	              ReactElement.isValidElement(inst) &&
+	              !!inst.tagName);
+	  },
+	
+	  isCompositeComponent: function(inst) {
+	    return typeof inst.render === 'function' &&
+	           typeof inst.setState === 'function';
+	  },
+	
+	  isCompositeComponentWithType: function(inst, type) {
+	    return !!(ReactTestUtils.isCompositeComponent(inst) &&
+	             (inst.constructor === type));
+	  },
+	
+	  isCompositeComponentElement: function(inst) {
+	    if (!ReactElement.isValidElement(inst)) {
+	      return false;
+	    }
+	    // We check the prototype of the type that will get mounted, not the
+	    // instance itself. This is a future proof way of duck typing.
+	    var prototype = inst.type.prototype;
+	    return (
+	      typeof prototype.render === 'function' &&
+	      typeof prototype.setState === 'function'
+	    );
+	  },
+	
+	  isCompositeComponentElementWithType: function(inst, type) {
+	    return !!(ReactTestUtils.isCompositeComponentElement(inst) &&
+	             (inst.constructor === type));
+	  },
+	
+	  getRenderedChildOfCompositeComponent: function(inst) {
+	    if (!ReactTestUtils.isCompositeComponent(inst)) {
+	      return null;
+	    }
+	    var internalInstance = ReactInstanceMap.get(inst);
+	    return internalInstance._renderedComponent.getPublicInstance();
+	  },
+	
+	  findAllInRenderedTree: function(inst, test) {
+	    if (!inst) {
+	      return [];
+	    }
+	    var ret = test(inst) ? [inst] : [];
+	    if (ReactTestUtils.isDOMComponent(inst)) {
+	      var internalInstance = ReactInstanceMap.get(inst);
+	      var renderedChildren = internalInstance
+	        ._renderedComponent
+	        ._renderedChildren;
+	      var key;
+	      for (key in renderedChildren) {
+	        if (!renderedChildren.hasOwnProperty(key)) {
+	          continue;
+	        }
+	        if (!renderedChildren[key].getPublicInstance) {
+	          continue;
+	        }
+	        ret = ret.concat(
+	          ReactTestUtils.findAllInRenderedTree(
+	            renderedChildren[key].getPublicInstance(),
+	            test
+	          )
+	        );
+	      }
+	    } else if (ReactTestUtils.isCompositeComponent(inst)) {
+	      ret = ret.concat(
+	        ReactTestUtils.findAllInRenderedTree(
+	          ReactTestUtils.getRenderedChildOfCompositeComponent(inst),
+	          test
+	        )
+	      );
+	    }
+	    return ret;
+	  },
+	
+	  /**
+	   * Finds all instance of components in the rendered tree that are DOM
+	   * components with the class name matching `className`.
+	   * @return an array of all the matches.
+	   */
+	  scryRenderedDOMComponentsWithClass: function(root, className) {
+	    return ReactTestUtils.findAllInRenderedTree(root, function(inst) {
+	      var instClassName = inst.props.className;
+	      return ReactTestUtils.isDOMComponent(inst) && (
+	        (instClassName && (' ' + instClassName + ' ').indexOf(' ' + className + ' ') !== -1)
+	      );
+	    });
+	  },
+	
+	  /**
+	   * Like scryRenderedDOMComponentsWithClass but expects there to be one result,
+	   * and returns that one result, or throws exception if there is any other
+	   * number of matches besides one.
+	   * @return {!ReactDOMComponent} The one match.
+	   */
+	  findRenderedDOMComponentWithClass: function(root, className) {
+	    var all =
+	      ReactTestUtils.scryRenderedDOMComponentsWithClass(root, className);
+	    if (all.length !== 1) {
+	      throw new Error('Did not find exactly one match '+
+	        '(found: ' + all.length + ') for class:' + className
+	      );
+	    }
+	    return all[0];
+	  },
+	
+	
+	  /**
+	   * Finds all instance of components in the rendered tree that are DOM
+	   * components with the tag name matching `tagName`.
+	   * @return an array of all the matches.
+	   */
+	  scryRenderedDOMComponentsWithTag: function(root, tagName) {
+	    return ReactTestUtils.findAllInRenderedTree(root, function(inst) {
+	      return ReactTestUtils.isDOMComponent(inst) &&
+	            inst.tagName === tagName.toUpperCase();
+	    });
+	  },
+	
+	  /**
+	   * Like scryRenderedDOMComponentsWithTag but expects there to be one result,
+	   * and returns that one result, or throws exception if there is any other
+	   * number of matches besides one.
+	   * @return {!ReactDOMComponent} The one match.
+	   */
+	  findRenderedDOMComponentWithTag: function(root, tagName) {
+	    var all = ReactTestUtils.scryRenderedDOMComponentsWithTag(root, tagName);
+	    if (all.length !== 1) {
+	      throw new Error('Did not find exactly one match for tag:' + tagName);
+	    }
+	    return all[0];
+	  },
+	
+	
+	  /**
+	   * Finds all instances of components with type equal to `componentType`.
+	   * @return an array of all the matches.
+	   */
+	  scryRenderedComponentsWithType: function(root, componentType) {
+	    return ReactTestUtils.findAllInRenderedTree(root, function(inst) {
+	      return ReactTestUtils.isCompositeComponentWithType(
+	        inst,
+	        componentType
+	      );
+	    });
+	  },
+	
+	  /**
+	   * Same as `scryRenderedComponentsWithType` but expects there to be one result
+	   * and returns that one result, or throws exception if there is any other
+	   * number of matches besides one.
+	   * @return {!ReactComponent} The one match.
+	   */
+	  findRenderedComponentWithType: function(root, componentType) {
+	    var all = ReactTestUtils.scryRenderedComponentsWithType(
+	      root,
+	      componentType
+	    );
+	    if (all.length !== 1) {
+	      throw new Error(
+	        'Did not find exactly one match for componentType:' + componentType
+	      );
+	    }
+	    return all[0];
+	  },
+	
+	  /**
+	   * Pass a mocked component module to this method to augment it with
+	   * useful methods that allow it to be used as a dummy React component.
+	   * Instead of rendering as usual, the component will become a simple
+	   * <div> containing any provided children.
+	   *
+	   * @param {object} module the mock function object exported from a
+	   *                        module that defines the component to be mocked
+	   * @param {?string} mockTagName optional dummy root tag name to return
+	   *                              from render method (overrides
+	   *                              module.mockTagName if provided)
+	   * @return {object} the ReactTestUtils object (for chaining)
+	   */
+	  mockComponent: function(module, mockTagName) {
+	    mockTagName = mockTagName || module.mockTagName || "div";
+	
+	    module.prototype.render.mockImplementation(function() {
+	      return React.createElement(
+	        mockTagName,
+	        null,
+	        this.props.children
+	      );
+	    });
+	
+	    return this;
+	  },
+	
+	  /**
+	   * Simulates a top level event being dispatched from a raw event that occured
+	   * on an `Element` node.
+	   * @param topLevelType {Object} A type from `EventConstants.topLevelTypes`
+	   * @param {!Element} node The dom to simulate an event occurring on.
+	   * @param {?Event} fakeNativeEvent Fake native event to use in SyntheticEvent.
+	   */
+	  simulateNativeEventOnNode: function(topLevelType, node, fakeNativeEvent) {
+	    fakeNativeEvent.target = node;
+	    ReactBrowserEventEmitter.ReactEventListener.dispatchEvent(
+	      topLevelType,
+	      fakeNativeEvent
+	    );
+	  },
+	
+	  /**
+	   * Simulates a top level event being dispatched from a raw event that occured
+	   * on the `ReactDOMComponent` `comp`.
+	   * @param topLevelType {Object} A type from `EventConstants.topLevelTypes`.
+	   * @param comp {!ReactDOMComponent}
+	   * @param {?Event} fakeNativeEvent Fake native event to use in SyntheticEvent.
+	   */
+	  simulateNativeEventOnDOMComponent: function(
+	      topLevelType,
+	      comp,
+	      fakeNativeEvent) {
+	    ReactTestUtils.simulateNativeEventOnNode(
+	      topLevelType,
+	      comp.getDOMNode(),
+	      fakeNativeEvent
+	    );
+	  },
+	
+	  nativeTouchData: function(x, y) {
+	    return {
+	      touches: [
+	        {pageX: x, pageY: y}
+	      ]
+	    };
+	  },
+	
+	  createRenderer: function() {
+	    return new ReactShallowRenderer();
+	  },
+	
+	  Simulate: null,
+	  SimulateNative: {}
+	};
+	
+	/**
+	 * @class ReactShallowRenderer
+	 */
+	var ReactShallowRenderer = function() {
+	  this._instance = null;
+	};
+	
+	ReactShallowRenderer.prototype.getRenderOutput = function() {
+	  return (
+	    (this._instance && this._instance._renderedComponent &&
+	     this._instance._renderedComponent._currentElement)
+	    || null
+	  );
+	};
+	
+	var NoopInternalComponent = function(element) {
+	  this._currentElement = element;
+	}
+	
+	NoopInternalComponent.prototype = {
+	
+	  mountComponent: function() {
+	  },
+	
+	  receiveComponent: function(element) {
+	    this._currentElement = element;
+	  },
+	
+	  unmountComponent: function() {
+	
+	  }
+	
+	};
+	
+	var ShallowComponentWrapper = function() { };
+	assign(
+	  ShallowComponentWrapper.prototype,
+	  ReactCompositeComponent.Mixin, {
+	    _instantiateReactComponent: function(element) {
+	      return new NoopInternalComponent(element);
+	    },
+	    _replaceNodeWithMarkupByID: function() {},
+	    _renderValidatedComponent:
+	      ReactCompositeComponent.Mixin.
+	        _renderValidatedComponentWithoutOwnerOrContext
+	  }
+	);
+	
+	ReactShallowRenderer.prototype.render = function(element, context) {
+	  var transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
+	  this._render(element, transaction, context);
+	  ReactUpdates.ReactReconcileTransaction.release(transaction);
+	};
+	
+	ReactShallowRenderer.prototype._render = function(element, transaction, context) {
+	  if (!this._instance) {
+	    var rootID = ReactInstanceHandles.createReactRootID();
+	    var instance = new ShallowComponentWrapper(element.type);
+	    instance.construct(element);
+	
+	    instance.mountComponent(rootID, transaction, context);
+	
+	    this._instance = instance;
+	  } else {
+	    this._instance.receiveComponent(element, transaction, context);
+	  }
+	};
+	
+	/**
+	 * Exports:
+	 *
+	 * - `ReactTestUtils.Simulate.click(Element/ReactDOMComponent)`
+	 * - `ReactTestUtils.Simulate.mouseMove(Element/ReactDOMComponent)`
+	 * - `ReactTestUtils.Simulate.change(Element/ReactDOMComponent)`
+	 * - ... (All keys from event plugin `eventTypes` objects)
+	 */
+	function makeSimulator(eventType) {
+	  return function(domComponentOrNode, eventData) {
+	    var node;
+	    if (ReactTestUtils.isDOMComponent(domComponentOrNode)) {
+	      node = domComponentOrNode.getDOMNode();
+	    } else if (domComponentOrNode.tagName) {
+	      node = domComponentOrNode;
+	    }
+	
+	    var fakeNativeEvent = new Event();
+	    fakeNativeEvent.target = node;
+	    // We don't use SyntheticEvent.getPooled in order to not have to worry about
+	    // properly destroying any properties assigned from `eventData` upon release
+	    var event = new SyntheticEvent(
+	      ReactBrowserEventEmitter.eventNameDispatchConfigs[eventType],
+	      ReactMount.getID(node),
+	      fakeNativeEvent
+	    );
+	    assign(event, eventData);
+	    EventPropagators.accumulateTwoPhaseDispatches(event);
+	
+	    ReactUpdates.batchedUpdates(function() {
+	      EventPluginHub.enqueueEvents(event);
+	      EventPluginHub.processEventQueue();
+	    });
+	  };
+	}
+	
+	function buildSimulators() {
+	  ReactTestUtils.Simulate = {};
+	
+	  var eventType;
+	  for (eventType in ReactBrowserEventEmitter.eventNameDispatchConfigs) {
+	    /**
+	     * @param {!Element || ReactDOMComponent} domComponentOrNode
+	     * @param {?object} eventData Fake event data to use in SyntheticEvent.
+	     */
+	    ReactTestUtils.Simulate[eventType] = makeSimulator(eventType);
+	  }
+	}
+	
+	// Rebuild ReactTestUtils.Simulate whenever event plugins are injected
+	var oldInjectEventPluginOrder = EventPluginHub.injection.injectEventPluginOrder;
+	EventPluginHub.injection.injectEventPluginOrder = function() {
+	  oldInjectEventPluginOrder.apply(this, arguments);
+	  buildSimulators();
+	};
+	var oldInjectEventPlugins = EventPluginHub.injection.injectEventPluginsByName;
+	EventPluginHub.injection.injectEventPluginsByName = function() {
+	  oldInjectEventPlugins.apply(this, arguments);
+	  buildSimulators();
+	};
+	
+	buildSimulators();
+	
+	/**
+	 * Exports:
+	 *
+	 * - `ReactTestUtils.SimulateNative.click(Element/ReactDOMComponent)`
+	 * - `ReactTestUtils.SimulateNative.mouseMove(Element/ReactDOMComponent)`
+	 * - `ReactTestUtils.SimulateNative.mouseIn/ReactDOMComponent)`
+	 * - `ReactTestUtils.SimulateNative.mouseOut(Element/ReactDOMComponent)`
+	 * - ... (All keys from `EventConstants.topLevelTypes`)
+	 *
+	 * Note: Top level event types are a subset of the entire set of handler types
+	 * (which include a broader set of "synthetic" events). For example, onDragDone
+	 * is a synthetic event. Except when testing an event plugin or React's event
+	 * handling code specifically, you probably want to use ReactTestUtils.Simulate
+	 * to dispatch synthetic events.
+	 */
+	
+	function makeNativeSimulator(eventType) {
+	  return function(domComponentOrNode, nativeEventData) {
+	    var fakeNativeEvent = new Event(eventType);
+	    assign(fakeNativeEvent, nativeEventData);
+	    if (ReactTestUtils.isDOMComponent(domComponentOrNode)) {
+	      ReactTestUtils.simulateNativeEventOnDOMComponent(
+	        eventType,
+	        domComponentOrNode,
+	        fakeNativeEvent
+	      );
+	    } else if (!!domComponentOrNode.tagName) {
+	      // Will allow on actual dom nodes.
+	      ReactTestUtils.simulateNativeEventOnNode(
+	        eventType,
+	        domComponentOrNode,
+	        fakeNativeEvent
+	      );
+	    }
+	  };
+	}
+	
+	var eventType;
+	for (eventType in topLevelTypes) {
+	  // Event type is stored as 'topClick' - we transform that to 'click'
+	  var convenienceName = eventType.indexOf('top') === 0 ?
+	    eventType.charAt(3).toLowerCase() + eventType.substr(4) : eventType;
+	  /**
+	   * @param {!Element || ReactDOMComponent} domComponentOrNode
+	   * @param {?Event} nativeEventData Fake native event to use in SyntheticEvent.
+	   */
+	  ReactTestUtils.SimulateNative[convenienceName] =
+	    makeNativeSimulator(eventType);
+	}
+	
+	module.exports = ReactTestUtils;
+
+
+/***/ },
+/* 190 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Flux Mixin
+	 *
+	 * Exports a function that creates a React component mixin. The mixin exposes
+	 * a Flux instance as `this.flux`. This requires that flux be passed as either
+	 * context or as a prop (prop takes precedence). Children also are given access
+	 * to flux instance as `context.flux`.
+	 *
+	 * It also adds the method `connectToStores()`, which ensures that the component
+	 * state stays in sync with the specified Flux stores. See the inline docs
+	 * of `connectToStores` for details.
+	 *
+	 * Any arguments passed to the mixin creator are passed to `connectToStores()`
+	 * and used as the return value of `getInitialState()`. This lets you handle
+	 * all of the state initialization and updates in a single place, while removing
+	 * the burden of manually adding and removing store listeners.
+	 *
+	 * @example
+	 * let Component = React.createClass({
+	 *   mixins: [FluxMixin({
+	 *     storeA: store => ({
+	 *       foo: store.state.a,
+	 *     }),
+	 *     storeB: store => ({
+	 *       bar: store.state.b,
+	 *     })
+	 *   }]
+	 * });
+	 */
+	
+	"use strict";
+	
+	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+	
+	var _defineProperty = function (obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); };
+	
+	module.exports = FluxMixin;
+	var PropTypes = __webpack_require__(1).PropTypes;
+	var Flux = __webpack_require__(156).Flux;
+	var assign = _interopRequire(__webpack_require__(159));
+	
+	function FluxMixin() {
+	  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	    args[_key] = arguments[_key];
+	  }
+	
+	  return {
+	
+	    contextTypes: {
+	      flux: PropTypes.instanceOf(Flux) },
+	
+	    childContextTypes: {
+	      flux: PropTypes.instanceOf(Flux) },
+	
+	    getChildContext: function getChildContext() {
+	      return {
+	        flux: this.flux
+	      };
+	    },
+	
+	    getInitialState: function getInitialState() {
+	      var _ref;
+	      this._flux_listeners = {};
+	      this.flux = this.props.flux || this.context.flux;
+	
+	      if (!(this.flux instanceof Flux)) {
+	        // TODO: print the actual class name here
+	        throw new Error("FluxMixin: Could not find Flux instance. Ensure that your component " + "has either `this.context.flux` or `this.props.flux`.");
+	      }
+	
+	      return (_ref = this).connectToStores.apply(_ref, args);
+	    },
+	
+	    componentWillUnmount: function componentWillUnmount() {
+	      for (var key in this._flux_listeners) {
+	        if (!this._flux_listeners.hasOwnProperty(key)) continue;
+	
+	        var store = this.flux.getStore(key);
+	        if (typeof store === "undefined") continue;
+	
+	        var listener = this._flux_listeners[key];
+	
+	        store.removeListener("change", listener);
+	      }
+	    },
+	
+	    /**
+	     * Connect component to stores, get the combined initial state, and
+	     * subscribe to future changes. There are three ways to call it. The
+	     * simplest is to pass a single store key and, optionally, a state getter.
+	     * The state getter is a function that takes the store as a parameter and
+	     * returns the state that should be passed to the component's `setState()`.
+	     * If no state getter is specified, the default getter is used, which simply
+	     * returns the entire store state.
+	     *
+	     * The second form accepts an array of store keys. With this form, every
+	     * store uses the default state getter.
+	     *
+	     * The last form accepts an object of store keys mapped to state getters. As
+	     * a shortcut, you can pass `null` as a state getter to use the default
+	     * state getter.
+	     *
+	     * Returns the combined initial state of all specified stores.
+	     *
+	     * This way you can write all the initialization and update logic in a single
+	     * location, without having to mess with adding/removing listeners.
+	     *
+	     * @type {string|array|object} stateGetterMap - map of keys to getters
+	     * @returns {object} Combined initial state of stores
+	     */
+	    connectToStores: function connectToStores() {
+	      var _this = this;
+	      var stateGetterMap = arguments[0] === undefined ? {} : arguments[0];
+	      var stateGetter = arguments[1] === undefined ? defaultStateGetter : arguments[1];
+	      var initialState = {};
+	
+	      // Ensure that stateGetterMap is an object
+	      if (typeof stateGetterMap === "string") {
+	        var key = stateGetterMap;
+	
+	        stateGetterMap = _defineProperty({}, key, stateGetter);
+	      } else if (Array.isArray(stateGetterMap)) {
+	        stateGetterMap = stateGetterMap.reduce(function (result, key) {
+	          result[key] = stateGetter;
+	          return result;
+	        }, {});
+	      }
+	
+	      for (var key in stateGetterMap) {
+	        (function (key) {
+	          var store = _this.flux.getStore(key);
+	
+	          if (typeof store === "undefined") throw new Error("connectToStores(): Store with key '" + key + "' does not exist.");
+	
+	          var storeStateGetter = stateGetterMap[key];
+	
+	          if (storeStateGetter === null) storeStateGetter = defaultStateGetter;
+	
+	          storeStateGetter = storeStateGetter.bind(_this);
+	
+	          var initialStoreState = storeStateGetter(store);
+	
+	          var listener = function () {
+	            var state = storeStateGetter(store);
+	            _this.setState(state);
+	          };
+	
+	          store.addListener("change", listener);
+	
+	          assign(_this._flux_listeners, _defineProperty({}, key, listener));
+	
+	          assign(initialState, initialStoreState);
+	        })(key);
+	      }
+	
+	      return initialState;
+	    }
+	
+	  };
+	}
+	
+	function defaultStateGetter(store) {
+	  return store.state;
+	}
+	//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9hZGRvbnMvRmx1eE1peGluLmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQThCQSxZQUFZLENBQUM7Ozs7OztpQkFPVyxTQUFTO0lBTHhCLFNBQVMsV0FBUSxPQUFPLEVBQXhCLFNBQVM7SUFDVCxJQUFJLFdBQVEsU0FBUyxFQUFyQixJQUFJO0lBQ04sTUFBTSwyQkFBTSxlQUFlOztBQUduQixTQUFTLFNBQVMsR0FBVTtvQ0FBTixJQUFJO0FBQUosUUFBSTs7O0FBRXZDLFNBQU87O0FBRUwsZ0JBQVksRUFBRTtBQUNaLFVBQUksRUFBRSxTQUFTLENBQUMsVUFBVSxDQUFDLElBQUksQ0FBQyxFQUNqQzs7QUFFRCxxQkFBaUIsRUFBRTtBQUNqQixVQUFJLEVBQUUsU0FBUyxDQUFDLFVBQVUsQ0FBQyxJQUFJLENBQUMsRUFDakM7O0FBRUQsbUJBQWUsRUFBQSwyQkFBRztBQUNoQixhQUFPO0FBQ0wsWUFBSSxFQUFFLElBQUksQ0FBQyxJQUFJO09BQ2hCLENBQUM7S0FDSDs7QUFFRCxtQkFBZSxFQUFBLDJCQUFHOztBQUNoQixVQUFJLENBQUMsZUFBZSxHQUFHLEVBQUUsQ0FBQztBQUMxQixVQUFJLENBQUMsSUFBSSxHQUFHLElBQUksQ0FBQyxLQUFLLENBQUMsSUFBSSxJQUFJLElBQUksQ0FBQyxPQUFPLENBQUMsSUFBSSxDQUFDOztBQUVqRCxVQUFJLEVBQUUsSUFBSSxDQUFDLElBQUksWUFBWSxJQUFJLENBQUEsQUFBQyxFQUFFOztBQUVoQyxjQUFNLElBQUksS0FBSyxDQUNiLCtIQUMwRCxDQUMzRCxDQUFDO09BQ0g7O0FBRUQsYUFBTyxRQUFBLElBQUksRUFBQyxlQUFlLE1BQUEsT0FBSSxJQUFJLENBQUMsQ0FBQztLQUN0Qzs7QUFFRCx3QkFBb0IsRUFBQSxnQ0FBRztBQUNyQixXQUFLLElBQUksR0FBRyxJQUFJLElBQUksQ0FBQyxlQUFlLEVBQUU7QUFDcEMsWUFBSSxDQUFDLElBQUksQ0FBQyxlQUFlLENBQUMsY0FBYyxDQUFDLEdBQUcsQ0FBQyxFQUFFLFNBQVM7O0FBRXhELFlBQUksS0FBSyxHQUFHLElBQUksQ0FBQyxJQUFJLENBQUMsUUFBUSxDQUFDLEdBQUcsQ0FBQyxDQUFDO0FBQ3BDLFlBQUksT0FBTyxLQUFLLEtBQUssV0FBVyxFQUFFLFNBQVM7O0FBRTNDLFlBQUksUUFBUSxHQUFHLElBQUksQ0FBQyxlQUFlLENBQUMsR0FBRyxDQUFDLENBQUM7O0FBRXpDLGFBQUssQ0FBQyxjQUFjLENBQUMsUUFBUSxFQUFFLFFBQVEsQ0FBQyxDQUFDO09BQzFDO0tBQ0Y7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBMEJELG1CQUFlLEVBQUEsMkJBQXdEOztVQUF2RCxjQUFjLGdDQUFHLEVBQUU7VUFBRSxXQUFXLGdDQUFHLGtCQUFrQjtBQUNuRSxVQUFJLFlBQVksR0FBRyxFQUFFLENBQUM7OztBQUd0QixVQUFJLE9BQU8sY0FBYyxLQUFLLFFBQVEsRUFBRTtBQUN0QyxZQUFJLEdBQUcsR0FBRyxjQUFjLENBQUM7O0FBRXpCLHNCQUFjLHVCQUNYLEdBQUcsRUFBRyxXQUFXLENBQ25CLENBQUM7T0FDSCxNQUFNLElBQUksS0FBSyxDQUFDLE9BQU8sQ0FBQyxjQUFjLENBQUMsRUFBRTtBQUN4QyxzQkFBYyxHQUFHLGNBQWMsQ0FBQyxNQUFNLENBQUMsVUFBQyxNQUFNLEVBQUUsR0FBRyxFQUFLO0FBQ3RELGdCQUFNLENBQUMsR0FBRyxDQUFDLEdBQUcsV0FBVyxDQUFDO0FBQzFCLGlCQUFPLE1BQU0sQ0FBQztTQUNmLEVBQUUsRUFBRSxDQUFDLENBQUM7T0FDUjs7QUFFRCxXQUFLLElBQUksR0FBRyxJQUFJLGNBQWMsRUFBRTttQkFBdkIsR0FBRztBQUNWLGNBQUksS0FBSyxHQUFHLE1BQUssSUFBSSxDQUFDLFFBQVEsQ0FBQyxHQUFHLENBQUMsQ0FBQzs7QUFFcEMsY0FBSSxPQUFPLEtBQUssS0FBSyxXQUFXLEVBQUUsTUFBTSxJQUFJLEtBQUsseUNBQ1QsR0FBRyx1QkFDMUMsQ0FBQzs7QUFFRixjQUFJLGdCQUFnQixHQUFHLGNBQWMsQ0FBQyxHQUFHLENBQUMsQ0FBQzs7QUFFM0MsY0FBSSxnQkFBZ0IsS0FBSyxJQUFJLEVBQUUsZ0JBQWdCLEdBQUcsa0JBQWtCLENBQUM7O0FBRXJFLDBCQUFnQixHQUFHLGdCQUFnQixDQUFDLElBQUksT0FBTSxDQUFDOztBQUUvQyxjQUFJLGlCQUFpQixHQUFHLGdCQUFnQixDQUFDLEtBQUssQ0FBQyxDQUFDOztBQUVoRCxjQUFJLFFBQVEsR0FBRyxZQUFNO0FBQ25CLGdCQUFJLEtBQUssR0FBRyxnQkFBZ0IsQ0FBQyxLQUFLLENBQUMsQ0FBQztBQUNwQyxrQkFBSyxRQUFRLENBQUMsS0FBSyxDQUFDLENBQUM7V0FDdEIsQ0FBQzs7QUFFRixlQUFLLENBQUMsV0FBVyxDQUFDLFFBQVEsRUFBRSxRQUFRLENBQUMsQ0FBQzs7QUFFdEMsZ0JBQU0sQ0FBQyxNQUFLLGVBQWUsc0JBQ3hCLEdBQUcsRUFBRyxRQUFRLEVBQ2YsQ0FBQzs7QUFFSCxnQkFBTSxDQUFDLFlBQVksRUFBRSxpQkFBaUIsQ0FBQyxDQUFDO1dBMUJqQyxHQUFHO09BMkJYOztBQUVELGFBQU8sWUFBWSxDQUFDO0tBQ3JCOztHQUVGLENBQUE7Q0FFRjs7QUFFRCxTQUFTLGtCQUFrQixDQUFDLEtBQUssRUFBRTtBQUNqQyxTQUFPLEtBQUssQ0FBQyxLQUFLLENBQUM7Q0FDcEIiLCJmaWxlIjoic3JjL2FkZG9ucy9GbHV4TWl4aW4uanMiLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIEZsdXggTWl4aW5cbiAqXG4gKiBFeHBvcnRzIGEgZnVuY3Rpb24gdGhhdCBjcmVhdGVzIGEgUmVhY3QgY29tcG9uZW50IG1peGluLiBUaGUgbWl4aW4gZXhwb3Nlc1xuICogYSBGbHV4IGluc3RhbmNlIGFzIGB0aGlzLmZsdXhgLiBUaGlzIHJlcXVpcmVzIHRoYXQgZmx1eCBiZSBwYXNzZWQgYXMgZWl0aGVyXG4gKiBjb250ZXh0IG9yIGFzIGEgcHJvcCAocHJvcCB0YWtlcyBwcmVjZWRlbmNlKS4gQ2hpbGRyZW4gYWxzbyBhcmUgZ2l2ZW4gYWNjZXNzXG4gKiB0byBmbHV4IGluc3RhbmNlIGFzIGBjb250ZXh0LmZsdXhgLlxuICpcbiAqIEl0IGFsc28gYWRkcyB0aGUgbWV0aG9kIGBjb25uZWN0VG9TdG9yZXMoKWAsIHdoaWNoIGVuc3VyZXMgdGhhdCB0aGUgY29tcG9uZW50XG4gKiBzdGF0ZSBzdGF5cyBpbiBzeW5jIHdpdGggdGhlIHNwZWNpZmllZCBGbHV4IHN0b3Jlcy4gU2VlIHRoZSBpbmxpbmUgZG9jc1xuICogb2YgYGNvbm5lY3RUb1N0b3Jlc2AgZm9yIGRldGFpbHMuXG4gKlxuICogQW55IGFyZ3VtZW50cyBwYXNzZWQgdG8gdGhlIG1peGluIGNyZWF0b3IgYXJlIHBhc3NlZCB0byBgY29ubmVjdFRvU3RvcmVzKClgXG4gKiBhbmQgdXNlZCBhcyB0aGUgcmV0dXJuIHZhbHVlIG9mIGBnZXRJbml0aWFsU3RhdGUoKWAuIFRoaXMgbGV0cyB5b3UgaGFuZGxlXG4gKiBhbGwgb2YgdGhlIHN0YXRlIGluaXRpYWxpemF0aW9uIGFuZCB1cGRhdGVzIGluIGEgc2luZ2xlIHBsYWNlLCB3aGlsZSByZW1vdmluZ1xuICogdGhlIGJ1cmRlbiBvZiBtYW51YWxseSBhZGRpbmcgYW5kIHJlbW92aW5nIHN0b3JlIGxpc3RlbmVycy5cbiAqXG4gKiBAZXhhbXBsZVxuICogbGV0IENvbXBvbmVudCA9IFJlYWN0LmNyZWF0ZUNsYXNzKHtcbiAqICAgbWl4aW5zOiBbRmx1eE1peGluKHtcbiAqICAgICBzdG9yZUE6IHN0b3JlID0+ICh7XG4gKiAgICAgICBmb286IHN0b3JlLnN0YXRlLmEsXG4gKiAgICAgfSksXG4gKiAgICAgc3RvcmVCOiBzdG9yZSA9PiAoe1xuICogICAgICAgYmFyOiBzdG9yZS5zdGF0ZS5iLFxuICogICAgIH0pXG4gKiAgIH1dXG4gKiB9KTtcbiAqL1xuXG4ndXNlIHN0cmljdCc7XG5cbmltcG9ydCB7IFByb3BUeXBlcyB9IGZyb20gJ3JlYWN0JztcbmltcG9ydCB7IEZsdXggfSBmcm9tICcuLi9GbHV4JztcbmltcG9ydCBhc3NpZ24gZnJvbSAnb2JqZWN0LWFzc2lnbic7XG5cblxuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gRmx1eE1peGluKC4uLmFyZ3MpIHtcblxuICByZXR1cm4ge1xuXG4gICAgY29udGV4dFR5cGVzOiB7XG4gICAgICBmbHV4OiBQcm9wVHlwZXMuaW5zdGFuY2VPZihGbHV4KSxcbiAgICB9LFxuXG4gICAgY2hpbGRDb250ZXh0VHlwZXM6IHtcbiAgICAgIGZsdXg6IFByb3BUeXBlcy5pbnN0YW5jZU9mKEZsdXgpLFxuICAgIH0sXG5cbiAgICBnZXRDaGlsZENvbnRleHQoKSB7XG4gICAgICByZXR1cm4ge1xuICAgICAgICBmbHV4OiB0aGlzLmZsdXhcbiAgICAgIH07XG4gICAgfSxcblxuICAgIGdldEluaXRpYWxTdGF0ZSgpIHtcbiAgICAgIHRoaXMuX2ZsdXhfbGlzdGVuZXJzID0ge307XG4gICAgICB0aGlzLmZsdXggPSB0aGlzLnByb3BzLmZsdXggfHwgdGhpcy5jb250ZXh0LmZsdXg7XG5cbiAgICAgIGlmICghKHRoaXMuZmx1eCBpbnN0YW5jZW9mIEZsdXgpKSB7XG4gICAgICAgIC8vIFRPRE86IHByaW50IHRoZSBhY3R1YWwgY2xhc3MgbmFtZSBoZXJlXG4gICAgICAgIHRocm93IG5ldyBFcnJvcihcbiAgICAgICAgICBgRmx1eE1peGluOiBDb3VsZCBub3QgZmluZCBGbHV4IGluc3RhbmNlLiBFbnN1cmUgdGhhdCB5b3VyIGNvbXBvbmVudCBgXG4gICAgICAgICsgYGhhcyBlaXRoZXIgXFxgdGhpcy5jb250ZXh0LmZsdXhcXGAgb3IgXFxgdGhpcy5wcm9wcy5mbHV4XFxgLmBcbiAgICAgICAgKTtcbiAgICAgIH1cblxuICAgICAgcmV0dXJuIHRoaXMuY29ubmVjdFRvU3RvcmVzKC4uLmFyZ3MpO1xuICAgIH0sXG5cbiAgICBjb21wb25lbnRXaWxsVW5tb3VudCgpIHtcbiAgICAgIGZvciAobGV0IGtleSBpbiB0aGlzLl9mbHV4X2xpc3RlbmVycykge1xuICAgICAgICBpZiAoIXRoaXMuX2ZsdXhfbGlzdGVuZXJzLmhhc093blByb3BlcnR5KGtleSkpIGNvbnRpbnVlO1xuXG4gICAgICAgIGxldCBzdG9yZSA9IHRoaXMuZmx1eC5nZXRTdG9yZShrZXkpO1xuICAgICAgICBpZiAodHlwZW9mIHN0b3JlID09PSAndW5kZWZpbmVkJykgY29udGludWU7XG5cbiAgICAgICAgbGV0IGxpc3RlbmVyID0gdGhpcy5fZmx1eF9saXN0ZW5lcnNba2V5XTtcblxuICAgICAgICBzdG9yZS5yZW1vdmVMaXN0ZW5lcignY2hhbmdlJywgbGlzdGVuZXIpO1xuICAgICAgfVxuICAgIH0sXG5cbiAgICAvKipcbiAgICAgKiBDb25uZWN0IGNvbXBvbmVudCB0byBzdG9yZXMsIGdldCB0aGUgY29tYmluZWQgaW5pdGlhbCBzdGF0ZSwgYW5kXG4gICAgICogc3Vic2NyaWJlIHRvIGZ1dHVyZSBjaGFuZ2VzLiBUaGVyZSBhcmUgdGhyZWUgd2F5cyB0byBjYWxsIGl0LiBUaGVcbiAgICAgKiBzaW1wbGVzdCBpcyB0byBwYXNzIGEgc2luZ2xlIHN0b3JlIGtleSBhbmQsIG9wdGlvbmFsbHksIGEgc3RhdGUgZ2V0dGVyLlxuICAgICAqIFRoZSBzdGF0ZSBnZXR0ZXIgaXMgYSBmdW5jdGlvbiB0aGF0IHRha2VzIHRoZSBzdG9yZSBhcyBhIHBhcmFtZXRlciBhbmRcbiAgICAgKiByZXR1cm5zIHRoZSBzdGF0ZSB0aGF0IHNob3VsZCBiZSBwYXNzZWQgdG8gdGhlIGNvbXBvbmVudCdzIGBzZXRTdGF0ZSgpYC5cbiAgICAgKiBJZiBubyBzdGF0ZSBnZXR0ZXIgaXMgc3BlY2lmaWVkLCB0aGUgZGVmYXVsdCBnZXR0ZXIgaXMgdXNlZCwgd2hpY2ggc2ltcGx5XG4gICAgICogcmV0dXJucyB0aGUgZW50aXJlIHN0b3JlIHN0YXRlLlxuICAgICAqXG4gICAgICogVGhlIHNlY29uZCBmb3JtIGFjY2VwdHMgYW4gYXJyYXkgb2Ygc3RvcmUga2V5cy4gV2l0aCB0aGlzIGZvcm0sIGV2ZXJ5XG4gICAgICogc3RvcmUgdXNlcyB0aGUgZGVmYXVsdCBzdGF0ZSBnZXR0ZXIuXG4gICAgICpcbiAgICAgKiBUaGUgbGFzdCBmb3JtIGFjY2VwdHMgYW4gb2JqZWN0IG9mIHN0b3JlIGtleXMgbWFwcGVkIHRvIHN0YXRlIGdldHRlcnMuIEFzXG4gICAgICogYSBzaG9ydGN1dCwgeW91IGNhbiBwYXNzIGBudWxsYCBhcyBhIHN0YXRlIGdldHRlciB0byB1c2UgdGhlIGRlZmF1bHRcbiAgICAgKiBzdGF0ZSBnZXR0ZXIuXG4gICAgICpcbiAgICAgKiBSZXR1cm5zIHRoZSBjb21iaW5lZCBpbml0aWFsIHN0YXRlIG9mIGFsbCBzcGVjaWZpZWQgc3RvcmVzLlxuICAgICAqXG4gICAgICogVGhpcyB3YXkgeW91IGNhbiB3cml0ZSBhbGwgdGhlIGluaXRpYWxpemF0aW9uIGFuZCB1cGRhdGUgbG9naWMgaW4gYSBzaW5nbGVcbiAgICAgKiBsb2NhdGlvbiwgd2l0aG91dCBoYXZpbmcgdG8gbWVzcyB3aXRoIGFkZGluZy9yZW1vdmluZyBsaXN0ZW5lcnMuXG4gICAgICpcbiAgICAgKiBAdHlwZSB7c3RyaW5nfGFycmF5fG9iamVjdH0gc3RhdGVHZXR0ZXJNYXAgLSBtYXAgb2Yga2V5cyB0byBnZXR0ZXJzXG4gICAgICogQHJldHVybnMge29iamVjdH0gQ29tYmluZWQgaW5pdGlhbCBzdGF0ZSBvZiBzdG9yZXNcbiAgICAgKi9cbiAgICBjb25uZWN0VG9TdG9yZXMoc3RhdGVHZXR0ZXJNYXAgPSB7fSwgc3RhdGVHZXR0ZXIgPSBkZWZhdWx0U3RhdGVHZXR0ZXIpIHtcbiAgICAgIGxldCBpbml0aWFsU3RhdGUgPSB7fTtcblxuICAgICAgLy8gRW5zdXJlIHRoYXQgc3RhdGVHZXR0ZXJNYXAgaXMgYW4gb2JqZWN0XG4gICAgICBpZiAodHlwZW9mIHN0YXRlR2V0dGVyTWFwID09PSAnc3RyaW5nJykge1xuICAgICAgICBsZXQga2V5ID0gc3RhdGVHZXR0ZXJNYXA7XG5cbiAgICAgICAgc3RhdGVHZXR0ZXJNYXAgPSB7XG4gICAgICAgICAgW2tleV06IHN0YXRlR2V0dGVyLFxuICAgICAgICB9O1xuICAgICAgfSBlbHNlIGlmIChBcnJheS5pc0FycmF5KHN0YXRlR2V0dGVyTWFwKSkge1xuICAgICAgICBzdGF0ZUdldHRlck1hcCA9IHN0YXRlR2V0dGVyTWFwLnJlZHVjZSgocmVzdWx0LCBrZXkpID0+IHtcbiAgICAgICAgICByZXN1bHRba2V5XSA9IHN0YXRlR2V0dGVyO1xuICAgICAgICAgIHJldHVybiByZXN1bHQ7XG4gICAgICAgIH0sIHt9KTtcbiAgICAgIH1cblxuICAgICAgZm9yIChsZXQga2V5IGluIHN0YXRlR2V0dGVyTWFwKSB7XG4gICAgICAgIGxldCBzdG9yZSA9IHRoaXMuZmx1eC5nZXRTdG9yZShrZXkpO1xuXG4gICAgICAgIGlmICh0eXBlb2Ygc3RvcmUgPT09ICd1bmRlZmluZWQnKSB0aHJvdyBuZXcgRXJyb3IoXG4gICAgICAgICAgYGNvbm5lY3RUb1N0b3JlcygpOiBTdG9yZSB3aXRoIGtleSAnJHtrZXl9JyBkb2VzIG5vdCBleGlzdC5gXG4gICAgICAgICk7XG5cbiAgICAgICAgbGV0IHN0b3JlU3RhdGVHZXR0ZXIgPSBzdGF0ZUdldHRlck1hcFtrZXldO1xuXG4gICAgICAgIGlmIChzdG9yZVN0YXRlR2V0dGVyID09PSBudWxsKSBzdG9yZVN0YXRlR2V0dGVyID0gZGVmYXVsdFN0YXRlR2V0dGVyO1xuXG4gICAgICAgIHN0b3JlU3RhdGVHZXR0ZXIgPSBzdG9yZVN0YXRlR2V0dGVyLmJpbmQodGhpcyk7XG5cbiAgICAgICAgbGV0IGluaXRpYWxTdG9yZVN0YXRlID0gc3RvcmVTdGF0ZUdldHRlcihzdG9yZSk7XG5cbiAgICAgICAgbGV0IGxpc3RlbmVyID0gKCkgPT4ge1xuICAgICAgICAgIGxldCBzdGF0ZSA9IHN0b3JlU3RhdGVHZXR0ZXIoc3RvcmUpO1xuICAgICAgICAgIHRoaXMuc2V0U3RhdGUoc3RhdGUpO1xuICAgICAgICB9O1xuXG4gICAgICAgIHN0b3JlLmFkZExpc3RlbmVyKCdjaGFuZ2UnLCBsaXN0ZW5lcik7XG5cbiAgICAgICAgYXNzaWduKHRoaXMuX2ZsdXhfbGlzdGVuZXJzLCB7XG4gICAgICAgICAgW2tleV06IGxpc3RlbmVyLFxuICAgICAgICB9KTtcblxuICAgICAgICBhc3NpZ24oaW5pdGlhbFN0YXRlLCBpbml0aWFsU3RvcmVTdGF0ZSk7XG4gICAgICB9XG5cbiAgICAgIHJldHVybiBpbml0aWFsU3RhdGU7XG4gICAgfVxuXG4gIH1cblxufTtcblxuZnVuY3Rpb24gZGVmYXVsdFN0YXRlR2V0dGVyKHN0b3JlKSB7XG4gIHJldHVybiBzdG9yZS5zdGF0ZTtcbn1cbiJdfQ==
 
 /***/ }
 /******/ ])

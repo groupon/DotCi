@@ -28,11 +28,11 @@ export default class RecentProjectsStore extends Store {
     constructor(flux) {
         super();
         let actionIds = flux.getActionIds('app');
-        this.register(actionIds.loadRecentProjects, this.handleInitialLoad);
+        this.register(actionIds.initialLoadRecentProjects, this.handleInitialLoad);
         this.state = {}
     }
     handleInitialLoad(recentProjects){
-      this.setState( recentProjects);
+      this.setState({recentProjects: recentProjects});
     }
     recentProjects(){
         return this.getState();
