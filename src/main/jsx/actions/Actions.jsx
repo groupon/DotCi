@@ -24,9 +24,11 @@
 
 import { Actions } from 'flummox';
 import {recentProjects} from "../api/RecentProjectsApi"
+import Polyfill from "6to5/polyfill";
 
 export default class AppActions extends Actions {
-    getRecentProjects(){
+    async getRecentProjects(){
+        let projects = await recentProjects();
       this.initialLoadRecentProjects(recentProjects());
     }
     initialLoadRecentProjects(recentProjects) {

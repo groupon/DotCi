@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 import React from "react";
-import BuildIcon from "../components/BuildIcon"
+import BuildIcon from "../BuildIcon"
 import FluxComponent from 'flummox/component';
 
 class RecentProjectsHeader extends React.Component{
@@ -40,7 +40,7 @@ class RecentProjectsHeader extends React.Component{
 class RecentProject extends React.Component{
     render(){
         return (
-            <li className="list-group-item">
+            <li key={this.props.url} className="list-group-item">
                 <a href={this.props.url}> {this.props.name}  </a>
                 <BuildIcon state="ABORTED"/>
             </li>

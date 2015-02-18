@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
+import Qwest from "qwest";
 export function recentProjects(){
-    return [{name: "meow",url: "url"}];
+    return Qwest.get(rootURL + '/recentProjects');
 }
