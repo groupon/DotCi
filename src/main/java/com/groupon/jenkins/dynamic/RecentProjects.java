@@ -65,7 +65,6 @@ public class RecentProjects implements RootAction{
             HashMap<String, Object> projectMap = new HashMap<String, Object>();
             projectMap.put("name",project.getFullName());
             projectMap.put("url",project.getUrl());
-            //List<Map<String,String>>
         }
         List<ImmutableMap<String, String>> responseOuput = Arrays.asList(ImmutableMap.of("name", "meow1", "url", "/meow"));
         JsonResponse.render(rsp,responseOuput);

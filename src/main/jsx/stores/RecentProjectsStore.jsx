@@ -30,12 +30,9 @@ export default class RecentProjectsStore extends Store {
         super();
         let actionIds = flux.getActionIds('app');
         this.register(actionIds.initialLoadRecentProjects, this.handleInitialLoad);
-        this.state = {}
+        this.state = {recentProjects: []}
     }
     handleInitialLoad(recentProjects){
       this.setState({recentProjects: jQuery.parseJSON(recentProjects)});
-    }
-    recentProjects(){
-        return this.getState();
     }
 }

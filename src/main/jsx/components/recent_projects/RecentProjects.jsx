@@ -72,9 +72,8 @@ export default class RecentProjectsView extends React.Component{
     render(){
         return (
             <FluxComponent connectToStores={['recentProjects']} flux={this.props.flux}>
-                <RecentProjectsWidget recentProjects={[]}/>
+                <RecentProjectsWidget/>
             </FluxComponent>
         )
     }
 }
-
