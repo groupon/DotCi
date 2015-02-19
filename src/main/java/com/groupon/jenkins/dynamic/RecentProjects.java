@@ -72,6 +72,7 @@ public class RecentProjects implements RootAction{
             }else{
                 projectMap.put("lastBuildStatus", Result.ABORTED.toString());
             }
+            output.add(projectMap);
         }
         JsonResponse.render(rsp,output);
 

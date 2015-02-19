@@ -55,7 +55,7 @@ class RecentProjectsWidget extends React.Component{
     render(){
         var recentProjects = this.props.recentProjects.map(function (project) {
             return (
-                <RecentProject url={project.url} name ={project.name}/>
+                <RecentProject url={project.url} name ={project.name} lastBuildStatus={project.lastBuildStatus}/>
             );
         });
         return (

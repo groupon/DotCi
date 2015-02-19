@@ -24,7 +24,7 @@
 
 import { Actions } from 'flummox';
 import {recentProjects} from "../api/RecentProjectsApi"
-import Polyfill from "6to5/polyfill";
+// import Polyfill from "6to5/polyfill";
 
 export default class AppActions extends Actions {
     getRecentProjects(){
