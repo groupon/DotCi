@@ -79,7 +79,7 @@
 	
 	var Flux = _interopRequire(__webpack_require__(155));
 	
-	var RecentProjects = _interopRequire(__webpack_require__(172));
+	var RecentProjects = _interopRequire(__webpack_require__(173));
 	
 	$(function () {
 	    var flux = new Flux();
@@ -29044,7 +29044,7 @@
 	
 	var AppActions = _interopRequire(__webpack_require__(165));
 	
-	var RecentProjectsStore = _interopRequire(__webpack_require__(171));
+	var RecentProjectsStore = _interopRequire(__webpack_require__(172));
 	
 	var Flux = (function (Flummox) {
 	    function Flux() {
@@ -30384,7 +30384,7 @@
 	
 	var Actions = __webpack_require__(156).Actions;
 	var recentProjects = __webpack_require__(166).recentProjects;
-	var Polyfill = _interopRequire(__webpack_require__(167));
+	var Polyfill = _interopRequire(__webpack_require__(168));
 	
 	var AppActions = (function (Actions) {
 	    function AppActions() {
@@ -30400,21 +30400,10 @@
 	    _prototypeProperties(AppActions, null, {
 	        getRecentProjects: {
 	            value: function getRecentProjects() {
-	                var _this = this;
-	                var projects;
-	                return regeneratorRuntime.async(function getRecentProjects$(context$2$0) {
-	                    while (1) switch (context$2$0.prev = context$2$0.next) {
-	                        case 0:
-	                            context$2$0.next = 2;
-	                            return recentProjects();
-	                        case 2:
-	                            projects = context$2$0.sent;
-	                            _this.initialLoadRecentProjects(recentProjects());
-	                        case 4:
-	                        case "end":
-	                            return context$2$0.stop();
-	                    }
-	                }, null, this);
+	                var outer = this;
+	                var projects = recentProjects().then(function (projects) {
+	                    outer.initialLoadRecentProjects(projects);
+	                });
 	            },
 	            writable: true,
 	            configurable: true
@@ -30465,7 +30454,7 @@
 	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 	 * THE SOFTWARE.
 	 */
-	var Qwest = _interopRequire(__webpack_require__(195));
+	var Qwest = _interopRequire(__webpack_require__(167));
 	
 	function recentProjects() {
 	  return Qwest.get(rootURL + "/recentProjects");
@@ -30478,11 +30467,512 @@
 /* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(168);
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! qwest 1.5.4 (https://github.com/pyrsmk/qwest) */
+	
+	;(function(context,name,definition){
+		if(typeof module!='undefined' && module.exports){
+			module.exports=definition;
+		}
+		else if(true){
+			!(__WEBPACK_AMD_DEFINE_FACTORY__ = (definition), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		}
+		else{
+			context[name]=definition;
+		}
+	}(this,'qwest',function(){
+	
+		var win=window,
+			doc=document,
+			before,
+			// Default response type for XDR in auto mode
+			defaultXdrResponseType='json',
+			// Variables for limit mechanism
+			limit=null,
+			requests=0,
+			request_stack=[],
+			// Get XMLHttpRequest object
+			getXHR=function(){
+					return win.XMLHttpRequest?
+							new XMLHttpRequest():
+							new ActiveXObject('Microsoft.XMLHTTP');
+				},
+			// Guess XHR version
+			xhr2=(getXHR().responseType===''),
+	
+		// Core function
+		qwest=function(method,url,data,options,before){
+	
+			// Format
+			method=method.toUpperCase();
+			data=data || null;
+			options=options || {};
+	
+			// Define variables
+			var nativeResponseParsing=false,
+				crossOrigin,
+				xhr,
+				xdr=false,
+				timeoutInterval,
+				aborted=false,
+				retries=0,
+				headers={},
+				mimeTypes={
+					text: '*/*',
+					xml: 'text/xml',
+					json: 'application/json',
+					arraybuffer: null,
+					formdata: null,
+					document: null,
+					file: null,
+					blob: null
+				},
+				contentType='Content-Type',
+				vars='',
+				i,j,
+				serialized,
+				then_stack=[],
+				catch_stack=[],
+				complete_stack=[],
+				response,
+				success,
+				error,
+				func,
+	
+			// Define promises
+			promises={
+				then:function(func){
+					if(options.async){
+						then_stack.push(func);
+					}
+					else if(success){
+						func.call(xhr,response);
+					}
+					return promises;
+				},
+				'catch':function(func){
+					if(options.async){
+						catch_stack.push(func);
+					}
+					else if(error){
+						func.call(xhr,response);
+					}
+					return promises;
+				},
+				complete:function(func){
+					if(options.async){
+						complete_stack.push(func);
+					}
+					else{
+						func.call(xhr);
+					}
+					return promises;
+				}
+			},
+			promises_limit={
+				then:function(func){
+					request_stack[request_stack.length-1].then.push(func);
+					return promises_limit;
+				},
+				'catch':function(func){
+					request_stack[request_stack.length-1]['catch'].push(func);
+					return promises_limit;
+				},
+				complete:function(func){
+					request_stack[request_stack.length-1].complete.push(func);
+					return promises_limit;
+				}
+			},
+	
+			// Handle the response
+			handleResponse=function(){
+				// Verify request's state
+				// --- https://stackoverflow.com/questions/7287706/ie-9-javascript-error-c00c023f
+				if(aborted){
+					return;
+				}
+				// Prepare
+				var i,req,p,responseType;
+				--requests;
+				// Clear the timeout
+				clearInterval(timeoutInterval);
+				// Launch next stacked request
+				if(request_stack.length){
+					req=request_stack.shift();
+					p=qwest(req.method,req.url,req.data,req.options,req.before);
+					for(i=0;func=req.then[i];++i){
+						p.then(func);
+					}
+					for(i=0;func=req['catch'][i];++i){
+						p['catch'](func);
+					}
+					for(i=0;func=req.complete[i];++i){
+						p.complete(func);
+					}
+				}
+				// Handle response
+				try{
+					// Verify status code
+					// --- https://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
+					if('status' in xhr && !/^2|1223/.test(xhr.status)){
+						throw xhr.status+' ('+xhr.statusText+')';
+					}
+					// Init
+					var responseText='responseText',
+						responseXML='responseXML',
+						parseError='parseError';
+					// Process response
+					if(nativeResponseParsing && 'response' in xhr && xhr.response!==null){
+						response=xhr.response;
+					}
+					else if(options.responseType=='document'){
+						var frame=doc.createElement('iframe');
+						frame.style.display='none';
+						doc.body.appendChild(frame);
+						frame.contentDocument.open();
+						frame.contentDocument.write(xhr.response);
+						frame.contentDocument.close();
+						response=frame.contentDocument;
+						doc.body.removeChild(frame);
+					}
+					else{
+						// Guess response type
+						responseType=options.responseType;
+						if(responseType=='auto'){
+							if(xdr){
+								responseType=defaultXdrResponseType;
+							}
+							else{
+								switch(xhr.getResponseHeader(contentType)){
+									case mimeTypes.json:
+										responseType='json';
+										break;
+									case mimeTypes.xml:
+										responseType='xml';
+										break;
+									default:
+										responseType='text';
+								}
+							}
+						}
+						// Handle response type
+						switch(responseType){
+							case 'json':
+								try{
+									if('JSON' in win){
+										response=JSON.parse(xhr[responseText]);
+									}
+									else{
+										response=eval('('+xhr[responseText]+')');
+									}
+								}
+								catch(e){
+									throw "Error while parsing JSON body : "+e;
+								}
+								break;
+							case 'xml':
+								// Based on jQuery's parseXML() function
+								try{
+									// Standard
+									if(win.DOMParser){
+										response=(new DOMParser()).parseFromString(xhr[responseText],'text/xml');
+									}
+									// IE<9
+									else{
+										response=new ActiveXObject('Microsoft.XMLDOM');
+										response.async='false';
+										response.loadXML(xhr[responseText]);
+									}
+								}
+								catch(e){
+									response=undefined;
+								}
+								if(!response || !response.documentElement || response.getElementsByTagName('parsererror').length){
+									throw 'Invalid XML';
+								}
+								break;
+							default:
+								response=xhr[responseText];
+						}
+					}
+					// Execute 'then' stack
+					success=true;
+					p=response;
+					if(options.async){
+						for(i=0;func=then_stack[i];++i){
+							p=func.call(xhr,p);
+						}
+					}
+				}
+				catch(e){
+					error=true;
+					// Execute 'catch' stack
+					if(options.async){
+						for(i=0;func=catch_stack[i];++i){
+							func.call(xhr,e+' ('+url+')');
+						}
+					}
+				}
+				// Execute complete stack
+				if(options.async){
+					for(i=0;func=complete_stack[i];++i){
+						func.call(xhr);
+					}
+				}
+			},
+	
+			// Recursively build the query string
+			buildData=function(data,key){
+				var res=[],
+					enc=encodeURIComponent,
+					p;
+				if(typeof data==='object' && data!=null) {
+					for(p in data) {
+						if(data.hasOwnProperty(p)) {
+							var built=buildData(data[p],key?key+'['+p+']':p);
+							if(built!==''){
+								res=res.concat(built);
+							}
+						}
+					}
+				}
+				else if(data!=null && key!=null){
+					res.push(enc(key)+'='+enc(data));
+				}
+				return res.join('&');
+			};
+	
+			// New request
+			++requests;
+	
+			// Normalize options
+			options.async='async' in options?!!options.async:true;
+			options.cache='cache' in options?!!options.cache:(method!='GET');
+			options.dataType='dataType' in options?options.dataType.toLowerCase():'post';
+			options.responseType='responseType' in options?options.responseType.toLowerCase():'auto';
+			options.user=options.user || '';
+			options.password=options.password || '';
+			options.withCredentials=!!options.withCredentials;
+			options.timeout=options.timeout?parseInt(options.timeout,10):3000;
+			options.retries=options.retries?parseInt(options.retries,10):3;
+	
+			// Guess if we're dealing with a cross-origin request
+			i=url.match(/\/\/(.+?)\//);
+			crossOrigin=i && i[1]?i[1]!=location.host:false;
+	
+			// Prepare data
+			if('ArrayBuffer' in win && data instanceof ArrayBuffer){
+				options.dataType='arraybuffer';
+			}
+			else if('Blob' in win && data instanceof Blob){
+				options.dataType='blob';
+			}
+			else if('Document' in win && data instanceof Document){
+				options.dataType='document';
+			}
+			else if('FormData' in win && data instanceof FormData){
+				options.dataType='formdata';
+			}
+			switch(options.dataType){
+				case 'json':
+					data=JSON.stringify(data);
+					break;
+				case 'post':
+					data=buildData(data);
+			}
+	
+			// Prepare headers
+			if(options.headers){
+				var format=function(match,p1,p2){
+					return p1+p2.toUpperCase();
+				};
+				for(i in options.headers){
+					headers[i.replace(/(^|-)([^-])/g,format)]=options.headers[i];
+				}
+			}
+			if(!headers[contentType] && method!='GET'){
+				if(options.dataType in mimeTypes){
+					if(mimeTypes[options.dataType]){
+						headers[contentType]=mimeTypes[options.dataType];
+					}
+				}
+				else{
+					headers[contentType]='application/x-www-form-urlencoded';
+				}
+			}
+			if(!headers.Accept){
+				headers.Accept=(options.responseType in mimeTypes)?mimeTypes[options.responseType]:'*/*';
+			}
+			if(!crossOrigin && !headers['X-Requested-With']){ // because that header breaks in legacy browsers with CORS
+				headers['X-Requested-With']='XMLHttpRequest';
+			}
+	
+			// Prepare URL
+			if(method=='GET'){
+				vars+=data;
+			}
+			if(!options.cache){
+				if(vars){
+					vars+='&';
+				}
+				vars+='__t='+(+new Date());
+			}
+			if(vars){
+				url+=(/\?/.test(url)?'&':'?')+vars;
+			}
+	
+			// The limit has been reached, stock the request
+			if(limit && requests==limit){
+				request_stack.push({
+					method	: method,
+					url		: url,
+					data	: data,
+					options	: options,
+					before	: before,
+					then	: [],
+					'catch'	: [],
+					complete: []
+				});
+				return promises_limit;
+			}
+	
+			// Send the request
+			var send=function(){
+				// Get XHR object
+				xhr=getXHR();
+				if(crossOrigin){
+					if(!('withCredentials' in xhr) && win.XDomainRequest){
+						xhr=new XDomainRequest(); // CORS with IE8/9
+						xdr=true;
+						if(method!='GET' && method!='POST'){
+							method='POST';
+						}
+					}
+				}
+				// Open connection
+				if(xdr){
+					xhr.open(method,url);
+				}
+				else{
+					xhr.open(method,url,options.async,options.user,options.password);
+					if(xhr2 && options.async){
+						xhr.withCredentials=options.withCredentials;
+					}
+				}
+				// Set headers
+				if(!xdr){
+					for(var i in headers){
+						xhr.setRequestHeader(i,headers[i]);
+					}
+				}
+				// Verify if the response type is supported by the current browser
+				if(xhr2 && options.responseType!='document'){ // Don't verify for 'document' since we're using an internal routine
+					try{
+						xhr.responseType=options.responseType;
+						nativeResponseParsing=(xhr.responseType==options.responseType);
+					}
+					catch(e){}
+				}
+				// Plug response handler
+				if(xhr2 || xdr){
+					xhr.onload=handleResponse;
+				}
+				else{
+					xhr.onreadystatechange=function(){
+						if(xhr.readyState==4){
+							handleResponse();
+						}
+					};
+				}
+				// Override mime type to ensure the response is well parsed
+				if(options.responseType!=='auto' && 'overrideMimeType' in xhr){
+					xhr.overrideMimeType(mimeTypes[options.responseType]);
+				}
+				// Run 'before' callback
+				if(before){
+					before.call(xhr);
+				}
+				// Send request
+				if(xdr){
+					setTimeout(function(){ // https://developer.mozilla.org/en-US/docs/Web/API/XDomainRequest
+						xhr.send();
+					},0);
+				}
+				else{
+					xhr.send(method!='GET'?data:null);
+				}
+			};
+	
+			// Timeout/retries
+			var timeout=function(){
+				timeoutInterval=setTimeout(function(){
+					aborted=true;
+					xhr.abort();
+					if(!options.retries || ++retries!=options.retries){
+						aborted=false;
+						timeout();
+						send();
+					}
+					else{
+						aborted=false;
+						error=true;
+						response='Timeout ('+url+')';
+						if(options.async){
+							for(i=0;func=catch_stack[i];++i){
+								func.call(xhr,response);
+							}
+						}
+					}
+				},options.timeout);
+			};
+	
+			// Start the request
+			timeout();
+			send();
+	
+			// Return promises
+			return promises;
+	
+		};
+	
+		// Return external qwest object
+		var create=function(method){
+				return function(url,data,options){
+					var b=before;
+					before=null;
+					return qwest(method,url,data,options,b);
+				};
+			},
+			obj={
+				before: function(callback){
+					before=callback;
+					return obj;
+				},
+				get: create('GET'),
+				post: create('POST'),
+				put: create('PUT'),
+				'delete': create('DELETE'),
+				xhr2: xhr2,
+				limit: function(by){
+					limit=by;
+				},
+				setDefaultXdrResponseType: function(type){
+					defaultXdrResponseType=type.toLowerCase();
+				}
+			};
+		return obj;
+	
+	}()));
 
 
 /***/ },
 /* 168 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(169);
+
+
+/***/ },
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {"use strict";
@@ -30492,13 +30982,13 @@
 	}
 	global._6to5Polyfill = true;
 	
-	__webpack_require__(169);
 	__webpack_require__(170);
+	__webpack_require__(171);
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 169 */
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32411,7 +32901,7 @@
 	}(typeof self != 'undefined' && self.Math === Math ? self : Function('return this')(), true);
 
 /***/ },
-/* 170 */
+/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -32945,7 +33435,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 171 */
+/* 172 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -32973,6 +33463,8 @@
 	 */
 	
 	"use strict";
+	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+	
 	var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
 	
 	var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
@@ -32982,6 +33474,8 @@
 	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 	
 	var Store = __webpack_require__(156).Store;
+	var jQuery = _interopRequire(__webpack_require__(154));
+	
 	var RecentProjectsStore = (function (Store) {
 	    function RecentProjectsStore(flux) {
 	        _classCallCheck(this, RecentProjectsStore);
@@ -32997,7 +33491,7 @@
 	    _prototypeProperties(RecentProjectsStore, null, {
 	        handleInitialLoad: {
 	            value: function handleInitialLoad(recentProjects) {
-	                this.setState({ recentProjects: recentProjects });
+	                this.setState({ recentProjects: jQuery.parseJSON(recentProjects) });
 	            },
 	            writable: true,
 	            configurable: true
@@ -33017,7 +33511,7 @@
 	module.exports = RecentProjectsStore;
 
 /***/ },
-/* 172 */
+/* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -33058,9 +33552,9 @@
 	 */
 	var React = _interopRequire(__webpack_require__(1));
 	
-	var BuildIcon = _interopRequire(__webpack_require__(173));
+	var BuildIcon = _interopRequire(__webpack_require__(174));
 	
-	var FluxComponent = _interopRequire(__webpack_require__(174));
+	var FluxComponent = _interopRequire(__webpack_require__(175));
 	
 	var RecentProjectsHeader = (function (_React$Component) {
 	    function RecentProjectsHeader() {
@@ -33155,7 +33649,7 @@
 	    _prototypeProperties(RecentProjectsView, null, {
 	        render: {
 	            value: function render() {
-	                return React.createElement(FluxComponent, { connectToStores: ["recentProjects"], flux: this.props.flux }, React.createElement(RecentProjectsWidget, null));
+	                return React.createElement(FluxComponent, { connectToStores: ["recentProjects"], flux: this.props.flux }, React.createElement(RecentProjectsWidget, { recentProjects: [] }));
 	            },
 	            writable: true,
 	            configurable: true
@@ -33168,7 +33662,7 @@
 	module.exports = RecentProjectsView;
 
 /***/ },
-/* 173 */
+/* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -33219,14 +33713,14 @@
 	});
 
 /***/ },
-/* 174 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(175);
+	module.exports = __webpack_require__(176);
 
 
 /***/ },
-/* 175 */
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33282,9 +33776,9 @@
 	
 	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 	
-	var React = _interopRequire(__webpack_require__(176));
+	var React = _interopRequire(__webpack_require__(177));
 	
-	var FluxMixin = _interopRequire(__webpack_require__(194));
+	var FluxMixin = _interopRequire(__webpack_require__(195));
 	
 	var assign = _interopRequire(__webpack_require__(159));
 	
@@ -33321,14 +33815,14 @@
 	//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9hZGRvbnMvRmx1eENvbXBvbmVudC5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBaURBLFlBQVksQ0FBQzs7OztJQUVOLEtBQUssMkJBQU0sY0FBYzs7SUFDekIsU0FBUywyQkFBTSxhQUFhOztJQUM1QixNQUFNLDJCQUFNLGVBQWU7O0FBRWxDLElBQUksYUFBYSxHQUFHLEtBQUssQ0FBQyxXQUFXLENBQUM7Ozs7QUFFcEMsUUFBTSxFQUFFLENBQUMsU0FBUyxFQUFFLENBQUM7O0FBRXJCLGlCQUFlLEVBQUEsMkJBQUc7QUFDaEIsV0FBTyxJQUFJLENBQUMsZUFBZSxDQUFDLElBQUksQ0FBQyxLQUFLLENBQUMsZUFBZSxDQUFDLENBQUM7R0FDekQ7O0FBRUQsUUFBTSxFQUFBLGtCQUFHOztBQUNQLFFBQUksQ0FBQyxJQUFJLENBQUMsS0FBSyxDQUFDLFFBQVE7QUFBRSxhQUFPLElBQUksQ0FBQztLQUFBLEFBRXRDLElBQUksUUFBUSxHQUFHLEtBQUssQ0FBQyxRQUFRLENBQUMsR0FBRyxDQUFDLElBQUksQ0FBQyxLQUFLLENBQUMsUUFBUSxFQUFFLFVBQUEsS0FBSzthQUMxRCxLQUFLLENBQUMsTUFBTSxDQUFDLGNBQWMsQ0FBQyxLQUFLLEVBQUUsTUFBTSxDQUFDO0FBQ3hDLFdBQUcsRUFBRSxLQUFLLENBQUMsR0FBRyxJQUFJLFNBQVM7QUFDM0IsWUFBSSxFQUFFLE1BQUssSUFBSSxFQUNoQixFQUFFLE1BQUssS0FBSyxDQUFDLENBQUM7S0FBQSxDQUNoQixDQUFDOztBQUVGLFdBQU87OztNQUFPLFFBQVE7S0FBUSxDQUFDO0dBQ2hDOztDQUVGLENBQUMsQ0FBQzs7aUJBRVksYUFBYSIsImZpbGUiOiJzcmMvYWRkb25zL0ZsdXhDb21wb25lbnQuanMiLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIEZsdXggQ29tcG9uZW50XG4gKlxuICogQ29tcG9uZW50IGZvcm0gb2YgRmx1eE1peGluLiBVc2VzIEZsdXhNaXhpbiBhcyBwYXJ0IG9mIGl0cyBpbXBsZW1lbnRhdGlvbixcbiAqIHNvIHJlcXVpcmVzIGEgZmx1eCBpbnN0YW5jZSB0byBiZSBwcm92aWRlZCBhcyBlaXRoZXIgY29udGV4dCBvciBhIHByb3AuXG4gKlxuICogTGlrZSBGbHV4TWl4aW4sIGNoaWxkcmVuIGFyZSBnaXZlbiBhY2Nlc3MgdG8gdGhlIGZsdXggaW5zdGFuY2UgdmlhXG4gKiBgY29udGV4dC5mbHV4YC4gVXNlIHRoaXMgbmVhciB0aGUgdG9wIG9mIHlvdXIgYXBwIGhpZXJhcmNoeSBhbmQgYWxsIGNoaWxkcmVuXG4gKiB3aWxsIGhhdmUgZWFzeSBhY2Nlc3MgdG8gdGhlIGZsdXggaW5zdGFuY2UgKGluY2x1ZGluZywgb2YgY291cnNlLCBvdGhlclxuICogRmx1eCBjb21wb25lbnRzISk6XG4gKlxuICogPEZsdXhDb21wb25lbnQgZmx1eD17Zmx1eH0+XG4gKiAgICAuLi50aGUgcmVzdCBvZiB5b3VyIGFwcFxuICogPC9GbHV4Q29tcG9uZW50PlxuICpcbiAqIE5vdyBhbnkgY2hpbGQgY2FuIGFjY2VzcyB0aGUgZmx1eCBpbnN0YW5jZSBhZ2FpbiBsaWtlIHRoaXM6XG4gKlxuICogPEZsdXhDb21wb25lbnQ+XG4gKiAgICAuLi5jaGlsZHJlblxuICogPC9GbHV4Q29tcG9uZW50PlxuICpcbiAqIFdlIGRvbid0IG5lZWQgdGhlIGZsdXggcHJvcCB0aGlzIHRpbWUgYmVjYXVzZSBmbHV4IGlzIGFscmVhZHkgcGFydCBvZlxuICogdGhlIGNvbnRleHQuXG4gKlxuICogQWRkaXRpb25hbGx5LCBpbW1lZGlhdGUgY2hpbGRyZW4gYXJlIGdpdmVuIGEgYGZsdXhgIHByb3AuXG4gKlxuICogVGhlIGNvbXBvbmVudCBoYXMgYW4gb3B0aW9uYWwgcHJvcCBgY29ubmVjdFRvU3RvcmVzYCwgd2hpY2ggaXMgLS0geW91IGd1ZXNzZWRcbiAqIGl0IC0tIHBhc3NlZCBkaXJlY3RseSB0byBGbHV4TWl4aW4ncyBgY29ubmVjdFRvU3RvcmVzKClgIGZ1bmN0aW9uIGFuZFxuICogc2V0IGFzIHRoZSBpbml0aWFsIHN0YXRlLiBUaGUgY29tcG9uZW50J3Mgc3RhdGUgaXMgaW5qZWN0ZWQgYXMgcHJvcHMgdG9cbiAqIGNoaWxkIGNvbXBvbmVudHMuXG4gKlxuICogVGhlIHByYWN0aWNhbCB1cHNob3Qgb2YgYWxsIHRoaXMgaXMgdGhhdCBGbHV4TWl4aW4sIHN0YXRlIGNoYW5nZXMsIGFuZFxuICogY29udGV4dCBhcmUgbm93IHNpbXBseSBpbXBsZW1lbnRhdGlvbiBkZXRhaWxzLiBBbW9uZyBvdGhlciB0aGluZ3MsIHRoaXMgbWVhbnNcbiAqIHlvdSBjYW4gd3JpdGUgeW91ciBjb21wb25lbnRzIGFzIHBsYWluIEVTNiBjbGFzc2VzLiBIZXJlJ3MgYW4gZXhhbXBsZTpcbiAqXG4gKiBjbGFzcyBQYXJlbnRDb21wb25lbnQgZXh0ZW5kcyBSZWFjdC5Db21wb25lbnQge1xuICpcbiAqICAgcmVuZGVyKCkge1xuICogICAgIDxGbHV4Q29tcG9uZW50IGNvbm5lY3RUb1N0b3JlPVwiZm9vU3RvcmVcIj5cbiAqICAgICAgIDxDaGlsZENvbXBvbmVudCAvPlxuICogICAgIDwvRmx1eENvbXBvbmVudD5cbiAqICAgfVxuICpcbiAqIH1cbiAqXG4gKiBDaGlsZENvbXBvbmVudCBpbiB0aGlzIGV4YW1wbGUgaGFzIHByb3AgYGZsdXhgIGNvbnRhaW5pbmcgdGhlIGZsdXggaW5zdGFuY2UsXG4gKiBhbmQgcHJvcHMgdGhhdCBzeW5jIHdpdGggZWFjaCBvZiB0aGUgc3RhdGUga2V5cyBvZiBmb29TdG9yZS5cbiAqL1xuXG4ndXNlIHN0cmljdCc7XG5cbmltcG9ydCBSZWFjdCBmcm9tICdyZWFjdC9hZGRvbnMnO1xuaW1wb3J0IEZsdXhNaXhpbiBmcm9tICcuL0ZsdXhNaXhpbic7XG5pbXBvcnQgYXNzaWduIGZyb20gJ29iamVjdC1hc3NpZ24nO1xuXG5sZXQgRmx1eENvbXBvbmVudCA9IFJlYWN0LmNyZWF0ZUNsYXNzKHtcblxuICBtaXhpbnM6IFtGbHV4TWl4aW4oKV0sXG5cbiAgZ2V0SW5pdGlhbFN0YXRlKCkge1xuICAgIHJldHVybiB0aGlzLmNvbm5lY3RUb1N0b3Jlcyh0aGlzLnByb3BzLmNvbm5lY3RUb1N0b3Jlcyk7XG4gIH0sXG5cbiAgcmVuZGVyKCkge1xuICAgIGlmICghdGhpcy5wcm9wcy5jaGlsZHJlbikgcmV0dXJuIG51bGw7XG5cbiAgICBsZXQgY2hpbGRyZW4gPSBSZWFjdC5DaGlsZHJlbi5tYXAodGhpcy5wcm9wcy5jaGlsZHJlbiwgY2hpbGQgPT5cbiAgICAgIFJlYWN0LmFkZG9ucy5jbG9uZVdpdGhQcm9wcyhjaGlsZCwgYXNzaWduKHtcbiAgICAgICAga2V5OiBjaGlsZC5rZXkgfHwgdW5kZWZpbmVkLFxuICAgICAgICBmbHV4OiB0aGlzLmZsdXgsXG4gICAgICB9LCB0aGlzLnN0YXRlKSlcbiAgICApO1xuXG4gICAgcmV0dXJuIDxzcGFuPntjaGlsZHJlbn08L3NwYW4+O1xuICB9XG5cbn0pO1xuXG5leHBvcnQgZGVmYXVsdCBGbHV4Q29tcG9uZW50O1xuIl19
 
 /***/ },
-/* 176 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(177);
+	module.exports = __webpack_require__(178);
 
 
 /***/ },
-/* 177 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -33351,17 +33845,17 @@
 	
 	'use strict';
 	
-	var LinkedStateMixin = __webpack_require__(178);
+	var LinkedStateMixin = __webpack_require__(179);
 	var React = __webpack_require__(2);
 	var ReactComponentWithPureRenderMixin =
-	  __webpack_require__(181);
-	var ReactCSSTransitionGroup = __webpack_require__(182);
-	var ReactTransitionGroup = __webpack_require__(183);
+	  __webpack_require__(182);
+	var ReactCSSTransitionGroup = __webpack_require__(183);
+	var ReactTransitionGroup = __webpack_require__(184);
 	var ReactUpdates = __webpack_require__(30);
 	
-	var cx = __webpack_require__(191);
-	var cloneWithProps = __webpack_require__(185);
-	var update = __webpack_require__(192);
+	var cx = __webpack_require__(192);
+	var cloneWithProps = __webpack_require__(186);
+	var update = __webpack_require__(193);
 	
 	React.addons = {
 	  CSSTransitionGroup: ReactCSSTransitionGroup,
@@ -33377,7 +33871,7 @@
 	
 	if ("production" !== process.env.NODE_ENV) {
 	  React.addons.Perf = __webpack_require__(147);
-	  React.addons.TestUtils = __webpack_require__(193);
+	  React.addons.TestUtils = __webpack_require__(194);
 	}
 	
 	module.exports = React;
@@ -33385,7 +33879,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ },
-/* 178 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33402,8 +33896,8 @@
 	
 	'use strict';
 	
-	var ReactLink = __webpack_require__(179);
-	var ReactStateSetters = __webpack_require__(180);
+	var ReactLink = __webpack_require__(180);
+	var ReactStateSetters = __webpack_require__(181);
 	
 	/**
 	 * A simple mixin around ReactLink.forState().
@@ -33430,7 +33924,7 @@
 
 
 /***/ },
-/* 179 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33507,7 +34001,7 @@
 
 
 /***/ },
-/* 180 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33617,7 +34111,7 @@
 
 
 /***/ },
-/* 181 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33670,7 +34164,7 @@
 
 
 /***/ },
-/* 182 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33692,10 +34186,10 @@
 	var assign = __webpack_require__(19);
 	
 	var ReactTransitionGroup = React.createFactory(
-	  __webpack_require__(183)
+	  __webpack_require__(184)
 	);
 	var ReactCSSTransitionGroupChild = React.createFactory(
-	  __webpack_require__(188)
+	  __webpack_require__(189)
 	);
 	
 	var ReactCSSTransitionGroup = React.createClass({
@@ -33744,7 +34238,7 @@
 
 
 /***/ },
-/* 183 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33761,10 +34255,10 @@
 	'use strict';
 	
 	var React = __webpack_require__(2);
-	var ReactTransitionChildMapping = __webpack_require__(184);
+	var ReactTransitionChildMapping = __webpack_require__(185);
 	
 	var assign = __webpack_require__(19);
-	var cloneWithProps = __webpack_require__(185);
+	var cloneWithProps = __webpack_require__(186);
 	var emptyFunction = __webpack_require__(10);
 	
 	var ReactTransitionGroup = React.createClass({
@@ -33978,7 +34472,7 @@
 
 
 /***/ },
-/* 184 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34083,7 +34577,7 @@
 
 
 /***/ },
-/* 185 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -34101,7 +34595,7 @@
 	'use strict';
 	
 	var ReactElement = __webpack_require__(17);
-	var ReactPropTransferer = __webpack_require__(186);
+	var ReactPropTransferer = __webpack_require__(187);
 	
 	var keyOf = __webpack_require__(38);
 	var warning = __webpack_require__(9);
@@ -34145,7 +34639,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ },
-/* 186 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34163,7 +34657,7 @@
 	
 	var assign = __webpack_require__(19);
 	var emptyFunction = __webpack_require__(10);
-	var joinClasses = __webpack_require__(187);
+	var joinClasses = __webpack_require__(188);
 	
 	/**
 	 * Creates a transfer strategy that will merge prop values using the supplied
@@ -34259,7 +34753,7 @@
 
 
 /***/ },
-/* 187 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34304,7 +34798,7 @@
 
 
 /***/ },
-/* 188 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -34323,8 +34817,8 @@
 	
 	var React = __webpack_require__(2);
 	
-	var CSSCore = __webpack_require__(189);
-	var ReactTransitionEvents = __webpack_require__(190);
+	var CSSCore = __webpack_require__(190);
+	var ReactTransitionEvents = __webpack_require__(191);
 	
 	var onlyChild = __webpack_require__(153);
 	
@@ -34452,7 +34946,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ },
-/* 189 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -34567,7 +35061,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ },
-/* 190 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34682,7 +35176,7 @@
 
 
 /***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34725,7 +35219,7 @@
 
 
 /***/ },
-/* 192 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -34896,7 +35390,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35398,7 +35892,7 @@
 
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35566,507 +36060,6 @@
 	  return store.state;
 	}
 	//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9hZGRvbnMvRmx1eE1peGluLmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQThCQSxZQUFZLENBQUM7Ozs7OztpQkFPVyxTQUFTO0lBTHhCLFNBQVMsV0FBUSxPQUFPLEVBQXhCLFNBQVM7SUFDVCxJQUFJLFdBQVEsU0FBUyxFQUFyQixJQUFJO0lBQ04sTUFBTSwyQkFBTSxlQUFlOztBQUduQixTQUFTLFNBQVMsR0FBVTtvQ0FBTixJQUFJO0FBQUosUUFBSTs7O0FBRXZDLFNBQU87O0FBRUwsZ0JBQVksRUFBRTtBQUNaLFVBQUksRUFBRSxTQUFTLENBQUMsVUFBVSxDQUFDLElBQUksQ0FBQyxFQUNqQzs7QUFFRCxxQkFBaUIsRUFBRTtBQUNqQixVQUFJLEVBQUUsU0FBUyxDQUFDLFVBQVUsQ0FBQyxJQUFJLENBQUMsRUFDakM7O0FBRUQsbUJBQWUsRUFBQSwyQkFBRztBQUNoQixhQUFPO0FBQ0wsWUFBSSxFQUFFLElBQUksQ0FBQyxJQUFJO09BQ2hCLENBQUM7S0FDSDs7QUFFRCxtQkFBZSxFQUFBLDJCQUFHOztBQUNoQixVQUFJLENBQUMsZUFBZSxHQUFHLEVBQUUsQ0FBQztBQUMxQixVQUFJLENBQUMsSUFBSSxHQUFHLElBQUksQ0FBQyxLQUFLLENBQUMsSUFBSSxJQUFJLElBQUksQ0FBQyxPQUFPLENBQUMsSUFBSSxDQUFDOztBQUVqRCxVQUFJLEVBQUUsSUFBSSxDQUFDLElBQUksWUFBWSxJQUFJLENBQUEsQUFBQyxFQUFFOztBQUVoQyxjQUFNLElBQUksS0FBSyxDQUNiLCtIQUMwRCxDQUMzRCxDQUFDO09BQ0g7O0FBRUQsYUFBTyxRQUFBLElBQUksRUFBQyxlQUFlLE1BQUEsT0FBSSxJQUFJLENBQUMsQ0FBQztLQUN0Qzs7QUFFRCx3QkFBb0IsRUFBQSxnQ0FBRztBQUNyQixXQUFLLElBQUksR0FBRyxJQUFJLElBQUksQ0FBQyxlQUFlLEVBQUU7QUFDcEMsWUFBSSxDQUFDLElBQUksQ0FBQyxlQUFlLENBQUMsY0FBYyxDQUFDLEdBQUcsQ0FBQyxFQUFFLFNBQVM7O0FBRXhELFlBQUksS0FBSyxHQUFHLElBQUksQ0FBQyxJQUFJLENBQUMsUUFBUSxDQUFDLEdBQUcsQ0FBQyxDQUFDO0FBQ3BDLFlBQUksT0FBTyxLQUFLLEtBQUssV0FBVyxFQUFFLFNBQVM7O0FBRTNDLFlBQUksUUFBUSxHQUFHLElBQUksQ0FBQyxlQUFlLENBQUMsR0FBRyxDQUFDLENBQUM7O0FBRXpDLGFBQUssQ0FBQyxjQUFjLENBQUMsUUFBUSxFQUFFLFFBQVEsQ0FBQyxDQUFDO09BQzFDO0tBQ0Y7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBMEJELG1CQUFlLEVBQUEsMkJBQXdEOztVQUF2RCxjQUFjLGdDQUFHLEVBQUU7VUFBRSxXQUFXLGdDQUFHLGtCQUFrQjtBQUNuRSxVQUFJLFlBQVksR0FBRyxFQUFFLENBQUM7OztBQUd0QixVQUFJLE9BQU8sY0FBYyxLQUFLLFFBQVEsRUFBRTtBQUN0QyxZQUFJLEdBQUcsR0FBRyxjQUFjLENBQUM7O0FBRXpCLHNCQUFjLHVCQUNYLEdBQUcsRUFBRyxXQUFXLENBQ25CLENBQUM7T0FDSCxNQUFNLElBQUksS0FBSyxDQUFDLE9BQU8sQ0FBQyxjQUFjLENBQUMsRUFBRTtBQUN4QyxzQkFBYyxHQUFHLGNBQWMsQ0FBQyxNQUFNLENBQUMsVUFBQyxNQUFNLEVBQUUsR0FBRyxFQUFLO0FBQ3RELGdCQUFNLENBQUMsR0FBRyxDQUFDLEdBQUcsV0FBVyxDQUFDO0FBQzFCLGlCQUFPLE1BQU0sQ0FBQztTQUNmLEVBQUUsRUFBRSxDQUFDLENBQUM7T0FDUjs7QUFFRCxXQUFLLElBQUksR0FBRyxJQUFJLGNBQWMsRUFBRTttQkFBdkIsR0FBRztBQUNWLGNBQUksS0FBSyxHQUFHLE1BQUssSUFBSSxDQUFDLFFBQVEsQ0FBQyxHQUFHLENBQUMsQ0FBQzs7QUFFcEMsY0FBSSxPQUFPLEtBQUssS0FBSyxXQUFXLEVBQUUsTUFBTSxJQUFJLEtBQUsseUNBQ1QsR0FBRyx1QkFDMUMsQ0FBQzs7QUFFRixjQUFJLGdCQUFnQixHQUFHLGNBQWMsQ0FBQyxHQUFHLENBQUMsQ0FBQzs7QUFFM0MsY0FBSSxnQkFBZ0IsS0FBSyxJQUFJLEVBQUUsZ0JBQWdCLEdBQUcsa0JBQWtCLENBQUM7O0FBRXJFLDBCQUFnQixHQUFHLGdCQUFnQixDQUFDLElBQUksT0FBTSxDQUFDOztBQUUvQyxjQUFJLGlCQUFpQixHQUFHLGdCQUFnQixDQUFDLEtBQUssQ0FBQyxDQUFDOztBQUVoRCxjQUFJLFFBQVEsR0FBRyxZQUFNO0FBQ25CLGdCQUFJLEtBQUssR0FBRyxnQkFBZ0IsQ0FBQyxLQUFLLENBQUMsQ0FBQztBQUNwQyxrQkFBSyxRQUFRLENBQUMsS0FBSyxDQUFDLENBQUM7V0FDdEIsQ0FBQzs7QUFFRixlQUFLLENBQUMsV0FBVyxDQUFDLFFBQVEsRUFBRSxRQUFRLENBQUMsQ0FBQzs7QUFFdEMsZ0JBQU0sQ0FBQyxNQUFLLGVBQWUsc0JBQ3hCLEdBQUcsRUFBRyxRQUFRLEVBQ2YsQ0FBQzs7QUFFSCxnQkFBTSxDQUFDLFlBQVksRUFBRSxpQkFBaUIsQ0FBQyxDQUFDO1dBMUJqQyxHQUFHO09BMkJYOztBQUVELGFBQU8sWUFBWSxDQUFDO0tBQ3JCOztHQUVGLENBQUE7Q0FFRjs7QUFFRCxTQUFTLGtCQUFrQixDQUFDLEtBQUssRUFBRTtBQUNqQyxTQUFPLEtBQUssQ0FBQyxLQUFLLENBQUM7Q0FDcEIiLCJmaWxlIjoic3JjL2FkZG9ucy9GbHV4TWl4aW4uanMiLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIEZsdXggTWl4aW5cbiAqXG4gKiBFeHBvcnRzIGEgZnVuY3Rpb24gdGhhdCBjcmVhdGVzIGEgUmVhY3QgY29tcG9uZW50IG1peGluLiBUaGUgbWl4aW4gZXhwb3Nlc1xuICogYSBGbHV4IGluc3RhbmNlIGFzIGB0aGlzLmZsdXhgLiBUaGlzIHJlcXVpcmVzIHRoYXQgZmx1eCBiZSBwYXNzZWQgYXMgZWl0aGVyXG4gKiBjb250ZXh0IG9yIGFzIGEgcHJvcCAocHJvcCB0YWtlcyBwcmVjZWRlbmNlKS4gQ2hpbGRyZW4gYWxzbyBhcmUgZ2l2ZW4gYWNjZXNzXG4gKiB0byBmbHV4IGluc3RhbmNlIGFzIGBjb250ZXh0LmZsdXhgLlxuICpcbiAqIEl0IGFsc28gYWRkcyB0aGUgbWV0aG9kIGBjb25uZWN0VG9TdG9yZXMoKWAsIHdoaWNoIGVuc3VyZXMgdGhhdCB0aGUgY29tcG9uZW50XG4gKiBzdGF0ZSBzdGF5cyBpbiBzeW5jIHdpdGggdGhlIHNwZWNpZmllZCBGbHV4IHN0b3Jlcy4gU2VlIHRoZSBpbmxpbmUgZG9jc1xuICogb2YgYGNvbm5lY3RUb1N0b3Jlc2AgZm9yIGRldGFpbHMuXG4gKlxuICogQW55IGFyZ3VtZW50cyBwYXNzZWQgdG8gdGhlIG1peGluIGNyZWF0b3IgYXJlIHBhc3NlZCB0byBgY29ubmVjdFRvU3RvcmVzKClgXG4gKiBhbmQgdXNlZCBhcyB0aGUgcmV0dXJuIHZhbHVlIG9mIGBnZXRJbml0aWFsU3RhdGUoKWAuIFRoaXMgbGV0cyB5b3UgaGFuZGxlXG4gKiBhbGwgb2YgdGhlIHN0YXRlIGluaXRpYWxpemF0aW9uIGFuZCB1cGRhdGVzIGluIGEgc2luZ2xlIHBsYWNlLCB3aGlsZSByZW1vdmluZ1xuICogdGhlIGJ1cmRlbiBvZiBtYW51YWxseSBhZGRpbmcgYW5kIHJlbW92aW5nIHN0b3JlIGxpc3RlbmVycy5cbiAqXG4gKiBAZXhhbXBsZVxuICogbGV0IENvbXBvbmVudCA9IFJlYWN0LmNyZWF0ZUNsYXNzKHtcbiAqICAgbWl4aW5zOiBbRmx1eE1peGluKHtcbiAqICAgICBzdG9yZUE6IHN0b3JlID0+ICh7XG4gKiAgICAgICBmb286IHN0b3JlLnN0YXRlLmEsXG4gKiAgICAgfSksXG4gKiAgICAgc3RvcmVCOiBzdG9yZSA9PiAoe1xuICogICAgICAgYmFyOiBzdG9yZS5zdGF0ZS5iLFxuICogICAgIH0pXG4gKiAgIH1dXG4gKiB9KTtcbiAqL1xuXG4ndXNlIHN0cmljdCc7XG5cbmltcG9ydCB7IFByb3BUeXBlcyB9IGZyb20gJ3JlYWN0JztcbmltcG9ydCB7IEZsdXggfSBmcm9tICcuLi9GbHV4JztcbmltcG9ydCBhc3NpZ24gZnJvbSAnb2JqZWN0LWFzc2lnbic7XG5cblxuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gRmx1eE1peGluKC4uLmFyZ3MpIHtcblxuICByZXR1cm4ge1xuXG4gICAgY29udGV4dFR5cGVzOiB7XG4gICAgICBmbHV4OiBQcm9wVHlwZXMuaW5zdGFuY2VPZihGbHV4KSxcbiAgICB9LFxuXG4gICAgY2hpbGRDb250ZXh0VHlwZXM6IHtcbiAgICAgIGZsdXg6IFByb3BUeXBlcy5pbnN0YW5jZU9mKEZsdXgpLFxuICAgIH0sXG5cbiAgICBnZXRDaGlsZENvbnRleHQoKSB7XG4gICAgICByZXR1cm4ge1xuICAgICAgICBmbHV4OiB0aGlzLmZsdXhcbiAgICAgIH07XG4gICAgfSxcblxuICAgIGdldEluaXRpYWxTdGF0ZSgpIHtcbiAgICAgIHRoaXMuX2ZsdXhfbGlzdGVuZXJzID0ge307XG4gICAgICB0aGlzLmZsdXggPSB0aGlzLnByb3BzLmZsdXggfHwgdGhpcy5jb250ZXh0LmZsdXg7XG5cbiAgICAgIGlmICghKHRoaXMuZmx1eCBpbnN0YW5jZW9mIEZsdXgpKSB7XG4gICAgICAgIC8vIFRPRE86IHByaW50IHRoZSBhY3R1YWwgY2xhc3MgbmFtZSBoZXJlXG4gICAgICAgIHRocm93IG5ldyBFcnJvcihcbiAgICAgICAgICBgRmx1eE1peGluOiBDb3VsZCBub3QgZmluZCBGbHV4IGluc3RhbmNlLiBFbnN1cmUgdGhhdCB5b3VyIGNvbXBvbmVudCBgXG4gICAgICAgICsgYGhhcyBlaXRoZXIgXFxgdGhpcy5jb250ZXh0LmZsdXhcXGAgb3IgXFxgdGhpcy5wcm9wcy5mbHV4XFxgLmBcbiAgICAgICAgKTtcbiAgICAgIH1cblxuICAgICAgcmV0dXJuIHRoaXMuY29ubmVjdFRvU3RvcmVzKC4uLmFyZ3MpO1xuICAgIH0sXG5cbiAgICBjb21wb25lbnRXaWxsVW5tb3VudCgpIHtcbiAgICAgIGZvciAobGV0IGtleSBpbiB0aGlzLl9mbHV4X2xpc3RlbmVycykge1xuICAgICAgICBpZiAoIXRoaXMuX2ZsdXhfbGlzdGVuZXJzLmhhc093blByb3BlcnR5KGtleSkpIGNvbnRpbnVlO1xuXG4gICAgICAgIGxldCBzdG9yZSA9IHRoaXMuZmx1eC5nZXRTdG9yZShrZXkpO1xuICAgICAgICBpZiAodHlwZW9mIHN0b3JlID09PSAndW5kZWZpbmVkJykgY29udGludWU7XG5cbiAgICAgICAgbGV0IGxpc3RlbmVyID0gdGhpcy5fZmx1eF9saXN0ZW5lcnNba2V5XTtcblxuICAgICAgICBzdG9yZS5yZW1vdmVMaXN0ZW5lcignY2hhbmdlJywgbGlzdGVuZXIpO1xuICAgICAgfVxuICAgIH0sXG5cbiAgICAvKipcbiAgICAgKiBDb25uZWN0IGNvbXBvbmVudCB0byBzdG9yZXMsIGdldCB0aGUgY29tYmluZWQgaW5pdGlhbCBzdGF0ZSwgYW5kXG4gICAgICogc3Vic2NyaWJlIHRvIGZ1dHVyZSBjaGFuZ2VzLiBUaGVyZSBhcmUgdGhyZWUgd2F5cyB0byBjYWxsIGl0LiBUaGVcbiAgICAgKiBzaW1wbGVzdCBpcyB0byBwYXNzIGEgc2luZ2xlIHN0b3JlIGtleSBhbmQsIG9wdGlvbmFsbHksIGEgc3RhdGUgZ2V0dGVyLlxuICAgICAqIFRoZSBzdGF0ZSBnZXR0ZXIgaXMgYSBmdW5jdGlvbiB0aGF0IHRha2VzIHRoZSBzdG9yZSBhcyBhIHBhcmFtZXRlciBhbmRcbiAgICAgKiByZXR1cm5zIHRoZSBzdGF0ZSB0aGF0IHNob3VsZCBiZSBwYXNzZWQgdG8gdGhlIGNvbXBvbmVudCdzIGBzZXRTdGF0ZSgpYC5cbiAgICAgKiBJZiBubyBzdGF0ZSBnZXR0ZXIgaXMgc3BlY2lmaWVkLCB0aGUgZGVmYXVsdCBnZXR0ZXIgaXMgdXNlZCwgd2hpY2ggc2ltcGx5XG4gICAgICogcmV0dXJucyB0aGUgZW50aXJlIHN0b3JlIHN0YXRlLlxuICAgICAqXG4gICAgICogVGhlIHNlY29uZCBmb3JtIGFjY2VwdHMgYW4gYXJyYXkgb2Ygc3RvcmUga2V5cy4gV2l0aCB0aGlzIGZvcm0sIGV2ZXJ5XG4gICAgICogc3RvcmUgdXNlcyB0aGUgZGVmYXVsdCBzdGF0ZSBnZXR0ZXIuXG4gICAgICpcbiAgICAgKiBUaGUgbGFzdCBmb3JtIGFjY2VwdHMgYW4gb2JqZWN0IG9mIHN0b3JlIGtleXMgbWFwcGVkIHRvIHN0YXRlIGdldHRlcnMuIEFzXG4gICAgICogYSBzaG9ydGN1dCwgeW91IGNhbiBwYXNzIGBudWxsYCBhcyBhIHN0YXRlIGdldHRlciB0byB1c2UgdGhlIGRlZmF1bHRcbiAgICAgKiBzdGF0ZSBnZXR0ZXIuXG4gICAgICpcbiAgICAgKiBSZXR1cm5zIHRoZSBjb21iaW5lZCBpbml0aWFsIHN0YXRlIG9mIGFsbCBzcGVjaWZpZWQgc3RvcmVzLlxuICAgICAqXG4gICAgICogVGhpcyB3YXkgeW91IGNhbiB3cml0ZSBhbGwgdGhlIGluaXRpYWxpemF0aW9uIGFuZCB1cGRhdGUgbG9naWMgaW4gYSBzaW5nbGVcbiAgICAgKiBsb2NhdGlvbiwgd2l0aG91dCBoYXZpbmcgdG8gbWVzcyB3aXRoIGFkZGluZy9yZW1vdmluZyBsaXN0ZW5lcnMuXG4gICAgICpcbiAgICAgKiBAdHlwZSB7c3RyaW5nfGFycmF5fG9iamVjdH0gc3RhdGVHZXR0ZXJNYXAgLSBtYXAgb2Yga2V5cyB0byBnZXR0ZXJzXG4gICAgICogQHJldHVybnMge29iamVjdH0gQ29tYmluZWQgaW5pdGlhbCBzdGF0ZSBvZiBzdG9yZXNcbiAgICAgKi9cbiAgICBjb25uZWN0VG9TdG9yZXMoc3RhdGVHZXR0ZXJNYXAgPSB7fSwgc3RhdGVHZXR0ZXIgPSBkZWZhdWx0U3RhdGVHZXR0ZXIpIHtcbiAgICAgIGxldCBpbml0aWFsU3RhdGUgPSB7fTtcblxuICAgICAgLy8gRW5zdXJlIHRoYXQgc3RhdGVHZXR0ZXJNYXAgaXMgYW4gb2JqZWN0XG4gICAgICBpZiAodHlwZW9mIHN0YXRlR2V0dGVyTWFwID09PSAnc3RyaW5nJykge1xuICAgICAgICBsZXQga2V5ID0gc3RhdGVHZXR0ZXJNYXA7XG5cbiAgICAgICAgc3RhdGVHZXR0ZXJNYXAgPSB7XG4gICAgICAgICAgW2tleV06IHN0YXRlR2V0dGVyLFxuICAgICAgICB9O1xuICAgICAgfSBlbHNlIGlmIChBcnJheS5pc0FycmF5KHN0YXRlR2V0dGVyTWFwKSkge1xuICAgICAgICBzdGF0ZUdldHRlck1hcCA9IHN0YXRlR2V0dGVyTWFwLnJlZHVjZSgocmVzdWx0LCBrZXkpID0+IHtcbiAgICAgICAgICByZXN1bHRba2V5XSA9IHN0YXRlR2V0dGVyO1xuICAgICAgICAgIHJldHVybiByZXN1bHQ7XG4gICAgICAgIH0sIHt9KTtcbiAgICAgIH1cblxuICAgICAgZm9yIChsZXQga2V5IGluIHN0YXRlR2V0dGVyTWFwKSB7XG4gICAgICAgIGxldCBzdG9yZSA9IHRoaXMuZmx1eC5nZXRTdG9yZShrZXkpO1xuXG4gICAgICAgIGlmICh0eXBlb2Ygc3RvcmUgPT09ICd1bmRlZmluZWQnKSB0aHJvdyBuZXcgRXJyb3IoXG4gICAgICAgICAgYGNvbm5lY3RUb1N0b3JlcygpOiBTdG9yZSB3aXRoIGtleSAnJHtrZXl9JyBkb2VzIG5vdCBleGlzdC5gXG4gICAgICAgICk7XG5cbiAgICAgICAgbGV0IHN0b3JlU3RhdGVHZXR0ZXIgPSBzdGF0ZUdldHRlck1hcFtrZXldO1xuXG4gICAgICAgIGlmIChzdG9yZVN0YXRlR2V0dGVyID09PSBudWxsKSBzdG9yZVN0YXRlR2V0dGVyID0gZGVmYXVsdFN0YXRlR2V0dGVyO1xuXG4gICAgICAgIHN0b3JlU3RhdGVHZXR0ZXIgPSBzdG9yZVN0YXRlR2V0dGVyLmJpbmQodGhpcyk7XG5cbiAgICAgICAgbGV0IGluaXRpYWxTdG9yZVN0YXRlID0gc3RvcmVTdGF0ZUdldHRlcihzdG9yZSk7XG5cbiAgICAgICAgbGV0IGxpc3RlbmVyID0gKCkgPT4ge1xuICAgICAgICAgIGxldCBzdGF0ZSA9IHN0b3JlU3RhdGVHZXR0ZXIoc3RvcmUpO1xuICAgICAgICAgIHRoaXMuc2V0U3RhdGUoc3RhdGUpO1xuICAgICAgICB9O1xuXG4gICAgICAgIHN0b3JlLmFkZExpc3RlbmVyKCdjaGFuZ2UnLCBsaXN0ZW5lcik7XG5cbiAgICAgICAgYXNzaWduKHRoaXMuX2ZsdXhfbGlzdGVuZXJzLCB7XG4gICAgICAgICAgW2tleV06IGxpc3RlbmVyLFxuICAgICAgICB9KTtcblxuICAgICAgICBhc3NpZ24oaW5pdGlhbFN0YXRlLCBpbml0aWFsU3RvcmVTdGF0ZSk7XG4gICAgICB9XG5cbiAgICAgIHJldHVybiBpbml0aWFsU3RhdGU7XG4gICAgfVxuXG4gIH1cblxufTtcblxuZnVuY3Rpb24gZGVmYXVsdFN0YXRlR2V0dGVyKHN0b3JlKSB7XG4gIHJldHVybiBzdG9yZS5zdGF0ZTtcbn1cbiJdfQ==
-
-/***/ },
-/* 195 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! qwest 1.5.4 (https://github.com/pyrsmk/qwest) */
-	
-	;(function(context,name,definition){
-		if(typeof module!='undefined' && module.exports){
-			module.exports=definition;
-		}
-		else if(true){
-			!(__WEBPACK_AMD_DEFINE_FACTORY__ = (definition), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		}
-		else{
-			context[name]=definition;
-		}
-	}(this,'qwest',function(){
-	
-		var win=window,
-			doc=document,
-			before,
-			// Default response type for XDR in auto mode
-			defaultXdrResponseType='json',
-			// Variables for limit mechanism
-			limit=null,
-			requests=0,
-			request_stack=[],
-			// Get XMLHttpRequest object
-			getXHR=function(){
-					return win.XMLHttpRequest?
-							new XMLHttpRequest():
-							new ActiveXObject('Microsoft.XMLHTTP');
-				},
-			// Guess XHR version
-			xhr2=(getXHR().responseType===''),
-	
-		// Core function
-		qwest=function(method,url,data,options,before){
-	
-			// Format
-			method=method.toUpperCase();
-			data=data || null;
-			options=options || {};
-	
-			// Define variables
-			var nativeResponseParsing=false,
-				crossOrigin,
-				xhr,
-				xdr=false,
-				timeoutInterval,
-				aborted=false,
-				retries=0,
-				headers={},
-				mimeTypes={
-					text: '*/*',
-					xml: 'text/xml',
-					json: 'application/json',
-					arraybuffer: null,
-					formdata: null,
-					document: null,
-					file: null,
-					blob: null
-				},
-				contentType='Content-Type',
-				vars='',
-				i,j,
-				serialized,
-				then_stack=[],
-				catch_stack=[],
-				complete_stack=[],
-				response,
-				success,
-				error,
-				func,
-	
-			// Define promises
-			promises={
-				then:function(func){
-					if(options.async){
-						then_stack.push(func);
-					}
-					else if(success){
-						func.call(xhr,response);
-					}
-					return promises;
-				},
-				'catch':function(func){
-					if(options.async){
-						catch_stack.push(func);
-					}
-					else if(error){
-						func.call(xhr,response);
-					}
-					return promises;
-				},
-				complete:function(func){
-					if(options.async){
-						complete_stack.push(func);
-					}
-					else{
-						func.call(xhr);
-					}
-					return promises;
-				}
-			},
-			promises_limit={
-				then:function(func){
-					request_stack[request_stack.length-1].then.push(func);
-					return promises_limit;
-				},
-				'catch':function(func){
-					request_stack[request_stack.length-1]['catch'].push(func);
-					return promises_limit;
-				},
-				complete:function(func){
-					request_stack[request_stack.length-1].complete.push(func);
-					return promises_limit;
-				}
-			},
-	
-			// Handle the response
-			handleResponse=function(){
-				// Verify request's state
-				// --- https://stackoverflow.com/questions/7287706/ie-9-javascript-error-c00c023f
-				if(aborted){
-					return;
-				}
-				// Prepare
-				var i,req,p,responseType;
-				--requests;
-				// Clear the timeout
-				clearInterval(timeoutInterval);
-				// Launch next stacked request
-				if(request_stack.length){
-					req=request_stack.shift();
-					p=qwest(req.method,req.url,req.data,req.options,req.before);
-					for(i=0;func=req.then[i];++i){
-						p.then(func);
-					}
-					for(i=0;func=req['catch'][i];++i){
-						p['catch'](func);
-					}
-					for(i=0;func=req.complete[i];++i){
-						p.complete(func);
-					}
-				}
-				// Handle response
-				try{
-					// Verify status code
-					// --- https://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
-					if('status' in xhr && !/^2|1223/.test(xhr.status)){
-						throw xhr.status+' ('+xhr.statusText+')';
-					}
-					// Init
-					var responseText='responseText',
-						responseXML='responseXML',
-						parseError='parseError';
-					// Process response
-					if(nativeResponseParsing && 'response' in xhr && xhr.response!==null){
-						response=xhr.response;
-					}
-					else if(options.responseType=='document'){
-						var frame=doc.createElement('iframe');
-						frame.style.display='none';
-						doc.body.appendChild(frame);
-						frame.contentDocument.open();
-						frame.contentDocument.write(xhr.response);
-						frame.contentDocument.close();
-						response=frame.contentDocument;
-						doc.body.removeChild(frame);
-					}
-					else{
-						// Guess response type
-						responseType=options.responseType;
-						if(responseType=='auto'){
-							if(xdr){
-								responseType=defaultXdrResponseType;
-							}
-							else{
-								switch(xhr.getResponseHeader(contentType)){
-									case mimeTypes.json:
-										responseType='json';
-										break;
-									case mimeTypes.xml:
-										responseType='xml';
-										break;
-									default:
-										responseType='text';
-								}
-							}
-						}
-						// Handle response type
-						switch(responseType){
-							case 'json':
-								try{
-									if('JSON' in win){
-										response=JSON.parse(xhr[responseText]);
-									}
-									else{
-										response=eval('('+xhr[responseText]+')');
-									}
-								}
-								catch(e){
-									throw "Error while parsing JSON body : "+e;
-								}
-								break;
-							case 'xml':
-								// Based on jQuery's parseXML() function
-								try{
-									// Standard
-									if(win.DOMParser){
-										response=(new DOMParser()).parseFromString(xhr[responseText],'text/xml');
-									}
-									// IE<9
-									else{
-										response=new ActiveXObject('Microsoft.XMLDOM');
-										response.async='false';
-										response.loadXML(xhr[responseText]);
-									}
-								}
-								catch(e){
-									response=undefined;
-								}
-								if(!response || !response.documentElement || response.getElementsByTagName('parsererror').length){
-									throw 'Invalid XML';
-								}
-								break;
-							default:
-								response=xhr[responseText];
-						}
-					}
-					// Execute 'then' stack
-					success=true;
-					p=response;
-					if(options.async){
-						for(i=0;func=then_stack[i];++i){
-							p=func.call(xhr,p);
-						}
-					}
-				}
-				catch(e){
-					error=true;
-					// Execute 'catch' stack
-					if(options.async){
-						for(i=0;func=catch_stack[i];++i){
-							func.call(xhr,e+' ('+url+')');
-						}
-					}
-				}
-				// Execute complete stack
-				if(options.async){
-					for(i=0;func=complete_stack[i];++i){
-						func.call(xhr);
-					}
-				}
-			},
-	
-			// Recursively build the query string
-			buildData=function(data,key){
-				var res=[],
-					enc=encodeURIComponent,
-					p;
-				if(typeof data==='object' && data!=null) {
-					for(p in data) {
-						if(data.hasOwnProperty(p)) {
-							var built=buildData(data[p],key?key+'['+p+']':p);
-							if(built!==''){
-								res=res.concat(built);
-							}
-						}
-					}
-				}
-				else if(data!=null && key!=null){
-					res.push(enc(key)+'='+enc(data));
-				}
-				return res.join('&');
-			};
-	
-			// New request
-			++requests;
-	
-			// Normalize options
-			options.async='async' in options?!!options.async:true;
-			options.cache='cache' in options?!!options.cache:(method!='GET');
-			options.dataType='dataType' in options?options.dataType.toLowerCase():'post';
-			options.responseType='responseType' in options?options.responseType.toLowerCase():'auto';
-			options.user=options.user || '';
-			options.password=options.password || '';
-			options.withCredentials=!!options.withCredentials;
-			options.timeout=options.timeout?parseInt(options.timeout,10):3000;
-			options.retries=options.retries?parseInt(options.retries,10):3;
-	
-			// Guess if we're dealing with a cross-origin request
-			i=url.match(/\/\/(.+?)\//);
-			crossOrigin=i && i[1]?i[1]!=location.host:false;
-	
-			// Prepare data
-			if('ArrayBuffer' in win && data instanceof ArrayBuffer){
-				options.dataType='arraybuffer';
-			}
-			else if('Blob' in win && data instanceof Blob){
-				options.dataType='blob';
-			}
-			else if('Document' in win && data instanceof Document){
-				options.dataType='document';
-			}
-			else if('FormData' in win && data instanceof FormData){
-				options.dataType='formdata';
-			}
-			switch(options.dataType){
-				case 'json':
-					data=JSON.stringify(data);
-					break;
-				case 'post':
-					data=buildData(data);
-			}
-	
-			// Prepare headers
-			if(options.headers){
-				var format=function(match,p1,p2){
-					return p1+p2.toUpperCase();
-				};
-				for(i in options.headers){
-					headers[i.replace(/(^|-)([^-])/g,format)]=options.headers[i];
-				}
-			}
-			if(!headers[contentType] && method!='GET'){
-				if(options.dataType in mimeTypes){
-					if(mimeTypes[options.dataType]){
-						headers[contentType]=mimeTypes[options.dataType];
-					}
-				}
-				else{
-					headers[contentType]='application/x-www-form-urlencoded';
-				}
-			}
-			if(!headers.Accept){
-				headers.Accept=(options.responseType in mimeTypes)?mimeTypes[options.responseType]:'*/*';
-			}
-			if(!crossOrigin && !headers['X-Requested-With']){ // because that header breaks in legacy browsers with CORS
-				headers['X-Requested-With']='XMLHttpRequest';
-			}
-	
-			// Prepare URL
-			if(method=='GET'){
-				vars+=data;
-			}
-			if(!options.cache){
-				if(vars){
-					vars+='&';
-				}
-				vars+='__t='+(+new Date());
-			}
-			if(vars){
-				url+=(/\?/.test(url)?'&':'?')+vars;
-			}
-	
-			// The limit has been reached, stock the request
-			if(limit && requests==limit){
-				request_stack.push({
-					method	: method,
-					url		: url,
-					data	: data,
-					options	: options,
-					before	: before,
-					then	: [],
-					'catch'	: [],
-					complete: []
-				});
-				return promises_limit;
-			}
-	
-			// Send the request
-			var send=function(){
-				// Get XHR object
-				xhr=getXHR();
-				if(crossOrigin){
-					if(!('withCredentials' in xhr) && win.XDomainRequest){
-						xhr=new XDomainRequest(); // CORS with IE8/9
-						xdr=true;
-						if(method!='GET' && method!='POST'){
-							method='POST';
-						}
-					}
-				}
-				// Open connection
-				if(xdr){
-					xhr.open(method,url);
-				}
-				else{
-					xhr.open(method,url,options.async,options.user,options.password);
-					if(xhr2 && options.async){
-						xhr.withCredentials=options.withCredentials;
-					}
-				}
-				// Set headers
-				if(!xdr){
-					for(var i in headers){
-						xhr.setRequestHeader(i,headers[i]);
-					}
-				}
-				// Verify if the response type is supported by the current browser
-				if(xhr2 && options.responseType!='document'){ // Don't verify for 'document' since we're using an internal routine
-					try{
-						xhr.responseType=options.responseType;
-						nativeResponseParsing=(xhr.responseType==options.responseType);
-					}
-					catch(e){}
-				}
-				// Plug response handler
-				if(xhr2 || xdr){
-					xhr.onload=handleResponse;
-				}
-				else{
-					xhr.onreadystatechange=function(){
-						if(xhr.readyState==4){
-							handleResponse();
-						}
-					};
-				}
-				// Override mime type to ensure the response is well parsed
-				if(options.responseType!=='auto' && 'overrideMimeType' in xhr){
-					xhr.overrideMimeType(mimeTypes[options.responseType]);
-				}
-				// Run 'before' callback
-				if(before){
-					before.call(xhr);
-				}
-				// Send request
-				if(xdr){
-					setTimeout(function(){ // https://developer.mozilla.org/en-US/docs/Web/API/XDomainRequest
-						xhr.send();
-					},0);
-				}
-				else{
-					xhr.send(method!='GET'?data:null);
-				}
-			};
-	
-			// Timeout/retries
-			var timeout=function(){
-				timeoutInterval=setTimeout(function(){
-					aborted=true;
-					xhr.abort();
-					if(!options.retries || ++retries!=options.retries){
-						aborted=false;
-						timeout();
-						send();
-					}
-					else{
-						aborted=false;
-						error=true;
-						response='Timeout ('+url+')';
-						if(options.async){
-							for(i=0;func=catch_stack[i];++i){
-								func.call(xhr,response);
-							}
-						}
-					}
-				},options.timeout);
-			};
-	
-			// Start the request
-			timeout();
-			send();
-	
-			// Return promises
-			return promises;
-	
-		};
-	
-		// Return external qwest object
-		var create=function(method){
-				return function(url,data,options){
-					var b=before;
-					before=null;
-					return qwest(method,url,data,options,b);
-				};
-			},
-			obj={
-				before: function(callback){
-					before=callback;
-					return obj;
-				},
-				get: create('GET'),
-				post: create('POST'),
-				put: create('PUT'),
-				'delete': create('DELETE'),
-				xhr2: xhr2,
-				limit: function(by){
-					limit=by;
-				},
-				setDefaultXdrResponseType: function(type){
-					defaultXdrResponseType=type.toLowerCase();
-				}
-			};
-		return obj;
-	
-	}()));
-
 
 /***/ }
 /******/ ])

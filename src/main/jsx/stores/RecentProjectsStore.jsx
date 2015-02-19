@@ -24,6 +24,7 @@
 
 'use strict';
 import { Store } from 'flummox';
+import jQuery from 'jquery';
 export default class RecentProjectsStore extends Store {
     constructor(flux) {
         super();
@@ -32,7 +33,7 @@ export default class RecentProjectsStore extends Store {
         this.state = {}
     }
     handleInitialLoad(recentProjects){
-      this.setState({recentProjects: recentProjects});
+      this.setState({recentProjects: jQuery.parseJSON(recentProjects)});
     }
     recentProjects(){
         return this.getState();

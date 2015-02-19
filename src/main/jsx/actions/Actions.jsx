@@ -27,9 +27,11 @@ import {recentProjects} from "../api/RecentProjectsApi"
 import Polyfill from "6to5/polyfill";
 
 export default class AppActions extends Actions {
-    async getRecentProjects(){
-        let projects = await recentProjects();
-      this.initialLoadRecentProjects(recentProjects());
+    getRecentProjects(){
+        var outer = this;
+        let projects = recentProjects().then(function(projects){
+            outer.initialLoadRecentProjects(projects);
+        })
     }
     initialLoadRecentProjects(recentProjects) {
         return recentProjects;
