@@ -31,6 +31,7 @@ import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.util.JsonResponse;
 import hudson.Extension;
+import hudson.model.Result;
 import hudson.model.RootAction;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONSerializer;
@@ -65,9 +66,14 @@ public class RecentProjects implements RootAction{
             HashMap<String, Object> projectMap = new HashMap<String, Object>();
             projectMap.put("name",project.getFullName());
             projectMap.put("url",project.getUrl());
+            DynamicBuild lastBuild = project.getLastBuild();
+            if(lastBuild!=null){
+                projectMap.put("lastBuildStatus",lastBuild.getResult().toString());
+            }else{
+                projectMap.put("lastBuildStatus", Result.ABORTED.toString());
+            }
         }
-        List<ImmutableMap<String, String>> responseOuput = Arrays.asList(ImmutableMap.of("name", "meow1", "url", "/meow"));
-        JsonResponse.render(rsp,responseOuput);
+        JsonResponse.render(rsp,output);
 
     }
     public Map<DynamicProject, List<DynamicBuild>> getRecentProjects(){

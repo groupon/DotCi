@@ -42,7 +42,7 @@ class RecentProject extends React.Component{
         return (
             <li key={this.props.url} className="list-group-item">
                 <a href={this.props.url}> {this.props.name}  </a>
-                <BuildIcon state="ABORTED"/>
+                <BuildIcon state={this.props.lastBuildStatus}/>
             </li>
         );
     }
