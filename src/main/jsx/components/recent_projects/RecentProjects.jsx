@@ -23,22 +23,11 @@
  * THE SOFTWARE.
  */
 import React from "react";
-import BuildIcon from "../BuildIcon"
+import BuildIcon from "../lib/BuildIcon"
 import FluxComponent from 'flummox/component';
 import Panel from "react-bootstrap/lib/Panel"
 import ListGroup from "react-bootstrap/lib/ListGroup"
 import ListGroupItem from "react-bootstrap/lib/ListGroupItem"
-
-var RecentProjectsHeader = React.createClass({
-    render(){
-        return (
-            <div className="panel-heading">
-                <h3 className="panel-title">Recent Projects</h3>
-            </div>
-        );
-    }
-});
-
 
 var RecentProject = React.createClass({
     render(){
