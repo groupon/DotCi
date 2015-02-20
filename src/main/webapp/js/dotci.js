@@ -44,10 +44,6 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
-	
-	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-	
 	/*
 	 * The MIT License (MIT)
 	 *
@@ -71,7 +67,9 @@
 	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 	 * THE SOFTWARE.
 	 */
+	"use strict";
 	
+	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 	
 	var React = _interopRequire(__webpack_require__(1));
 	

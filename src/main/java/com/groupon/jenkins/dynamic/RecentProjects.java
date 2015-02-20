@@ -65,7 +65,7 @@ public class RecentProjects implements RootAction{
         for(DynamicProject project: recentProjects.keySet()){
             HashMap<String, Object> projectMap = new HashMap<String, Object>();
             projectMap.put("name",project.getFullName());
-            projectMap.put("url",project.getUrl());
+            projectMap.put("url",project.getAbsoluteUrl());
             DynamicBuild lastBuild = project.getLastBuild();
             if(lastBuild!=null){
                 projectMap.put("lastBuildStatus",lastBuild.getResult().toString());
