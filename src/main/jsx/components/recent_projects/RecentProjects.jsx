@@ -26,7 +26,7 @@ import React from "react";
 import BuildIcon from "../BuildIcon"
 import FluxComponent from 'flummox/component';
 
-class RecentProjectsHeader extends React.Component{
+var RecentProjectsHeader = React.createClass({
     render(){
         return (
             <div className="panel-heading">
@@ -34,10 +34,10 @@ class RecentProjectsHeader extends React.Component{
             </div>
         );
     }
-};
+});
 
 
-class RecentProject extends React.Component{
+var RecentProject = React.createClass({
     render(){
         return (
             <li key={this.props.url} className="list-group-item">
@@ -46,16 +46,13 @@ class RecentProject extends React.Component{
             </li>
         );
     }
-};
+});
 
-class RecentProjectsWidget extends React.Component{
-    constructor(props) {
-        super(props);
-    }
+var RecentProjectsWidget =React.createClass({
     render(){
         var recentProjects = this.props.recentProjects.map(function (project) {
             return (
-                <RecentProject url={project.url} name ={project.name} lastBuildStatus={project.lastBuildStatus}/>
+                <RecentProject key={project.url} url={project.url} name ={project.name} lastBuildStatus={project.lastBuildStatus}/>
             );
         });
         return (
@@ -67,8 +64,8 @@ class RecentProjectsWidget extends React.Component{
             </div>
         );
     }
-};
-export default class RecentProjectsView extends React.Component{
+});
+export default React.createClass({
     render(){
         return (
             <FluxComponent connectToStores={['recentProjects']} flux={this.props.flux}>
@@ -76,4 +73,4 @@ export default class RecentProjectsView extends React.Component{
             </FluxComponent>
         )
     }
-}
+})
