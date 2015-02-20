@@ -30187,6 +30187,12 @@
 	
 	var FluxComponent = _interopRequire(__webpack_require__(165));
 	
+	var Panel = _interopRequire(__webpack_require__(184));
+	
+	var ListGroup = _interopRequire(__webpack_require__(193));
+	
+	var ListGroupItem = _interopRequire(__webpack_require__(196));
+	
 	var RecentProjectsHeader = React.createClass({ displayName: "RecentProjectsHeader",
 	    render: function render() {
 	        return React.createElement("div", { className: "panel-heading" }, React.createElement("h3", { className: "panel-title" }, "Recent Projects"));
@@ -30196,7 +30202,7 @@
 	
 	var RecentProject = React.createClass({ displayName: "RecentProject",
 	    render: function render() {
-	        return React.createElement("li", { key: this.props.url, className: "list-group-item" }, React.createElement("a", { href: this.props.url }, " ", this.props.name, "  "), React.createElement(BuildIcon, { state: this.props.lastBuildStatus }));
+	        return React.createElement(ListGroupItem, { key: this.props.url }, React.createElement("a", { href: this.props.url }, " ", this.props.name, "  "), React.createElement(BuildIcon, { state: this.props.lastBuildStatus }));
 	    }
 	});
 	
@@ -30205,7 +30211,7 @@
 	        var recentProjects = this.props.recentProjects.map(function (project) {
 	            return React.createElement(RecentProject, { key: project.url, url: project.url, name: project.name, lastBuildStatus: project.lastBuildStatus });
 	        });
-	        return React.createElement("div", { className: "panel panel-info" }, React.createElement(RecentProjectsHeader, null), React.createElement("ul", { className: "list-group" }, recentProjects));
+	        return React.createElement(Panel, { collapsable: true, defaultExpanded: true, header: "Recent Projects" }, React.createElement(ListGroup, { fill: true }, recentProjects));
 	    }
 	});
 	module.exports = React.createClass({
@@ -32315,6 +32321,1355 @@
 	  return store.state;
 	}
 	//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9hZGRvbnMvRmx1eE1peGluLmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQThCQSxZQUFZLENBQUM7Ozs7OztpQkFPVyxTQUFTO0lBTHhCLFNBQVMsV0FBUSxPQUFPLEVBQXhCLFNBQVM7SUFDVCxJQUFJLFdBQVEsU0FBUyxFQUFyQixJQUFJO0lBQ04sTUFBTSwyQkFBTSxlQUFlOztBQUduQixTQUFTLFNBQVMsR0FBVTtvQ0FBTixJQUFJO0FBQUosUUFBSTs7O0FBRXZDLFNBQU87O0FBRUwsZ0JBQVksRUFBRTtBQUNaLFVBQUksRUFBRSxTQUFTLENBQUMsVUFBVSxDQUFDLElBQUksQ0FBQyxFQUNqQzs7QUFFRCxxQkFBaUIsRUFBRTtBQUNqQixVQUFJLEVBQUUsU0FBUyxDQUFDLFVBQVUsQ0FBQyxJQUFJLENBQUMsRUFDakM7O0FBRUQsbUJBQWUsRUFBQSwyQkFBRztBQUNoQixhQUFPO0FBQ0wsWUFBSSxFQUFFLElBQUksQ0FBQyxJQUFJO09BQ2hCLENBQUM7S0FDSDs7QUFFRCxtQkFBZSxFQUFBLDJCQUFHOztBQUNoQixVQUFJLENBQUMsZUFBZSxHQUFHLEVBQUUsQ0FBQztBQUMxQixVQUFJLENBQUMsSUFBSSxHQUFHLElBQUksQ0FBQyxLQUFLLENBQUMsSUFBSSxJQUFJLElBQUksQ0FBQyxPQUFPLENBQUMsSUFBSSxDQUFDOztBQUVqRCxVQUFJLEVBQUUsSUFBSSxDQUFDLElBQUksWUFBWSxJQUFJLENBQUEsQUFBQyxFQUFFOztBQUVoQyxjQUFNLElBQUksS0FBSyxDQUNiLCtIQUMwRCxDQUMzRCxDQUFDO09BQ0g7O0FBRUQsYUFBTyxRQUFBLElBQUksRUFBQyxlQUFlLE1BQUEsT0FBSSxJQUFJLENBQUMsQ0FBQztLQUN0Qzs7QUFFRCx3QkFBb0IsRUFBQSxnQ0FBRztBQUNyQixXQUFLLElBQUksR0FBRyxJQUFJLElBQUksQ0FBQyxlQUFlLEVBQUU7QUFDcEMsWUFBSSxDQUFDLElBQUksQ0FBQyxlQUFlLENBQUMsY0FBYyxDQUFDLEdBQUcsQ0FBQyxFQUFFLFNBQVM7O0FBRXhELFlBQUksS0FBSyxHQUFHLElBQUksQ0FBQyxJQUFJLENBQUMsUUFBUSxDQUFDLEdBQUcsQ0FBQyxDQUFDO0FBQ3BDLFlBQUksT0FBTyxLQUFLLEtBQUssV0FBVyxFQUFFLFNBQVM7O0FBRTNDLFlBQUksUUFBUSxHQUFHLElBQUksQ0FBQyxlQUFlLENBQUMsR0FBRyxDQUFDLENBQUM7O0FBRXpDLGFBQUssQ0FBQyxjQUFjLENBQUMsUUFBUSxFQUFFLFFBQVEsQ0FBQyxDQUFDO09BQzFDO0tBQ0Y7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBMEJELG1CQUFlLEVBQUEsMkJBQXdEOztVQUF2RCxjQUFjLGdDQUFHLEVBQUU7VUFBRSxXQUFXLGdDQUFHLGtCQUFrQjtBQUNuRSxVQUFJLFlBQVksR0FBRyxFQUFFLENBQUM7OztBQUd0QixVQUFJLE9BQU8sY0FBYyxLQUFLLFFBQVEsRUFBRTtBQUN0QyxZQUFJLEdBQUcsR0FBRyxjQUFjLENBQUM7O0FBRXpCLHNCQUFjLHVCQUNYLEdBQUcsRUFBRyxXQUFXLENBQ25CLENBQUM7T0FDSCxNQUFNLElBQUksS0FBSyxDQUFDLE9BQU8sQ0FBQyxjQUFjLENBQUMsRUFBRTtBQUN4QyxzQkFBYyxHQUFHLGNBQWMsQ0FBQyxNQUFNLENBQUMsVUFBQyxNQUFNLEVBQUUsR0FBRyxFQUFLO0FBQ3RELGdCQUFNLENBQUMsR0FBRyxDQUFDLEdBQUcsV0FBVyxDQUFDO0FBQzFCLGlCQUFPLE1BQU0sQ0FBQztTQUNmLEVBQUUsRUFBRSxDQUFDLENBQUM7T0FDUjs7QUFFRCxXQUFLLElBQUksR0FBRyxJQUFJLGNBQWMsRUFBRTttQkFBdkIsR0FBRztBQUNWLGNBQUksS0FBSyxHQUFHLE1BQUssSUFBSSxDQUFDLFFBQVEsQ0FBQyxHQUFHLENBQUMsQ0FBQzs7QUFFcEMsY0FBSSxPQUFPLEtBQUssS0FBSyxXQUFXLEVBQUUsTUFBTSxJQUFJLEtBQUsseUNBQ1QsR0FBRyx1QkFDMUMsQ0FBQzs7QUFFRixjQUFJLGdCQUFnQixHQUFHLGNBQWMsQ0FBQyxHQUFHLENBQUMsQ0FBQzs7QUFFM0MsY0FBSSxnQkFBZ0IsS0FBSyxJQUFJLEVBQUUsZ0JBQWdCLEdBQUcsa0JBQWtCLENBQUM7O0FBRXJFLDBCQUFnQixHQUFHLGdCQUFnQixDQUFDLElBQUksT0FBTSxDQUFDOztBQUUvQyxjQUFJLGlCQUFpQixHQUFHLGdCQUFnQixDQUFDLEtBQUssQ0FBQyxDQUFDOztBQUVoRCxjQUFJLFFBQVEsR0FBRyxZQUFNO0FBQ25CLGdCQUFJLEtBQUssR0FBRyxnQkFBZ0IsQ0FBQyxLQUFLLENBQUMsQ0FBQztBQUNwQyxrQkFBSyxRQUFRLENBQUMsS0FBSyxDQUFDLENBQUM7V0FDdEIsQ0FBQzs7QUFFRixlQUFLLENBQUMsV0FBVyxDQUFDLFFBQVEsRUFBRSxRQUFRLENBQUMsQ0FBQzs7QUFFdEMsZ0JBQU0sQ0FBQyxNQUFLLGVBQWUsc0JBQ3hCLEdBQUcsRUFBRyxRQUFRLEVBQ2YsQ0FBQzs7QUFFSCxnQkFBTSxDQUFDLFlBQVksRUFBRSxpQkFBaUIsQ0FBQyxDQUFDO1dBMUJqQyxHQUFHO09BMkJYOztBQUVELGFBQU8sWUFBWSxDQUFDO0tBQ3JCOztHQUVGLENBQUE7Q0FFRjs7QUFFRCxTQUFTLGtCQUFrQixDQUFDLEtBQUssRUFBRTtBQUNqQyxTQUFPLEtBQUssQ0FBQyxLQUFLLENBQUM7Q0FDcEIiLCJmaWxlIjoic3JjL2FkZG9ucy9GbHV4TWl4aW4uanMiLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIEZsdXggTWl4aW5cbiAqXG4gKiBFeHBvcnRzIGEgZnVuY3Rpb24gdGhhdCBjcmVhdGVzIGEgUmVhY3QgY29tcG9uZW50IG1peGluLiBUaGUgbWl4aW4gZXhwb3Nlc1xuICogYSBGbHV4IGluc3RhbmNlIGFzIGB0aGlzLmZsdXhgLiBUaGlzIHJlcXVpcmVzIHRoYXQgZmx1eCBiZSBwYXNzZWQgYXMgZWl0aGVyXG4gKiBjb250ZXh0IG9yIGFzIGEgcHJvcCAocHJvcCB0YWtlcyBwcmVjZWRlbmNlKS4gQ2hpbGRyZW4gYWxzbyBhcmUgZ2l2ZW4gYWNjZXNzXG4gKiB0byBmbHV4IGluc3RhbmNlIGFzIGBjb250ZXh0LmZsdXhgLlxuICpcbiAqIEl0IGFsc28gYWRkcyB0aGUgbWV0aG9kIGBjb25uZWN0VG9TdG9yZXMoKWAsIHdoaWNoIGVuc3VyZXMgdGhhdCB0aGUgY29tcG9uZW50XG4gKiBzdGF0ZSBzdGF5cyBpbiBzeW5jIHdpdGggdGhlIHNwZWNpZmllZCBGbHV4IHN0b3Jlcy4gU2VlIHRoZSBpbmxpbmUgZG9jc1xuICogb2YgYGNvbm5lY3RUb1N0b3Jlc2AgZm9yIGRldGFpbHMuXG4gKlxuICogQW55IGFyZ3VtZW50cyBwYXNzZWQgdG8gdGhlIG1peGluIGNyZWF0b3IgYXJlIHBhc3NlZCB0byBgY29ubmVjdFRvU3RvcmVzKClgXG4gKiBhbmQgdXNlZCBhcyB0aGUgcmV0dXJuIHZhbHVlIG9mIGBnZXRJbml0aWFsU3RhdGUoKWAuIFRoaXMgbGV0cyB5b3UgaGFuZGxlXG4gKiBhbGwgb2YgdGhlIHN0YXRlIGluaXRpYWxpemF0aW9uIGFuZCB1cGRhdGVzIGluIGEgc2luZ2xlIHBsYWNlLCB3aGlsZSByZW1vdmluZ1xuICogdGhlIGJ1cmRlbiBvZiBtYW51YWxseSBhZGRpbmcgYW5kIHJlbW92aW5nIHN0b3JlIGxpc3RlbmVycy5cbiAqXG4gKiBAZXhhbXBsZVxuICogbGV0IENvbXBvbmVudCA9IFJlYWN0LmNyZWF0ZUNsYXNzKHtcbiAqICAgbWl4aW5zOiBbRmx1eE1peGluKHtcbiAqICAgICBzdG9yZUE6IHN0b3JlID0+ICh7XG4gKiAgICAgICBmb286IHN0b3JlLnN0YXRlLmEsXG4gKiAgICAgfSksXG4gKiAgICAgc3RvcmVCOiBzdG9yZSA9PiAoe1xuICogICAgICAgYmFyOiBzdG9yZS5zdGF0ZS5iLFxuICogICAgIH0pXG4gKiAgIH1dXG4gKiB9KTtcbiAqL1xuXG4ndXNlIHN0cmljdCc7XG5cbmltcG9ydCB7IFByb3BUeXBlcyB9IGZyb20gJ3JlYWN0JztcbmltcG9ydCB7IEZsdXggfSBmcm9tICcuLi9GbHV4JztcbmltcG9ydCBhc3NpZ24gZnJvbSAnb2JqZWN0LWFzc2lnbic7XG5cblxuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gRmx1eE1peGluKC4uLmFyZ3MpIHtcblxuICByZXR1cm4ge1xuXG4gICAgY29udGV4dFR5cGVzOiB7XG4gICAgICBmbHV4OiBQcm9wVHlwZXMuaW5zdGFuY2VPZihGbHV4KSxcbiAgICB9LFxuXG4gICAgY2hpbGRDb250ZXh0VHlwZXM6IHtcbiAgICAgIGZsdXg6IFByb3BUeXBlcy5pbnN0YW5jZU9mKEZsdXgpLFxuICAgIH0sXG5cbiAgICBnZXRDaGlsZENvbnRleHQoKSB7XG4gICAgICByZXR1cm4ge1xuICAgICAgICBmbHV4OiB0aGlzLmZsdXhcbiAgICAgIH07XG4gICAgfSxcblxuICAgIGdldEluaXRpYWxTdGF0ZSgpIHtcbiAgICAgIHRoaXMuX2ZsdXhfbGlzdGVuZXJzID0ge307XG4gICAgICB0aGlzLmZsdXggPSB0aGlzLnByb3BzLmZsdXggfHwgdGhpcy5jb250ZXh0LmZsdXg7XG5cbiAgICAgIGlmICghKHRoaXMuZmx1eCBpbnN0YW5jZW9mIEZsdXgpKSB7XG4gICAgICAgIC8vIFRPRE86IHByaW50IHRoZSBhY3R1YWwgY2xhc3MgbmFtZSBoZXJlXG4gICAgICAgIHRocm93IG5ldyBFcnJvcihcbiAgICAgICAgICBgRmx1eE1peGluOiBDb3VsZCBub3QgZmluZCBGbHV4IGluc3RhbmNlLiBFbnN1cmUgdGhhdCB5b3VyIGNvbXBvbmVudCBgXG4gICAgICAgICsgYGhhcyBlaXRoZXIgXFxgdGhpcy5jb250ZXh0LmZsdXhcXGAgb3IgXFxgdGhpcy5wcm9wcy5mbHV4XFxgLmBcbiAgICAgICAgKTtcbiAgICAgIH1cblxuICAgICAgcmV0dXJuIHRoaXMuY29ubmVjdFRvU3RvcmVzKC4uLmFyZ3MpO1xuICAgIH0sXG5cbiAgICBjb21wb25lbnRXaWxsVW5tb3VudCgpIHtcbiAgICAgIGZvciAobGV0IGtleSBpbiB0aGlzLl9mbHV4X2xpc3RlbmVycykge1xuICAgICAgICBpZiAoIXRoaXMuX2ZsdXhfbGlzdGVuZXJzLmhhc093blByb3BlcnR5KGtleSkpIGNvbnRpbnVlO1xuXG4gICAgICAgIGxldCBzdG9yZSA9IHRoaXMuZmx1eC5nZXRTdG9yZShrZXkpO1xuICAgICAgICBpZiAodHlwZW9mIHN0b3JlID09PSAndW5kZWZpbmVkJykgY29udGludWU7XG5cbiAgICAgICAgbGV0IGxpc3RlbmVyID0gdGhpcy5fZmx1eF9saXN0ZW5lcnNba2V5XTtcblxuICAgICAgICBzdG9yZS5yZW1vdmVMaXN0ZW5lcignY2hhbmdlJywgbGlzdGVuZXIpO1xuICAgICAgfVxuICAgIH0sXG5cbiAgICAvKipcbiAgICAgKiBDb25uZWN0IGNvbXBvbmVudCB0byBzdG9yZXMsIGdldCB0aGUgY29tYmluZWQgaW5pdGlhbCBzdGF0ZSwgYW5kXG4gICAgICogc3Vic2NyaWJlIHRvIGZ1dHVyZSBjaGFuZ2VzLiBUaGVyZSBhcmUgdGhyZWUgd2F5cyB0byBjYWxsIGl0LiBUaGVcbiAgICAgKiBzaW1wbGVzdCBpcyB0byBwYXNzIGEgc2luZ2xlIHN0b3JlIGtleSBhbmQsIG9wdGlvbmFsbHksIGEgc3RhdGUgZ2V0dGVyLlxuICAgICAqIFRoZSBzdGF0ZSBnZXR0ZXIgaXMgYSBmdW5jdGlvbiB0aGF0IHRha2VzIHRoZSBzdG9yZSBhcyBhIHBhcmFtZXRlciBhbmRcbiAgICAgKiByZXR1cm5zIHRoZSBzdGF0ZSB0aGF0IHNob3VsZCBiZSBwYXNzZWQgdG8gdGhlIGNvbXBvbmVudCdzIGBzZXRTdGF0ZSgpYC5cbiAgICAgKiBJZiBubyBzdGF0ZSBnZXR0ZXIgaXMgc3BlY2lmaWVkLCB0aGUgZGVmYXVsdCBnZXR0ZXIgaXMgdXNlZCwgd2hpY2ggc2ltcGx5XG4gICAgICogcmV0dXJucyB0aGUgZW50aXJlIHN0b3JlIHN0YXRlLlxuICAgICAqXG4gICAgICogVGhlIHNlY29uZCBmb3JtIGFjY2VwdHMgYW4gYXJyYXkgb2Ygc3RvcmUga2V5cy4gV2l0aCB0aGlzIGZvcm0sIGV2ZXJ5XG4gICAgICogc3RvcmUgdXNlcyB0aGUgZGVmYXVsdCBzdGF0ZSBnZXR0ZXIuXG4gICAgICpcbiAgICAgKiBUaGUgbGFzdCBmb3JtIGFjY2VwdHMgYW4gb2JqZWN0IG9mIHN0b3JlIGtleXMgbWFwcGVkIHRvIHN0YXRlIGdldHRlcnMuIEFzXG4gICAgICogYSBzaG9ydGN1dCwgeW91IGNhbiBwYXNzIGBudWxsYCBhcyBhIHN0YXRlIGdldHRlciB0byB1c2UgdGhlIGRlZmF1bHRcbiAgICAgKiBzdGF0ZSBnZXR0ZXIuXG4gICAgICpcbiAgICAgKiBSZXR1cm5zIHRoZSBjb21iaW5lZCBpbml0aWFsIHN0YXRlIG9mIGFsbCBzcGVjaWZpZWQgc3RvcmVzLlxuICAgICAqXG4gICAgICogVGhpcyB3YXkgeW91IGNhbiB3cml0ZSBhbGwgdGhlIGluaXRpYWxpemF0aW9uIGFuZCB1cGRhdGUgbG9naWMgaW4gYSBzaW5nbGVcbiAgICAgKiBsb2NhdGlvbiwgd2l0aG91dCBoYXZpbmcgdG8gbWVzcyB3aXRoIGFkZGluZy9yZW1vdmluZyBsaXN0ZW5lcnMuXG4gICAgICpcbiAgICAgKiBAdHlwZSB7c3RyaW5nfGFycmF5fG9iamVjdH0gc3RhdGVHZXR0ZXJNYXAgLSBtYXAgb2Yga2V5cyB0byBnZXR0ZXJzXG4gICAgICogQHJldHVybnMge29iamVjdH0gQ29tYmluZWQgaW5pdGlhbCBzdGF0ZSBvZiBzdG9yZXNcbiAgICAgKi9cbiAgICBjb25uZWN0VG9TdG9yZXMoc3RhdGVHZXR0ZXJNYXAgPSB7fSwgc3RhdGVHZXR0ZXIgPSBkZWZhdWx0U3RhdGVHZXR0ZXIpIHtcbiAgICAgIGxldCBpbml0aWFsU3RhdGUgPSB7fTtcblxuICAgICAgLy8gRW5zdXJlIHRoYXQgc3RhdGVHZXR0ZXJNYXAgaXMgYW4gb2JqZWN0XG4gICAgICBpZiAodHlwZW9mIHN0YXRlR2V0dGVyTWFwID09PSAnc3RyaW5nJykge1xuICAgICAgICBsZXQga2V5ID0gc3RhdGVHZXR0ZXJNYXA7XG5cbiAgICAgICAgc3RhdGVHZXR0ZXJNYXAgPSB7XG4gICAgICAgICAgW2tleV06IHN0YXRlR2V0dGVyLFxuICAgICAgICB9O1xuICAgICAgfSBlbHNlIGlmIChBcnJheS5pc0FycmF5KHN0YXRlR2V0dGVyTWFwKSkge1xuICAgICAgICBzdGF0ZUdldHRlck1hcCA9IHN0YXRlR2V0dGVyTWFwLnJlZHVjZSgocmVzdWx0LCBrZXkpID0+IHtcbiAgICAgICAgICByZXN1bHRba2V5XSA9IHN0YXRlR2V0dGVyO1xuICAgICAgICAgIHJldHVybiByZXN1bHQ7XG4gICAgICAgIH0sIHt9KTtcbiAgICAgIH1cblxuICAgICAgZm9yIChsZXQga2V5IGluIHN0YXRlR2V0dGVyTWFwKSB7XG4gICAgICAgIGxldCBzdG9yZSA9IHRoaXMuZmx1eC5nZXRTdG9yZShrZXkpO1xuXG4gICAgICAgIGlmICh0eXBlb2Ygc3RvcmUgPT09ICd1bmRlZmluZWQnKSB0aHJvdyBuZXcgRXJyb3IoXG4gICAgICAgICAgYGNvbm5lY3RUb1N0b3JlcygpOiBTdG9yZSB3aXRoIGtleSAnJHtrZXl9JyBkb2VzIG5vdCBleGlzdC5gXG4gICAgICAgICk7XG5cbiAgICAgICAgbGV0IHN0b3JlU3RhdGVHZXR0ZXIgPSBzdGF0ZUdldHRlck1hcFtrZXldO1xuXG4gICAgICAgIGlmIChzdG9yZVN0YXRlR2V0dGVyID09PSBudWxsKSBzdG9yZVN0YXRlR2V0dGVyID0gZGVmYXVsdFN0YXRlR2V0dGVyO1xuXG4gICAgICAgIHN0b3JlU3RhdGVHZXR0ZXIgPSBzdG9yZVN0YXRlR2V0dGVyLmJpbmQodGhpcyk7XG5cbiAgICAgICAgbGV0IGluaXRpYWxTdG9yZVN0YXRlID0gc3RvcmVTdGF0ZUdldHRlcihzdG9yZSk7XG5cbiAgICAgICAgbGV0IGxpc3RlbmVyID0gKCkgPT4ge1xuICAgICAgICAgIGxldCBzdGF0ZSA9IHN0b3JlU3RhdGVHZXR0ZXIoc3RvcmUpO1xuICAgICAgICAgIHRoaXMuc2V0U3RhdGUoc3RhdGUpO1xuICAgICAgICB9O1xuXG4gICAgICAgIHN0b3JlLmFkZExpc3RlbmVyKCdjaGFuZ2UnLCBsaXN0ZW5lcik7XG5cbiAgICAgICAgYXNzaWduKHRoaXMuX2ZsdXhfbGlzdGVuZXJzLCB7XG4gICAgICAgICAgW2tleV06IGxpc3RlbmVyLFxuICAgICAgICB9KTtcblxuICAgICAgICBhc3NpZ24oaW5pdGlhbFN0YXRlLCBpbml0aWFsU3RvcmVTdGF0ZSk7XG4gICAgICB9XG5cbiAgICAgIHJldHVybiBpbml0aWFsU3RhdGU7XG4gICAgfVxuXG4gIH1cblxufTtcblxuZnVuY3Rpb24gZGVmYXVsdFN0YXRlR2V0dGVyKHN0b3JlKSB7XG4gIHJldHVybiBzdG9yZS5zdGF0ZTtcbn1cbiJdfQ==
+
+/***/ },
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var joinClasses = __webpack_require__(185);
+	var classSet = __webpack_require__(186);
+	var cloneWithProps = __webpack_require__(187);
+	
+	var BootstrapMixin = __webpack_require__(189);
+	var CollapsableMixin = __webpack_require__(191);
+	
+	var Panel = React.createClass({displayName: "Panel",
+	  mixins: [BootstrapMixin, CollapsableMixin],
+	
+	  propTypes: {
+	    onSelect: React.PropTypes.func,
+	    header: React.PropTypes.node,
+	    footer: React.PropTypes.node,
+	    eventKey: React.PropTypes.any
+	  },
+	
+	  getDefaultProps: function () {
+	    return {
+	      bsClass: 'panel',
+	      bsStyle: 'default'
+	    };
+	  },
+	
+	  handleSelect: function (e) {
+	    if (this.props.onSelect) {
+	      this._isChanging = true;
+	      this.props.onSelect(this.props.eventKey);
+	      this._isChanging = false;
+	    }
+	
+	    e.preventDefault();
+	
+	    this.setState({
+	      expanded: !this.state.expanded
+	    });
+	  },
+	
+	  shouldComponentUpdate: function () {
+	    return !this._isChanging;
+	  },
+	
+	  getCollapsableDimensionValue: function () {
+	    return this.refs.panel.getDOMNode().scrollHeight;
+	  },
+	
+	  getCollapsableDOMNode: function () {
+	    if (!this.isMounted() || !this.refs || !this.refs.panel) {
+	      return null;
+	    }
+	
+	    return this.refs.panel.getDOMNode();
+	  },
+	
+	  render: function () {
+	    var classes = this.getBsClassSet();
+	    classes['panel'] = true;
+	
+	    return (
+	      React.createElement("div", React.__spread({},  this.props, {className: joinClasses(this.props.className, classSet(classes)), 
+	        id: this.props.collapsable ? null : this.props.id, onSelect: null}), 
+	        this.renderHeading(), 
+	        this.props.collapsable ? this.renderCollapsableBody() : this.renderBody(), 
+	        this.renderFooter()
+	      )
+	    );
+	  },
+	
+	  renderCollapsableBody: function () {
+	    return (
+	      React.createElement("div", {className: classSet(this.getCollapsableClassSet('panel-collapse')), id: this.props.id, ref: "panel"}, 
+	        this.renderBody()
+	      )
+	    );
+	  },
+	
+	  renderBody: function () {
+	    var allChildren = this.props.children;
+	    var bodyElements = [];
+	
+	    function getProps() {
+	      return {key: bodyElements.length};
+	    }
+	
+	    function addPanelChild (child) {
+	      bodyElements.push(cloneWithProps(child, getProps()));
+	    }
+	
+	    function addPanelBody (children) {
+	      bodyElements.push(
+	        React.createElement("div", React.__spread({className: "panel-body"},  getProps()), 
+	          children
+	        )
+	      );
+	    }
+	
+	    // Handle edge cases where we should not iterate through children.
+	    if (!Array.isArray(allChildren) || allChildren.length == 0) {
+	      if (this.shouldRenderFill(allChildren)) {
+	        addPanelChild(allChildren);
+	      } else {
+	        addPanelBody(allChildren);
+	      }
+	    } else {
+	      var panelBodyChildren = [];
+	
+	      function maybeRenderPanelBody () {
+	        if (panelBodyChildren.length == 0) {
+	          return;
+	        }
+	
+	        addPanelBody(panelBodyChildren);
+	        panelBodyChildren = [];
+	      }
+	
+	      allChildren.forEach(function(child) {
+	        if (this.shouldRenderFill(child)) {
+	          maybeRenderPanelBody();
+	
+	          // Separately add the filled element.
+	          addPanelChild(child);
+	        } else {
+	          panelBodyChildren.push(child);
+	        }
+	      }.bind(this));
+	
+	      maybeRenderPanelBody();
+	    }
+	
+	    return bodyElements;
+	  },
+	
+	  shouldRenderFill: function (child) {
+	    return React.isValidElement(child) && child.props.fill != null
+	  },
+	
+	  renderHeading: function () {
+	    var header = this.props.header;
+	
+	    if (!header) {
+	      return null;
+	    }
+	
+	    if (!React.isValidElement(header) || Array.isArray(header)) {
+	      header = this.props.collapsable ?
+	        this.renderCollapsableTitle(header) : header;
+	    } else if (this.props.collapsable) {
+	      header = cloneWithProps(header, {
+	        className: 'panel-title',
+	        children: this.renderAnchor(header.props.children)
+	      });
+	    } else {
+	      header = cloneWithProps(header, {
+	        className: 'panel-title'
+	      });
+	    }
+	
+	    return (
+	      React.createElement("div", {className: "panel-heading"}, 
+	        header
+	      )
+	    );
+	  },
+	
+	  renderAnchor: function (header) {
+	    return (
+	      React.createElement("a", {
+	        href: '#' + (this.props.id || ''), 
+	        className: this.isExpanded() ? null : 'collapsed', 
+	        onClick: this.handleSelect}, 
+	        header
+	      )
+	    );
+	  },
+	
+	  renderCollapsableTitle: function (header) {
+	    return (
+	      React.createElement("h4", {className: "panel-title"}, 
+	        this.renderAnchor(header)
+	      )
+	    );
+	  },
+	
+	  renderFooter: function () {
+	    if (!this.props.footer) {
+	      return null;
+	    }
+	
+	    return (
+	      React.createElement("div", {className: "panel-footer"}, 
+	        this.props.footer
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = Panel;
+
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This file contains an unmodified version of:
+	 * https://github.com/facebook/react/blob/v0.12.0/src/utils/joinClasses.js
+	 *
+	 * This source code is licensed under the BSD-style license found here:
+	 * https://github.com/facebook/react/blob/v0.12.0/LICENSE
+	 * An additional grant of patent rights can be found here:
+	 * https://github.com/facebook/react/blob/v0.12.0/PATENTS
+	 */
+	
+	"use strict";
+	
+	/**
+	 * Combines multiple className strings into one.
+	 * http://jsperf.com/joinclasses-args-vs-array
+	 *
+	 * @param {...?string} classes
+	 * @return {string}
+	 */
+	function joinClasses(className/*, ... */) {
+	  if (!className) {
+	    className = '';
+	  }
+	  var nextClass;
+	  var argLength = arguments.length;
+	  if (argLength > 1) {
+	    for (var ii = 1; ii < argLength; ii++) {
+	      nextClass = arguments[ii];
+	      if (nextClass) {
+	        className = (className ? className + ' ' : '') + nextClass;
+	      }
+	    }
+	  }
+	  return className;
+	}
+	
+	module.exports = joinClasses;
+
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This file contains an unmodified version of:
+	 * https://github.com/facebook/react/blob/v0.12.0/src/vendor/stubs/cx.js
+	 *
+	 * This source code is licensed under the BSD-style license found here:
+	 * https://github.com/facebook/react/blob/v0.12.0/LICENSE
+	 * An additional grant of patent rights can be found here:
+	 * https://github.com/facebook/react/blob/v0.12.0/PATENTS
+	 */
+	
+	/**
+	 * This function is used to mark string literals representing CSS class names
+	 * so that they can be transformed statically. This allows for modularization
+	 * and minification of CSS class names.
+	 *
+	 * In static_upstream, this function is actually implemented, but it should
+	 * eventually be replaced with something more descriptive, and the transform
+	 * that is used in the main stack should be ported for use elsewhere.
+	 *
+	 * @param string|object className to modularize, or an object of key/values.
+	 *                      In the object case, the values are conditions that
+	 *                      determine if the className keys should be included.
+	 * @param [string ...]  Variable list of classNames in the string case.
+	 * @return string       Renderable space-separated CSS className.
+	 */
+	function cx(classNames) {
+	  if (typeof classNames == 'object') {
+	    return Object.keys(classNames).filter(function(className) {
+	      return classNames[className];
+	    }).join(' ');
+	  } else {
+	    return Array.prototype.join.call(arguments, ' ');
+	  }
+	}
+	
+	module.exports = cx;
+
+/***/ },
+/* 187 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This file contains modified versions of:
+	 * https://github.com/facebook/react/blob/v0.12.0/src/utils/cloneWithProps.js
+	 * https://github.com/facebook/react/blob/v0.12.0/src/core/ReactPropTransferer.js
+	 *
+	 * This source code is licensed under the BSD-style license found here:
+	 * https://github.com/facebook/react/blob/v0.12.0/LICENSE
+	 * An additional grant of patent rights can be found here:
+	 * https://github.com/facebook/react/blob/v0.12.0/PATENTS
+	 *
+	 * TODO: This should be replaced as soon as cloneWithProps is available via
+	 *  the core React package or a separate package.
+	 *  @see https://github.com/facebook/react/issues/1906
+	 */
+	
+	var React = __webpack_require__(1);
+	var joinClasses = __webpack_require__(185);
+	var assign = __webpack_require__(188);
+	
+	/**
+	 * Creates a transfer strategy that will merge prop values using the supplied
+	 * `mergeStrategy`. If a prop was previously unset, this just sets it.
+	 *
+	 * @param {function} mergeStrategy
+	 * @return {function}
+	 */
+	function createTransferStrategy(mergeStrategy) {
+	  return function(props, key, value) {
+	    if (!props.hasOwnProperty(key)) {
+	      props[key] = value;
+	    } else {
+	      props[key] = mergeStrategy(props[key], value);
+	    }
+	  };
+	}
+	
+	var transferStrategyMerge = createTransferStrategy(function(a, b) {
+	  // `merge` overrides the first object's (`props[key]` above) keys using the
+	  // second object's (`value`) keys. An object's style's existing `propA` would
+	  // get overridden. Flip the order here.
+	  return assign({}, b, a);
+	});
+	
+	function emptyFunction() {}
+	
+	/**
+	 * Transfer strategies dictate how props are transferred by `transferPropsTo`.
+	 * NOTE: if you add any more exceptions to this list you should be sure to
+	 * update `cloneWithProps()` accordingly.
+	 */
+	var TransferStrategies = {
+	  /**
+	   * Never transfer `children`.
+	   */
+	  children: emptyFunction,
+	  /**
+	   * Transfer the `className` prop by merging them.
+	   */
+	  className: createTransferStrategy(joinClasses),
+	  /**
+	   * Transfer the `style` prop (which is an object) by merging them.
+	   */
+	  style: transferStrategyMerge
+	};
+	
+	/**
+	 * Mutates the first argument by transferring the properties from the second
+	 * argument.
+	 *
+	 * @param {object} props
+	 * @param {object} newProps
+	 * @return {object}
+	 */
+	function transferInto(props, newProps) {
+	  for (var thisKey in newProps) {
+	    if (!newProps.hasOwnProperty(thisKey)) {
+	      continue;
+	    }
+	
+	    var transferStrategy = TransferStrategies[thisKey];
+	
+	    if (transferStrategy && TransferStrategies.hasOwnProperty(thisKey)) {
+	      transferStrategy(props, thisKey, newProps[thisKey]);
+	    } else if (!props.hasOwnProperty(thisKey)) {
+	      props[thisKey] = newProps[thisKey];
+	    }
+	  }
+	  return props;
+	}
+	
+	/**
+	 * Merge two props objects using TransferStrategies.
+	 *
+	 * @param {object} oldProps original props (they take precedence)
+	 * @param {object} newProps new props to merge in
+	 * @return {object} a new object containing both sets of props merged.
+	 */
+	function mergeProps(oldProps, newProps) {
+	  return transferInto(assign({}, oldProps), newProps);
+	}
+	
+	
+	var ReactPropTransferer = {
+	  mergeProps: mergeProps
+	};
+	
+	var CHILDREN_PROP = 'children';
+	
+	/**
+	 * Sometimes you want to change the props of a child passed to you. Usually
+	 * this is to add a CSS class.
+	 *
+	 * @param {object} child child component you'd like to clone
+	 * @param {object} props props you'd like to modify. They will be merged
+	 * as if you used `transferPropsTo()`.
+	 * @return {object} a clone of child with props merged in.
+	 */
+	function cloneWithProps(child, props) {
+	  var newProps = ReactPropTransferer.mergeProps(props, child.props);
+	
+	  // Use `child.props.children` if it is provided.
+	  if (!newProps.hasOwnProperty(CHILDREN_PROP) &&
+	    child.props.hasOwnProperty(CHILDREN_PROP)) {
+	    newProps.children = child.props.children;
+	  }
+	
+	  if (React.version.substr(0, 4) === '0.12'){
+	    var mockLegacyFactory = function(){};
+	    mockLegacyFactory.isReactLegacyFactory = true;
+	    mockLegacyFactory.type = child.type;
+	
+	    return React.createElement(mockLegacyFactory, newProps);
+	  }
+	
+	  // The current API doesn't retain _owner and _context, which is why this
+	  // doesn't use ReactElement.cloneAndReplaceProps.
+	  return React.createElement(child.type, newProps);
+	}
+	
+	module.exports = cloneWithProps;
+
+/***/ },
+/* 188 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This file contains an unmodified version of:
+	 * https://github.com/facebook/react/blob/v0.12.0/src/vendor/stubs/Object.assign.js
+	 *
+	 * This source code is licensed under the BSD-style license found here:
+	 * https://github.com/facebook/react/blob/v0.12.0/LICENSE
+	 * An additional grant of patent rights can be found here:
+	 * https://github.com/facebook/react/blob/v0.12.0/PATENTS
+	 */
+	
+	// https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.assign
+	
+	function assign(target, sources) {
+	  if (target == null) {
+	    throw new TypeError('Object.assign target cannot be null or undefined');
+	  }
+	
+	  var to = Object(target);
+	  var hasOwnProperty = Object.prototype.hasOwnProperty;
+	
+	  for (var nextIndex = 1; nextIndex < arguments.length; nextIndex++) {
+	    var nextSource = arguments[nextIndex];
+	    if (nextSource == null) {
+	      continue;
+	    }
+	
+	    var from = Object(nextSource);
+	
+	    // We don't currently support accessors nor proxies. Therefore this
+	    // copy cannot throw. If we ever supported this then we must handle
+	    // exceptions and side-effects. We don't support symbols so they won't
+	    // be transferred.
+	
+	    for (var key in from) {
+	      if (hasOwnProperty.call(from, key)) {
+	        to[key] = from[key];
+	      }
+	    }
+	  }
+	
+	  return to;
+	};
+	
+	module.exports = assign;
+
+
+/***/ },
+/* 189 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var constants = __webpack_require__(190);
+	
+	var BootstrapMixin = {
+	  propTypes: {
+	    bsClass: React.PropTypes.oneOf(Object.keys(constants.CLASSES)),
+	    bsStyle: React.PropTypes.oneOf(Object.keys(constants.STYLES)),
+	    bsSize: React.PropTypes.oneOf(Object.keys(constants.SIZES))
+	  },
+	
+	  getBsClassSet: function () {
+	    var classes = {};
+	
+	    var bsClass = this.props.bsClass && constants.CLASSES[this.props.bsClass];
+	    if (bsClass) {
+	      classes[bsClass] = true;
+	
+	      var prefix = bsClass + '-';
+	
+	      var bsSize = this.props.bsSize && constants.SIZES[this.props.bsSize];
+	      if (bsSize) {
+	        classes[prefix + bsSize] = true;
+	      }
+	
+	      var bsStyle = this.props.bsStyle && constants.STYLES[this.props.bsStyle];
+	      if (this.props.bsStyle) {
+	        classes[prefix + bsStyle] = true;
+	      }
+	    }
+	
+	    return classes;
+	  }
+	};
+	
+	module.exports = BootstrapMixin;
+
+/***/ },
+/* 190 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = {
+	  CLASSES: {
+	    'alert': 'alert',
+	    'button': 'btn',
+	    'button-group': 'btn-group',
+	    'button-toolbar': 'btn-toolbar',
+	    'column': 'col',
+	    'input-group': 'input-group',
+	    'form': 'form',
+	    'glyphicon': 'glyphicon',
+	    'label': 'label',
+	    'list-group-item': 'list-group-item',
+	    'panel': 'panel',
+	    'panel-group': 'panel-group',
+	    'progress-bar': 'progress-bar',
+	    'nav': 'nav',
+	    'navbar': 'navbar',
+	    'modal': 'modal',
+	    'row': 'row',
+	    'well': 'well'
+	  },
+	  STYLES: {
+	    'default': 'default',
+	    'primary': 'primary',
+	    'success': 'success',
+	    'info': 'info',
+	    'warning': 'warning',
+	    'danger': 'danger',
+	    'link': 'link',
+	    'inline': 'inline',
+	    'tabs': 'tabs',
+	    'pills': 'pills'
+	  },
+	  SIZES: {
+	    'large': 'lg',
+	    'medium': 'md',
+	    'small': 'sm',
+	    'xsmall': 'xs'
+	  },
+	  GLYPHS: [
+	    'asterisk',
+	    'plus',
+	    'euro',
+	    'eur',
+	    'minus',
+	    'cloud',
+	    'envelope',
+	    'pencil',
+	    'glass',
+	    'music',
+	    'search',
+	    'heart',
+	    'star',
+	    'star-empty',
+	    'user',
+	    'film',
+	    'th-large',
+	    'th',
+	    'th-list',
+	    'ok',
+	    'remove',
+	    'zoom-in',
+	    'zoom-out',
+	    'off',
+	    'signal',
+	    'cog',
+	    'trash',
+	    'home',
+	    'file',
+	    'time',
+	    'road',
+	    'download-alt',
+	    'download',
+	    'upload',
+	    'inbox',
+	    'play-circle',
+	    'repeat',
+	    'refresh',
+	    'list-alt',
+	    'lock',
+	    'flag',
+	    'headphones',
+	    'volume-off',
+	    'volume-down',
+	    'volume-up',
+	    'qrcode',
+	    'barcode',
+	    'tag',
+	    'tags',
+	    'book',
+	    'bookmark',
+	    'print',
+	    'camera',
+	    'font',
+	    'bold',
+	    'italic',
+	    'text-height',
+	    'text-width',
+	    'align-left',
+	    'align-center',
+	    'align-right',
+	    'align-justify',
+	    'list',
+	    'indent-left',
+	    'indent-right',
+	    'facetime-video',
+	    'picture',
+	    'map-marker',
+	    'adjust',
+	    'tint',
+	    'edit',
+	    'share',
+	    'check',
+	    'move',
+	    'step-backward',
+	    'fast-backward',
+	    'backward',
+	    'play',
+	    'pause',
+	    'stop',
+	    'forward',
+	    'fast-forward',
+	    'step-forward',
+	    'eject',
+	    'chevron-left',
+	    'chevron-right',
+	    'plus-sign',
+	    'minus-sign',
+	    'remove-sign',
+	    'ok-sign',
+	    'question-sign',
+	    'info-sign',
+	    'screenshot',
+	    'remove-circle',
+	    'ok-circle',
+	    'ban-circle',
+	    'arrow-left',
+	    'arrow-right',
+	    'arrow-up',
+	    'arrow-down',
+	    'share-alt',
+	    'resize-full',
+	    'resize-small',
+	    'exclamation-sign',
+	    'gift',
+	    'leaf',
+	    'fire',
+	    'eye-open',
+	    'eye-close',
+	    'warning-sign',
+	    'plane',
+	    'calendar',
+	    'random',
+	    'comment',
+	    'magnet',
+	    'chevron-up',
+	    'chevron-down',
+	    'retweet',
+	    'shopping-cart',
+	    'folder-close',
+	    'folder-open',
+	    'resize-vertical',
+	    'resize-horizontal',
+	    'hdd',
+	    'bullhorn',
+	    'bell',
+	    'certificate',
+	    'thumbs-up',
+	    'thumbs-down',
+	    'hand-right',
+	    'hand-left',
+	    'hand-up',
+	    'hand-down',
+	    'circle-arrow-right',
+	    'circle-arrow-left',
+	    'circle-arrow-up',
+	    'circle-arrow-down',
+	    'globe',
+	    'wrench',
+	    'tasks',
+	    'filter',
+	    'briefcase',
+	    'fullscreen',
+	    'dashboard',
+	    'paperclip',
+	    'heart-empty',
+	    'link',
+	    'phone',
+	    'pushpin',
+	    'usd',
+	    'gbp',
+	    'sort',
+	    'sort-by-alphabet',
+	    'sort-by-alphabet-alt',
+	    'sort-by-order',
+	    'sort-by-order-alt',
+	    'sort-by-attributes',
+	    'sort-by-attributes-alt',
+	    'unchecked',
+	    'expand',
+	    'collapse-down',
+	    'collapse-up',
+	    'log-in',
+	    'flash',
+	    'log-out',
+	    'new-window',
+	    'record',
+	    'save',
+	    'open',
+	    'saved',
+	    'import',
+	    'export',
+	    'send',
+	    'floppy-disk',
+	    'floppy-saved',
+	    'floppy-remove',
+	    'floppy-save',
+	    'floppy-open',
+	    'credit-card',
+	    'transfer',
+	    'cutlery',
+	    'header',
+	    'compressed',
+	    'earphone',
+	    'phone-alt',
+	    'tower',
+	    'stats',
+	    'sd-video',
+	    'hd-video',
+	    'subtitles',
+	    'sound-stereo',
+	    'sound-dolby',
+	    'sound-5-1',
+	    'sound-6-1',
+	    'sound-7-1',
+	    'copyright-mark',
+	    'registration-mark',
+	    'cloud-download',
+	    'cloud-upload',
+	    'tree-conifer',
+	    'tree-deciduous',
+	    'cd',
+	    'save-file',
+	    'open-file',
+	    'level-up',
+	    'copy',
+	    'paste',
+	    'alert',
+	    'equalizer',
+	    'king',
+	    'queen',
+	    'pawn',
+	    'bishop',
+	    'knight',
+	    'baby-formula',
+	    'tent',
+	    'blackboard',
+	    'bed',
+	    'apple',
+	    'erase',
+	    'hourglass',
+	    'lamp',
+	    'duplicate',
+	    'piggy-bank',
+	    'scissors',
+	    'bitcoin',
+	    'yen',
+	    'ruble',
+	    'scale',
+	    'ice-lolly',
+	    'ice-lolly-tasted',
+	    'education',
+	    'option-horizontal',
+	    'option-vertical',
+	    'menu-hamburger',
+	    'modal-window',
+	    'oil',
+	    'grain',
+	    'sunglasses',
+	    'text-size',
+	    'text-color',
+	    'text-background',
+	    'object-align-top',
+	    'object-align-bottom',
+	    'object-align-horizontal',
+	    'object-align-left',
+	    'object-align-vertical',
+	    'object-align-right',
+	    'triangle-right',
+	    'triangle-left',
+	    'triangle-bottom',
+	    'triangle-top',
+	    'console',
+	    'superscript',
+	    'subscript',
+	    'menu-left',
+	    'menu-right',
+	    'menu-down',
+	    'menu-up'
+	  ]
+	};
+
+
+/***/ },
+/* 191 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var TransitionEvents = __webpack_require__(192);
+	
+	var CollapsableMixin = {
+	
+	  propTypes: {
+	    collapsable: React.PropTypes.bool,
+	    defaultExpanded: React.PropTypes.bool,
+	    expanded: React.PropTypes.bool
+	  },
+	
+	  getInitialState: function () {
+	    return {
+	      expanded: this.props.defaultExpanded != null ? this.props.defaultExpanded : null,
+	      collapsing: false
+	    };
+	  },
+	
+	  handleTransitionEnd: function () {
+	    this._collapseEnd = true;
+	    this.setState({
+	      collapsing: false
+	    });
+	  },
+	
+	  componentWillReceiveProps: function (newProps) {
+	    if (this.props.collapsable && newProps.expanded !== this.props.expanded) {
+	      this._collapseEnd = false;
+	      this.setState({
+	        collapsing: true
+	      });
+	    }
+	  },
+	
+	  _addEndTransitionListener: function () {
+	    var node = this.getCollapsableDOMNode();
+	
+	    if (node) {
+	      TransitionEvents.addEndEventListener(
+	        node,
+	        this.handleTransitionEnd
+	      );
+	    }
+	  },
+	
+	  _removeEndTransitionListener: function () {
+	    var node = this.getCollapsableDOMNode();
+	
+	    if (node) {
+	      TransitionEvents.removeEndEventListener(
+	        node,
+	        this.handleTransitionEnd
+	      );
+	    }
+	  },
+	
+	  componentDidMount: function () {
+	    this._afterRender();
+	  },
+	
+	  componentWillUnmount: function () {
+	    this._removeEndTransitionListener();
+	  },
+	
+	  componentWillUpdate: function (nextProps) {
+	    var dimension = (typeof this.getCollapsableDimension === 'function') ?
+	      this.getCollapsableDimension() : 'height';
+	    var node = this.getCollapsableDOMNode();
+	
+	    this._removeEndTransitionListener();
+	  },
+	
+	  componentDidUpdate: function (prevProps, prevState) {
+	    this._afterRender();
+	  },
+	
+	  _afterRender: function () {
+	    if (!this.props.collapsable) {
+	      return;
+	    }
+	
+	    this._addEndTransitionListener();
+	    setTimeout(this._updateDimensionAfterRender, 0);
+	  },
+	
+	  _updateDimensionAfterRender: function () {
+	    var node = this.getCollapsableDOMNode();
+	    if (node) {
+	        var dimension = (typeof this.getCollapsableDimension === 'function') ?
+	            this.getCollapsableDimension() : 'height';
+	        node.style[dimension] = this.isExpanded() ?
+	            this.getCollapsableDimensionValue() + 'px' : '0px';
+	    }
+	  },
+	
+	  isExpanded: function () {
+	    return (this.props.expanded != null) ?
+	      this.props.expanded : this.state.expanded;
+	  },
+	
+	  getCollapsableClassSet: function (className) {
+	    var classes = {};
+	
+	    if (typeof className === 'string') {
+	      className.split(' ').forEach(function (className) {
+	        if (className) {
+	          classes[className] = true;
+	        }
+	      });
+	    }
+	
+	    classes.collapsing = this.state.collapsing;
+	    classes.collapse = !this.state.collapsing;
+	    classes['in'] = this.isExpanded() && !this.state.collapsing;
+	
+	    return classes;
+	  }
+	};
+	
+	module.exports = CollapsableMixin;
+
+
+/***/ },
+/* 192 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This file contains a modified version of:
+	 * https://github.com/facebook/react/blob/v0.12.0/src/addons/transitions/ReactTransitionEvents.js
+	 *
+	 * This source code is licensed under the BSD-style license found here:
+	 * https://github.com/facebook/react/blob/v0.12.0/LICENSE
+	 * An additional grant of patent rights can be found here:
+	 * https://github.com/facebook/react/blob/v0.12.0/PATENTS
+	 */
+	
+	var canUseDOM = !!(
+	  typeof window !== 'undefined' &&
+	    window.document &&
+	    window.document.createElement
+	  );
+	
+	/**
+	 * EVENT_NAME_MAP is used to determine which event fired when a
+	 * transition/animation ends, based on the style property used to
+	 * define that event.
+	 */
+	var EVENT_NAME_MAP = {
+	  transitionend: {
+	    'transition': 'transitionend',
+	    'WebkitTransition': 'webkitTransitionEnd',
+	    'MozTransition': 'mozTransitionEnd',
+	    'OTransition': 'oTransitionEnd',
+	    'msTransition': 'MSTransitionEnd'
+	  },
+	
+	  animationend: {
+	    'animation': 'animationend',
+	    'WebkitAnimation': 'webkitAnimationEnd',
+	    'MozAnimation': 'mozAnimationEnd',
+	    'OAnimation': 'oAnimationEnd',
+	    'msAnimation': 'MSAnimationEnd'
+	  }
+	};
+	
+	var endEvents = [];
+	
+	function detectEvents() {
+	  var testEl = document.createElement('div');
+	  var style = testEl.style;
+	
+	  // On some platforms, in particular some releases of Android 4.x,
+	  // the un-prefixed "animation" and "transition" properties are defined on the
+	  // style object but the events that fire will still be prefixed, so we need
+	  // to check if the un-prefixed events are useable, and if not remove them
+	  // from the map
+	  if (!('AnimationEvent' in window)) {
+	    delete EVENT_NAME_MAP.animationend.animation;
+	  }
+	
+	  if (!('TransitionEvent' in window)) {
+	    delete EVENT_NAME_MAP.transitionend.transition;
+	  }
+	
+	  for (var baseEventName in EVENT_NAME_MAP) {
+	    var baseEvents = EVENT_NAME_MAP[baseEventName];
+	    for (var styleName in baseEvents) {
+	      if (styleName in style) {
+	        endEvents.push(baseEvents[styleName]);
+	        break;
+	      }
+	    }
+	  }
+	}
+	
+	if (canUseDOM) {
+	  detectEvents();
+	}
+	
+	// We use the raw {add|remove}EventListener() call because EventListener
+	// does not know how to remove event listeners and we really should
+	// clean up. Also, these events are not triggered in older browsers
+	// so we should be A-OK here.
+	
+	function addEventListener(node, eventName, eventListener) {
+	  node.addEventListener(eventName, eventListener, false);
+	}
+	
+	function removeEventListener(node, eventName, eventListener) {
+	  node.removeEventListener(eventName, eventListener, false);
+	}
+	
+	var ReactTransitionEvents = {
+	  addEndEventListener: function(node, eventListener) {
+	    if (endEvents.length === 0) {
+	      // If CSS transitions are not supported, trigger an "end animation"
+	      // event immediately.
+	      window.setTimeout(eventListener, 0);
+	      return;
+	    }
+	    endEvents.forEach(function(endEvent) {
+	      addEventListener(node, endEvent, eventListener);
+	    });
+	  },
+	
+	  removeEndEventListener: function(node, eventListener) {
+	    if (endEvents.length === 0) {
+	      return;
+	    }
+	    endEvents.forEach(function(endEvent) {
+	      removeEventListener(node, endEvent, eventListener);
+	    });
+	  }
+	};
+	
+	module.exports = ReactTransitionEvents;
+
+
+/***/ },
+/* 193 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var classSet = __webpack_require__(186);
+	var cloneWithProps = __webpack_require__(187);
+	
+	var ValidComponentChildren = __webpack_require__(194);
+	var createChainedFunction = __webpack_require__(195);
+	
+	var ListGroup = React.createClass({displayName: "ListGroup",
+	  propTypes: {
+	    onClick: React.PropTypes.func
+	  },
+	
+	  render: function () {
+	    return (
+	      React.createElement("div", {className: "list-group"}, 
+	        ValidComponentChildren.map(this.props.children, this.renderListItem)
+	      )
+	    );
+	  },
+	
+	  renderListItem: function (child, index) {
+	    return cloneWithProps(child, {
+	      onClick: createChainedFunction(child.props.onClick, this.props.onClick),
+	      ref: child.ref,
+	      key: child.key ? child.key : index
+	    });
+	  }
+	});
+	
+	module.exports = ListGroup;
+
+
+/***/ },
+/* 194 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	/**
+	 * Maps children that are typically specified as `props.children`,
+	 * but only iterates over children that are "valid components".
+	 *
+	 * The mapFunction provided index will be normalised to the components mapped,
+	 * so an invalid component would not increase the index.
+	 *
+	 * @param {?*} children Children tree container.
+	 * @param {function(*, int)} mapFunction.
+	 * @param {*} mapContext Context for mapFunction.
+	 * @return {object} Object containing the ordered map of results.
+	 */
+	function mapValidComponents(children, func, context) {
+	  var index = 0;
+	
+	  return React.Children.map(children, function (child) {
+	    if (React.isValidElement(child)) {
+	      var lastIndex = index;
+	      index++;
+	      return func.call(context, child, lastIndex);
+	    }
+	
+	    return child;
+	  });
+	}
+	
+	/**
+	 * Iterates through children that are typically specified as `props.children`,
+	 * but only iterates over children that are "valid components".
+	 *
+	 * The provided forEachFunc(child, index) will be called for each
+	 * leaf child with the index reflecting the position relative to "valid components".
+	 *
+	 * @param {?*} children Children tree container.
+	 * @param {function(*, int)} forEachFunc.
+	 * @param {*} forEachContext Context for forEachContext.
+	 */
+	function forEachValidComponents(children, func, context) {
+	  var index = 0;
+	
+	  return React.Children.forEach(children, function (child) {
+	    if (React.isValidElement(child)) {
+	      func.call(context, child, index);
+	      index++;
+	    }
+	  });
+	}
+	
+	/**
+	 * Count the number of "valid components" in the Children container.
+	 *
+	 * @param {?*} children Children tree container.
+	 * @returns {number}
+	 */
+	function numberOfValidComponents(children) {
+	  var count = 0;
+	
+	  React.Children.forEach(children, function (child) {
+	    if (React.isValidElement(child)) { count++; }
+	  });
+	
+	  return count;
+	}
+	
+	/**
+	 * Determine if the Child container has one or more "valid components".
+	 *
+	 * @param {?*} children Children tree container.
+	 * @returns {boolean}
+	 */
+	function hasValidComponent(children) {
+	  var hasValid = false;
+	
+	  React.Children.forEach(children, function (child) {
+	    if (!hasValid && React.isValidElement(child)) {
+	      hasValid = true;
+	    }
+	  });
+	
+	  return hasValid;
+	}
+	
+	module.exports = {
+	  map: mapValidComponents,
+	  forEach: forEachValidComponents,
+	  numberOf: numberOfValidComponents,
+	  hasValidComponent: hasValidComponent
+	};
+
+/***/ },
+/* 195 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Safe chained function
+	 *
+	 * Will only create a new function if needed,
+	 * otherwise will pass back existing functions or null.
+	 *
+	 * @param {function} one
+	 * @param {function} two
+	 * @returns {function|null}
+	 */
+	function createChainedFunction(one, two) {
+	  var hasOne = typeof one === 'function';
+	  var hasTwo = typeof two === 'function';
+	
+	  if (!hasOne && !hasTwo) { return null; }
+	  if (!hasOne) { return two; }
+	  if (!hasTwo) { return one; }
+	
+	  return function chainedFunction() {
+	    one.apply(this, arguments);
+	    two.apply(this, arguments);
+	  };
+	}
+	
+	module.exports = createChainedFunction;
+
+/***/ },
+/* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var joinClasses = __webpack_require__(185);
+	var BootstrapMixin = __webpack_require__(189);
+	var classSet = __webpack_require__(186);
+	var cloneWithProps = __webpack_require__(187);
+	
+	var ValidComponentChildren = __webpack_require__(194);
+	
+	var ListGroupItem = React.createClass({displayName: "ListGroupItem",
+	  mixins: [BootstrapMixin],
+	
+	  propTypes: {
+	    bsStyle: React.PropTypes.oneOf(['danger','info','success','warning']),
+	    active: React.PropTypes.any,
+	    disabled: React.PropTypes.any,
+	    header: React.PropTypes.node,
+	    onClick: React.PropTypes.func,
+	    eventKey: React.PropTypes.any,
+	    href: React.PropTypes.string,
+	    target: React.PropTypes.string
+	  },
+	
+	  getDefaultProps: function () {
+	    return {
+	      bsClass: 'list-group-item'
+	    };
+	  },
+	
+	  render: function () {
+	    var classes = this.getBsClassSet();
+	
+	    classes['active'] = this.props.active;
+	    classes['disabled'] = this.props.disabled;
+	
+	    if (this.props.href || this.props.target || this.props.onClick) {
+	      return this.renderAnchor(classes);
+	    } else {
+	      return this.renderSpan(classes);
+	    }
+	  },
+	
+	  renderSpan: function (classes) {
+	    return (
+	      React.createElement("span", React.__spread({},  this.props, {className: joinClasses(this.props.className, classSet(classes))}), 
+	        this.props.header ? this.renderStructuredContent() : this.props.children
+	      )
+	    );
+	  },
+	
+	  renderAnchor: function (classes) {
+	    return (
+	      React.createElement("a", React.__spread({}, 
+	        this.props, 
+	        {className: joinClasses(this.props.className, classSet(classes)), 
+	        onClick: this.handleClick}), 
+	        this.props.header ? this.renderStructuredContent() : this.props.children
+	      )
+	    );
+	  },
+	
+	  renderStructuredContent: function () {
+	    var header;
+	    if (React.isValidElement(this.props.header)) {
+	      header = cloneWithProps(this.props.header, {
+	        className: 'list-group-item-heading'
+	      });
+	    } else {
+	      header = (
+	        React.createElement("h4", {className: "list-group-item-heading"}, 
+	          this.props.header
+	        )
+	      );
+	    }
+	
+	    var content = (
+	      React.createElement("p", {className: "list-group-item-text"}, 
+	        this.props.children
+	      )
+	    );
+	
+	    return {
+	      header: header,
+	      content: content
+	    };
+	  },
+	
+	  handleClick: function (e) {
+	    if (this.props.onClick) {
+	      e.preventDefault();
+	      this.props.onClick(this.props.eventKey, this.props.href, this.props.target);
+	    }
+	  }
+	});
+	
+	module.exports = ListGroupItem;
+
 
 /***/ }
 /******/ ])

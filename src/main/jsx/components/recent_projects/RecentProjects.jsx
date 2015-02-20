@@ -25,6 +25,9 @@
 import React from "react";
 import BuildIcon from "../BuildIcon"
 import FluxComponent from 'flummox/component';
+import Panel from "react-bootstrap/lib/Panel"
+import ListGroup from "react-bootstrap/lib/ListGroup"
+import ListGroupItem from "react-bootstrap/lib/ListGroupItem"
 
 var RecentProjectsHeader = React.createClass({
     render(){
@@ -40,10 +43,10 @@ var RecentProjectsHeader = React.createClass({
 var RecentProject = React.createClass({
     render(){
         return (
-            <li key={this.props.url} className="list-group-item">
+            <ListGroupItem key={this.props.url}>
                 <a href={this.props.url}> {this.props.name}  </a>
                 <BuildIcon state={this.props.lastBuildStatus}/>
-            </li>
+            </ListGroupItem>
         );
     }
 });
@@ -56,12 +59,13 @@ var RecentProjectsWidget =React.createClass({
             );
         });
         return (
-            <div className="panel panel-info">
-                <RecentProjectsHeader/>
-                <ul className="list-group">
-                    {recentProjects}
-                </ul>
-            </div>
+        <Panel collapsable defaultExpanded header="Recent Projects">
+            <ListGroup fill>
+            {recentProjects}
+            </ListGroup>
+        </Panel>
+
+
         );
     }
 });

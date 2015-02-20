@@ -4,10 +4,11 @@
   "author": "Surya Gaddipati",
   "description": "DotCi frontend",
   "dependencies": {
-    "react": "latest",
-    "jquery": "latest",
     "flummox": "2.7.2",
-    "qwest":"latest"
+    "jquery": "latest",
+    "qwest": "latest",
+    "react": "latest",
+    "react-bootstrap": "^0.15.1"
   },
   "devDependencies": {
     "react-tools": "latest",
@@ -20,7 +21,6 @@
     "babel": "latest",
     "babel-core": "latest",
     "jest-cli": "^0.2.2"
-
   },
   "jest": {
     "rootDir": "./target/js",
@@ -30,9 +30,7 @@
     ]
   },
   "scripts": {
-
     "watch-jsx": "jsx --extension jsx --watch src/main/jsx/ target/js/",
-    "test" : "jest"
+    "test": "jest"
   }
-
 }
