@@ -34,6 +34,7 @@ import com.groupon.jenkins.dynamic.buildtype.BuildTypeProperty;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainerRepository;
 import com.groupon.jenkins.github.GithubRepoProperty;
+import com.groupon.jenkins.util.JsonResponse;
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 import hudson.Extension;
 import hudson.PermalinkList;
@@ -57,6 +58,7 @@ import org.mongodb.morphia.annotations.PostLoad;
 import org.mongodb.morphia.annotations.PrePersist;
 
 import javax.servlet.ServletException;
+import static com.google.common.collect.ImmutableMap.of;
 
 public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild> implements TopLevelItem, Saveable, IdentifableItemGroup<DynamicSubProject> {
     private transient Map<String, DynamicSubProject> items;
@@ -280,6 +282,18 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     public void doDoDelete(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
         rsp.setHeader("Location", getParent().getAbsoluteUrl());
         delete();
+    }
+
+    public void doApi(StaplerRequest req, StaplerResponse rsp) throws IOException {
+        // @formatter:off
+        Map info = of("info",
+                of("githubUrl", getGithubRepoUrl(),
+                        "permissions",
+                        of("configure", true,
+                                "build", true))
+        );
+        // @formatter:on
+        JsonResponse.render(rsp, info);
     }
 
 }

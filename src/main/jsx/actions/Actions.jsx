@@ -23,18 +23,30 @@
  */
 
 import { Actions } from 'flummox';
-import {recentProjects} from "../api/RecentProjectsApi"
-// import Polyfill from "6to5/polyfill";
+import {recentProjects,job} from "../api/Api"
+import jQuery from "jQuery";
+
 
 export default class AppActions extends Actions {
-    getRecentProjects(){
+    getRecentProjectsFromServer(){
         var outer = this;
-        let projects = recentProjects().then(function(projects){
-            outer.initialLoadRecentProjects(projects);
+        recentProjects().then(function(projects){
+            outer.recentProjectsChanged(projects);
         })
     }
-    initialLoadRecentProjects(recentProjects) {
-        return recentProjects;
+    getJobInfoFromServer(){
+        var outer = this;
+        job().then(function(job){
+            outer.jobInfoChanged(job);
+        })
+    }
+
+    jobInfoChanged(jobInfo){
+        return jQuery.parseJSON(jobInfo)
+    }
+
+    recentProjectsChanged(recentProjects) {
+        return jQuery.parseJSON(recentProjects);
     }
 
 }

@@ -29,21 +29,7 @@
         <st:include page="head.jelly" />
         <body>
             <st:include page="header/header.jelly" />
-            <div class="container-fluid" >
-                <div class="row">
-                    <div class="col-md-3">
-                        <div id="recent-projects"/>
-                    </div>
-                    <div class="col-md-9">
-                        <st:include page="job_header.jelly" />
-                        <div class="row spacer">
-                            <div class="col-md-12">
-                                <div id="job-info"/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div id="app"/>
 
         </body>
     </j:jelly>

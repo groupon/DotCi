@@ -21,17 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-'use strict';
-import { Store } from 'flummox';
-export default class RecentProjectsStore extends Store {
-    constructor(flux) {
-        super();
-        let actionIds = flux.getActionIds('app');
-        this.register(actionIds.recentProjectsChanged, this.recentProjectsChanged);
-        this.state = {recentProjects: []}
+import React from "react";
+import FluxComponent from 'flummox/component';
+import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
+import Button from 'react-bootstrap/lib/Button';
+import IconLink from '../lib/IconLink';
+var Header = React.createClass({
+    render(){
+        return (
+        <div className="row">
+            <ButtonToolbar>
+                <IconLink href={this.props.info.githubUrl} className="octicon octicon-mark-github"> Name</IconLink>
+                <IconLink href="build?delay=0sec" className="fa fa-rocket"> Build Now</IconLink>
+                </ButtonToolbar>
+          </div>
+        )
     }
-    recentProjectsChanged(recentProjects){
-      this.setState({recentProjects: recentProjects});
+})
+export default React.createClass({
+    render(){
+        return (
+            <FluxComponent connectToStores={['job']} flux={this.props.flux}>
+                <Header/>
+            </FluxComponent>
+        )
     }
-}
+})

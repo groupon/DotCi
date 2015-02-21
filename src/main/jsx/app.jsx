@@ -27,12 +27,27 @@ import React from "react";
 import $ from "jquery";
 import Flux from "./Flux";
 import RecentProjects from "./components/recent_projects/RecentProjects"
+import Job from "./components/job/Job"
 $(() => {
     let flux = new Flux();
     let actions = flux.getActions('app');
-    actions.getRecentProjects();
+    actions.getRecentProjectsFromServer();
+    actions.getJobInfoFromServer();
     React.render(
-        <RecentProjects flux={flux} />,
-        document.getElementById('recent-projects')
+        <div className="container-fluid" >
+            <div className="row">
+                <div className="col-md-3">
+                    <RecentProjects flux={flux} />
+                </div>
+                <div className="col-md-9">
+                    <div className="row ">
+                        <div className="col-md-12">
+                           <Job flux={flux} />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>,
+        document.getElementById('app')
     );
 });

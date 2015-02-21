@@ -21,7 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-import Qwest from "qwest";
-export function recentProjects(){
-    return Qwest.get(rootURL + '/recentProjects');
-}
+
+import React from 'react';
+import Button from 'react-bootstrap/lib/Button'
+export default React.createClass({
+    render: function () {
+        return(
+        <Button href={this.props.href}  bsStyle="primary" bsSize="small" className="btn-labeled" > <span className={"btn-label " + this.props.className}/>
+        {this.props.children}
+        </Button>
+        );
+    }
+})

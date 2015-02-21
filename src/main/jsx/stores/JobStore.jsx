@@ -24,14 +24,14 @@
 
 'use strict';
 import { Store } from 'flummox';
-export default class RecentProjectsStore extends Store {
+export default class JobStore extends Store {
     constructor(flux) {
         super();
         let actionIds = flux.getActionIds('app');
-        this.register(actionIds.recentProjectsChanged, this.recentProjectsChanged);
-        this.state = {recentProjects: []}
+        this.register(actionIds.jobInfoChanged, this.jobInfoChanged);
+        this.state = {info: {}}
     }
-    recentProjectsChanged(recentProjects){
-      this.setState({recentProjects: recentProjects});
+    jobInfoChanged(jobInfo){
+      this.setState(jobInfo);
     }
 }

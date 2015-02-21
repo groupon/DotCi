@@ -21,17 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-'use strict';
-import { Store } from 'flummox';
-export default class RecentProjectsStore extends Store {
-    constructor(flux) {
-        super();
-        let actionIds = flux.getActionIds('app');
-        this.register(actionIds.recentProjectsChanged, this.recentProjectsChanged);
-        this.state = {recentProjects: []}
-    }
-    recentProjectsChanged(recentProjects){
-      this.setState({recentProjects: recentProjects});
-    }
+import Qwest from "qwest";
+export function recentProjects(){
+    return Qwest.get(rootURL + '/recentProjects');
+}
+export function job(){
+    let url =window.location.pathname + 'api';
+    return Qwest.get(url);
 }
