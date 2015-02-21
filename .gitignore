@@ -13,3 +13,4 @@ _site
 *.iws
 *.ipr
 *.iml
+npm-debug.log

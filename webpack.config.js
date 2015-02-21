@@ -1,5 +1,4 @@
 module.exports = {
-    entry: "./target/js/app.js",
     output: {
         path: "src/main/webapp/js",
         filename: "dotci.js"
@@ -7,7 +6,13 @@ module.exports = {
     module: {
         loaders: [
             { test: /\.css$/, loader: "style!css" },
-            { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader?experimental'}
+            {
+                test: /\.jsx?$/,
+                exclude: /node_modules/,
+                loader: 'babel-loader?experimental'
+            }
         ]
-    }
+    },
+    devtool: "#inline-source-map"
+
 };

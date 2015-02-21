@@ -12,10 +12,7 @@
   },
   "devDependencies": {
     "react-tools": "latest",
-    "gulp": "latest",
-    "gulp-util": "latest",
     "webpack": "latest",
-    "gulp-webpack-build": "latest",
     "webpack-dev-server": "latest",
     "babel-loader": "latest",
     "babel": "latest",
@@ -30,7 +27,7 @@
     ]
   },
   "scripts": {
-    "watch-jsx": "jsx --extension jsx --watch src/main/jsx/ target/js/",
+    "start": "webpack --colors --progress --watch src/main/jsx/app.jsx",
     "test": "jest"
   }
 }

@@ -25,7 +25,7 @@ import React from "react";
 import FluxComponent from 'flummox/component';
 import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
 import Button from 'react-bootstrap/lib/Button';
-import IconLink from '../lib/IconLink';
+import IconLink from '../lib/IconLink.jsx';
 var Header = React.createClass({
     render(){
         return (

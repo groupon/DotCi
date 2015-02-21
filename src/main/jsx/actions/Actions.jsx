@@ -23,8 +23,8 @@
  */
 
 import { Actions } from 'flummox';
-import {recentProjects,job} from "../api/Api"
-import jQuery from "jQuery";
+import {recentProjects,job} from "../api/Api.jsx"
+import jQuery from "jquery";
 
 
 export default class AppActions extends Actions {

@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 import React from "react";
-import BuildIcon from "../lib/BuildIcon"
+import BuildIcon from "../lib/BuildIcon.jsx"
 import FluxComponent from 'flummox/component';
 import Panel from "react-bootstrap/lib/Panel"
 import ListGroup from "react-bootstrap/lib/ListGroup"
@@ -33,7 +33,7 @@ var RecentProject = React.createClass({
     render(){
         return (
             <ListGroupItem key={this.props.url}>
-                <a href={this.props.url}> {this.props.name}  </a>
+                <a href={this.props.url}> {this.props.name} </a>
                 <BuildIcon state={this.props.lastBuildStatus}/>
             </ListGroupItem>
         );

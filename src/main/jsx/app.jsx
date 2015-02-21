@@ -25,9 +25,9 @@
 
 import React from "react";
 import $ from "jquery";
-import Flux from "./Flux";
-import RecentProjects from "./components/recent_projects/RecentProjects"
-import Job from "./components/job/Job"
+import Flux from "./Flux.jsx";
+import RecentProjects from "./components/recent_projects/RecentProjects.jsx"
+import Job from "./components/job/Job.jsx"
 $(() => {
     let flux = new Flux();
     let actions = flux.getActions('app');
