@@ -15,6 +15,9 @@
     "webpack": "latest",
     "webpack-dev-server": "latest",
     "babel-loader": "latest",
+    "style-loader": "^0.8.3",
+    "css-loader": "^0.9.1",
+    "autoprefixer-loader": "^1.1.0",
     "babel": "latest",
     "babel-core": "latest",
     "jest-cli": "^0.2.2"
