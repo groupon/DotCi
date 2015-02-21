@@ -30,7 +30,8 @@
     ]
   },
   "scripts": {
-    "start": "webpack --colors --progress --watch src/main/jsx/app.jsx",
+    "watch": "webpack --colors --progress --watch src/main/jsx/app.jsx",
+    "dev-server": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --port 3000 --content-base src/main/webapp/js/ --hot",
     "test": "jest"
   }
 }
