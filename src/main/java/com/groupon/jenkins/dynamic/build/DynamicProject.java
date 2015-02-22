@@ -286,14 +286,12 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
     public void doApi(StaplerRequest req, StaplerResponse rsp) throws IOException {
         // @formatter:off
-        Map info = of("info",
-                of("githubUrl", getGithubRepoUrl(),
-                        "permissions",
-                        of("configure", true,
-                                "build", true))
-        );
+        Map jobInfo = of("githubUrl", getGithubRepoUrl(),
+                         "fullName", getFullName(),
+                         "permissions", of("configure", hasPermission(CONFIGURE),
+                                            "build", hasPermission(BUILD)));
         // @formatter:on
-        JsonResponse.render(rsp, info);
+        JsonResponse.render(rsp, jobInfo);
     }
 
 }

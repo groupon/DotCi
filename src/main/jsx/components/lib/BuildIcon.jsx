@@ -22,6 +22,8 @@
  * THE SOFTWARE.
  */
 import React from 'react';
+import Tooltip from 'react-bootstrap/lib/Tooltip';
+import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 export default React.createClass({
     render: function() {
         var buildIcon ;
@@ -32,7 +34,9 @@ export default React.createClass({
             case 'ABORTED': buildIcon = "fa-ban"; break;
         }
         return (
-            <span className={"fa fa-fw " + buildIcon} />
+            <OverlayTrigger placement="right" overlay={<Tooltip><strong>{this.props.state}</strong></Tooltip>}>
+                <span className={"fa fa-fw " + buildIcon} />
+            </OverlayTrigger>
         );
     }
 });
