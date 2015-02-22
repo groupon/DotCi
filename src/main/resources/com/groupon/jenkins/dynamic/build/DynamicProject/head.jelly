@@ -25,7 +25,9 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
     <head>
         <j:new var="h" className="hudson.Functions" /><!-- instead of JSP functions -->
-        <j:getStatic var="developmentMode" className="hudson.Main" field="isDevelopmentMode"/>
+        <j:invokeStatic var="developmentMode" className="java.lang.Boolean" method="getBoolean">
+            <j:arg type="java.lang.String" value="hudson.hpi.run"/>
+        </j:invokeStatic>
         ${h.initPageVariables(context)}
         <title>${h.appendIfNotNull(title, ' [Jenkins]', 'Jenkins')}</title>
         <link rel="shortcut icon" href="${resURL}/favicon.ico" type="image/vnd.microsoft.icon" />
@@ -36,6 +38,16 @@
         <link rel="stylesheet" href="${resURL}/plugin/DotCi/css/jasny-bootstrap.min.css"/>
         <link rel="stylesheet" href="${resURL}/plugin/DotCi/octicons/octicons.css"/>
         <link rel="stylesheet" href="${resURL}/plugin/DotCi/css/build_history_styling.css"/>
-        <script src="http://localhost:3000/dotci.js"/>
+        <j:if test='${developmentMode}'>
+            <script src="http://localhost:3000/dotci.js"/>
+        </j:if>
+        <j:if test='${!developmentMode}'>
+            <script src="${resURL}/plugin/DotCi/js/dotci.js"/>
+        </j:if>
+        <script>
+            rootURL = '${rootURL}'
+            DEVELOPMENT_MODE = '${developmentMode}'
+        </script>
+
     </head>
 </j:jelly>

@@ -26,9 +26,7 @@
 
   <j:new var="h" className="hudson.Functions" />
   ${h.initPageVariables(context)}
-  <script>
-      rootURL = '${rootURL}'
-  </script>
+
   <nav class="navbar navbar-inverse">
     <div class="navbar-header">
       <st:include page="header/logo.jelly" />
