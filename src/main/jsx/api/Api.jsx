@@ -21,9 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-import Qwest from "qwest";
+'use strict';
+import Qwest from 'qwest';
 export function recentProjects(){
-    return Qwest.get(rootURL + '/recentProjects');
+    return Qwest.get(window.rootURL + '/recentProjects');
 }
 export function job(){
     let url =window.location.pathname + 'api';

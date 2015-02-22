@@ -29,7 +29,7 @@ export default class RecentProjectsStore extends Store {
         super();
         let actionIds = flux.getActionIds('app');
         this.register(actionIds.recentProjectsChanged, this.recentProjectsChanged);
-        this.state = {recentProjects: []}
+        this.state = {recentProjects: []};
     }
     recentProjectsChanged(recentProjects){
       this.setState({recentProjects: recentProjects});

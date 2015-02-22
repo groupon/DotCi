@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-'use strict'
+'use strict';
 import { Actions } from 'flummox';
-import {recentProjects,job} from "../api/Api.jsx";
-import jQuery from "jquery";
+import {recentProjects,job} from '../api/Api.jsx';
+import jQuery from 'jquery';
 
 
 export default class AppActions extends Actions {
@@ -32,17 +32,17 @@ export default class AppActions extends Actions {
         var outer = this;
         recentProjects().then(function(projects){
             outer.recentProjectsChanged(projects);
-        })
+        });
     }
     getJobInfoFromServer(){
         var outer = this;
         job().then(function(job){
             outer.jobInfoChanged(job);
-        })
+        });
     }
 
     jobInfoChanged(jobInfo){
-        return jQuery.parseJSON(jobInfo)
+        return jQuery.parseJSON(jobInfo);
     }
 
     recentProjectsChanged(recentProjects) {
