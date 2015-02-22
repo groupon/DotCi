@@ -11,16 +11,17 @@
     "react-bootstrap": "^0.15.1"
   },
   "devDependencies": {
-    "react-tools": "latest",
-    "webpack": "latest",
-    "webpack-dev-server": "latest",
-    "babel-loader": "latest",
-    "style-loader": "^0.8.3",
-    "css-loader": "^0.9.1",
     "autoprefixer-loader": "^1.1.0",
     "babel": "latest",
     "babel-core": "latest",
-    "jest-cli": "^0.2.2"
+    "babel-loader": "latest",
+    "css-loader": "^0.9.1",
+    "jest-cli": "^0.2.2",
+    "jsxhint": "^0.12.0",
+    "react-tools": "latest",
+    "style-loader": "^0.8.3",
+    "webpack": "latest",
+    "webpack-dev-server": "latest"
   },
   "jest": {
     "rootDir": "./target/js",
@@ -31,6 +32,7 @@
   },
   "scripts": {
     "build": "webpack --colors --progress  src/main/jsx/app.jsx",
+    "jshint": "jsxhint src/main/jsx/**/*",
     "dev-server": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --colors --progress --port 3000 --content-base src/main/webapp/js/ --hot",
     "test": "jest"
   }

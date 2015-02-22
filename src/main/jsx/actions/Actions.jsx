@@ -21,9 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
+'use strict'
 import { Actions } from 'flummox';
-import {recentProjects,job} from "../api/Api.jsx"
+import {recentProjects,job} from "../api/Api.jsx";
 import jQuery from "jquery";
 
 
