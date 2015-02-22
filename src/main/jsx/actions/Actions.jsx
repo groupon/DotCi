@@ -30,7 +30,7 @@ import jQuery from 'jquery';
 export default class AppActions extends Actions {
 
     deleteProject(){
-        deleteCurrentProject().then(()=>console.log("project deleted"));
+        deleteCurrentProject().then(()=>console.log('project deleted'));
     }
 
     getRecentProjectsFromServer(){

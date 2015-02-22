@@ -36,7 +36,7 @@ export function deleteCurrentProject(){
             resolve();
         }
         else {
-            reject(Error("It broke"));
+            reject(Error('It broke'));
         }
     });
 }
