@@ -28,6 +28,9 @@
     "scriptPreprocessor": "preprocessor.js",
     "unmockedModulePathPatterns": [
       "react"
+    ],
+    "testFileExtensions": [
+      "jsx"
     ]
   },
   "scripts": {

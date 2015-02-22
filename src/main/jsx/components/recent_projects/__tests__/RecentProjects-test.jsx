@@ -22,11 +22,11 @@
  * THE SOFTWARE.
  */
 
-jest.dontMock('../RecentProjects.js');
+jest.dontMock('../RecentProjects.jsx');
 describe('CheckboxWithLabel', function() {
     it('changes the text after click', function() {
         var React = require('react/addons');
-        var RecentProjects = require('../RecentProjects.js');
+        var RecentProjects = require('../RecentProjects.jsx');
         var TestUtils = React.addons.TestUtils;
 
         var RecentProjects = TestUtils.renderIntoDocument(
