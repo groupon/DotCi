@@ -26,27 +26,31 @@ import FluxComponent from 'flummox/component';
 import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
 import Button from 'react-bootstrap/lib/Button';
 import IconLink from '../lib/IconLink.jsx';
+import ConfirmationModal from '../lib/ConfirmationModal.jsx';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
+
 var Header = React.createClass({
     render(){
-        var settingsTitle = <span className="fa fa-cog btn-label">Settings</span>;
+        var settingsTitle = <span className="fa fa-cog btn-label">Settingsx</span>;
         return (
-        <div className="row">
-            <ButtonToolbar justified>
-                <IconLink href={this.props.githubUrl} className="octicon octicon-mark-github">{this.props.fullName}</IconLink>
-                <IconLink href="build?delay=0sec" className="fa fa-rocket"> Build Now</IconLink>
-                <DropdownButton title={settingsTitle}   bsSize="small" className="btn-labeled" pullRight>
-                    <MenuItem href="configure">Configure</MenuItem>
-                    <MenuItem onSelect={this.deleteJob}>Delete</MenuItem>
-                </DropdownButton>
+            <div className="row">
+                <ButtonToolbar justified>
+                    <IconLink href={this.props.githubUrl} className="octicon octicon-mark-github">{this.props.fullName}</IconLink>
+                    <IconLink href="build?delay=0sec" className="fa fa-rocket"> Build Now</IconLink>
+                    <DropdownButton title={settingsTitle}   bsSize="small" className="btn-labeled" pullRight>
+                        <MenuItem href="configure">Configure</MenuItem>
+                        <ConfirmationModal onConfirm={this.deleteJob}>
+                            <MenuItem>Delete</MenuItem>
+                        </ConfirmationModal>
+                    </DropdownButton>
                 </ButtonToolbar>
-          </div>
+            </div>
         )
     },
 
     deleteJob(){
-     console.log("meow")
+        console.log("meow")
     }
 })
 export default React.createClass({
