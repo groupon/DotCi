@@ -24,7 +24,7 @@
     "webpack-dev-server": "latest"
   },
   "jest": {
-    "rootDir": "./target/js",
+    "rootDir": "./src/main/jsx",
     "scriptPreprocessor": "preprocessor.js",
     "unmockedModulePathPatterns": [
       "react"
