@@ -23,22 +23,21 @@
  */
 'use strict';
 import { Actions } from 'flummox';
-import {recentProjects,job} from '../api/Api.jsx';
+import {recentProjects,job,deleteCurrentProject} from '../api/Api.jsx';
 import jQuery from 'jquery';
 
 
 export default class AppActions extends Actions {
+
+    deleteProject(){
+        deleteCurrentProject().then(()=>console.log("project deleted"));
+    }
+
     getRecentProjectsFromServer(){
-        var outer = this;
-        recentProjects().then(function(projects){
-            outer.recentProjectsChanged(projects);
-        });
+        recentProjects().then(projects => this.recentProjectsChanged(projects));
     }
     getJobInfoFromServer(){
-        var outer = this;
-        job().then(function(job){
-            outer.jobInfoChanged(job);
-        });
+        job().then(job => this.jobInfoChanged(job));
     }
 
     jobInfoChanged(jobInfo){

@@ -30,3 +30,13 @@ export function job(){
     let url =window.location.pathname + 'api';
     return Qwest.get(url);
 }
+export function deleteCurrentProject(){
+  return new Promise(function(resolve, reject) {
+        if (true) {
+            resolve();
+        }
+        else {
+            reject(Error("It broke"));
+        }
+    });
+}

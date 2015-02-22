@@ -48,9 +48,9 @@ var Header = React.createClass({
             </div>
         )
     },
-
     deleteJob(){
-        console.log("meow")
+        let actions = this.props.flux.getActions('app');
+        actions.deleteProject();
     }
 })
 export default React.createClass({
