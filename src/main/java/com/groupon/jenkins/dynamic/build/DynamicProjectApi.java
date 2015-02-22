@@ -22,24 +22,31 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.util;
+package com.groupon.jenkins.dynamic.build;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import net.sf.json.JSONSerializer;
-import org.kohsuke.stapler.StaplerResponse;
+import com.groupon.jenkins.branchhistory.HistoryTab;
 
-import java.io.IOException;
+import java.util.Map;
 
-public class JsonResponse {
-    public static void  render(StaplerResponse rsp, Object output) throws IOException {
-        rsp.setContentType("application/json;charset=UTF-8");
-        ObjectMapper mapper = new ObjectMapper(new JsonFactory());
-        mapper.setVisibilityChecker(mapper.getSerializationConfig().getDefaultVisibilityChecker().
-                withGetterVisibility(JsonAutoDetect.Visibility.PUBLIC_ONLY).
-                withSetterVisibility(JsonAutoDetect.Visibility.NONE));
-        mapper.writeValue(rsp.getOutputStream(),output);
-        rsp.flushBuffer();
+import static com.google.common.collect.ImmutableMap.of;
+
+public class DynamicProjectApi {
+    private DynamicProject dynamicProject;
+
+    public DynamicProjectApi(DynamicProject dynamicProject) {
+        this.dynamicProject = dynamicProject;
+    }
+    public String getFullName(){
+       return dynamicProject.getFullName();
+    }
+    public String getGithubUrl(){
+       return dynamicProject.getGithubRepoUrl();
+    }
+    public Map getPermissions(){
+       return of("configure",dynamicProject.hasPermission(DynamicProject.CONFIGURE),
+                  "build", dynamicProject.hasPermission(DynamicProject.BUILD)) ;
+    }
+    public Iterable<HistoryTab> getTabs(){
+       return dynamicProject.getJobHistoryWidget().getTabs();
     }
 }

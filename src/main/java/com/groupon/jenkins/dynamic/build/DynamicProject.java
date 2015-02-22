@@ -167,8 +167,12 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     @Override
     public List<Widget> getWidgets() {
         List<Widget> widgets = new ArrayList<Widget>();
-        widgets.add(new JobHistoryWidget(this));
+        widgets.add(getJobHistoryWidget());
         return widgets;
+    }
+
+    public JobHistoryWidget getJobHistoryWidget() {
+        return new JobHistoryWidget(this);
     }
 
     @Override
@@ -187,12 +191,6 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
         return permalink;
     }
-
-
-
-
-
-
 
     @Override
     protected Class<DynamicBuild> getBuildClass() {
@@ -285,13 +283,8 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     }
 
     public void doApi(StaplerRequest req, StaplerResponse rsp) throws IOException {
-        // @formatter:off
-        Map jobInfo = of("githubUrl", getGithubRepoUrl(),
-                         "fullName", getFullName(),
-                         "permissions", of("configure", hasPermission(CONFIGURE),
-                                            "build", hasPermission(BUILD)));
-        // @formatter:on
-        JsonResponse.render(rsp, jobInfo);
+
+        JsonResponse.render(rsp, new DynamicProjectApi(this));
     }
 
 }
