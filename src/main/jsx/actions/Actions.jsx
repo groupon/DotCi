@@ -26,18 +26,20 @@ import { Actions } from 'flummox';
 import {recentProjects,job,deleteCurrentProject} from '../api/Api.jsx';
 import jQuery from 'jquery';
 
-
+require("babel/polyfill");
 export default class AppActions extends Actions {
 
     deleteProject(){
         deleteCurrentProject().then(()=>console.log('project deleted'));
     }
 
-    getRecentProjectsFromServer(){
-        recentProjects().then(projects => this.recentProjectsChanged(projects));
+    async getRecentProjectsFromServer(){
+       let  projects = await recentProjects();
+       this.recentProjectsChanged(projects);
     }
-    getJobInfoFromServer(){
-        job().then(job => this.jobInfoChanged(job));
+    async getJobInfoFromServer(){
+        let jobInfo = await job();
+        this.jobInfoChanged(jobInfo);
     }
 
     jobInfoChanged(jobInfo){
