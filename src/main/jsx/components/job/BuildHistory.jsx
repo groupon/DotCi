@@ -23,8 +23,15 @@
  */
 
 import React from 'react';
+import TabbedArea from 'react-bootstrap/lib/TabbedArea';
+import TabPane from 'react-bootstrap/lib/TabPane';
 export default React.createClass({
     render(){
-        return(<h1>Meow1</h1>);
+        let tabs = this.props.tabs.map( tab => (<TabPane eventKey={1} tab="Tab 1">TabPane 1 content</TabPane>));
+        return(
+            <TabbedArea>
+            {tabs}
+            </TabbedArea>
+        );
     }
 });

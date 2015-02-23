@@ -29,8 +29,8 @@ import IconLink from '../lib/IconLink.jsx';
 import ConfirmationModal from '../lib/ConfirmationModal.jsx';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
-import TabbedArea from 'react-bootstrap/lib/TabbedArea';
-import TabPane from 'react-bootstrap/lib/TabPane';
+import Nav from 'react-bootstrap/lib/Nav';
+import NavItem from 'react-bootstrap/lib/NavItem';
 import BuildHistory from './BuildHistory.jsx';
 
 var Header = React.createClass({
@@ -59,13 +59,18 @@ var Header = React.createClass({
 
 var Tabs = React.createClass({
     render(){
-        let tabs = this.props.tabs.map( tab => (<TabPane eventKey={1} tab="Tab 1">TabPane 1 content</TabPane>));
 
         return(
             <div className="row">
-                <TabbedArea>
-                {tabs}
-                </TabbedArea>
+                <div className="col-md-9">
+                    <BuildHistory tabs={this.props.tabs}/>
+                </div>
+                <div className="col-md-3">
+                    <Nav bsStyle="pills" stacked activeKey={2}>
+                        <NavItem eventKey={1} href="/home">Builds</NavItem>
+                        <NavItem eventKey={2} title="Item">Metrics</NavItem>
+                    </Nav>
+                </div>
             </div>
         );
 
