@@ -30,6 +30,7 @@ import ConfirmationModal from '../lib/ConfirmationModal.jsx';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import BuildHistory from './BuildHistory.jsx';
+import BuildMetrics from './BuildMetrics.jsx';
 import {Widgets,Widget} from '../lib/Widgets.jsx'
 
 var Header = React.createClass({
@@ -60,8 +61,8 @@ var JobWidgets = React.createClass({
     render(){
         return(
             <Widgets>
-                <Widget name="Build History" content={BuildHistory} />
-                <Widget name="Metrics" content={BuildHistory} />
+                <Widget name="Build History" content={<BuildHistory/>} />
+                <Widget name="Metrics" content={<BuildMetrics/>} />
             </Widgets>
         );
 

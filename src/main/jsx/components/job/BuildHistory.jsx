@@ -27,11 +27,9 @@ import TabbedArea from 'react-bootstrap/lib/TabbedArea';
 import TabPane from 'react-bootstrap/lib/TabPane';
 export default React.createClass({
     render(){
-        let tabs = this.props.tabs.map( tab => (<TabPane eventKey={1} tab="Tab 1">TabPane 1 content</TabPane>));
+        //let tabs = this.props.tabs.map( tab => (<TabPane eventKey={1} tab="Tab 1">TabPane 1 content</TabPane>));
         return(
-            <TabbedArea>
-            {tabs}
-            </TabbedArea>
+            <h1> Build History </h1>
         );
     }
 });

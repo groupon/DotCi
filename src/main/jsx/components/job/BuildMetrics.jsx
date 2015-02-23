@@ -21,39 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 import React from 'react';
-import Nav from 'react-bootstrap/lib/Nav';
-import NavItem from 'react-bootstrap/lib/NavItem';
-var Widgets  = React.createClass({
-    getInitialState(){
-        return {currentSelection: 0}
-    },
-
+import TabbedArea from 'react-bootstrap/lib/TabbedArea';
+import TabPane from 'react-bootstrap/lib/TabPane';
+export default React.createClass({
     render(){
-        let activeWidget =  this.props.children[this.state.currentSelection].props.content;
-        var navs = this.props.children.map((widget,index) => <NavItem eventKey={index}>{widget.props.name}</NavItem> );
+        //let tabs = this.props.tabs.map( tab => (<TabPane eventKey={1} tab="Tab 1">TabPane 1 content</TabPane>));
         return(
-            <div className="row">
-                <div className="col-md-9">
-               {activeWidget}
-                </div>
-                <div className="col-md-3">
-                    <Nav bsStyle="pills" stacked activeKey={this.state.currentSelection}  onSelect={this._onActiveTabChange}>
-                   {navs}
-                    </Nav>
-                </div>
-            </div>
+            <h1> Metrics </h1>
         );
-    },
-    _onActiveTabChange(tab){
-        this.setState({currentSelection: tab});
     }
 });
-var Widget = React.createClass({
-    render(){
-        return(<span/>);
-    }
-});
-
-export { Widgets as Widgets };
-export { Widget as Widget };
