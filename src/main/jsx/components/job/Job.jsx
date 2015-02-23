@@ -29,9 +29,8 @@ import IconLink from '../lib/IconLink.jsx';
 import ConfirmationModal from '../lib/ConfirmationModal.jsx';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
-import Nav from 'react-bootstrap/lib/Nav';
-import NavItem from 'react-bootstrap/lib/NavItem';
 import BuildHistory from './BuildHistory.jsx';
+import {Widgets,Widget} from '../lib/Widgets.jsx'
 
 var Header = React.createClass({
     render(){
@@ -57,21 +56,13 @@ var Header = React.createClass({
     }
 })
 
-var Tabs = React.createClass({
+var JobWidgets = React.createClass({
     render(){
-
         return(
-            <div className="row">
-                <div className="col-md-9">
-                    <BuildHistory tabs={this.props.tabs}/>
-                </div>
-                <div className="col-md-3">
-                    <Nav bsStyle="pills" stacked activeKey={2}>
-                        <NavItem eventKey={1} href="/home">Builds</NavItem>
-                        <NavItem eventKey={2} title="Item">Metrics</NavItem>
-                    </Nav>
-                </div>
-            </div>
+            <Widgets>
+                <Widget name="Build History" content={BuildHistory} />
+                <Widget name="Metrics" content={BuildHistory} />
+            </Widgets>
         );
 
     }
@@ -82,7 +73,7 @@ export default React.createClass({
         return (
             <FluxComponent connectToStores={['job']} flux={this.props.flux}>
                 <Header/>
-                <Tabs/>
+                <JobWidgets/>
             </FluxComponent>
         )
     }
