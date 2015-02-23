@@ -21,32 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-'use strict';
-import { Actions } from 'flummox';
-import {recentProjects,job,deleteCurrentProject} from '../api/Api.jsx';
-import jQuery from 'jquery';
-require("babel/polyfill");
-export default class AppActions extends Actions {
 
-    deleteProject(){
-        deleteCurrentProject().then(()=>console.log('project deleted'));
+import React from 'react';
+export default React.createClass({
+    render(){
+        return(<h1>Meow1</h1>);
     }
-
-    async getRecentProjectsFromServer(){
-       let  projects = await recentProjects();
-       this.recentProjectsChanged(projects);
-    }
-    async getJobInfoFromServer(){
-        let jobInfo = await job();
-        this.jobInfoChanged(jobInfo);
-    }
-
-    jobInfoChanged(jobInfo){
-        return jQuery.parseJSON(jobInfo);
-    }
-
-    recentProjectsChanged(recentProjects) {
-        return jQuery.parseJSON(recentProjects);
-    }
-
-}
+});

@@ -29,10 +29,13 @@ import IconLink from '../lib/IconLink.jsx';
 import ConfirmationModal from '../lib/ConfirmationModal.jsx';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
+import TabbedArea from 'react-bootstrap/lib/TabbedArea';
+import TabPane from 'react-bootstrap/lib/TabPane';
+import BuildHistory from './BuildHistory.jsx';
 
 var Header = React.createClass({
     render(){
-        var settingsTitle = <span className="fa fa-cog btn-label">Settingsx</span>;
+        var settingsTitle = <span className="fa fa-cog btn-label">Settings</span>;
         return (
             <div className="row">
                 <ButtonToolbar justified>
@@ -53,12 +56,29 @@ var Header = React.createClass({
         actions.deleteProject();
     }
 })
+
+var Tabs = React.createClass({
+    render(){
+        let tabs = this.props.tabs.map( tab => (<TabPane eventKey={1} tab="Tab 1">TabPane 1 content</TabPane>));
+
+        return(
+            <div className="row">
+                <TabbedArea>
+                {tabs}
+                </TabbedArea>
+            </div>
+        );
+
+    }
+});
+
 export default React.createClass({
     render(){
         return (
             <FluxComponent connectToStores={['job']} flux={this.props.flux}>
                 <Header/>
+                <Tabs/>
             </FluxComponent>
         )
     }
-})
+});
