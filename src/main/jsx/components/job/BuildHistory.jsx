@@ -23,13 +23,22 @@
  */
 
 import React from 'react';
-import TabbedArea from 'react-bootstrap/lib/TabbedArea';
-import TabPane from 'react-bootstrap/lib/TabPane';
+import Nav from 'react-bootstrap/lib/Nav';
+import NavItem from 'react-bootstrap/lib/NavItem';
+
 export default React.createClass({
+    getInitialState(){
+        return {currentSelection: 0}
+    },
     render(){
-        //let tabs = this.props.tabs.map( tab => (<TabPane eventKey={1} tab="Tab 1">TabPane 1 content</TabPane>));
+        var tabs = this.props.tabs.map((tab,i) => <NavItem eventKey={i} > {tab}</NavItem>);
         return(
-            <h1> Build History </h1>
+            <Nav bsStyle="pills" activeKey={this.state.currentSelection} onSelect={this._onActiveTabChange}>
+               {tabs}
+            </Nav>
         );
+    },
+    _onActiveTabChange(tab){
+        this.setState({currentSelection: tab});
     }
 });

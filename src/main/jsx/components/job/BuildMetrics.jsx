@@ -23,8 +23,8 @@
  */
 
 import React from 'react';
-import TabbedArea from 'react-bootstrap/lib/TabbedArea';
-import TabPane from 'react-bootstrap/lib/TabPane';
+import Nav from 'react-bootstrap/lib/Nav';
+import NavItem from 'react-bootstrap/lib/NavItem';
 export default React.createClass({
     render(){
         //let tabs = this.props.tabs.map( tab => (<TabPane eventKey={1} tab="Tab 1">TabPane 1 content</TabPane>));

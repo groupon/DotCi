@@ -29,7 +29,7 @@ export default class JobStore extends Store {
         super();
         let actionIds = flux.getActionIds('app');
         this.register(actionIds.jobInfoChanged, this.jobInfoChanged);
-        this.state = {tabs:[]};
+        this.state = {buildHistoryTabs:[]};
     }
     jobInfoChanged(jobInfo){
       this.setState(jobInfo);

@@ -26,6 +26,8 @@ package com.groupon.jenkins.dynamic.build;
 
 import com.groupon.jenkins.branchhistory.HistoryTab;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.ImmutableMap.of;
@@ -46,7 +48,8 @@ public class DynamicProjectApi {
        return of("configure",dynamicProject.hasPermission(DynamicProject.CONFIGURE),
                   "build", dynamicProject.hasPermission(DynamicProject.BUILD)) ;
     }
-    public Iterable<HistoryTab> getTabs(){
-       return dynamicProject.getJobHistoryWidget().getTabs();
+    public Iterable<String> getBuildHistoryTabs(){
+        DynamicProjectBranchTabsProperty tabsProperty =dynamicProject.getProperty(DynamicProjectBranchTabsProperty.class);
+        return tabsProperty == null ? Collections.<String>emptyList() : tabsProperty.getBranches();
     }
 }
