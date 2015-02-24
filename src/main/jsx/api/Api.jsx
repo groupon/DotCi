@@ -40,3 +40,7 @@ export function deleteCurrentProject(){
         }
     });
 }
+
+export function fetchBuildHistory(tab) {
+    return ['1','2'];
+}

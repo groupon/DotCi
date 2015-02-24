@@ -22,39 +22,19 @@
  * THE SOFTWARE.
  */
 
-import React from 'react';
-import Nav from 'react-bootstrap/lib/Nav';
-import NavItem from 'react-bootstrap/lib/NavItem';
-import FluxComponent from 'flummox/component';
+'use strict';
+import { Actions } from 'flummox';
+import {fetchBuildHistory} from '../api/Api.jsx';
+require("babel/polyfill");
+export default class BuildHistoryActions extends Actions {
 
-var BuildHistoryTable = React.createClass({
-    render(){
-        return(<h1 className="well-lg"> {this.props.builds} </h1>)
+     buildHistorySelected(branch){
+       let  builds = fetchBuildHistory(branch);
+       this.buildHistoryChanged(builds);
     }
-});
 
-export default React.createClass({
-    render(){
-        return(
-            <div>
-                <Nav bsStyle="pills" activeKey={this.props.currentSelection} onSelect={this._onActiveTabChange}>
-               {this.props.tabs.map((tab,i) => this._getHistoryTab(tab,i))}
-                </Nav>
-                <FluxComponent  connectToStores="buildHistory">
-                    <BuildHistoryTable/>
-                </FluxComponent>
-            </div>
-        );
-    },
-    _onActiveTabChange(tab){
-        //this.setState({currentSelection: tab});
-        let actions = this.props.flux.getActions('buildHistory');
-        actions.buildHistorySelected(tab);
-    },
-    _getHistoryTab(tab,i) {
-        return <NavItem eventKey={i} > {tab}</NavItem>;
-    },
-    _currentTab(){
-        return this.props.tabs[this.state.currentSelection];
+    buildHistoryChanged(builds){
+        return builds;
     }
-});
+
+}

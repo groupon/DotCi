@@ -30,7 +30,7 @@ var Widgets  = React.createClass({
     },
 
     render(){
-        let activeWidget =  this.props.children[this.state.currentSelection].props.content;
+        let activeWidget =  this.props.children[this.state.currentSelection];
         var navs = this.props.children.map((widget,index) => <NavItem eventKey={index}>{widget.props.name}</NavItem> );
         return(
             <div className="row">
@@ -49,11 +49,5 @@ var Widgets  = React.createClass({
         this.setState({currentSelection: tab});
     }
 });
-var Widget = React.createClass({
-    render(){
-        return(<span/>);
-    }
-});
 
 export { Widgets as Widgets };
-export { Widget as Widget };

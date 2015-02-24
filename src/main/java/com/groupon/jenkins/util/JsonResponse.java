@@ -34,7 +34,7 @@ import java.io.IOException;
 
 public class JsonResponse {
     public static void  render(StaplerResponse rsp, Object output) throws IOException {
-        rsp.setContentType("application/json;charset=UTF-8");
+        rsp.setContentType("application/json");
         ObjectMapper mapper = new ObjectMapper(new JsonFactory());
         mapper.setVisibilityChecker(mapper.getSerializationConfig().getDefaultVisibilityChecker().
                 withGetterVisibility(JsonAutoDetect.Visibility.PUBLIC_ONLY).

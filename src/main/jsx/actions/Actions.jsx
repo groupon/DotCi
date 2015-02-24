@@ -24,7 +24,6 @@
 'use strict';
 import { Actions } from 'flummox';
 import {recentProjects,job,deleteCurrentProject} from '../api/Api.jsx';
-import jQuery from 'jquery';
 require("babel/polyfill");
 export default class AppActions extends Actions {
 
@@ -42,11 +41,11 @@ export default class AppActions extends Actions {
     }
 
     jobInfoChanged(jobInfo){
-        return jQuery.parseJSON(jobInfo);
+        return jobInfo;
     }
 
     recentProjectsChanged(recentProjects) {
-        return jQuery.parseJSON(recentProjects);
+        return recentProjects;
     }
 
 }

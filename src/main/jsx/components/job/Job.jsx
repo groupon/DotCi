@@ -61,8 +61,8 @@ var JobWidgets = React.createClass({
     render(){
         return(
             <Widgets>
-                <Widget name="Build History" content={<BuildHistory tabs={this.props.buildHistoryTabs}/>} />
-                <Widget name="Metrics" content={<BuildMetrics/>} />
+                <BuildHistory name="Build History" tabs={this.props.buildHistoryTabs} flux={this.props.flux}/>
+                <BuildMetrics name="Metrics"/>
             </Widgets>
         );
 
