@@ -36,17 +36,22 @@ var BuildHistoryTabs = React.createClass({
     getInitialState(){
         return {currentSelection: 0}
     },
-       render()  {
-          return (
-           <Nav bsStyle="pills" activeKey={this.state.currentSelection} onSelect={this._onActiveTabChange}>
+    componentDidMount(){
+       this._notifyTabSelection(this.state.currentSelection);
+    },
+    render()  {
+        return (
+            <Nav bsStyle="pills" activeKey={this.state.currentSelection} onSelect={this._onActiveTabChange}>
                {this.props.tabs.map((tab,i) => this._getHistoryTab(tab,i))}
-           </Nav>
-          )
-       },
-    _onActiveTabChange(tab){
-        this.setState({currentSelection: tab});
+            </Nav>
+        )
+    },
+    _notifyTabSelection: function (tab) {
         let actions = this.props.flux.getActions('buildHistory');
         actions.buildHistorySelected(tab);
+    }, _onActiveTabChange(tab){
+        this.setState({currentSelection: tab});
+        this._notifyTabSelection(tab);
     },
     _getHistoryTab(tab,i) {
         return <NavItem eventKey={i} > {tab}</NavItem>;
