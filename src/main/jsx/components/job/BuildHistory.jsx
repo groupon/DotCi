@@ -32,29 +32,35 @@ var BuildHistoryTable = React.createClass({
         return(<h1 className="well-lg"> {this.props.builds} </h1>)
     }
 });
-
-export default React.createClass({
-    render(){
-        return(
-            <div>
-                <Nav bsStyle="pills" activeKey={this.props.currentSelection} onSelect={this._onActiveTabChange}>
-               {this.props.tabs.map((tab,i) => this._getHistoryTab(tab,i))}
-                </Nav>
-                <FluxComponent  connectToStores="buildHistory">
-                    <BuildHistoryTable/>
-                </FluxComponent>
-            </div>
-        );
+var BuildHistoryTabs = React.createClass({
+    getInitialState(){
+        return {currentSelection: 0}
     },
+       render()  {
+          return (
+           <Nav bsStyle="pills" activeKey={this.state.currentSelection} onSelect={this._onActiveTabChange}>
+               {this.props.tabs.map((tab,i) => this._getHistoryTab(tab,i))}
+           </Nav>
+          )
+       },
     _onActiveTabChange(tab){
-        //this.setState({currentSelection: tab});
+        this.setState({currentSelection: tab});
         let actions = this.props.flux.getActions('buildHistory');
         actions.buildHistorySelected(tab);
     },
     _getHistoryTab(tab,i) {
         return <NavItem eventKey={i} > {tab}</NavItem>;
-    },
-    _currentTab(){
-        return this.props.tabs[this.state.currentSelection];
+    }
+})
+export default React.createClass({
+    render(){
+        return(
+            <div>
+                <BuildHistoryTabs flux={this.props.flux} tabs={this.props.tabs}/>
+                <FluxComponent  connectToStores="buildHistory">
+                    <BuildHistoryTable/>
+                </FluxComponent>
+            </div>
+        );
     }
 });
