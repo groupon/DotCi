@@ -24,6 +24,7 @@
 
 'use strict';
 import { Store } from 'flummox';
+import React from 'react';
 export default class JobStore extends Store {
     constructor(flux) {
         super();
@@ -32,6 +33,11 @@ export default class JobStore extends Store {
         this.state = {buildHistoryTabs:[]};
     }
     jobInfoChanged(jobInfo){
-      this.setState(jobInfo);
+      this.setState(this.addAllNewTabs(jobInfo));
+    }
+    addAllNewTabs(jobInfo) {
+        return React.addons.update(jobInfo, {
+            buildHistoryTabs: {$push: ['All','Mine']}
+        });
     }
 }
