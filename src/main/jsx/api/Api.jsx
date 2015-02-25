@@ -27,8 +27,7 @@ export function recentProjects(){
     return Qwest.get(window.rootURL + '/recentProjects');
 }
 export function job(){
-    let url =window.location.pathname + 'api';
-    return Qwest.get(url);
+    return Qwest.get(_jobApiUrl()+"/info");
 }
 export function deleteCurrentProject(){
   return new Promise(function(resolve, reject) {
@@ -42,5 +41,9 @@ export function deleteCurrentProject(){
 }
 
 export function fetchBuildHistory(tab) {
-    return ['1','2'];
+    return Qwest.get(`${_jobApiUrl()}/buildHistory/${tab}`);
+}
+
+function _jobApiUrl() {
+    return window.location.pathname + 'json';
 }

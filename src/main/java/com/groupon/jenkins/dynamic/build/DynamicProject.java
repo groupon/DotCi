@@ -29,6 +29,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.branchhistory.JobHistoryWidget;
+import com.groupon.jenkins.dynamic.build.api.DynamicProjectApi;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.dynamic.buildtype.BuildTypeProperty;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
@@ -282,9 +283,8 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         delete();
     }
 
-    public void doApi(StaplerRequest req, StaplerResponse rsp) throws IOException {
-
-        JsonResponse.render(rsp, new DynamicProjectApi(this));
+    public DynamicProjectApi getJson() throws IOException {
+        return new DynamicProjectApi(this);
     }
 
 }

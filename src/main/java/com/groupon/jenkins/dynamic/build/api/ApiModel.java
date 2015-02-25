@@ -22,34 +22,22 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.dynamic.build;
+package com.groupon.jenkins.dynamic.build.api;
 
-import com.groupon.jenkins.branchhistory.HistoryTab;
+import com.groupon.jenkins.util.JsonResponse;
+import hudson.model.AbstractModelObject;
+import hudson.model.ModelObject;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
 
-import static com.google.common.collect.ImmutableMap.of;
-
-public class DynamicProjectApi {
-    private DynamicProject dynamicProject;
-
-    public DynamicProjectApi(DynamicProject dynamicProject) {
-        this.dynamicProject = dynamicProject;
+public class ApiModel implements ModelObject{
+    @Override
+    public String getDisplayName() {
+        return "api";
     }
-    public String getFullName(){
-       return dynamicProject.getFullName();
-    }
-    public String getGithubUrl(){
-       return dynamicProject.getGithubRepoUrl();
-    }
-    public Map getPermissions(){
-       return of("configure",dynamicProject.hasPermission(DynamicProject.CONFIGURE),
-                  "build", dynamicProject.hasPermission(DynamicProject.BUILD)) ;
-    }
-    public Iterable<String> getBuildHistoryTabs(){
-        DynamicProjectBranchTabsProperty tabsProperty =dynamicProject.getProperty(DynamicProjectBranchTabsProperty.class);
-        return tabsProperty == null ? Collections.<String>emptyList() : tabsProperty.getBranches();
+    public void doIndex(StaplerRequest req, StaplerResponse rsp) throws IOException {
+        JsonResponse.render(rsp, this);
     }
 }

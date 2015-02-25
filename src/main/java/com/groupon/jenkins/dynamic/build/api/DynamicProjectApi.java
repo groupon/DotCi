@@ -22,19 +22,38 @@
  * THE SOFTWARE.
  */
 
-'use strict';
-import { Actions } from 'flummox';
-import {fetchBuildHistory} from '../api/Api.jsx';
-require("babel/polyfill");
-export default class BuildHistoryActions extends Actions {
+package com.groupon.jenkins.dynamic.build.api;
 
-     async buildHistorySelected(branch){
-       let  builds = await fetchBuildHistory(branch);
-       this.buildHistoryChanged(builds);
+import com.groupon.jenkins.branchhistory.HistoryTab;
+import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
+import com.groupon.jenkins.util.JsonResponse;
+import hudson.model.AbstractModelObject;
+import hudson.model.Action;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static com.google.common.collect.ImmutableMap.of;
+
+public class DynamicProjectApi extends ApiModel {
+    private DynamicProject dynamicProject;
+
+    public DynamicProjectApi(DynamicProject dynamicProject) {
+        this.dynamicProject = dynamicProject;
     }
 
-    buildHistoryChanged(builds){
-        return builds;
+
+    public JobInfo getInfo(){
+       return new JobInfo(dynamicProject) ;
     }
+
+
+
+
 
 }
