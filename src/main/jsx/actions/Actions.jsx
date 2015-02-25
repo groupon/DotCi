@@ -23,7 +23,7 @@
  */
 'use strict';
 import { Actions } from 'flummox';
-import {recentProjects,job,deleteCurrentProject} from '../api/Api.jsx';
+import {recentProjects,job,deleteCurrentProject,fetchBuildHistory} from '../api/Api.jsx';
 require("babel/polyfill");
 export default class AppActions extends Actions {
 
@@ -46,6 +46,16 @@ export default class AppActions extends Actions {
 
     recentProjectsChanged(recentProjects) {
         return recentProjects;
+    }
+
+
+    async buildHistorySelected(branch){
+        let  builds = await fetchBuildHistory(branch);
+        this.buildHistoryChanged(builds);
+    }
+
+    buildHistoryChanged(builds){
+        return builds;
     }
 
 }

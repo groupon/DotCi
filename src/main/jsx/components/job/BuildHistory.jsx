@@ -59,7 +59,7 @@ var BuildHistoryTabs = React.createClass({
         )
     },
     _notifyTabSelection: function (tabIndex) {
-        let actions = this.props.flux.getActions('buildHistory');
+        let actions = this.props.flux.getActions('app');
         actions.buildHistorySelected(this.props.tabs[tabIndex]);
     },
     _onActiveTabChange(tab){
@@ -75,9 +75,7 @@ export default React.createClass({
         return(
             <div>
                 <BuildHistoryTabs flux={this.props.flux} tabs={this.props.tabs}/>
-                <FluxComponent  connectToStores="buildHistory">
-                    <BuildHistoryTable/>
-                </FluxComponent>
+                <BuildHistoryTable builds ={this.props.builds}/>
             </div>
         );
     }

@@ -30,14 +30,20 @@ export default class JobStore extends Store {
         super();
         let actionIds = flux.getActionIds('app');
         this.register(actionIds.jobInfoChanged, this.jobInfoChanged);
-        this.state = {buildHistoryTabs:[]};
+        this.register(actionIds.buildHistoryChanged, this.buildHistoryChanged);
+        this.state = {buildHistoryTabs:[], builds: []};
     }
     jobInfoChanged(jobInfo){
-      this.setState(this.addAllNewTabs(jobInfo));
+      this.setState(this.addAllMineNewTabs(jobInfo));
     }
-    addAllNewTabs(jobInfo) {
+    addAllMineNewTabs(jobInfo) {
         return React.addons.update(jobInfo, {
             buildHistoryTabs: {$push: ['All','Mine']}
         });
+    }
+    buildHistoryChanged(builds){
+        this.setState( React.addons.update(this.getState(), {
+            builds: {$set: builds}
+        }));
     }
 }
