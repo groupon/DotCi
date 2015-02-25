@@ -31,7 +31,7 @@ export default React.createClass({
 
     render(){
         let activeWidget =  this.props.children[this.state.currentSelection];
-        var navs = this.props.children.map((widget,index) => <NavItem eventKey={index}>{widget.props.name}</NavItem> );
+        var navs = this.props.children.map((widget,index) => <NavItem key={index} eventKey={index}>{widget.props.name}</NavItem> );
         return(
             <div className="row">
                 <div className="col-md-9">

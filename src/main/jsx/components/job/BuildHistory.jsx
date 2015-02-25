@@ -41,7 +41,7 @@ var BuildRow = React.createClass({
 
 var BuildHistoryTable = React.createClass({
     render(){
-        let builds = this.props.builds.map((build) => <BuildRow {...build}/>);
+        let builds = this.props.builds.map((build) => <BuildRow key={build.number} {...build}/>);
         return   <div className="list-group">
                  {builds}
         </div>;
@@ -67,7 +67,7 @@ var BuildHistoryTabs = React.createClass({
         this._notifyTabSelection(tab);
     },
     _getHistoryTab(tab,i) {
-        return <NavItem eventKey={i} > {tab}</NavItem>;
+        return <NavItem key={i} eventKey={i} > {tab}</NavItem>;
     }
 })
 export default React.createClass({
