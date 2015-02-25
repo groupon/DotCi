@@ -22,60 +22,55 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.branchhistory;
+package com.groupon.jenkins.dynamic.build.api;
 
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.api.BuildHistoryRow;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
-import hudson.model.Queue;
+import hudson.model.Result;
 
-import java.io.IOException;
+public class ProcessedBuildHistoryRow extends BuildHistoryRow {
+    private DynamicBuild build;
 
-public class QueuedBuildHistoryRow extends BuildHistoryRow {
-    private Queue.Item item;
-    private int number;
-
-    public QueuedBuildHistoryRow(Queue.Item item, int number) {
-        this.item = item;
-        this.number = number;
+    public ProcessedBuildHistoryRow(DynamicBuild build){
+        this.build = build;
     }
 
     @Override
-    public int getNumber() {
-        return number;
+    public int getNumber(){
+        return build.getNumber();
     }
-
     @Override
-    public String getResult() {
-        return "QUEUED";
-    }
-
-    @Override
-    public String getIcon() {
-        return "fa-paper-plane-o";
+    public String getResult(){
+        if(build.isBuilding()){
+            return "IN_PROGRESS";
+        }
+        return build.getResult().toString();
     }
 
     @Override
     public BuildCause.CommitInfo getCommit() {
-        return new BuildCause.CommitInfo("Queued: " + item.getWhy(),item.getInQueueForString());
+        return build.getCause().getCommitInfo();
     }
 
 
     @Override
-    public String getDisplayTime() {
-        return "-";
+    public String getDisplayTime(){
+        return  build.getDisplayTime();
     }
 
     @Override
     public String getDuration() {
-        return "-"  ;
+        return build.getDurationString();
     }
 
     @Override
     public boolean isCancelable() {
-        return true;
+        return build.isBuilding();
     }
 
     @Override
     public String getCancelUrl() {
-        return "/queue/cancelItem?id="+item.id;
+        return build.getUrl() + "/stop";
     }
 }

@@ -27,17 +27,29 @@ import Nav from 'react-bootstrap/lib/Nav';
 import NavItem from 'react-bootstrap/lib/NavItem';
 import FluxComponent from 'flummox/component';
 
+
+
+var BuildRow = React.createClass({
+    render(){
+        return (
+            <a href={this.props.number} className="list-group-item">
+                <h1> {this.props.number} </h1>
+            </a>
+        );
+    }
+});
+
 var BuildHistoryTable = React.createClass({
     render(){
-        return(<h1 className="well-lg"> {this.props.builds} </h1>)
+        let builds = this.props.builds.map((build) => <BuildRow {...build}/>);
+        return   <div className="list-group">
+                 {builds}
+        </div>;
     }
 });
 var BuildHistoryTabs = React.createClass({
     getInitialState(){
         return {currentSelection: 0}
-    },
-    componentDidMount(){
-       this._notifyTabSelection(this.state.currentSelection);
     },
     render()  {
         return (
@@ -46,10 +58,11 @@ var BuildHistoryTabs = React.createClass({
             </Nav>
         )
     },
-    _notifyTabSelection: function (tab) {
+    _notifyTabSelection: function (tabIndex) {
         let actions = this.props.flux.getActions('buildHistory');
-        actions.buildHistorySelected(tab);
-    }, _onActiveTabChange(tab){
+        actions.buildHistorySelected(this.props.tabs[tabIndex]);
+    },
+    _onActiveTabChange(tab){
         this.setState({currentSelection: tab});
         this._notifyTabSelection(tab);
     },

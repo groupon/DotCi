@@ -52,6 +52,10 @@ public class DynamicProjectApi extends ApiModel {
        return new JobInfo(dynamicProject) ;
     }
 
+    public BuildHistory getBuildHistory(){
+      return new BuildHistory(dynamicProject);
+    }
+
 
 
 

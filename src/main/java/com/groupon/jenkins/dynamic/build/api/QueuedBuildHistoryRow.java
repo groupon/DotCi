@@ -22,72 +22,54 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.branchhistory;
+package com.groupon.jenkins.dynamic.build.api;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.api.BuildHistoryRow;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
-import hudson.model.Result;
-import jenkins.model.Jenkins;
+import hudson.model.Queue;
 
-import java.io.IOException;
+public class QueuedBuildHistoryRow extends BuildHistoryRow {
+    private Queue.Item item;
+    private int number;
 
-public class ProcessedBuildHistoryRow extends BuildHistoryRow {
-    private DynamicBuild build;
-
-    public ProcessedBuildHistoryRow(DynamicBuild build){
-        this.build = build;
+    public QueuedBuildHistoryRow(Queue.Item item, int number) {
+        this.item = item;
+        this.number = number;
     }
 
     @Override
-    public int getNumber(){
-        return build.getNumber();
+    public int getNumber() {
+        return number;
     }
-    @Override
-    public String getResult(){
-        if(build.isBuilding()){
-            return "IN_PROGRESS";
-        }
-        return build.getResult().toString();
-    }
-    @Override
-    public String getIcon(){
 
-        if(build.isBuilding()){
-            return "fa-circle-o-notch fa-spin";
-        }
-        if( Result.SUCCESS.equals( build.getResult())){
-            return "fa-check";
-
-        }
-        if(Result.FAILURE.equals(build.getResult())){
-            return "fa-times" ;
-        }
-        return"fa-ban" ;
+    @Override
+    public String getResult() {
+        return "QUEUED";
     }
 
     @Override
     public BuildCause.CommitInfo getCommit() {
-        return build.getCause().getCommitInfo();
+        return new BuildCause.CommitInfo("Queued: " + item.getWhy(),item.getInQueueForString());
     }
 
 
     @Override
-    public String getDisplayTime(){
-        return  build.getDisplayTime();
+    public String getDisplayTime() {
+        return "-";
     }
 
     @Override
     public String getDuration() {
-        return build.getDurationString();
+        return "-"  ;
     }
 
     @Override
     public boolean isCancelable() {
-        return build.isBuilding();
+        return true;
     }
 
     @Override
     public String getCancelUrl() {
-        return build.getUrl() + "/stop";
+        return "/queue/cancelItem?id="+item.id;
     }
 }

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.groupon.jenkins.branchhistory;
+package com.groupon.jenkins.dynamic.build.api;
 
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 
@@ -32,7 +32,6 @@ public abstract class BuildHistoryRow {
 
     public abstract int getNumber();
     public abstract String getResult();
-    public abstract String getIcon();
 
 
     public abstract BuildCause.CommitInfo getCommit();
