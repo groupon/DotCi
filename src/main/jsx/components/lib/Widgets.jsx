@@ -24,7 +24,7 @@
 import React from 'react';
 import Nav from 'react-bootstrap/lib/Nav';
 import NavItem from 'react-bootstrap/lib/NavItem';
-var Widgets  = React.createClass({
+export default React.createClass({
     getInitialState(){
         return {currentSelection: 0}
     },
@@ -50,4 +50,3 @@ var Widgets  = React.createClass({
     }
 });
 
-export { Widgets as Widgets };
