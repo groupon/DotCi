@@ -24,21 +24,7 @@
 
 package com.groupon.jenkins.dynamic.build.api;
 
-import com.groupon.jenkins.branchhistory.HistoryTab;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
-import com.groupon.jenkins.util.JsonResponse;
-import hudson.model.AbstractModelObject;
-import hudson.model.Action;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static com.google.common.collect.ImmutableMap.of;
 
 public class DynamicProjectApi extends ApiModel {
     private DynamicProject dynamicProject;

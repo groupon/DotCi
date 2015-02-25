@@ -54,4 +54,7 @@ public class JobInfo extends  ApiModel{
             DynamicProjectBranchTabsProperty tabsProperty =dynamicProject.getProperty(DynamicProjectBranchTabsProperty.class);
             return tabsProperty == null ? Collections.<String>emptyList() : tabsProperty.getBranches();
         }
+        public Iterable<BuildHistoryRow> getBuilds(){
+           return new BuildHistory(dynamicProject).getBuilds("master");
+        }
 }

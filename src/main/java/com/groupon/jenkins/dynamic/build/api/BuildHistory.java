@@ -46,8 +46,11 @@ public class BuildHistory extends ApiModel {
     }
 
     public void getDynamic(String branch, StaplerRequest req, StaplerResponse rsp) throws IOException {
-        Iterable<DynamicBuild> builds = filterSkipped(isMyBuilds(branch) ? getDynamicBuildRepository().<DynamicBuild>getCurrentUserBuilds(dynamicProject, BUILD_COUNT) : getDynamicBuildRepository().<DynamicBuild>getLast(dynamicProject, BUILD_COUNT, branch));
-        JsonResponse.render(rsp,toUiBuilds(builds));
+        JsonResponse.render(rsp,getBuilds(branch));
+    }
+
+    public Iterable<BuildHistoryRow> getBuilds(String branch) {
+        return toUiBuilds( filterSkipped(isMyBuilds(branch) ? getDynamicBuildRepository().<DynamicBuild>getCurrentUserBuilds(dynamicProject, BUILD_COUNT) : getDynamicBuildRepository().<DynamicBuild>getLast(dynamicProject, BUILD_COUNT, branch)));
     }
 
     private Iterable<BuildHistoryRow> toUiBuilds(Iterable<DynamicBuild> builds) {
