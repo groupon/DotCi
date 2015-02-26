@@ -25,16 +25,35 @@
 import React from 'react';
 import Nav from 'react-bootstrap/lib/Nav';
 import NavItem from 'react-bootstrap/lib/NavItem';
-import FluxComponent from 'flummox/component';
+import ListGroup from 'react-bootstrap/lib/ListGroup.js';
+import ListGroupItem from 'react-bootstrap/lib/ListGroupItem.js';
+import BuildIcon from '../lib/BuildIcon.jsx'
 
 
 
 var BuildRow = React.createClass({
     render(){
         return (
-            <a href={this.props.number} className="list-group-item">
-                <h1> {this.props.number} </h1>
-            </a>
+            <ListGroupItem header={this._header()} href={this.props.number+''} >
+                <img  alt={this.props.commit.emailDigest} src={"https://secure.gravatar.com/avatar/"+this.props.commit.emailDigest+".png?r=PG&s=46"}/>
+                <span >{this.props.commit.committerName}</span> 
+                <button type="button" className="btn btn-link with-space" >
+                    <span className="octicon octicon-git-compare"/> {this.props.commit.shortSha} <i className="fa fa-external-link-square"></i>
+                </button>
+                <span className="pull-right">
+                    <span ><small><i className="fa fa-clock-o"></i> Duration:</small> {this.props.duration} </span>
+                    <span ><small><i className="fa fa-clock-o"></i> Started:</small> {this.props.displayTime} </span>
+                </span>
+            </ListGroupItem>
+        );
+    },
+    _header(){
+        return (
+            <h4>
+                <BuildIcon state={this.props.result}/>
+                <small> <span className="octicon octicon-git-branch with-space"></span>{this.props.commit.branch}:</small>
+                {this.props.commit.message}
+            </h4>
         );
     }
 });
@@ -42,9 +61,9 @@ var BuildRow = React.createClass({
 var BuildHistoryTable = React.createClass({
     render(){
         let builds = this.props.builds.map((build) => <BuildRow key={build.number} {...build}/>);
-        return   <div className="list-group">
+        return      <ListGroup>
                  {builds}
-        </div>;
+        </ListGroup>;
     }
 });
 var BuildHistoryTabs = React.createClass({
