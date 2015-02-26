@@ -21,32 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-import React from 'react';
-import Nav from 'react-bootstrap/lib/Nav';
-import NavItem from 'react-bootstrap/lib/NavItem';
-export default React.createClass({
-    getInitialState(){
-        return {currentSelection: 0}
-    },
 
-    render(){
-        let activeWidget =  this.props.children[this.state.currentSelection];
-        var navs = this.props.children.map((widget,index) => <NavItem key={index} className="well" eventKey={index}>{widget.props.name}</NavItem> );
-        return(
-            <div className="row">
-                <div className="col-md-9">
-               {activeWidget}
-                </div>
-                <div className="col-md-3">
-                    <Nav bsStyle="pills" stacked activeKey={this.state.currentSelection}  onSelect={this._onActiveTabChange}>
-                   {navs}
-                    </Nav>
-                </div>
-            </div>
-        );
-    },
-    _onActiveTabChange(tab){
-        this.setState({currentSelection: tab});
-    }
-});
 
+@success:   #038035;
+@success-background:   #fafffa;
+
+
+@failure:   #038035;
+@failure-background: #snow;
+
+@aborted:   #666;
+@aborted-background: #dimgrey;
+
+
+@in-progress:   #E7D100;
+@in-progress-background:#fffcf4;
+
+.build-row{
+  padding: 20px;
+  margin: 20px 0;
+  border: 1px solid #eee;
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+
+.build-row-SUCCESS{
+  .build-row;
+  border-left-color: @success;
+  background-color: @success-background;
+}
+
+.build-row-FAILURE{
+  .build-row;
+  border-left-color: @failure;
+  background-color: @failure-background;
+}
+
+.build-row-ABORTED {
+  .build-row;
+  border-left-color: @aborted;
+  background-color: @aborted-background;
+}
+
+.build-row-IN_PROGRESS {
+  .build-row;
+  border-left-color: @in-progress;
+  background-color: @in-progress-background;
+}

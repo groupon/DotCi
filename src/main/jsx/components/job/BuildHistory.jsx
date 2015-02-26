@@ -27,14 +27,15 @@ import Nav from 'react-bootstrap/lib/Nav';
 import NavItem from 'react-bootstrap/lib/NavItem';
 import ListGroup from 'react-bootstrap/lib/ListGroup.js';
 import ListGroupItem from 'react-bootstrap/lib/ListGroupItem.js';
-import BuildIcon from '../lib/BuildIcon.jsx'
+import BuildIcon from '../lib/BuildIcon.jsx';
+require('./build_history.less');
 
 
 
 var BuildRow = React.createClass({
     render(){
         return (
-            <ListGroupItem header={this._header()} href={this.props.number+''} >
+            <ListGroupItem className ={"build-row-"+this.props.result} header={this._header()} href={this.props.number+''} >
                 <img  alt={this.props.commit.emailDigest} src={"https://secure.gravatar.com/avatar/"+this.props.commit.emailDigest+".png?r=PG&s=46"}/>
                 <span >{this.props.commit.committerName}</span> 
                 <button type="button" className="btn btn-link with-space" >
@@ -42,6 +43,7 @@ var BuildRow = React.createClass({
                 </button>
                 <span className="pull-right">
                     <span ><small><i className="fa fa-clock-o"></i> Duration:</small> {this.props.duration} </span>
+                    <br/>
                     <span ><small><i className="fa fa-clock-o"></i> Started:</small> {this.props.displayTime} </span>
                 </span>
             </ListGroupItem>
@@ -49,10 +51,10 @@ var BuildRow = React.createClass({
     },
     _header(){
         return (
-            <h4>
+            <span>
                 <BuildIcon state={this.props.result}/>
-                <span className="octicon octicon-git-branch with-space"></span>{this.props.commit.branch}: {this.props.commit.message}
-            </h4>
+                <span className="octicon octicon-git-branch with-space"></span><small>{this.props.commit.branch}</small>: {this.props.commit.message}
+            </span>
         );
     }
 });

@@ -16,6 +16,8 @@
     "babel-core": "latest",
     "babel-loader": "latest",
     "css-loader": "^0.9.1",
+    "less": "^2.4.0",
+    "less-loader": "^2.0.0",
     "jest-cli": "^0.2.2",
     "jsxhint": "^0.12.0",
     "react-tools": "latest",
