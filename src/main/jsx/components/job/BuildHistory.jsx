@@ -51,8 +51,7 @@ var BuildRow = React.createClass({
         return (
             <h4>
                 <BuildIcon state={this.props.result}/>
-                <small> <span className="octicon octicon-git-branch with-space"></span>{this.props.commit.branch}:</small>
-                {this.props.commit.message}
+                <span className="octicon octicon-git-branch with-space"></span>{this.props.commit.branch}: {this.props.commit.message}
             </h4>
         );
     }
