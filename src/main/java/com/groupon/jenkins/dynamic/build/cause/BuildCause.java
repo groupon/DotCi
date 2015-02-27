@@ -73,12 +73,21 @@ public abstract class BuildCause extends Cause {
 
 
     public static class CommitInfo{
+        public static CommitInfo NULL_INFO =  new CommitInfo();
         private  String committerEmail;
         private String message;
         private String committerName;
         private String branch;
         private String sha;
         private String commitUrl;
+        //for backward compat
+        private CommitInfo(){
+            this.committerEmail = "unknown@unknown.com";
+            this.message = "unknown";
+            this.committerName="unknown";
+            this.commitUrl="http://unknown.com";
+            this.branch="unknown.com";
+        }
         public CommitInfo(GHCommit commit, GitBranch branch){
             this.sha = commit.getSHA1();
             this.message = commit.getCommitShortInfo().getMessage();

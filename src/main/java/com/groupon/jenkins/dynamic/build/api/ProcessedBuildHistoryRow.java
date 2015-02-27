@@ -50,7 +50,11 @@ public class ProcessedBuildHistoryRow extends BuildHistoryRow {
 
     @Override
     public BuildCause.CommitInfo getCommit() {
-        return build.getCause().getCommitInfo();
+        BuildCause.CommitInfo commitInfo = build.getCause().getCommitInfo();
+        if(commitInfo == null){
+           return BuildCause.CommitInfo.NULL_INFO;
+        }
+        return commitInfo;
     }
 
 

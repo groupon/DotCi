@@ -40,6 +40,5 @@ public class JsonResponse {
                 withGetterVisibility(JsonAutoDetect.Visibility.PUBLIC_ONLY).
                 withSetterVisibility(JsonAutoDetect.Visibility.NONE));
         mapper.writeValue(rsp.getOutputStream(),output);
-        rsp.flushBuffer();
     }
 }
