@@ -24,29 +24,32 @@
 import React from 'react';
 import Nav from 'react-bootstrap/lib/Nav';
 import NavItem from 'react-bootstrap/lib/NavItem';
+require('./widgets.less')
 export default React.createClass({
     getInitialState(){
         return {currentSelection: 0}
     },
-
     render(){
         let activeWidget =  this.props.children[this.state.currentSelection];
-        var navs = this.props.children.map((widget,index) => <NavItem key={index} className="well" eventKey={index}>{widget.props.name}</NavItem> );
+        var navs = this.props.children.map((widget,index) => <li key={index} className={this.state.currentSelection==index?'active':''}><a data-index={index} href="#" onClick={this._onActiveTabChange}> {widget.props.name}</a></li> );
         return(
-            <div className="row">
-                <div className="col-md-9">
-               {activeWidget}
+            <div className="row top-buffer">
+                <div className="col-md-9 activeWidget">
+                    {activeWidget}
                 </div>
-                <div className="col-md-3">
-                    <Nav bsStyle="pills" stacked activeKey={this.state.currentSelection}  onSelect={this._onActiveTabChange}>
-                   {navs}
-                    </Nav>
+                <div className="col-md-3 tabbable tabs-right">
+                    <ul className="nav nav-tabs">
+                    {navs}
+                    </ul>
                 </div>
             </div>
+
         );
     },
-    _onActiveTabChange(tab){
+    _onActiveTabChange(event){
+        var tab =parseInt(event.currentTarget.getAttribute('data-index'))
         this.setState({currentSelection: tab});
+        event.preventDefault();
     }
 });
 
