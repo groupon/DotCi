@@ -16,10 +16,11 @@
     "babel-core": "latest",
     "babel-loader": "latest",
     "css-loader": "^0.9.1",
-    "less": "^2.4.0",
-    "less-loader": "^2.0.0",
     "jest-cli": "^0.2.2",
     "jsxhint": "^0.12.0",
+    "less": "^2.4.0",
+    "less-loader": "^2.0.0",
+    "minimist": "^1.1.0",
     "react-tools": "latest",
     "style-loader": "^0.8.3",
     "webpack": "latest",
@@ -36,7 +37,7 @@
     ]
   },
   "scripts": {
-    "build": "webpack --colors --progress  src/main/jsx/app.jsx",
+    "build": "webpack --release=true  --colors --progress  src/main/jsx/app.jsx",
     "jshint": "jsxhint src/main/jsx/**/*",
     "dev-server": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --colors --progress --port 3000 --content-base src/main/webapp/js/ --hot",
     "test": "jest"
