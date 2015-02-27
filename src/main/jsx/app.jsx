@@ -24,11 +24,10 @@
 'use strict';
 
 import React from "react";
-import $ from "jquery";
 import Flux from "./Flux.jsx";
 import RecentProjects from "./components/recent_projects/RecentProjects.jsx"
 import Job from "./components/job/Job.jsx"
-$(() => {
+ window.onload = function(){
     let flux = new Flux();
     let actions = flux.getActions('app');
     actions.getRecentProjectsFromServer();
@@ -42,7 +41,7 @@ $(() => {
                 <div className="col-md-9">
                     <div className="row ">
                         <div className="col-md-12">
-                           <Job flux={flux} />
+                            <Job flux={flux} />
                         </div>
                     </div>
                 </div>
@@ -50,4 +49,4 @@ $(() => {
         </div>,
         document.getElementById('app')
     );
-});
+}
