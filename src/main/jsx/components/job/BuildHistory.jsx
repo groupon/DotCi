@@ -54,7 +54,7 @@ var BuildRow = React.createClass({
             <div className="row">
                 <BuildIcon className="col-md-1" state={this.props.result}/>
                 <span className="octicon octicon-git-branch col-md-11">
-                    <small>{this.props.commit.branch}</small>: {this.props.commit.message}
+                    <small className="text-right">{this.props.commit.branch}</small>: {this.props.commit.message}
                 </span>
             </div>
         );
