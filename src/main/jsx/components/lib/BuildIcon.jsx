@@ -35,7 +35,7 @@ export default React.createClass({
         }
         return (
             <OverlayTrigger placement="right" overlay={<Tooltip><strong>{this.props.state}</strong></Tooltip>}>
-                <span className={"fa fa-fw " + buildIcon} />
+                <span className={"fa fa-fw " + buildIcon + " " +this.props.className} />
             </OverlayTrigger>
         );
     }

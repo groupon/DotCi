@@ -35,13 +35,13 @@ require('./build_history.less');
 var BuildRow = React.createClass({
     render(){
         return (
-            <ListGroupItem className ={"build-row-"+this.props.result} header={this._header()} href={this.props.number+''} >
-                <img  alt={this.props.commit.emailDigest} src={"https://secure.gravatar.com/avatar/"+this.props.commit.emailDigest+".png?r=PG&s=46"}/>
-                <span >{this.props.commit.committerName}</span> 
-                <button type="button" className="btn btn-link with-space" >
+            <ListGroupItem className ={"row build-row-"+this.props.result} header={this._header()} href={this.props.number+''} >
+                <img  alt={this.props.commit.emailDigest} className="col-md-1" src={"https://secure.gravatar.com/avatar/"+this.props.commit.emailDigest+".png?r=PG&s=46"}/>
+                <span className="col-md-3" >{this.props.commit.committerName}</span> 
+                <button type="button" className="btn btn-link col-md-3" >
                     <span className="octicon octicon-git-compare"/> {this.props.commit.shortSha} <i className="fa fa-external-link-square"></i>
                 </button>
-                <span className="pull-right">
+                <span className="pull-right col-md-5">
                     <span ><small><i className="fa fa-clock-o"></i> Duration:</small> {this.props.duration} </span>
                     <br/>
                     <span ><small><i className="fa fa-clock-o"></i> Started:</small> {this.props.displayTime} </span>
@@ -51,10 +51,12 @@ var BuildRow = React.createClass({
     },
     _header(){
         return (
-            <span>
-                <BuildIcon state={this.props.result}/>
-                <span className="octicon octicon-git-branch with-space"></span><small>{this.props.commit.branch}</small>: {this.props.commit.message}
-            </span>
+            <div className="row">
+                <BuildIcon className="col-md-1" state={this.props.result}/>
+                <span className="octicon octicon-git-branch col-md-11">
+                    <small>{this.props.commit.branch}</small>: {this.props.commit.message}
+                </span>
+            </div>
         );
     }
 });
