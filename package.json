@@ -6,6 +6,7 @@
   "dependencies": {
     "flummox": "2.7.2",
     "jquery": "latest",
+    "lesshat": "^3.0.2",
     "qwest": "latest",
     "react": "latest",
     "react-bootstrap": "^0.15.1"
