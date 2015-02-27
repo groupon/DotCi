@@ -38,35 +38,29 @@
 @in-progress:   #E7D100;
 @in-progress-background:#fffcf4;
 
-.build-row{
+.build-row(@color, @background-color){
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #eee;
   border-left-width: 5px;
   border-radius: 3px;
+  border-left-color: @color;
+  background-color: @background-color;
   .box-shadow(0 1px 10px rgba(20,20,20,0.5));
 }
 
 .build-row-SUCCESS{
-  .build-row;
-  border-left-color: @success;
-  background-color: @success-background;
+  .build-row(@success,@success-background);
 }
 
 .build-row-FAILURE{
-  .build-row;
-  border-left-color: @failure;
-  background-color: @failure-background;
+  .build-row(@failure,@failure-background);
 }
 
 .build-row-ABORTED {
-  .build-row;
-  border-left-color: @aborted;
-  background-color: @aborted-background;
+  .build-row(@aborted,@aborted-background);
 }
 
 .build-row-IN_PROGRESS {
-  .build-row;
-  border-left-color: @in-progress;
-  background-color: @in-progress-background;
+  .build-row(@in-progress,@in-progress-background);
 }

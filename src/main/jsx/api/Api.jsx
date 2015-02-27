@@ -24,7 +24,7 @@
 'use strict';
 import Qwest from 'qwest';
 export function recentProjects(){
-    return Qwest.get(window.rootURL + '/recentProjects');
+    return Qwest.get(window.rootURL + '/recentProjects',{},{responseType: 'json'});
 }
 export function job(){
     return Qwest.get(_jobApiUrl()+"/info",{},{responseType: 'json'});
