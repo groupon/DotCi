@@ -14,3 +14,5 @@ _site
 *.ipr
 *.iml
 npm-debug.log
+src/main/webapp/js/dotci.js
+src/main/webapp/js/dotci.js.map
