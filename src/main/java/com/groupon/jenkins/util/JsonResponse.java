@@ -28,17 +28,17 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.json.JSONSerializer;
+import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.export.Flavor;
 
+import javax.servlet.ServletException;
 import java.io.IOException;
 
 public class JsonResponse {
     public static void  render(StaplerResponse rsp, Object output) throws IOException {
         rsp.setContentType("application/json");
         ObjectMapper mapper = new ObjectMapper(new JsonFactory());
-        mapper.setVisibilityChecker(mapper.getSerializationConfig().getDefaultVisibilityChecker().
-                withGetterVisibility(JsonAutoDetect.Visibility.PUBLIC_ONLY).
-                withSetterVisibility(JsonAutoDetect.Visibility.NONE));
-        mapper.writeValue(rsp.getOutputStream(),output);
+       mapper.writeValue(rsp.getWriter(),output);
     }
 }
