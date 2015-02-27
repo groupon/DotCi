@@ -1,0 +1,10 @@
+{
+  "parser": "babel-eslint",
+  "rules": {
+    "strict": 0
+  },
+"settings": {
+        "ecmascript": 6,
+        "jsx": true
+    }
+}
