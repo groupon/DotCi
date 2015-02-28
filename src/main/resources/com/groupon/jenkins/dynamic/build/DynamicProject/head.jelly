@@ -40,7 +40,7 @@
         <link rel="stylesheet" href="${resURL}/plugin/DotCi/octicons/octicons.css"/>
         <link rel="stylesheet" href="${resURL}/plugin/DotCi/css/build_history_styling.css"/>
         <j:if test='${developmentMode}'>
-            <script src="http://localhost:3000/dotci.js"/>
+            <script src="http://localhost:3000/assets/dotci.js"/>
         </j:if>
         <j:if test='${!developmentMode}'>
             <script src="${resURL}/plugin/DotCi/js/dotci.js"/>

@@ -23,7 +23,8 @@
     "style-loader": "^0.8.3",
     "webpack": "latest",
     "webpack-dev-server": "latest",
-    "lesshat": "^3.0.2"
+    "lesshat": "^3.0.2",
+    "react-hot-loader": "^1.1.1"
   },
   "jest": {
     "rootDir": "./src/main/jsx",
@@ -38,7 +39,7 @@
   "scripts": {
     "package": "npm install && webpack --release=true  --colors --progress  src/main/jsx/app.jsx",
     "lint": "eslint --ext=jsx src/main/jsx/**/*",
-    "dev-server": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --colors --progress --port 3000 --content-base src/main/webapp/js/ --hot",
+    "dev-server": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.config.dev.js --colors --progress --hot --inline  --port  3000",
     "test": "jest"
   }
 }
