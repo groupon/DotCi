@@ -33,12 +33,21 @@ import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Flavor;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import java.io.IOException;
 
 public class JsonResponse {
     public static void  render(StaplerResponse rsp, Object output) throws IOException {
-        rsp.setContentType("application/json");
-        ObjectMapper mapper = new ObjectMapper(new JsonFactory());
-       mapper.writeValue(rsp.getWriter(),output);
+        ServletOutputStream outputStream = null;
+        try {
+            rsp.setContentType("application/json");
+            ObjectMapper mapper = new ObjectMapper(new JsonFactory());
+            outputStream = rsp.getOutputStream();
+            mapper.writeValue(outputStream, output);
+//            outputStream.flush();
+        } finally{
+//            if(outputStream!=null)
+//            outputStream.close();;
+        }
     }
 }
