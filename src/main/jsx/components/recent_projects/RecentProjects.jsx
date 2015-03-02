@@ -23,11 +23,11 @@
  * THE SOFTWARE.
  */
 import React from "react";
-import BuildIcon from "../lib/BuildIcon.jsx"
+import BuildIcon from "../lib/BuildIcon.jsx";
 import FluxComponent from 'flummox/component';
-import Panel from "react-bootstrap/lib/Panel"
-import ListGroup from "react-bootstrap/lib/ListGroup"
-import ListGroupItem from "react-bootstrap/lib/ListGroupItem"
+import Panel from "react-bootstrap/lib/Panel";
+import ListGroup from "react-bootstrap/lib/ListGroup";
+import ListGroupItem from "react-bootstrap/lib/ListGroupItem";
 
 var RecentProject = React.createClass({
     render(){
@@ -64,6 +64,6 @@ export default React.createClass({
             <FluxComponent connectToStores={['recentProjects']} flux={this.props.flux}>
                 <RecentProjectsWidget/>
             </FluxComponent>
-        )
+        );
     }
-})
+});

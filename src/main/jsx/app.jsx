@@ -21,12 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-'use strict';
 
 import React from "react";
 import Flux from "./Flux.jsx";
-import RecentProjects from "./components/recent_projects/RecentProjects.jsx"
-import Job from "./components/job/Job.jsx"
+import RecentProjects from "./components/recent_projects/RecentProjects.jsx";
+import Job from "./components/job/Job.jsx";
  window.onload = function(){
     let flux = new Flux();
     let actions = flux.getActions('app');
@@ -48,5 +47,4 @@ import Job from "./components/job/Job.jsx"
             </div>
         </div>,
         document.getElementById('app')
-    );
-}
+    );};
