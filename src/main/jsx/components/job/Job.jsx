@@ -31,7 +31,7 @@ import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import BuildHistory from './BuildHistory.jsx';
 import BuildMetrics from './BuildMetrics.jsx';
-import Widgets from '../lib/Widgets.jsx'
+import Widgets from '../lib/Widgets.jsx';
 
 var Header = React.createClass({
     render(){
@@ -49,20 +49,20 @@ var Header = React.createClass({
                     </DropdownButton>
                 </ButtonToolbar>
             </div>
-        )
+        );
     },
     deleteJob(){
         let actions = this.props.flux.getActions('app');
         actions.deleteProject();
     }
-})
+});
 
 var JobWidgets = React.createClass({
     render(){
         return(
             <Widgets>
-                <BuildHistory  name="Build History" tabs={this.props.buildHistoryTabs} builds={this.props.builds} flux={this.props.flux}/>
-                <BuildMetrics  name="Metrics"/>
+                <BuildHistory icon="fa fa-history" name="Build History" tabs={this.props.buildHistoryTabs} builds={this.props.builds} flux={this.props.flux}/>
+		<BuildMetrics icon="fa fa-bar-chart" name="Metrics"/>
             </Widgets>
         );
 
@@ -76,6 +76,6 @@ export default React.createClass({
                 <Header/>
                 <JobWidgets/>
             </FluxComponent>
-        )
+        );
     }
 });
