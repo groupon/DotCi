@@ -46,9 +46,15 @@
   border-radius: 3px;
   border-left-color: @color;
   background-color: @background-color;
+  text-decoration: none;
+ &:hover{
+  text-decoration: none;
+  }
+ &:visited{
+  text-decoration: none;
+  }
   .box-shadow(0 1px 10px rgba(20,20,20,0.5));
 }
-
 .build-row-SUCCESS{
   .build-row(@success,@success-background);
 }
@@ -63,4 +69,16 @@
 
 .build-row-IN_PROGRESS {
   .build-row(@in-progress,@in-progress-background);
+}
+.flex-row {
+    display:flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: flex-start;
+    align-items: flex-start;
+}
+.flex-column {
+    display:flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
 }

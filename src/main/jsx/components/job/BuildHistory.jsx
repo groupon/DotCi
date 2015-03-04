@@ -25,37 +25,29 @@
 import React from 'react';
 import Nav from 'react-bootstrap/lib/Nav';
 import NavItem from 'react-bootstrap/lib/NavItem';
-import ListGroup from 'react-bootstrap/lib/ListGroup.js';
-import ListGroupItem from 'react-bootstrap/lib/ListGroupItem.js';
-import BuildIcon from '../lib/BuildIcon.jsx';
 require('./build_history.less');
-
-
 
 var BuildRow = React.createClass({
     render(){
         return (
-            <ListGroupItem className ={"row build-row-"+this.props.result} header={this._header()} href={this.props.number+''} >
+            <a className ={"build-row-"+this.props.result}  href={this.props.number+''} >
+               {this._header()}
                 <img  alt={this.props.commit.emailDigest} className="col-md-1" src={"https://secure.gravatar.com/avatar/"+this.props.commit.emailDigest+".png?r=PG&s=46"}/>
-                <span className="col-md-3" >{this.props.commit.committerName}</span> 
-                <button type="button" className="btn btn-link col-md-3" >
-                    <span className="octicon octicon-git-compare"/> {this.props.commit.shortSha} <i className="fa fa-external-link-square"></i>
+                <span >{this.props.commit.committerName}</span>
+                <button type="button" className="btn btn-link" >
+                    {this.props.commit.shortSha} <i className="fa fa-external-link-square"></i>
                 </button>
-                <span className="pull-right col-md-5">
                     <span ><small><i className="fa fa-clock-o"></i> Duration:</small> {this.props.duration} </span>
                     <br/>
                     <span ><small><i className="fa fa-clock-o"></i> Started:</small> {this.props.displayTime} </span>
-                </span>
-            </ListGroupItem>
+            </a>
         );
     },
     _header(){
         return (
-            <div className="row">
-                <BuildIcon className="col-md-1" state={this.props.result}/>
-                <span className="octicon octicon-git-branch col-md-11">
-                    <small className="text-right">{this.props.commit.branch}</small>: {this.props.commit.message}
-                </span>
+            <div className="flex-row">
+              <i className="octicon octicon-git-branch" />
+              <small >{this.props.commit.branch}</small>: {this.props.commit.message}
             </div>
         );
     }
@@ -64,21 +56,23 @@ var BuildRow = React.createClass({
 var BuildHistoryTable = React.createClass({
     render(){
         let builds = this.props.builds.map((build) => <BuildRow key={build.number} {...build}/>);
-        return      <ListGroup>
+        return(
+          <div className="flex-column">
                  {builds}
-        </ListGroup>;
+               </div>
+        );
     }
 });
 var BuildHistoryTabs = React.createClass({
     getInitialState(){
-        return {currentSelection: 0}
+        return {currentSelection: 0};
     },
     render()  {
         return (
             <Nav bsStyle="pills" activeKey={this.state.currentSelection} onSelect={this._onActiveTabChange}>
                {this.props.tabs.map((tab,i) => this._getHistoryTab(tab,i))}
             </Nav>
-        )
+        );
     },
     _notifyTabSelection: function (tabIndex) {
         let actions = this.props.flux.getActions('app');
@@ -91,7 +85,7 @@ var BuildHistoryTabs = React.createClass({
     _getHistoryTab(tab,i) {
         return <NavItem key={i} eventKey={i} > {tab}</NavItem>;
     }
-})
+});
 export default React.createClass({
     render(){
         return(
