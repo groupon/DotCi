@@ -31,25 +31,35 @@ var BuildRow = React.createClass({
     render(){
         return (
             <a className ={"build-row-"+this.props.result}  href={this.props.number+''} >
-               {this._header()}
-                <img  alt={this.props.commit.emailDigest} className="col-md-1" src={"https://secure.gravatar.com/avatar/"+this.props.commit.emailDigest+".png?r=PG&s=46"}/>
-                <span >{this.props.commit.committerName}</span>
-                <button type="button" className="btn btn-link" >
-                    {this.props.commit.shortSha} <i className="fa fa-external-link-square"></i>
-                </button>
-                    <span ><small><i className="fa fa-clock-o"></i> Duration:</small> {this.props.duration} </span>
-                    <br/>
-                    <span ><small><i className="fa fa-clock-o"></i> Started:</small> {this.props.displayTime} </span>
+               <span className="flex-row">
+               {this._commitInfo()}
+                {this._buildDuration()}
+              </span>
             </a>
         );
     },
-    _header(){
-        return (
-            <div className="flex-row">
-              <i className="octicon octicon-git-branch" />
-              <small >{this.props.commit.branch}</small>: {this.props.commit.message}
-            </div>
-        );
+    _commitInfo(){
+      return <span className="flex-column">
+        <b>{this.props.commit.message}
+        <button type="button" className="btn btn-link" >
+          {this.props.commit.shortSha} <i className="fa fa-external-link-square"></i>
+        </button>
+        </b>
+        <span className="flex-row">
+               {this._avatar()}
+        <small>{this.props.commit.committerName}</small>
+      </span>
+      </span>;
+    },
+    _avatar(){
+      return <img  alt={this.props.commit.emailDigest}  src={"https://secure.gravatar.com/avatar/"+this.props.commit.emailDigest+".png?r=PG&s=46"}/>;
+    },
+    _buildDuration(){
+      return( <span className="build-duration">
+        <span ><small><i className="fa fa-clock-o"></i> Duration:</small> {this.props.duration} </span>
+        <span ><small><i className="fa fa-clock-o"></i> Started:</small> {this.props.displayTime} </span>
+      </span>
+            );
     }
 });
 
