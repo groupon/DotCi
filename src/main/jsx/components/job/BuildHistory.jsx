@@ -23,8 +23,6 @@
  */
 
 import React from 'react';
-import Nav from 'react-bootstrap/lib/Nav';
-import NavItem from 'react-bootstrap/lib/NavItem';
 import BuildRow from './BuildRow.jsx';
 
 require('./build_history.less');
@@ -45,10 +43,9 @@ var BuildHistoryTabs = React.createClass({
         return {currentSelection: 0};
     },
     render()  {
-        return (
-            <Nav bsStyle="pills" activeKey={this.state.currentSelection} onSelect={this._onActiveTabChange}>
-               {this.props.tabs.map((tab,i) => this._getHistoryTab(tab,i))}
-            </Nav>
+      return (<div className="branch-tabs">
+        {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i))}
+              </div>
         );
     },
     _notifyTabSelection: function (tabIndex) {
@@ -60,7 +57,12 @@ var BuildHistoryTabs = React.createClass({
         this._notifyTabSelection(tab);
     },
     _getHistoryTab(tab,i) {
-        return <NavItem key={i} eventKey={i} > {tab}</NavItem>;
+      var cx = React.addons.classSet;
+      var classes = cx({
+        'branch-tab': true,
+        'branch-tab-active': this.state.currentSelection==i
+      });
+      return   <a className={classes} key={i}  onClick={this._onActiveTabChange.bind(null,i)} href="#" > {tab}</a>;
     }
 });
 export default React.createClass({

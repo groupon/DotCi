@@ -37,6 +37,18 @@
 
 @in-progress:   #E7D100;
 @in-progress-background:#fffcf4;
+.link-no-decoration{
+  text-decoration: none;
+  &:visited{
+    text-decoration: none;
+  }
+  &:hover{
+    text-decoration: none;
+  }
+  &:active{
+    text-decoration: none;
+  }
+}
 
 .build-row(@color, @background-color){
   padding: 10px;
@@ -46,14 +58,8 @@
   border-radius: 3px;
   border-left-color: @color;
   background-color: @background-color;
-  text-decoration: none;
-  &:hover{
-    text-decoration: none;
-  }
-  &:visited{
-    text-decoration: none;
-  }
   .box-shadow(0 1px 10px rgba(20,20,20,0.5));
+  .link-no-decoration();
 }
 .build-row-SUCCESS{
   .build-row(@success,@success-background);
@@ -76,5 +82,20 @@
 .commit-info{
   .flex-column;
   .flex-grow(2);
+}
+.branch-tabs{
+  .display(flex);
+  .flex-direction(row);
+}
+.branch-tab{
+  margin: 10px 0;
+  width: 100%;
+  .link-no-decoration();
+}
+.branch-tab-active{
+  border-bottom: 1px solid #eee;
+  border-bottom-width: 5px;
+  border-radius: 3px;
+  border-bottom-color: blue;
 }
 
