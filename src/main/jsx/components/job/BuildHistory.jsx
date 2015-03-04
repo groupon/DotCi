@@ -39,13 +39,14 @@ var BuildRow = React.createClass({
         );
     },
     _commitInfo(){
-      return <span className="flex-column">
+      return <span className="commit-info">
         <b>{this.props.commit.message}
         <button type="button" className="btn btn-link" >
           {this.props.commit.shortSha} <i className="fa fa-external-link-square"></i>
         </button>
         </b>
         <span className="flex-row">
+
                {this._avatar()}
         <small>{this.props.commit.committerName}</small>
       </span>
