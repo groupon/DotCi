@@ -32,6 +32,7 @@ var BuildRow = React.createClass({
         return (
             <a className ={"build-row-"+this.props.result}  href={this.props.number+''} >
                <span className="flex-row">
+               {this._avatar()}
                {this._commitInfo()}
                 {this._buildDuration()}
               </span>
@@ -46,8 +47,6 @@ var BuildRow = React.createClass({
         </button>
         </b>
         <span className="flex-row">
-
-               {this._avatar()}
         <small>{this.props.commit.committerName}</small>
       </span>
       </span>;

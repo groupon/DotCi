@@ -33,11 +33,11 @@ export default React.createClass({
         let activeWidget =  this.props.children[this.state.currentSelection];
 	var navs = this.props.children.map((widget,index) => this._tabItem(widget,index));
         return(
-            <div className="row top-buffer">
-                <div className="col-md-9 activeWidget">
+            <div className="flex-row top-buffer">
+                <div className="activeWidget">
                     {activeWidget}
                 </div>
-                <div className="col-md-3 tabbable tabs-right">
+                <div className="tabbable tabs-right">
                     <ul className="nav nav-tabs">
                     {navs}
                     </ul>

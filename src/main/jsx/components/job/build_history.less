@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-@import '~lesshat/build/lesshat.less';
+@import '../../flex.less';
 
 @success:   #038035;
 @success-background:   #fafffa;
@@ -76,18 +76,5 @@
 .commit-info{
   .flex-column;
   .flex-grow(2);
-}
-
-.flex-row {
-  .display(flex);
-  .flex-direction(row);
-  .flex-wrap(nowrap);
-  .align-content(space-between);
-  .align-items(flex-start);
-}
-.flex-column {
-  .display(flex);
-  .flex-direction(column);
-  .flex-wrap(nowrap);
 }
 

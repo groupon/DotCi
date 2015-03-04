@@ -37,8 +37,7 @@ var Header = React.createClass({
     render(){
         var settingsTitle = <span className="fa fa-cog btn-label">Settings</span>;
         return (
-            <div className="row">
-                <ButtonToolbar justified>
+                <ButtonToolbar className="flex-row" justified>
                     <IconLink href={this.props.githubUrl} className="octicon octicon-mark-github">{this.props.fullName}</IconLink>
                     <IconLink href="build?delay=0sec" className="fa fa-rocket"> Build Now</IconLink>
                     <DropdownButton title={settingsTitle}   bsSize="small" className="btn-labeled" pullRight>
@@ -48,7 +47,6 @@ var Header = React.createClass({
                         </ConfirmationModal>
                     </DropdownButton>
                 </ButtonToolbar>
-            </div>
         );
     },
     deleteJob(){
