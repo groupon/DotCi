@@ -297,14 +297,10 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         return super.getLastBuild();
     }
 
-    @Override
-    public void doDoDelete(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+    public void doDoDeleteAjax(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
         rsp.setHeader("Location", getParent().getAbsoluteUrl());
         delete();
     }
-//    public void doNewUi(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-//    }
-
 
     public DynamicProjectApi getJson() throws IOException {
         return new DynamicProjectApi(this);

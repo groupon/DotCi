@@ -325,4 +325,9 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         addAction(new SkippedBuildAction());
     }
 
+    @Override
+    public String getDescription() {
+       String description = super.getDescription();
+        return description == null? getCurrentBranch().toString() : description;
+    }
 }
