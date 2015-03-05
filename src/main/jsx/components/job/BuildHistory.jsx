@@ -45,8 +45,11 @@ var BuildHistoryTabs = React.createClass({
     render()  {
       return (<div className="branch-tabs">
         {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i))}
+        <a className="branch-tab" href="#" onClick={this._addTab}> <i className="fa fa-plus-circle"></i></a>
               </div>
         );
+    },
+    _addTab(){
     },
     _notifyTabSelection: function (tabIndex) {
         let actions = this.props.flux.getActions('app');
