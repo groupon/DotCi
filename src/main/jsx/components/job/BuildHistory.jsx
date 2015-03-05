@@ -24,7 +24,6 @@
 
 import React from 'react';
 import BuildRow from './BuildRow.jsx';
-
 require('./build_history.less');
 
 
@@ -32,7 +31,7 @@ var BuildHistoryTable = React.createClass({
     render(){
         let builds = this.props.builds.map((build) => <BuildRow key={build.number} {...build}/>);
         return(
-          <div className="flex-column">
+          <div className="builds">
                  {builds}
                </div>
         );

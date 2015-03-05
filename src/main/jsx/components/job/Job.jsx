@@ -32,7 +32,6 @@ import MenuItem from 'react-bootstrap/lib/MenuItem';
 import BuildHistory from './BuildHistory.jsx';
 import BuildMetrics from './BuildMetrics.jsx';
 import Widgets from '../lib/Widgets.jsx';
-require("./job.less");
 
 var Header = React.createClass({
     render(){
@@ -71,12 +70,10 @@ var JobWidgets = React.createClass({
 export default React.createClass({
     render(){
         return (
-            <div className="job">
             <FluxComponent connectToStores={['job']} flux={this.props.flux}>
                 <Header/>
                 <JobWidgets/>
             </FluxComponent>
-          </div>
         );
     }
 });

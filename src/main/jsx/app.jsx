@@ -26,16 +26,20 @@ import React from "react";
 import Flux from "./Flux.jsx";
 import RecentProjects from "./components/recent_projects/RecentProjects.jsx";
 import Job from "./components/job/Job.jsx";
-require('./flex.less');
+require('./app.less');
 window.onload = function(){
   let flux = new Flux();
   let actions = flux.getActions('app');
   actions.getRecentProjectsFromServer();
   actions.getJobInfoFromServer();
   React.render(
-    <div className="flex-row" >
+    <div className="app" >
+      <div className="recent-projects">
       <RecentProjects flux={flux} />
+      </div>
+      <div className="job">
       <Job flux={flux} />
+      </div>
     </div>,
     document.getElementById('app')
   );};
