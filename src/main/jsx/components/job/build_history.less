@@ -23,6 +23,7 @@
  */
 
 @import '../../flex.less';
+@import '../../animate.less';
 
 @success:   #038035;
 @success-background:   #fafffa;
@@ -46,6 +47,9 @@
     text-decoration: none;
   }
   &:active{
+    text-decoration: none;
+  }
+  &:focus{
     text-decoration: none;
   }
 }
@@ -98,5 +102,7 @@
   border-bottom-width: 5px;
   border-radius: 3px;
   border-bottom-color: blue;
+  .animated;
+  .pulse;
 }
 

@@ -55,7 +55,8 @@ var BuildHistoryTabs = React.createClass({
         let actions = this.props.flux.getActions('app');
         actions.buildHistorySelected(this.props.tabs[tabIndex]);
     },
-    _onActiveTabChange(tab){
+    _onActiveTabChange(event){
+        var tab =parseInt(event.currentTarget.getAttribute('data-tab'));
         this.setState({currentSelection: tab});
         this._notifyTabSelection(tab);
     },
@@ -65,7 +66,7 @@ var BuildHistoryTabs = React.createClass({
         'branch-tab': true,
         'branch-tab-active': this.state.currentSelection==i
       });
-      return   <a className={classes} key={i}  onClick={this._onActiveTabChange.bind(null,i)} href="#" > {tab}</a>;
+      return   <a className={classes} key={i} data-tab={i}  onClick={this._onActiveTabChange} href="#" >{tab}</a>;
     }
 });
 export default React.createClass({
