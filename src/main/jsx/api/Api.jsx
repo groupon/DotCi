@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-'use strict';
 import Qwest from 'qwest';
 export function recentProjects(){
     return Qwest.get(window.rootURL + '/recentProjects',{},{responseType: 'json'});
@@ -45,5 +44,5 @@ export function fetchBuildHistory(tab) {
 }
 
 function _jobApiUrl() {
-    return window.location.pathname + 'json';
+    return window.location.pathname.replace('newUi','') + 'json';
 }

@@ -302,6 +302,9 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         rsp.setHeader("Location", getParent().getAbsoluteUrl());
         delete();
     }
+//    public void doNewUi(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+//    }
+
 
     public DynamicProjectApi getJson() throws IOException {
         return new DynamicProjectApi(this);
