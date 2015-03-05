@@ -28,6 +28,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.branchhistory.BranchHistoryWidget;
 import com.groupon.jenkins.branchhistory.JobHistoryWidget;
 import com.groupon.jenkins.dynamic.build.api.DynamicProjectApi;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
@@ -49,9 +50,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import hudson.widgets.HistoryWidget;
 import hudson.widgets.Widget;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONSerializer;
+import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Flavor;
@@ -165,15 +168,15 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     }
 
 
-    @Override
-    public List<Widget> getWidgets() {
-        List<Widget> widgets = new ArrayList<Widget>();
-        widgets.add(getJobHistoryWidget());
-        return widgets;
-    }
 
-    public JobHistoryWidget getJobHistoryWidget() {
-        return new JobHistoryWidget(this);
+    @Override
+    protected HistoryWidget createHistoryWidget() {
+        return new BranchHistoryWidget(
+                this,
+                HISTORY_ADAPTER,
+                SetupConfig.get().getDynamicBuildRepository(),
+                getCurrentBranch()
+        );
     }
 
     @Override
@@ -191,6 +194,23 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         }
 
         return permalink;
+    }
+    protected String getCurrentBranch(){
+        return (String) Stapler.getCurrentRequest().getSession().getAttribute("branchView" + getName());
+    }
+
+    public void doBranchBuilds(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+        String tab  = req.getRestOfPath().replace("/","");
+        handleBranchTabs(tab, req);
+        rsp.forwardToPreviousPage(req);
+    }
+
+    private void handleBranchTabs(String branch, StaplerRequest req) {
+        if("all".equals(branch)){
+            req.getSession().removeAttribute("branchView" + this.getName());
+        }else{
+            req.getSession().setAttribute("branchView" + this.getName(), branch);
+        }
     }
 
     @Override

@@ -1,52 +1,0 @@
-
-<?jelly escape-by-default='true'?>
-<!--
-  ~ The MIT License (MIT)
-  ~
-  ~ Copyright (c) 2014, Groupon, Inc.
-  ~
-  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
-  ~ of this software and associated documentation files (the "Software"), to deal
-  ~ in the Software without restriction, including without limitation the rights
-  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  ~ copies of the Software, and to permit persons to whom the Software is
-  ~ furnished to do so, subject to the following conditions:
-  ~
-  ~ The above copyright notice and this permission notice shall be included in
-  ~ all copies or substantial portions of the Software.
-  ~
-  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-  ~ THE SOFTWARE.
-  -->
-
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-  <a href="${build.number}" class="list-group-item build-${build.result}">
-    <h4 class="list-group-item-heading"> 
-      <span class="fa fa-fw ${build.icon}" ></span> 
-      <small> <span class="octicon octicon-git-branch with-space"></span>${build.commit.branch}:</small>
-      ${build.commit.message}
-      <j:if test="${build.cancelable}">
-        <button class="close"   href="#" onclick="dotCiCancelBuild(event,'${rootURL}/${build.cancelUrl}')" >x</button>
-      </j:if>
-
-    </h4> 
-
-    <div class="list-group-item-text"> 
-
-      <img class="with-space" alt="${build.commit.emailDigest}" src="https://secure.gravatar.com/avatar/${build.commit.emailDigest}.png?r=PG&amp;s=30"/>
-      <span class="with-space">${build.commit.committerName}</span> 
-      <button type="button" class="btn btn-link with-space" onclick="dotciGoto(event,'${build.commit.commitUrl}')">
-        <span class="octicon octicon-git-compare"/> ${build.commit.shortSha} <i class="fa fa-external-link-square"></i>
-      </button>
-      <span class="pull-right">
-        <span class="with-space"><small><i class="fa fa-clock-o"></i> Duration:</small> ${build.duration} </span>
-        <span class="with-space"><small><i class="fa fa-clock-o"></i> Started:</small> ${build.displayTime} </span>
-      </span>
-    </div>
-  </a>
-</j:jelly>
