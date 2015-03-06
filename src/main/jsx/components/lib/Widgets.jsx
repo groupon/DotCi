@@ -25,17 +25,14 @@ import React from 'react';
 import Nav from 'react-bootstrap/lib/Nav';
 import NavItem from 'react-bootstrap/lib/NavItem';
 require('./widgets.less');
+import Router from 'react-router';
 export default React.createClass({
-    getInitialState(){
-        return {currentSelection: 0};
-    },
     render(){
-        let activeWidget =  this.props.children[this.state.currentSelection];
 	var navs = this.props.children.map((widget,index) => this._tabItem(widget,index));
         return(
             <div className="flex-row top-buffer">
                 <div className="activeWidget">
-                    {activeWidget}
+                    {this._activeWidget()}
                 </div>
                 <div className="tabbable tabs-right">
                     <ul className="nav nav-tabs">
@@ -46,16 +43,15 @@ export default React.createClass({
 
         );
     },
-    _onActiveTabChange(event){
-        var tab =parseInt(event.currentTarget.getAttribute('data-index'));
-        this.setState({currentSelection: tab});
-        event.preventDefault();
+    _activeWidget(){
+      let activeWidget = this.props.children.find((widget)=> widget.props.url ==this.props.activeWidget );
+      return activeWidget? activeWidget : this.props.children[0];
     },
     _tabItem(widget,index){
-	    return <li key={index} className={this.state.currentSelection==index?'active':''}>
-		    <a data-index={index} href="#" onClick={this._onActiveTabChange}> 
+	    return <li key={index} className={false?'active':''}>
+        <Router.Link data-index={index} to="job-widgets" params={{widget: widget.props.url}}> 
 		        <i className={widget.props.icon}/>{widget.props.name}
-		    </a>
+		    </Router.Link>
 		   </li>; 
 
     }

@@ -29,7 +29,7 @@ import Flux from "./Flux.jsx";
 import Router from 'react-router';
 require('./app.less');
 var RouteHandler = Router.RouteHandler;
-
+var Route = Router.Route;
 const App=  React.createClass({
   render(){
     const flux = this.props.flux;
@@ -45,20 +45,18 @@ const App=  React.createClass({
 });
 window.onload = function(){
   let flux = new Flux();
-  var Route = Router.Route;
-  var DefaultRoute = Router.DefaultRoute;
   var routes = (
     <Route  path="/"  handler={App} >
-          <Route name="/recent-users" path="recent" handler={RecentProjects} />
-      <DefaultRoute  handler={Job}>
-      </DefaultRoute>
+      <Route name="job" path="/" handler={Job}>
+        {Job.Routes}
+      </Route>
     </Route>
   );
   let actions = flux.getActions('app');
   actions.getRecentProjectsFromServer();
   actions.getJobInfoFromServer();
   Router.run(routes, function (Handler, state) {
-    var params = state.params;
+    var params = "/"+state.params;
     React.render(<Handler params={params} flux={flux}/>, document.getElementById('app'));
   });
 };

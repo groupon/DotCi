@@ -26,6 +26,12 @@
 <!DOCTYPE html>
 <html lang="en">
     <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+
+         <script>
+             var el = document.createElement('a');
+             el.href = '${it.absoluteUrl}'+'newUi';
+             jobUrl = el.pathname
+         </script>
         <st:include page="head.jelly" />
         <body>
             <st:include page="header/header.jelly" />
