@@ -23,23 +23,25 @@
  */
 
 import React from "react";
-import Flux from "./Flux.jsx";
 import RecentProjects from "./components/recent_projects/RecentProjects.jsx";
 import Job from "./components/job/Job.jsx";
 require('./app.less');
+const App=  React.createClass({
+  render(){
+    const flux = this.props.flux;
+ return    <div className="app" >
+      <div className="recent-projects">
+      <RecentProjects flux={flux} />
+      </div>
+      <div className="job">
+      </div>
+    </div>;
+  }
+});
 window.onload = function(){
   let flux = new Flux();
   let actions = flux.getActions('app');
   actions.getRecentProjectsFromServer();
   actions.getJobInfoFromServer();
-  React.render(
-    <div className="app" >
-      <div className="recent-projects">
-      <RecentProjects flux={flux} />
-      </div>
-      <div className="job">
-      <Job flux={flux} />
-      </div>
-    </div>,
-    document.getElementById('app')
-  );};
+  React.render( <App flux={flux}/>, document.getElementById('app'));
+};
