@@ -30,25 +30,25 @@ import Widgets from '../lib/Widgets.jsx';
 import Header from './Header.jsx';
 
 
-var JobWidgets = React.createClass({
-    render(){
-        return(
-            <Widgets>
-                <BuildHistory icon="fa fa-history" name="Build History" tabs={this.props.buildHistoryTabs} builds={this.props.builds} flux={this.props.flux}/>
-		<BuildMetrics icon="fa fa-bar-chart" name="Metrics"/>
-            </Widgets>
-        );
+var Job = React.createClass({
+  render(){
+    return(
+      <Widgets>
+        <BuildHistory icon="fa fa-history" name="Build History" tabs={this.props.buildHistoryTabs} builds={this.props.builds} flux={this.props.flux}/>
+        <BuildMetrics icon="fa fa-bar-chart" name="Metrics"/>
+      </Widgets>
+    );
 
-    }
+  }
 });
 
 export default React.createClass({
-    render(){
-        return (
-            <FluxComponent connectToStores={['job']} flux={this.props.flux}>
-                <Header/>
-                <JobWidgets/>
-            </FluxComponent>
-        );
-    }
+  render(){
+    return (
+      <FluxComponent connectToStores={['job']} flux={this.props.flux}>
+        <Header/>
+        <Job/>
+      </FluxComponent>
+    );
+  }
 });

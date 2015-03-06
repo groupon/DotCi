@@ -25,23 +25,40 @@
 import React from "react";
 import RecentProjects from "./components/recent_projects/RecentProjects.jsx";
 import Job from "./components/job/Job.jsx";
+import Flux from "./Flux.jsx";
+import Router from 'react-router';
 require('./app.less');
+var RouteHandler = Router.RouteHandler;
+
 const App=  React.createClass({
   render(){
     const flux = this.props.flux;
- return    <div className="app" >
+    return    <div className="app" >
       <div className="recent-projects">
-      <RecentProjects flux={flux} />
+        <RecentProjects flux={flux} />
       </div>
       <div className="job">
+        <RouteHandler {...this.props}/>
       </div>
     </div>;
   }
 });
 window.onload = function(){
   let flux = new Flux();
+  var Route = Router.Route;
+  var DefaultRoute = Router.DefaultRoute;
+  var routes = (
+    <Route  path="/"  handler={App} >
+          <Route name="/recent-users" path="recent" handler={RecentProjects} />
+      <DefaultRoute  handler={Job}>
+      </DefaultRoute>
+    </Route>
+  );
   let actions = flux.getActions('app');
   actions.getRecentProjectsFromServer();
   actions.getJobInfoFromServer();
-  React.render( <App flux={flux}/>, document.getElementById('app'));
+  Router.run(routes, function (Handler, state) {
+    var params = state.params;
+    React.render(<Handler params={params} flux={flux}/>, document.getElementById('app'));
+  });
 };

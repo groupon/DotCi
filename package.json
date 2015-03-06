@@ -7,7 +7,8 @@
     "flummox": "2.7.2",
     "qwest": "latest",
     "react": "latest",
-    "react-bootstrap": "^0.15.1"
+    "react-bootstrap": "^0.15.1",
+    "react-router": "^0.12.4"
   },
   "devDependencies": {
     "autoprefixer-loader": "^1.1.0",
@@ -37,7 +38,7 @@
     ]
   },
   "scripts": {
-    "package": "npm install && webpack --release=true  --colors --progress  src/main/jsx/app.jsx",
+    "package": "npm install && webpack --release=true  --colors --progress  src/main/jsx/index.jsx",
     "lint": "eslint --ext=jsx src/main/jsx/**/*",
     "watch": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.config.dev.js --colors --progress --hot --inline  --port  3000",
     "test": "jest"
