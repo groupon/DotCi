@@ -23,37 +23,12 @@
  */
 import React from "react";
 import FluxComponent from 'flummox/component';
-import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
 import Button from 'react-bootstrap/lib/Button';
-import IconLink from '../lib/IconLink.jsx';
-import ConfirmationModal from '../lib/ConfirmationModal.jsx';
-import DropdownButton from 'react-bootstrap/lib/DropdownButton';
-import MenuItem from 'react-bootstrap/lib/MenuItem';
 import BuildHistory from './BuildHistory.jsx';
 import BuildMetrics from './BuildMetrics.jsx';
 import Widgets from '../lib/Widgets.jsx';
+import Header from './Header.jsx';
 
-var Header = React.createClass({
-    render(){
-        var settingsTitle = <span className="fa fa-cog btn-label">Settings</span>;
-        return (
-                <ButtonToolbar className="flex-row" justified>
-                    <IconLink href={this.props.githubUrl} className="octicon octicon-mark-github">{this.props.fullName}</IconLink>
-                    <IconLink href="build?delay=0sec" className="fa fa-rocket"> Build Now</IconLink>
-                    <DropdownButton title={settingsTitle}   bsSize="small" className="btn-labeled" pullRight>
-                        <MenuItem href="configure">Configure</MenuItem>
-                        <ConfirmationModal onConfirm={this.deleteJob}>
-                            <MenuItem>Delete</MenuItem>
-                        </ConfirmationModal>
-                    </DropdownButton>
-                </ButtonToolbar>
-        );
-    },
-    deleteJob(){
-        let actions = this.props.flux.getActions('app');
-        actions.deleteProject();
-    }
-});
 
 var JobWidgets = React.createClass({
     render(){
