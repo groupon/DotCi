@@ -48,8 +48,9 @@ export default React.createClass({
       return activeWidget? activeWidget : this.props.children[0];
     },
     _tabItem(widget,index){
-	    return <li key={index} className={false?'active':''}>
-        <Router.Link data-index={index} to="job-widgets" params={{widget: widget.props.url}}> 
+      var className = this.props.activeWidget?'': index === 0? 'active':'';
+	    return <li key={index}>
+        <Router.Link data-index={index} className={className} to="job-widgets" params={{widget: widget.props.url}}> 
 		        <i className={widget.props.icon}/>{widget.props.name}
 		    </Router.Link>
 		   </li>; 
