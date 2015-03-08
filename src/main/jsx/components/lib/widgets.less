@@ -23,46 +23,7 @@
  */
 
 @import '../../flex.less';
-.tabs-right > .nav-tabs {
-  border-bottom: 0;
-}
 
-.tabs-right > .nav-tabs > li {
-  float: none;
-}
-
-.tabs-right > .nav-tabs > li > a {
-  min-width: 74px;
-  margin-right: 0;
-  margin-bottom: 3px;
-}
-
-.tabs-right > .nav-tabs {
-  border-left: 1px solid #ddd;
-}
-
-.tabs-right > .nav-tabs > li > a {
-  margin-left: -1px;
-  -webkit-border-radius: 0 4px 4px 0;
-  -moz-border-radius: 0 4px 4px 0;
-  border-radius: 0 4px 4px 0;
-}
-
-.tabs-right > .nav-tabs > li > a:hover,
-.tabs-right > .nav-tabs > li > a:focus {
-  border-color: #eeeeee #eeeeee #eeeeee #dddddd;
-}
-
-.tabs-right > .nav-tabs>li > a.active ,
-.tabs-right > .nav-tabs >li > a.active:hover,
-.tabs-right > .nav-tabs li> a.active:focus {
-  border-color: #ddd #ddd #ddd transparent;
-  border-right: 1px solid #eee;
-  border-right-width: 5px;
-  border-radius: 3px;
-  border-right-color: blue;
-  border-left-width: 0px;
-}
 .activeWidget{
   flex-basis: 80%;
   // border: 1px solid #ddd;
@@ -71,4 +32,9 @@
   justify-content: center;
   text-align: center;
 }
-.top-buffer { margin-top:20px; }
+.top-buffer { margin-top:10px; }
+.widget.active{
+  border-right: 1px solid #eee !important;
+  border-right-width: 3px !important;
+  border-right-color: black !important;
+}
