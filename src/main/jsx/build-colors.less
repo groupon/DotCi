@@ -1,0 +1,29 @@
+@success:   #038035;
+@success-background:   #fafffa;
+
+
+@failure:   #c00;
+@failure-background: snow;
+
+@aborted:   #666;
+@aborted-background: #dimgrey;
+@in-progress:   #E7D100;
+@in-progress-background:#fffcf4;
+
+.build-border(@border-color){
+  border-left-width: 5px;
+  border-radius: 3px;
+  border-left-color: @border-color;
+}
+.border-failure{
+  .build-border(@failure);
+}
+.border-success{
+  .build-border(@success);
+}
+.border-aborted{
+  .build-border(@aborted);
+}
+.border-in-progress{
+  .build-border(@in-progress);
+}

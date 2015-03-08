@@ -25,17 +25,15 @@
 import React from "react";
 import BuildIcon from "../lib/BuildIcon.jsx";
 import FluxComponent from 'flummox/component';
-import Panel from "react-bootstrap/lib/Panel";
-import ListGroup from "react-bootstrap/lib/ListGroup";
-import ListGroupItem from "react-bootstrap/lib/ListGroupItem";
+require("./recent_projects.less");
 
 var RecentProject = React.createClass({
     render(){
         return (
-            <div key={this.props.url} className="ui center aligned  segment">
-                <a href={this.props.url}> {this.props.name} </a>
-                <BuildIcon state={this.props.lastBuildStatus}/>
-            </div>
+              <a className={"recent-project-"+this.props.lastBuildStatus+ " ui animated fade button  segment attached"} href={this.props.url}> 
+                <div className="visible content">{this.props.name}</div>
+                  <div className="hidden content"> {this.props.lastBuildStatus} </div>
+              </a>
         );
     }
 });
@@ -50,7 +48,6 @@ var RecentProjectsWidget =React.createClass({
         return (
 <div className="ui segment">
 <h5 className="ui top attached header">Recent Projects</h5>
-{recentProjects}
 {recentProjects}
 </div>
 

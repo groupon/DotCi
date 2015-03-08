@@ -1,17 +1,5 @@
 @import '~lesshat/build/lesshat.less';
-@success:   #038035;
-@success-background:   #fafffa;
-
-
-@failure:   #c00;
-@failure-background: snow;
-
-@aborted:   #666;
-@aborted-background: #dimgrey;
-
-
-@in-progress:   #E7D100;
-@in-progress-background:#fffcf4;
+@import './../../build-colors.less';
 .link-no-decoration{
   text-decoration: none;
   &:visited{
@@ -32,9 +20,6 @@
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #eee;
-  border-left-width: 5px;
-  border-radius: 3px;
-  border-left-color: @color;
   background-color: @background-color;
   .box-shadow(0 1px 10px rgba(20,20,20,0.5));
   .link-no-decoration();
@@ -43,18 +28,22 @@
 }
 .build-row-SUCCESS{
   .build-row(@success,@success-background);
+  .border-success;
 }
 
 .build-row-FAILURE{
   .build-row(@failure,@failure-background);
+  .border-failure;
 }
 
 .build-row-ABORTED {
   .build-row(@aborted,@aborted-background);
+  .border-aborted;
 }
 
 .build-row-IN_PROGRESS {
   .build-row(@in-progress,@in-progress-background);
+  .border-in-progress;
 }
 .build-duration{
   .display(flex);
