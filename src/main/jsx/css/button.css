@@ -76,7 +76,7 @@
   background-color: '';
   color: rgba(0, 0, 0, 0.8);
   background-image: '' !important;
-  box-shadow: 0px 0px 0px 1px #dddddd, 0px 0px 1px rgba(81, 167, 232, 0.8) inset, 0px 0px 3px 2px rgba(81, 167, 232, 0.8) !important;
+  box-shadow: 0px 0px 0px 1px #dddddd, 0px 0px 1px rgba(122, 122, 122, 122) inset, 0px 0px 3px 2px rgba(122, 122, 122, 122) ;
 }
 .ui.button:focus .icon {
   opacity: 0.85;
