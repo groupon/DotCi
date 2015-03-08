@@ -23,7 +23,6 @@
  */
 import React from "react";
 import FluxComponent from 'flummox/component';
-import Button from 'react-bootstrap/lib/Button';
 import BuildHistory from './BuildHistory.jsx';
 import BuildMetrics from './BuildMetrics.jsx';
 import Widgets from '../lib/Widgets.jsx';
