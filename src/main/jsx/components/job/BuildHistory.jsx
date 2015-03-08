@@ -28,53 +28,64 @@ require('./build_history.less');
 
 
 var BuildHistoryTable = React.createClass({
-    render(){
-        let builds = this.props.builds.map((build) => <BuildRow key={build.number} {...build}/>);
-        return(
-          <div className="builds">
-                 {builds}
-               </div>
-        );
-    }
+  render(){
+    let builds = this.props.builds.map((build) => <BuildRow key={build.number} {...build}/>);
+    return(
+      <div className="builds">
+        {builds}
+      </div>
+    );
+  }
 });
 var BuildHistoryTabs = React.createClass({
-    getInitialState(){
-        return {currentSelection: 0};
-    },
-    render()  {
-      return (<div className="branch-tabs">
-        {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i))}
-        <a className="branch-tab" href="#" onClick={this._addTab}> <i className="fa fa-plus-circle"></i></a>
-              </div>
-        );
-    },
-    _addTab(){
-    },
-    _notifyTabSelection: function (tabIndex) {
-        let actions = this.props.flux.getActions('app');
-        actions.buildHistorySelected(this.props.tabs[tabIndex]);
-    },
-    _onActiveTabChange(event){
-        var tab =parseInt(event.currentTarget.getAttribute('data-tab'));
-        this.setState({currentSelection: tab});
-        this._notifyTabSelection(tab);
-    },
-    _getHistoryTab(tab,i) {
-      var cx = React.addons.classSet;
-      var classes = cx({
-        'branch-tab': true,
-        'branch-tab-active': this.state.currentSelection==i
-      });
-      return   <a className={classes} key={i} data-tab={i}  onClick={this._onActiveTabChange} href="#" >{tab}</a>;
-    }
+  getInitialState(){
+    return {currentSelection: 0};
+  },
+  render()  {
+    return (<div className="branch-tabs">
+      {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i))}
+      <a className="ui icon button" href="#" onClick={this._addTab}> <i className="icon fa fa-plus-circle"></i></a>
+    </div>
+           );
+  },
+  _addTab(){
+  },
+  _notifyTabSelection: function (tabIndex) {
+    let actions = this.props.flux.getActions('app');
+    actions.buildHistorySelected(this.props.tabs[tabIndex]);
+  },
+  _onActiveTabChange(event){
+    var tab =parseInt(event.currentTarget.getAttribute('data-tab'));
+    this.setState({currentSelection: tab});
+    this._notifyTabSelection(tab);
+  },
+  _getHistoryTab(tab,i) {
+    var cx = React.addons.classSet;
+    var classes = cx({
+      'ui':true,
+      'labeled':true ,
+      'icon':true ,
+      'button':true,
+      'branch-tab': true,
+      'tab-active': this.state.currentSelection==i
+    });
+    return (<a className={classes} key={i} data-tab={i}  onClick={this._onActiveTabChange} href="#" >
+            <i className={"icon octicon octicon-git-branch "}></i>
+      {tab}
+    </a>);
+  }
 });
 export default React.createClass({
-    render(){
-        return(
-            <div>
-                <BuildHistoryTabs flux={this.props.flux} tabs={this.props.tabs}/>
-                <BuildHistoryTable builds ={this.props.builds}/>
-            </div>
-        );
-    }
+  render(){
+    return(
+      <div>
+        <BuildHistoryTabs flux={this.props.flux} tabs={this.props.tabs}/>
+        <h4 className="ui horizontal header divider">
+          <i className="fa fa-server"></i>
+          Builds
+        </h4>
+        <BuildHistoryTable builds ={this.props.builds}/>
+      </div>
+    );
+  }
 });
