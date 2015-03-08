@@ -23,7 +23,6 @@
  * THE SOFTWARE.
  */
 import React from "react";
-import BuildIcon from "../lib/BuildIcon.jsx";
 import FluxComponent from 'flummox/component';
 require("./recent_projects.less");
 
