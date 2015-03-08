@@ -23,13 +23,14 @@
  */
 
 import React from 'react';
-import Button from 'react-bootstrap/lib/Button';
 export default React.createClass({
     render: function () {
         return(
-        <Button href={this.props.href}  bsStyle="primary" bsSize="small" className="btn-labeled" > <span className={"btn-label " + this.props.className}/>
-        {this.props.children}
-        </Button>
+
+          <a href={this.props.href} className="ui labeled icon button">
+            <i className={"icon "+ this.props.icon}></i>
+            {this.props.children}
+              </a>
         );
     }
 });

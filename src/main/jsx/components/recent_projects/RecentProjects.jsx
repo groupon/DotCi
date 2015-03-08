@@ -32,10 +32,10 @@ import ListGroupItem from "react-bootstrap/lib/ListGroupItem";
 var RecentProject = React.createClass({
     render(){
         return (
-            <ListGroupItem key={this.props.url}>
+            <div key={this.props.url} className="ui center aligned  segment">
                 <a href={this.props.url}> {this.props.name} </a>
                 <BuildIcon state={this.props.lastBuildStatus}/>
-            </ListGroupItem>
+            </div>
         );
     }
 });
@@ -48,11 +48,11 @@ var RecentProjectsWidget =React.createClass({
             );
         });
         return (
-        <Panel collapsable defaultExpanded header="Recent Projects">
-            <ListGroup fill>
-            {recentProjects}
-            </ListGroup>
-        </Panel>
+<div className="ui segment">
+<h5 className="ui top attached header">Recent Projects</h5>
+{recentProjects}
+{recentProjects}
+</div>
 
 
         );
