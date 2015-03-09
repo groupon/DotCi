@@ -12,16 +12,15 @@ var BuildRow = React.createClass({
         );
     },
     _commitInfo(){
-      return <span className="commit-info">
+      return(<span className="commit-info">
         <span>
-        <b>{this.props.commit.message}
-        <a  href={this.props.commit.commitUrl} >
+        <b>{this.props.commit.message}</b>
+        <a className="commit-url"  href={this.props.commit.commitUrl} >
           {this.props.commit.shortSha} <i className="icon fa fa-external-link-square"></i>
         </a>
-        </b>
       </span>
         <small>{this.props.commit.committerName}</small>
-      </span>;
+      </span>);
     },
     _avatar(){
       return <img  className="ui avatar image" alt={this.props.commit.emailDigest}  src={"https://secure.gravatar.com/avatar/"+this.props.commit.emailDigest+".png"}/>;
