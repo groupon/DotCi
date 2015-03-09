@@ -4,27 +4,27 @@ require('./build_row.less');
 var BuildRow = React.createClass({
     render(){
         return (
-            <a className ={"build-row-"+this.props.result}  href={this.props.number+''} >
+            <div className ={"build-row-"+this.props.result}  href={this.props.number+''} >
                {this._avatar()}
                {this._commitInfo()}
                 {this._buildDuration()}
-            </a>
+            </div>
         );
     },
     _commitInfo(){
       return <span className="commit-info">
         <span>
         <b>{this.props.commit.message}
-        <button type="button" className="btn btn-link" >
-          {this.props.commit.shortSha} <i className="fa fa-external-link-square"></i>
-        </button>
+        <a  href={this.props.commit.commitUrl} >
+          {this.props.commit.shortSha} <i className="icon fa fa-external-link-square"></i>
+        </a>
         </b>
       </span>
         <small>{this.props.commit.committerName}</small>
       </span>;
     },
     _avatar(){
-      return <img  alt={this.props.commit.emailDigest}  src={"https://secure.gravatar.com/avatar/"+this.props.commit.emailDigest+".png?r=PG&s=46"}/>;
+      return <img  className="ui avatar image" alt={this.props.commit.emailDigest}  src={"https://secure.gravatar.com/avatar/"+this.props.commit.emailDigest+".png"}/>;
     },
     _buildDuration(){
       return( <span className="build-duration">
