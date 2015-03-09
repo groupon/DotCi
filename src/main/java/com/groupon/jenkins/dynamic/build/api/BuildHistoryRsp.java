@@ -21,29 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-import Qwest from 'qwest';
-export function recentProjects(){
-    return Qwest.get(window.rootURL + '/recentProjects',{},{responseType: 'json'});
-}
-export function job(){
-    return Qwest.get(_jobApiUrl()+"/info",{depth:2},{responseType: 'json'});
-}
-export function deleteCurrentProject(){
-  return new Promise(function(resolve, reject) {
-        if (true) {
-            resolve();
-        }
-        else {
-            reject(Error('It broke'));
-        }
-    });
-}
 
-export function fetchBuildHistory(tab) {
-    return Qwest.get(`${_jobApiUrl()}/buildHistory/${tab}`,{depth:2},{responseType: 'json'});
-}
+package com.groupon.jenkins.dynamic.build.api;
 
-function _jobApiUrl() {
-    const url = window.location.pathname.replace('newUi','') + 'json';
-    return url;
+import com.google.common.collect.Lists;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
+
+import java.util.ArrayList;
+
+@ExportedBean
+public class BuildHistoryRsp {
+
+    private final ArrayList<BuildHistoryRow> builds;
+
+    public BuildHistoryRsp(Iterable<BuildHistoryRow> builds) {
+         this.builds = Lists.newArrayList(builds);
+    }
+
+    @Exported
+    public ArrayList<BuildHistoryRow> getBuilds() {
+        return builds;
+    }
 }

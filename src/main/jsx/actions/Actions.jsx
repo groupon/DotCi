@@ -51,7 +51,7 @@ export default class AppActions extends Actions {
 
     async buildHistorySelected(branch){
         let  builds = await fetchBuildHistory(branch);
-        this.buildHistoryChanged(builds);
+        this.buildHistoryChanged(builds.builds);
     }
 
     buildHistoryChanged(builds){

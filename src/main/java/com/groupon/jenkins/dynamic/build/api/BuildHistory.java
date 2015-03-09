@@ -47,7 +47,7 @@ public class BuildHistory extends ApiModel {
     }
 
     public void getDynamic(String branch, StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-        JsonResponse.render(req, rsp,getBuilds(branch));
+        JsonResponse.render(req, rsp,new BuildHistoryRsp( getBuilds(branch)));
     }
 
     public Iterable<BuildHistoryRow> getBuilds(String branch) {

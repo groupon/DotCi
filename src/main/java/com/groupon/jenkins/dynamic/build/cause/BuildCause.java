@@ -121,7 +121,7 @@ public abstract class BuildCause extends Cause {
 
         @Exported
         public String getShortSha(){
-            return sha.substring(0,7);
+            return sha==null?"master":sha.substring(0,7);
         }
 
         @Exported
