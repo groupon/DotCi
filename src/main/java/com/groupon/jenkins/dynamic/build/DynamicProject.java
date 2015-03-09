@@ -25,18 +25,15 @@ package com.groupon.jenkins.dynamic.build;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.branchhistory.BranchHistoryWidget;
-import com.groupon.jenkins.branchhistory.JobHistoryWidget;
 import com.groupon.jenkins.dynamic.build.api.DynamicProjectApi;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.dynamic.buildtype.BuildTypeProperty;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainerRepository;
 import com.groupon.jenkins.github.GithubRepoProperty;
-import com.groupon.jenkins.util.JsonResponse;
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 import hudson.Extension;
 import hudson.PermalinkList;
@@ -45,24 +42,21 @@ import hudson.model.*;
 import hudson.model.Queue.Task;
 import hudson.util.CaseInsensitiveComparator;
 import hudson.util.CopyOnWriteMap;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
 import hudson.widgets.HistoryWidget;
-import hudson.widgets.Widget;
 import jenkins.model.Jenkins;
-import net.sf.json.JSONSerializer;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
-import org.kohsuke.stapler.export.Flavor;
 import org.mongodb.morphia.annotations.PostLoad;
 import org.mongodb.morphia.annotations.PrePersist;
 
 import javax.servlet.ServletException;
-import static com.google.common.collect.ImmutableMap.of;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
 
 public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild> implements TopLevelItem, Saveable, IdentifableItemGroup<DynamicSubProject> {
     private transient Map<String, DynamicSubProject> items;

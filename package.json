@@ -37,7 +37,7 @@
     ]
   },
   "scripts": {
-    "package": "npm install && webpack --release=true  --colors --progress  src/main/jsx/index.jsx",
+    "package": "npm install && webpack --release=true  --colors --progress  src/main/jsx/app.jsx",
     "lint": "eslint --ext=jsx src/main/jsx/**/*",
     "watch": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.config.dev.js --colors --progress --hot --inline  --port  3000",
     "test": "jest"
