@@ -24,13 +24,18 @@
 
 package com.groupon.jenkins.dynamic.build.api;
 
+import com.google.common.collect.Lists;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import  static com.google.common.collect.ImmutableMap.of;
 
+@ExportedBean
 public class JobInfo extends  ApiModel{
 
         private DynamicProject dynamicProject;
@@ -40,21 +45,26 @@ public class JobInfo extends  ApiModel{
             this.dynamicProject = dynamicProject;
         }
 
+        @Exported
         public String getFullName(){
             return dynamicProject.getFullName();
         }
+    @Exported
         public String getGithubUrl(){
             return dynamicProject.getGithubRepoUrl();
         }
+    @Exported
         public Map getPermissions(){
             return of("configure",dynamicProject.hasPermission(DynamicProject.CONFIGURE),
                     "build", dynamicProject.hasPermission(DynamicProject.BUILD)) ;
         }
+    @Exported
         public Iterable<String> getBuildHistoryTabs(){
             DynamicProjectBranchTabsProperty tabsProperty =dynamicProject.getProperty(DynamicProjectBranchTabsProperty.class);
             return tabsProperty == null ? Collections.<String>emptyList() : tabsProperty.getBranches();
         }
-        public Iterable<BuildHistoryRow> getBuilds(){
-           return new BuildHistory(dynamicProject).getBuilds("master");
+        @Exported
+        public List<BuildHistoryRow> getBuilds(){
+           return Lists.newArrayList( new BuildHistory(dynamicProject).getBuilds("master"));
         }
 }

@@ -25,11 +25,11 @@
 package com.groupon.jenkins.dynamic.build.api;
 
 import com.groupon.jenkins.util.JsonResponse;
-import hudson.model.AbstractModelObject;
 import hudson.model.ModelObject;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
+import javax.servlet.ServletException;
 import java.io.IOException;
 
 public class ApiModel implements ModelObject{
@@ -37,7 +37,7 @@ public class ApiModel implements ModelObject{
     public String getDisplayName() {
         return "api";
     }
-    public void doIndex(StaplerRequest req, StaplerResponse rsp) throws IOException {
-        JsonResponse.render(rsp, this);
+    public void doIndex(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+        JsonResponse.render(req, rsp, this);
     }
 }

@@ -21,29 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-import Qwest from 'qwest';
-export function recentProjects(){
-    return Qwest.get(window.rootURL + '/recentProjects',{},{responseType: 'json'});
-}
-export function job(){
-    return Qwest.get(_jobApiUrl()+"/info",{depth:2},{responseType: 'json'});
-}
-export function deleteCurrentProject(){
-  return new Promise(function(resolve, reject) {
-        if (true) {
-            resolve();
-        }
-        else {
-            reject(Error('It broke'));
-        }
-    });
-}
 
-export function fetchBuildHistory(tab) {
-    return Qwest.get(`${_jobApiUrl()}/buildHistory/${tab}`,{},{responseType: 'json'});
-}
+package com.groupon.jenkins.dynamic;
 
-function _jobApiUrl() {
-    const url = window.location.pathname.replace('newUi','') + 'json';
-    return url;
-}
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
+
+import java.util.List;
+
+@ExportedBean
+    public class RecentProjectsRsp{
+        private List recentProjects;
+        public RecentProjectsRsp(List recentProjects) {
+
+            this.recentProjects = recentProjects;
+        }
+
+        @Exported(inline=true)
+        public List getRecentProjects() {
+            return recentProjects;
+        }
+    }

@@ -37,17 +37,7 @@ import javax.servlet.ServletOutputStream;
 import java.io.IOException;
 
 public class JsonResponse {
-    public static void  render(StaplerResponse rsp, Object output) throws IOException {
-        ServletOutputStream outputStream = null;
-        try {
-            rsp.setContentType("application/json");
-            ObjectMapper mapper = new ObjectMapper(new JsonFactory());
-            outputStream = rsp.getOutputStream();
-            mapper.writeValue(outputStream, output);
-//            outputStream.flush();
-        } finally{
-//            if(outputStream!=null)
-//            outputStream.close();;
-        }
+    public static void  render(StaplerRequest req, StaplerResponse rsp, Object output) throws IOException, ServletException {
+        rsp.serveExposedBean(req,output,Flavor.JSON);
     }
 }

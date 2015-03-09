@@ -39,6 +39,8 @@ import java.util.Map;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.github.GHCommit;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
 
 public abstract class BuildCause extends Cause {
@@ -72,6 +74,7 @@ public abstract class BuildCause extends Cause {
     public abstract Iterable<GithubLogEntry> getChangeLogEntries();
 
 
+    @ExportedBean
     public static class CommitInfo{
         public static CommitInfo NULL_INFO =  new CommitInfo();
         private  String committerEmail;
@@ -111,25 +114,31 @@ public abstract class BuildCause extends Cause {
             this.branch = payload.getBranch();
         }
 
+        @Exported
         public String getCommitUrl() {
             return commitUrl;
         }
 
+        @Exported
         public String getShortSha(){
             return sha.substring(0,7);
         }
 
+        @Exported
         public String getMessage(){
             return StringUtils.abbreviate(message, 50);
         }
 
+        @Exported
         public  String getCommitterName(){
             return committerName;
         }
 
+        @Exported
         public String getBranch() {
             return branch;
         }
+        @Exported
         public String getEmailDigest(){
             if(StringUtils.isEmpty(committerEmail)) return null;
             byte[] md5 = DigestUtils.md5(committerEmail);

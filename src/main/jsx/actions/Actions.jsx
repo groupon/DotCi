@@ -33,7 +33,7 @@ export default class AppActions extends Actions {
 
     async getRecentProjectsFromServer(){
        let  projects = await recentProjects();
-       this.recentProjectsChanged(projects);
+       this.recentProjectsChanged(projects.recentProjects);
     }
     async getJobInfoFromServer(){
         let jobInfo = await job();

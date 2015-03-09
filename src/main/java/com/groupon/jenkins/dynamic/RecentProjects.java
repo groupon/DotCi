@@ -37,7 +37,10 @@ import jenkins.model.Jenkins;
 import net.sf.json.JSONSerializer;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
+import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.*;
 
@@ -58,7 +61,7 @@ public class RecentProjects implements RootAction{
         return "recentProjects";
     }
 
-    public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException {
+    public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
         rsp.setContentType("application/json");
         Map<DynamicProject, List<DynamicBuild>> recentProjects = getRecentProjects();
         List<Map<String, Object>> output = new ArrayList<Map<String, Object>>();
@@ -74,7 +77,7 @@ public class RecentProjects implements RootAction{
             }
             output.add(projectMap);
         }
-        JsonResponse.render(rsp,output);
+        JsonResponse.render(req,rsp,new RecentProjectsRsp(output));
 
     }
     public Map<DynamicProject, List<DynamicBuild>> getRecentProjects(){
@@ -98,6 +101,9 @@ public class RecentProjects implements RootAction{
     }
 
     private String getCurrentUser() {
+
         return Jenkins.getAuthentication().getName();
     }
+
+
 }

@@ -35,6 +35,7 @@ import com.groupon.jenkins.util.JsonResponse;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
+import javax.servlet.ServletException;
 import java.io.IOException;
 
 public class BuildHistory extends ApiModel {
@@ -45,8 +46,8 @@ public class BuildHistory extends ApiModel {
         this.dynamicProject = dynamicProject;
     }
 
-    public void getDynamic(String branch, StaplerRequest req, StaplerResponse rsp) throws IOException {
-        JsonResponse.render(rsp,getBuilds(branch));
+    public void getDynamic(String branch, StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+        JsonResponse.render(req, rsp,getBuilds(branch));
     }
 
     public Iterable<BuildHistoryRow> getBuilds(String branch) {
