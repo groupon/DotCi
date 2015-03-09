@@ -13,13 +13,20 @@ var BuildRow = React.createClass({
     },
     _commitInfo(){
       return(<span className="commit-info">
-        <span>
+        <span className="commit-info-column">
         <b>{this.props.commit.message}</b>
         <a className="commit-url"  href={this.props.commit.commitUrl} >
           {this.props.commit.shortSha} <i className="icon fa fa-external-link-square"></i>
         </a>
       </span>
+      <span className="commit-info-column">
         <small>{this.props.commit.committerName}</small>
+        <span>{this.props.commit.branch}</span>
+        <a href={this.props.number+"/console"} className="compact mini ui black  button right labeled icon ">
+          <i className="fa fa-arrow-circle-right icon"></i>
+          Console
+        </a>
+      </span>
       </span>);
     },
     _avatar(){
