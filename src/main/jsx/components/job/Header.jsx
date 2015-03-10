@@ -7,7 +7,7 @@ export default React.createClass({
           <div className="flex-row">
                     <IconLink href={this.props.githubUrl} icon="octicon octicon-mark-github">{this.props.fullName}</IconLink>
                     <IconLink href="build?delay=0sec" icon="fa fa-rocket"> Build Now</IconLink>
-<div className="ui compact menu">
+<div id="settings" className="ui compact menu">
     <div className="button labeled ui simple dropdown item">
       <i className="dropdown icon"></i>
       <i className="icon fa fa-cog"/>  Settings
