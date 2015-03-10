@@ -93,7 +93,7 @@ THE SOFTWARE.
                 <version>1.3.2</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <phase>compile</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>

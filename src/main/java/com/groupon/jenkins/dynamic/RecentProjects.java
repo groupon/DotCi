@@ -73,8 +73,10 @@ public class RecentProjects implements RootAction{
             DynamicBuild lastBuild = project.getLastBuild();
             if(lastBuild!=null){
                 projectMap.put("lastBuildStatus",lastBuild.getResult().toString());
-                projectMap.put("lastCommit", StringUtils.abbreviate(lastBuild.getCause().getCommitInfo().getMessage(),30));
-                projectMap.put("avatarDigest", lastBuild.getCause().getCommitInfo().getEmailDigest());
+                if(lastBuild.getCause().getCommitInfo() !=null){
+                    projectMap.put("lastCommit", StringUtils.abbreviate(lastBuild.getCause().getCommitInfo().getMessage(),30));
+                    projectMap.put("avatarDigest", lastBuild.getCause().getCommitInfo().getEmailDigest());
+                }
             }else{
                 projectMap.put("lastBuildStatus", Result.ABORTED.toString());
             }
