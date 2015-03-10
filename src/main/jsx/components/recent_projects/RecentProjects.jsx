@@ -24,6 +24,7 @@
  */
 import React from "react";
 import FluxComponent from 'flummox/component';
+import Avatar from '../lib/Avatar.jsx';
 require("./recent_projects.less");
 
 var RecentProject = React.createClass({
@@ -31,7 +32,9 @@ var RecentProject = React.createClass({
         return (
               <a className={"recent-project-"+this.props.lastBuildStatus+ " ui animated fade button  segment attached"} href={this.props.url}> 
                 <div className="visible content">{this.props.name}</div>
-                  <div className="hidden content"> {this.props.lastBuildStatus} </div>
+                <div className="hidden content">
+                  {this.props.lastCommit}
+                </div>
               </a>
         );
     }
@@ -41,7 +44,7 @@ var RecentProjectsWidget =React.createClass({
     render(){
         var recentProjects = this.props.recentProjects.map(function (project) {
             return (
-                <RecentProject key={project.url} url={project.url} name ={project.name} lastBuildStatus={project.lastBuildStatus}/>
+                <RecentProject key={project.url} {...project}/>
             );
         });
         return (

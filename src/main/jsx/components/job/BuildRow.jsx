@@ -1,11 +1,12 @@
 
 import React from 'react';
+import Avatar from '../lib/Avatar.jsx';
 require('./build_row.less');
 var BuildRow = React.createClass({
     render(){
         return (
             <div className ={"build-row-"+this.props.result}  href={this.props.number+''} >
-               {this._avatar()}
+               <Avatar emailDigest={this.props.commit.emailDigest} />
                {this._commitInfo()}
                 {this._buildDuration()}
             </div>
@@ -28,9 +29,6 @@ var BuildRow = React.createClass({
         </a>
       </span>
       </span>);
-    },
-    _avatar(){
-      return <img  className="ui avatar image" alt={this.props.commit.emailDigest}  src={"https://secure.gravatar.com/avatar/"+this.props.commit.emailDigest+".png"}/>;
     },
     _buildDuration(){
       return( <span className="build-duration">

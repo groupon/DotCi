@@ -35,6 +35,7 @@ import hudson.model.Result;
 import hudson.model.RootAction;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONSerializer;
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
@@ -72,6 +73,8 @@ public class RecentProjects implements RootAction{
             DynamicBuild lastBuild = project.getLastBuild();
             if(lastBuild!=null){
                 projectMap.put("lastBuildStatus",lastBuild.getResult().toString());
+                projectMap.put("lastCommit", StringUtils.abbreviate(lastBuild.getCause().getCommitInfo().getMessage(),30));
+                projectMap.put("avatarDigest", lastBuild.getCause().getCommitInfo().getEmailDigest());
             }else{
                 projectMap.put("lastBuildStatus", Result.ABORTED.toString());
             }
