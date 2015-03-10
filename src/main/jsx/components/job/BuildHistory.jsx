@@ -42,7 +42,8 @@ var BuildHistoryTable = React.createClass({
   },
   _applyFilter(build){
     const filter = this.state.filter.trim();
-    return !filter || build.commit.message.match(new RegExp(filter, 'gi'));
+    const filterRegex = new RegExp(filter, 'gi');
+    return !filter || build.commit.message.match(filterRegex) || build.commit.branch.match(filterRegex)|| build.commit.committerName.match(filterRegex);
   },
   _onFilterChange(filter){
     this.replaceState({filter:filter });
@@ -55,7 +56,7 @@ var BuildHistoryTabs = React.createClass({
   render()  {
     return (<div className="ui  buttons">
       {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i))}
-      <a className="ui icon button" href="#" onClick={this._addTab}> <i className="icon fa fa-plus-circle"></i></a>
+      <a className="ui icon button"  data-content="Meow Meow" href="#" onClick={this._addTab}> <i className="icon fa fa-plus-circle"></i></a>
     </div>
            );
   },
