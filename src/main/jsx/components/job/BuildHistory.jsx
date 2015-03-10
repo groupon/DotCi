@@ -88,7 +88,7 @@ var BuildHistoryTabs = React.createClass({
 });
 const FilterBar = React.createClass({
   render(){
-    return (<div className="ui icon input">
+    return (<div id="filter-bar" className=" ui icon input">
       <input type="text" onChange={this._onChange} placeholder="Filter..."/>
       <i className="fa fa-filter icon"></i>
     </div>);
@@ -100,7 +100,7 @@ const FilterBar = React.createClass({
 export default React.createClass({
   render(){
     return(
-      <div>
+      <div id="build-history">
         <BuildHistoryTabs flux={this.props.flux} tabs={this.props.tabs}/>
         <h4 className="ui horizontal header divider">
           <i className="fa fa-server"></i>
