@@ -28,13 +28,24 @@ require('./build_history.less');
 
 
 var BuildHistoryTable = React.createClass({
+  getInitialState: function() {
+      return {filter: ''};
+    },
   render(){
-    let builds = this.props.builds.map((build) => <BuildRow key={build.number} {...build}/>);
+    let builds = this.props.builds.filter(this._applyFilter).map((build) => <BuildRow key={build.number} {...build}/>);
     return(
       <div className="builds">
+         <FilterBar onChange={this._onFilterChange}/> 
         {builds}
       </div>
     );
+  },
+  _applyFilter(build){
+    const filter = this.state.filter.trim();
+    return !filter || build.commit.message.match(new RegExp(filter, 'gi'));
+  },
+  _onFilterChange(filter){
+    this.replaceState({filter:filter });
   }
 });
 var BuildHistoryTabs = React.createClass({
@@ -73,6 +84,17 @@ var BuildHistoryTabs = React.createClass({
             <i className={"icon octicon octicon-git-branch "}></i>
       {tab}
     </a>);
+  }
+});
+const FilterBar = React.createClass({
+  render(){
+    return (<div className="ui icon input">
+      <input type="text" onChange={this._onChange} placeholder="Filter..."/>
+      <i className="fa fa-filter icon"></i>
+    </div>);
+  },
+  _onChange(event){
+    this.props.onChange(event.target.value);
   }
 });
 export default React.createClass({
