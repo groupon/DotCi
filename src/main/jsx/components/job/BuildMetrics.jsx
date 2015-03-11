@@ -34,7 +34,7 @@ export default React.createClass({
 ];
         return(
 <rd3.LineChart
-  legend={false}
+  legend={true}
   data={lineData}
   width={500}
   height={300}

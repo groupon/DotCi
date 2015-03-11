@@ -38,33 +38,33 @@ import  static com.google.common.collect.ImmutableMap.of;
 @ExportedBean
 public class JobInfo extends  ApiModel{
 
-        private DynamicProject dynamicProject;
+    private DynamicProject dynamicProject;
 
-        public JobInfo(DynamicProject dynamicProject) {
+    public JobInfo(DynamicProject dynamicProject) {
 
-            this.dynamicProject = dynamicProject;
-        }
+        this.dynamicProject = dynamicProject;
+    }
 
-        @Exported
-        public String getFullName(){
-            return dynamicProject.getFullName();
-        }
     @Exported
-        public String getGithubUrl(){
-            return dynamicProject.getGithubRepoUrl();
-        }
+    public String getFullName(){
+        return dynamicProject.getFullName();
+    }
     @Exported
-        public Map getPermissions(){
-            return of("configure",dynamicProject.hasPermission(DynamicProject.CONFIGURE),
-                    "build", dynamicProject.hasPermission(DynamicProject.BUILD)) ;
-        }
+    public String getGithubUrl(){
+        return dynamicProject.getGithubRepoUrl();
+    }
     @Exported
-        public Iterable<String> getBuildHistoryTabs(){
-            DynamicProjectBranchTabsProperty tabsProperty =dynamicProject.getProperty(DynamicProjectBranchTabsProperty.class);
-            return tabsProperty == null ? Collections.<String>emptyList() : tabsProperty.getBranches();
-        }
-        @Exported
-        public List<BuildHistoryRow> getBuilds(){
-           return Lists.newArrayList( new BuildHistory(dynamicProject).getBuilds("master"));
-        }
+    public Map getPermissions(){
+        return of("configure",dynamicProject.hasPermission(DynamicProject.CONFIGURE),
+                "build", dynamicProject.hasPermission(DynamicProject.BUILD)) ;
+    }
+    @Exported
+    public Iterable<String> getBuildHistoryTabs(){
+        DynamicProjectBranchTabsProperty tabsProperty =dynamicProject.getProperty(DynamicProjectBranchTabsProperty.class);
+        return tabsProperty == null ? Collections.<String>emptyList() : tabsProperty.getBranches();
+    }
+    @Exported
+    public List<BuildHistoryRow> getBuilds(){
+        return Lists.newArrayList( new BuildHistory(dynamicProject).getBuilds("master"));
+    }
 }

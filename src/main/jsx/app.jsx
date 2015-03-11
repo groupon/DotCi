@@ -31,6 +31,9 @@ require('./app.less');
 var RouteHandler = Router.RouteHandler;
 var Route = Router.Route;
 const App=  React.createClass({
+  componentDidMount(){
+    console.log("meow");
+  },
   render(){
     const flux = this.props.flux;
     return    <div className="app" >
@@ -52,9 +55,6 @@ window.onload = function(){
       </Route>
     </Route>
   );
-  let actions = flux.getActions('app');
-  actions.getRecentProjectsFromServer();
-  actions.getJobInfoFromServer();
   Router.run(routes, function (Handler, state) {
     var params = "/"+state.params;
     React.render(<Handler params={params} flux={flux}/>, document.getElementById('app'));

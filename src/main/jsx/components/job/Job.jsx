@@ -43,6 +43,10 @@ var JobWidgets = React.createClass({
 });
 
 export default React.createClass({
+  componentWillMount(){
+    const actions = this.props.flux.getActions('app');
+    actions.getJobInfoFromServer();
+  },
   statics:{
     Routes: (<Route>
       <DefaultRoute handler={JobWidgets} />
