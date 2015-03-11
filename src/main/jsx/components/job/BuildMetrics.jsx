@@ -23,11 +23,23 @@
  */
 
 import React from 'react';
+import rd3 from 'react-d3';
 export default React.createClass({
     render(){
-        //let tabs = this.props.tabs.map( tab => (<TabPane eventKey={1} tab="Tab 1">TabPane 1 content</TabPane>));
+ var lineData = [
+{
+    name: "series1",
+    values: [ { x: 0, y: 20 },  { x: 24, y: 10 } ]
+  }
+];
         return(
-            <h1> Metrics </h1>
+<rd3.LineChart
+  legend={false}
+  data={lineData}
+  width={500}
+  height={300}
+  title="Build Times"
+/>
         );
     }
 });

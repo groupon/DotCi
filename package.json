@@ -7,6 +7,7 @@
     "flummox": "2.7.2",
     "qwest": "latest",
     "react": "latest",
+    "react-d3": "^0.2.1",
     "react-router": "^0.12.4"
   },
   "devDependencies": {
