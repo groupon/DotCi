@@ -56,7 +56,7 @@ var BuildHistoryTabs = React.createClass({
   render()  {
     return (<div className="ui  buttons">
       {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i))}
-      <a className="ui icon button"  data-content="Meow Meow" href="#" onClick={this._addTab}> <i className="icon fa fa-plus-circle"></i></a>
+      <a className="ui icon button"  href="#" onClick={this._addTab}> <i className="icon fa fa-plus-circle"></i></a>
     </div>
            );
   },

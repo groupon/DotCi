@@ -24,34 +24,20 @@
 
 package com.groupon.jenkins.dynamic.build.api;
 
-import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import java.io.IOException;
-
-
 @ExportedBean
-public abstract class BuildHistoryRow {
+public class BuildTime {
+
+    private int number;
+
+    public BuildTime(int number){
+        this.number = number;
+    }
 
     @Exported
-    public abstract int getNumber();
-    @Exported
-    public abstract String getResult();
-
-
-    @Exported(inline = true)
-    public abstract BuildCause.CommitInfo getCommit();
-
-
-    @Exported
-    public abstract String getDisplayTime();
-    @Exported
-    public abstract String getDuration();
-
-    @Exported
-    public abstract boolean isCancelable();
-    @Exported
-    public abstract String getCancelUrl();
-
+    public int getNumber() {
+        return number;
+    }
 }

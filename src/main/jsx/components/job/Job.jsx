@@ -45,7 +45,7 @@ var JobWidgets = React.createClass({
 export default React.createClass({
   componentWillMount(){
     const actions = this.props.flux.getActions('app');
-    actions.getJobInfoFromServer("*,builds[*,commit[*]]");
+    actions.getJobInfoFromServer("buildHistoryTabs,fullName,githubUrl,permissions,builds[*,commit[*]]");
   },
   statics:{
     Routes: (<Route>

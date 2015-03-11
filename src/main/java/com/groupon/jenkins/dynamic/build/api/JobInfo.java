@@ -30,6 +30,7 @@ import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -67,4 +68,9 @@ public class JobInfo extends  ApiModel{
     public List<BuildHistoryRow> getBuilds(){
         return Lists.newArrayList( new BuildHistory(dynamicProject).getBuilds("master"));
     }
+    @Exported
+    public List<BuildTime> getBuildTimes(){
+       return Arrays.asList(new BuildTime(21));
+    }
+
 }

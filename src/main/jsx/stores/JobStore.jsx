@@ -33,7 +33,8 @@ export default class JobStore extends Store {
         this.state = {buildHistoryTabs:[], builds: [],buildTimes:[]};
     }
     jobInfoChanged(jobInfo){
-      this.setState(this.addAllMineNewTabs(jobInfo));
+      const newJobInfo = jobInfo.buildHistoryTabs? this.addAllMineNewTabs(jobInfo):jobInfo;
+      this.setState(React.addons.update(this.getState(),{$merge: newJobInfo}));
     }
     addAllMineNewTabs(jobInfo) {
         return React.addons.update(jobInfo, {
