@@ -21,12 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-import Qwest from 'qwest';
+import fetch_polyfill from 'whatwg-fetch';
+import {stringify} from 'qs';
 export function recentProjects(){
-    return Qwest.get(window.rootURL + '/recentProjects',{},{responseType: 'json'});
+  return _get(window.rootURL + '/recentProjects');
 }
 export function job(){
-    return Qwest.get(_jobApiUrl()+"/info",{depth:2},{responseType: 'json'});
+    return _get(_jobApiUrl()+"/info",{depth:2});
 }
 export function deleteCurrentProject(){
   return new Promise(function(resolve, reject) {
@@ -40,10 +41,14 @@ export function deleteCurrentProject(){
 }
 
 export function fetchBuildHistory(tab) {
-    return Qwest.get(`${_jobApiUrl()}/buildHistory/${tab}`,{depth:2},{responseType: 'json'});
+    return _get(`${_jobApiUrl()}/buildHistory/${tab}`,{depth:2});
 }
 
 function _jobApiUrl() {
     const url = window.location.pathname.replace('newUi','') + 'json';
     return url;
+}
+function _get(url, params){
+  let fetchUrl = params?`${url}?${stringify(params)}`: url;
+  return fetch(fetchUrl).then(response=>response.json());
 }
