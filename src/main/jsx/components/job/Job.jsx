@@ -37,7 +37,7 @@ var JobWidgets = React.createClass({
   render(){
     return  <Widgets activeWidget={this.getParams().widget}>
       <BuildHistory icon="fa fa-history" url="buildHistory" name="Build History" tabs={this.props.buildHistoryTabs} builds={this.props.builds} flux={this.props.flux}/>
-      <BuildMetrics icon="fa fa-bar-chart" url="buildMetrics" name="Build Metrics"/>
+      <BuildMetrics icon="fa fa-bar-chart" url="buildMetrics" name="Build Metrics" buildTimes={this.props.buildTimes} flux={this.props.flux} />
       </Widgets>;
   }
 });
@@ -45,7 +45,7 @@ var JobWidgets = React.createClass({
 export default React.createClass({
   componentWillMount(){
     const actions = this.props.flux.getActions('app');
-    actions.getJobInfoFromServer();
+    actions.getJobInfoFromServer("*,builds[*,commit[*]]");
   },
   statics:{
     Routes: (<Route>

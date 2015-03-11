@@ -35,8 +35,8 @@ export default class AppActions extends Actions {
        let  projects = await recentProjects();
        this.recentProjectsChanged(projects.recentProjects);
     }
-    async getJobInfoFromServer(){
-        let jobInfo = await job();
+    async getJobInfoFromServer(tree){
+        let jobInfo = await job(tree);
         this.jobInfoChanged(jobInfo);
     }
 

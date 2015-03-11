@@ -25,13 +25,17 @@
 import React from 'react';
 import rd3 from 'react-d3';
 export default React.createClass({
+  componentWillMount(){
+    const actions = this.props.flux.getActions('app');
+    // actions.getJobInfoFromServer();
+  },
     render(){
- var lineData = [
-{
-    name: "series1",
-    values: [ { x: 0, y: 20 },  { x: 24, y: 10 } ]
-  }
-];
+      var lineData = [
+        {
+          name: "series1",
+          values: [ { x: 0, y: 20 },  { x: 24, y: 10 } ]
+        }
+      ];
         return(
 <rd3.LineChart
   legend={true}

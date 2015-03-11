@@ -31,7 +31,6 @@ import hudson.model.Result;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-@ExportedBean(defaultVisibility = 1)
 public class ProcessedBuildHistoryRow extends BuildHistoryRow {
     private DynamicBuild build;
 
@@ -40,12 +39,10 @@ public class ProcessedBuildHistoryRow extends BuildHistoryRow {
     }
 
     @Override
-    @Exported
     public int getNumber(){
         return build.getNumber();
     }
     @Override
-    @Exported
     public String getResult(){
         if(build.isBuilding()){
             return "IN_PROGRESS";
@@ -54,7 +51,6 @@ public class ProcessedBuildHistoryRow extends BuildHistoryRow {
     }
 
     @Override
-    @Exported
     public BuildCause.CommitInfo getCommit() {
         BuildCause.CommitInfo commitInfo = build.getCause().getCommitInfo();
         if(commitInfo == null){
@@ -65,25 +61,21 @@ public class ProcessedBuildHistoryRow extends BuildHistoryRow {
 
 
     @Override
-    @Exported
     public String getDisplayTime(){
         return  build.getDisplayTime();
     }
 
     @Override
-    @Exported
     public String getDuration() {
         return build.getDurationString();
     }
 
     @Override
-    @Exported
     public boolean isCancelable() {
         return build.isBuilding();
     }
 
     @Override
-    @Exported
     public String getCancelUrl() {
         return build.getUrl() + "/stop";
     }

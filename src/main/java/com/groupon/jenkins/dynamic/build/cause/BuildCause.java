@@ -74,7 +74,7 @@ public abstract class BuildCause extends Cause {
     public abstract Iterable<GithubLogEntry> getChangeLogEntries();
 
 
-    @ExportedBean
+    @ExportedBean(defaultVisibility = 99)
     public static class CommitInfo{
         public static CommitInfo NULL_INFO =  new CommitInfo();
         private  String committerEmail;

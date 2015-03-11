@@ -40,7 +40,7 @@ public abstract class BuildHistoryRow {
     public abstract String getResult();
 
 
-    @Exported
+    @Exported(inline = true)
     public abstract BuildCause.CommitInfo getCommit();
 
 

@@ -31,9 +31,6 @@ require('./app.less');
 var RouteHandler = Router.RouteHandler;
 var Route = Router.Route;
 const App=  React.createClass({
-  componentDidMount(){
-    console.log("meow");
-  },
   render(){
     const flux = this.props.flux;
     return    <div className="app" >

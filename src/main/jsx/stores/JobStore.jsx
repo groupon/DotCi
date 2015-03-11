@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 
-'use strict';
 import { Store } from 'flummox';
 import React from 'react';
 export default class JobStore extends Store {
@@ -31,7 +30,7 @@ export default class JobStore extends Store {
         let actionIds = flux.getActionIds('app');
         this.register(actionIds.jobInfoChanged, this.jobInfoChanged);
         this.register(actionIds.buildHistoryChanged, this.buildHistoryChanged);
-        this.state = {buildHistoryTabs:[], builds: []};
+        this.state = {buildHistoryTabs:[], builds: [],buildTimes:[]};
     }
     jobInfoChanged(jobInfo){
       this.setState(this.addAllMineNewTabs(jobInfo));

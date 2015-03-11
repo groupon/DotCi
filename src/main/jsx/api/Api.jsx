@@ -26,8 +26,8 @@ import {stringify} from 'qs';
 export function recentProjects(){
   return _get(window.rootURL + '/recentProjects');
 }
-export function job(){
-    return _get(_jobApiUrl()+"/info",{depth:2});
+export function job(tree){
+    return _get(_jobApiUrl()+"/info",{tree:tree});
 }
 export function deleteCurrentProject(){
   return new Promise(function(resolve, reject) {
