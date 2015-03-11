@@ -22,11 +22,27 @@
   border: 1px solid #eee;
   // background-color: @background-color;
   .box-shadow(0 1px 10px rgba(20,20,20,0.5));
-  .link-no-decoration();
+  .link-no-decoration;
   .display(flex);
   .flex-direction(row);
   > *{
     padding:5px; 
+  }
+  color: #212121;
+  &:hover{
+    text-decoration: none;
+    color: #212121;
+  }
+
+}
+.commit-link{
+  padding-left: 20px;
+  color: #212121;
+  &:hover{
+    color: #212121;
+  }
+  > *{
+    padding:1px; 
   }
 }
 .build-duration{
@@ -57,6 +73,9 @@
   justify-content: flex-start;
   text-align: start;
   margin-left: auto !important;
+  .ui.label{
+     background-color: white;
+  }
 }
 .commit-info{
   .display(flex);
@@ -69,6 +88,7 @@
 }
 .commit-info-column {
     > *{
-    padding:10px; 
+    padding-left:10px; 
+    display: inline;
     }
 }

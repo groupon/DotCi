@@ -5,35 +5,39 @@ require('./build_row.less');
 var BuildRow = React.createClass({
     render(){
         return (
-            <div className ={"build-row-"+this.props.result}  href={this.props.number+''} >
+          <a className ={"build-row-"+this.props.result}  href={this.props.number+'/console'} >
                <Avatar emailDigest={this.props.commit.emailDigest} />
                {this._commitInfo()}
                 {this._buildDuration()}
-            </div>
+            </a>
         );
     },
     _commitInfo(){
       return(<span className="commit-info">
         <span className="commit-info-column">
-        <b>{this.props.commit.message}</b>
-        <a className="commit-url"  href={this.props.commit.commitUrl} >
-          {this.props.commit.shortSha} <i className="icon fa fa-external-link-square"></i>
+        <h5>{this.props.commit.message}</h5>
+        <object>
+        <a className="commit-link"  href={this.props.commit.commitUrl} >
+          <span className="icon octicon octicon-git-compare"></span> {this.props.commit.shortSha} <i className="fa fa-external-link-square"></i>
         </a>
+      </object>
       </span>
       <span className="commit-info-column">
-        <small>{this.props.commit.committerName}</small>
+        {this.props.commit.committerName}
         <span>{this.props.commit.branch}</span>
-        <a href={this.props.number+"/console"} className="compact mini ui black  button right labeled icon ">
-          <i className="fa fa-arrow-circle-right icon"></i>
-          Console
-        </a>
       </span>
       </span>);
     },
     _buildDuration(){
       return( <span className="build-duration">
-        <span ><small><i className="fa fa-clock-o"></i>Duration:</small>{this.props.duration}</span>
-        <span ><small><i className="fa fa-clock-o"></i>Started:</small>{this.props.displayTime}</span>
+        <div className="ui label">
+          <i className="icon fa fa-clock-o"></i> Duration:
+          <span className="detail">{this.props.duration}</span>
+        </div>
+        <div className="ui label">
+          <i className="icon fa fa-clock-o"></i> Started
+          <span className="detail">{this.props.displayTime}</span>
+        </div>
       </span>
             );
     }
