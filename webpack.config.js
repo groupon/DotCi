@@ -23,13 +23,6 @@ module.exports = {
             }
         ],
         loaders: [
-          {
-            test: [
-              /BuildMetrics\.jsx$/ 
-            ],
-            loader: "react-proxy"
-          },
-
             {
                 test: /\.less$/,
                 loader: 'style-loader!css-loader!' + AUTOPREFIXER_LOADER + '!less-loader'
