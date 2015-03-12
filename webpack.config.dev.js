@@ -31,15 +31,21 @@ module.exports = {
             }
         ],
         loaders: [
-            {
-                test: /\.less$/,
-                loader: 'style-loader!css-loader!' + AUTOPREFIXER_LOADER + '!less-loader'
-            },
-            {
-                test: /\.css$/,
-                loader: 'style-loader!css-loader!' + AUTOPREFIXER_LOADER
-            },
-            { test: /\.jsx?$/, loaders: ['react-hot', 'babel-loader?experimental'], exclude: /node_modules/ }
+          {
+            test: [
+              /BuildMetrics\.jsx$/ 
+            ],
+            loader: "react-proxy"
+          },
+          {
+            test: /\.less$/,
+            loader: 'style-loader!css-loader!' + AUTOPREFIXER_LOADER + '!less-loader'
+          },
+          {
+            test: /\.css$/,
+            loader: 'style-loader!css-loader!' + AUTOPREFIXER_LOADER
+          },
+          { test: /\.jsx?$/, loaders: ['react-hot', 'babel-loader?experimental'], exclude: /node_modules/ }
         ]
     },
     cache: DEBUG,

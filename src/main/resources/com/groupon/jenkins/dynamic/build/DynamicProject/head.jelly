@@ -35,6 +35,11 @@
 
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet"/>
         <link rel="stylesheet" href="${resURL}/plugin/DotCi/octicons/octicons.css"/>
+        <script>
+            rootURL = '${rootURL}'
+            resURL= '${resURL}/plugin/DotCi/js/'
+            DEVELOPMENT_MODE = '${developmentMode}'
+        </script>
         <j:if test='${developmentMode}'>
             <script src="http://localhost:3000/assets/dotci.js"/>
         </j:if>

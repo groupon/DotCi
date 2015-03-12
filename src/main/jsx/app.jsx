@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 
+__webpack_public_path__= window.resURL;
 import React from "react";
 import RecentProjects from "./components/recent_projects/RecentProjects.jsx";
 import Job from "./components/job/Job.jsx";

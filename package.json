@@ -9,7 +9,8 @@
     "react": "0.12.2",
     "react-d3": "^0.2.1",
     "react-router": "^0.12.4",
-    "whatwg-fetch": "^0.7.0"
+    "whatwg-fetch": "^0.7.0",
+    "react-proxy-loader": "^0.3.1"
   },
   "devDependencies": {
     "autoprefixer-loader": "^1.1.0",
