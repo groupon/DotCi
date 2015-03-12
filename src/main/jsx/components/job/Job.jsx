@@ -24,8 +24,8 @@
 import React from "react";
 import FluxComponent from 'flummox/component';
 import BuildHistory from './BuildHistory.jsx';
+//Lazy load BuildMetrics; not used frequently
 import BuildMetrics from 'react-proxy!./BuildMetrics.jsx';
-// import BuildMetrics from './BuildMetrics.jsx';
 import Widgets from '../lib/Widgets.jsx';
 import Header from './Header.jsx';
 import Router from 'react-router';

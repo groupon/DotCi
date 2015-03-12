@@ -31,13 +31,20 @@ import org.kohsuke.stapler.export.ExportedBean;
 public class BuildTime {
 
     private int number;
+    private long time;
 
-    public BuildTime(int number){
+    public BuildTime(int number, long time) {
         this.number = number;
+
+        this.time = time;
     }
 
     @Exported
-    public int getNumber() {
+    public int getX() {
         return number;
+    }
+    @Exported
+    public long getY() {
+        return time;
     }
 }

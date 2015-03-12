@@ -25,15 +25,16 @@
 package com.groupon.jenkins.dynamic.build.api;
 
 import com.google.common.collect.Lists;
+import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
 import  static com.google.common.collect.ImmutableMap.of;
 
 @ExportedBean
@@ -70,7 +71,17 @@ public class JobInfo extends  ApiModel{
     }
     @Exported
     public List<BuildTime> getBuildTimes(){
-       return Arrays.asList(new BuildTime(21));
+            List<BuildTime> buildTimes = new ArrayList<BuildTime>();
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.MONTH, -1);
+            List<DbBackedBuild> builds = SetupConfig.get().getDynamicBuildRepository().getSuccessfulBuilds(dynamicProject, "master", cal, Calendar.getInstance());;
+
+            for(DbBackedBuild build : builds){
+                BuildTime buildTime = new BuildTime(build.getNumber(),TimeUnit.MILLISECONDS.toMinutes(build.getDuration()));
+                buildTimes.add(buildTime);
+            }
+
+        return buildTimes;
     }
 
 }
