@@ -29,15 +29,9 @@ export function recentProjects(){
 export function job(tree){
     return _get(_jobApiUrl()+"/info",{tree:tree});
 }
-export function deleteCurrentProject(){
-  return new Promise(function(resolve, reject) {
-        if (true) {
-            resolve();
-        }
-        else {
-            reject(Error('It broke'));
-        }
-    });
+export async function deleteCurrentProject(){
+  const rsp = await fetch(window.location.pathname.replace('newUi','')+"/doDeleteAjax",{method: 'post' });
+  window.location = rsp.headers.get('location');
 }
 
 export function fetchBuildHistory(tab) {
