@@ -27,18 +27,10 @@
   <j:new var="h" className="hudson.Functions" />
   ${h.initPageVariables(context)}
 
-  <nav class="navbar navbar-inverse">
-    <div class="navbar-header">
-      <st:include page="header/logo.jelly" />
-    </div>
-
-    <ul class="nav navbar-nav navbar-left">
+  <div class="ui menu inverted">
       <st:include page="header/breadcrumb.jelly" />
-    </ul>
-    <ul class="nav navbar-nav navbar-right">
       <st:include page="header/login.jelly" />
-    </ul>
-  </nav>
+  </div>
 
 
 </j:jelly>

@@ -23,9 +23,11 @@
   -->
 
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-<ul class="breadcrumb ">
-    <li><a href="${it.parent.parent.rootUrl}">Jenkins</a></li>
-    <li><a href="${it.parent.absoluteUrl}">${it.parent.name}</a></li>
-    <li class="active">${it.name}</li>
-</ul>
+<div class="ui item breadcrumb ">
+    <a class="section" href="${it.parent.parent.rootUrl}">Jenkins</a>
+    <div class="divider" style="color: #ffffff"> / </div>
+    <a class="section" href="${it.parent.absoluteUrl}">${it.parent.name}</a>
+    <div class="divider" style="color: #ffffff"> / </div>
+    <span class="active section">${it.name}</span>
+</div>
 </j:jelly>

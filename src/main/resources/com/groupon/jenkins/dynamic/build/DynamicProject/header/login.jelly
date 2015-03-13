@@ -36,20 +36,18 @@
                     </j:otherwise>
                 </j:choose>
 
-                <li class="dropdown ">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                        <i class="fa fa-user"></i> &amp;nbsp;${userName}<span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="${rootURL}/user/${user.id}">Profile</a></li>
-                        <j:if test="${app.securityRealm.canLogOut()}">
-                        <li><a href="${rootURL}/logout">${%logout}</a></li>
-                        </j:if>
-                    </ul>
-                </li>
+                <div class="ui item right">
+                    <a href="${rootURL}/user/${user.id}"><i class="fa fa-user"></i> &amp;nbsp;${userName}</a>
+                    <j:if test="${app.securityRealm.canLogOut()}">
+                        <span>&amp;nbsp;|&amp;nbsp;</span>
+                        <a href="${rootURL}/logout">${%logout}</a>
+                    </j:if>
+                </div>
             </j:when>
             <j:otherwise>
+                <div class="ui item right">
                 <st:include it="${app.securityRealm}" page="loginLink.jelly" />
+                </div>
             </j:otherwise>
         </j:choose>
     </j:if>
