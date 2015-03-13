@@ -32,7 +32,7 @@ export default React.createClass({
                 <div className="activeWidget">
                     {this._activeWidget()}
                 </div>
-                <div className="ui  vertical buttons">
+                <div className="ui vertical menu  buttons">
                     {navs}
                 </div>
             </div>
@@ -45,7 +45,7 @@ export default React.createClass({
     },
     _tabItem(widget,index){
       var className = this.props.activeWidget?'': index === 0? 'active':'';
-      className += " widget ui labeled icon button ";
+      className += " widget ui labeled icon button item";
 	    return <Router.Link data-index={index} className={className} to="job-widgets" params={{widget: widget.props.url}}> 
 		        <i className={widget.props.icon + " ui icon"}/>{widget.props.name}
 		    </Router.Link>;
