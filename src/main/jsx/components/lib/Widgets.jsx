@@ -26,11 +26,12 @@ require('./widgets.less');
 import Router from 'react-router';
 export default React.createClass({
     render(){
-	var navs = this.props.children.map((widget,index) => this._tabItem(widget,index));
+      const activeWidget = this._activeWidget();
+      var navs = this.props.children.map((widget,index) => this._tabItem(widget,index,widget===activeWidget));
         return(
             <div className="flex-row top-buffer">
                 <div className="activeWidget">
-                    {this._activeWidget()}
+                    {activeWidget}
                 </div>
                 <div className="ui vertical menu  buttons">
                     {navs}
@@ -40,11 +41,10 @@ export default React.createClass({
         );
     },
     _activeWidget(){
-      let activeWidget = this.props.children.find((widget)=> widget.props.url ==this.props.activeWidget );
-      return activeWidget? activeWidget : this.props.children[0];
+      return this.props.children.find((widget)=> widget.props.url ==this.props.activeWidget );
     },
-    _tabItem(widget,index){
-      var className = this.props.activeWidget?'': index === 0? 'active':'';
+    _tabItem(widget,index,isActive){
+      var className = isActive? 'active':'';
       className += " widget ui labeled icon button item";
 	    return <Router.Link data-index={index} className={className} to="job-widgets" params={{widget: widget.props.url}}> 
 		        <i className={widget.props.icon + " ui icon"}/>{widget.props.name}

@@ -50,8 +50,9 @@ export default React.createClass({
   },
   statics:{
     Routes: (<Route>
-      <DefaultRoute handler={JobWidgets} />
       <Route name="job-widgets" path=":widget" handler={JobWidgets}/>
+      <Route name="buildHistory" handler={JobWidgets} />
+      <Redirect from="/" to="buildHistory" />
     </Route>)
   },
   render(){
