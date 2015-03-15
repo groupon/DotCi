@@ -28,11 +28,11 @@ require('./header.less');
 export default React.createClass({
   render(){
     return(
-      <div className="ui menu">
+      <div className="">
         <IconLink href={this.props.githubUrl}  icon="octicon octicon-mark-github">{this.props.fullName}</IconLink>
         <IconLink href="build?delay=0sec" disabled={!this._hasBuildPermission()} icon="fa fa-rocket"> Build Now</IconLink>
         <div id="settings" className="right ui compact menu">
-          <div className={"button labeled ui simple dropdown item"+(this._hasConfigurePermission()?"":" disabled")}>
+          <div className={"ui simple dropdown item"+(this._hasConfigurePermission()?"":" disabled")}>
             <i className="dropdown icon"></i>
             <i className="icon fa fa-cog"/>  Settings
             <div className="fa-stack menu">

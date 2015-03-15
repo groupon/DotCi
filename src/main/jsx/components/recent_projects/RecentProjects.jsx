@@ -53,7 +53,7 @@ var RecentProjectsWidget =React.createClass({
         });
         return (
 <div className="ui segment">
-<h5 className="ui top attached header">Recent Projects</h5>
+<h5 className="ui top block header">Recent Projects</h5>
 {recentProjects}
 </div>
 

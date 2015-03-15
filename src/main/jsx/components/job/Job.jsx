@@ -42,6 +42,12 @@ var JobWidgets = React.createClass({
       </Widgets>;
   }
 });
+const Build = React.createClass({
+  mixins: [Router.State],
+  render(){
+    return <h1> {this.getParams().buildNumber} </h1>;
+  }
+});
 
 export default React.createClass({
   componentWillMount(){
@@ -50,15 +56,17 @@ export default React.createClass({
   },
   statics:{
     Routes: (<Route>
-      <Route name="job-widgets" path=":widget" handler={JobWidgets}/>
-      <Route name="buildHistory" handler={JobWidgets} />
-      <Redirect from="/" to="buildHistory" />
+      <Route name="build" path="build/:buildNumber" handler={Build}/>
+      <Route name="job-widgets" path="w/:widget" handler={JobWidgets}/>
+      <Route name="w/buildHistory" handler={JobWidgets} />
+      <Redirect from="/" to="w/buildHistory" />
     </Route>)
   },
   render(){
     return (
       <FluxComponent connectToStores={['job']} flux={this.props.flux}>
         <Header/>
+        <div className="ui clearing divider"/>
         <RouteHandler {...this.props}/>
       </FluxComponent>
     );
