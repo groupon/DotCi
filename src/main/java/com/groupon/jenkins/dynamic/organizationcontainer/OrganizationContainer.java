@@ -144,6 +144,10 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
         return itemMap;
     }
 
+    public synchronized void reloadItems() {
+        items = getJobsForThisContainer();
+    }
+
     @Override
     public void onLoad(ItemGroup<? extends Item> parent, String name) throws IOException {
         super.onLoad(parent, name);

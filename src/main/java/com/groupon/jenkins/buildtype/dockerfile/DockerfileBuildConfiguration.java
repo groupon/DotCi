@@ -32,6 +32,7 @@ import com.groupon.jenkins.buildtype.install_packages.buildconfiguration.configv
 import com.groupon.jenkins.buildtype.util.config.Config;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import hudson.matrix.Combination;
+import java.util.UUID;
 import java.util.List;
 import java.util.Map;
 
@@ -64,9 +65,11 @@ public class DockerfileBuildConfiguration extends DockerBuildConfiguration {
 
     @Override
     protected String getRunCommand(Combination combination) {
-        String buildImageCommand = dockerCommand("build").flag("t","dockerfile" ).args( ".").get();
+        String builtImageTagName = UUID.randomUUID().toString().replaceAll("-", "");
+        String buildImageCommand = dockerCommand("build").flag("t", builtImageTagName).args( ".").get();
         ShellCommands buildCommands = new ShellCommands();
         buildCommands.add(buildImageCommand);
+
         String buildCommand =  new ShellCommands(getCommandForCombination(combination)).toSingleShellCommand();
         String buildShellCommand = "sh -cx '" +  buildCommand+ "'";
         DockerCommandBuilder dockerRunCommand = dockerCommand("run")
@@ -75,6 +78,10 @@ public class DockerfileBuildConfiguration extends DockerBuildConfiguration {
                 .bulkOptions(config.get("run_params", String.class))
                 .args("dockerfile", buildShellCommand);
         buildCommands.addAll(linkServicesToRunCommand(dockerRunCommand, config.get("links", List.class)));
+
+        String removeImageCommand = dockerCommand("rmi").args(builtImageTagName).get();
+        buildCommands.add(removeImageCommand);
+
         return checkoutCommands.add(buildCommands).toSingleShellCommand();
     }
 }
