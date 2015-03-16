@@ -22,14 +22,10 @@
  * THE SOFTWARE.
  */
 
-var webpack = require('webpack');
-var AUTOPREFIXER_LOADER = 'autoprefixer-loader?{browsers:[' +
-    '"Android 2.3", "Android >= 4", "Chrome >= 20", "Firefox >= 24", ' +
-    '"Explorer >= 8", "iOS >= 6", "Opera >= 12", "Safari >= 6"]}';
-var argv = require('minimist')(process.argv.slice(2));
-var DEBUG = !argv.release;
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-module.exports = {
+
+module.exports = require('./make-webpack-config.js')(
+  { 
+    debug: true ,
     entry:{
        dotci:  [
            'webpack-dev-server/client?http://localhost:3000',
@@ -39,45 +35,6 @@ module.exports = {
     output: {
         filename: "dotci.js",
         publicPath: "http://localhost:3000/assets/"
-    },
-    stats: {
-        colors: true,
-        reasons: DEBUG
-    },
-    resolve: {
-        extensions: ['', '.js', '.jsx']
-    },
-    module: {
-        preLoaders: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                loader: 'jshint'
-            }
-        ],
-        loaders: [
-          {
-            test: /\.less$/,
-            loader:  ExtractTextPlugin.extract('css-loader!' + AUTOPREFIXER_LOADER + '!less-loader')
-          },
-          {
-            test: /\.css$/,
-            loader: 'style-loader!css-loader!' + AUTOPREFIXER_LOADER
-          },
-          { test: /\.jsx?$/, loaders: ['react-hot', 'babel-loader?experimental'], exclude: /node_modules/ }
-        ]
-    },
-    cache: DEBUG,
-    debug: DEBUG,
-    devtool: 'source-map',
-    plugins: DEBUG ? [
-        new webpack.NoErrorsPlugin(),
-        new ExtractTextPlugin('styles.css')
-
-    ] : [
-            new webpack.optimize.DedupePlugin(),
-            new webpack.optimize.UglifyJsPlugin(),
-            new webpack.optimize.AggressiveMergingPlugin()
-        ]
-
-};
+    }
+  }
+);
