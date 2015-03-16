@@ -45,10 +45,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-'use strict';
 import { Actions } from 'flummox';
-import {recentProjects,job,deleteCurrentProject,fetchBuildHistory} from '../api/Api.jsx';
-require("babel/polyfill");
+import {recentProjects,job,deleteCurrentProject, fetchBuildHistory} from '../api/Api.jsx';
+import babel_polyfill from 'babel/polyfill';
 export default class AppActions extends Actions {
 
     deleteProject(){
