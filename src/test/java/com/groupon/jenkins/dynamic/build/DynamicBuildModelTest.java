@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 import org.kohsuke.github.GHCommit;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GitUser;
 import org.mockito.ArgumentCaptor;
 
 import static org.junit.Assert.*;
@@ -53,7 +55,7 @@ public class DynamicBuildModelTest {
     public void should_add_manual_build_cause_before_run_if_build_is_manually_kicked_off() throws IOException {
         DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().manualStart("surya", "master").get();
         GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
-        when(githubRepositoryService.getHeadCommitForBranch("master")).thenReturn(new GHCommit());
+        when(githubRepositoryService.getHeadCommitForBranch("master")).thenReturn(getGHCommit());
         DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
         model.run();
         //verify(dynamicBuild).addCause(new ManualBuildCause(new GitBranch("master"), "masterSha", "surya"));
@@ -63,10 +65,34 @@ public class DynamicBuildModelTest {
     public void should_add_commit_history_view_to_build() throws IOException {
         DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().manualStart("surya", "master").get();
         GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
-        when(githubRepositoryService.getHeadCommitForBranch("master")).thenReturn(new GHCommit());
+        when(githubRepositoryService.getHeadCommitForBranch("master")).thenReturn(getGHCommit());
         DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
         model.run();
         verify(dynamicBuild).addAction(any(CommitHistoryView.class));
+    }
+
+    private GHCommit getGHCommit() {
+        return new GHCommit(){
+            @Override
+            public GHRepository getOwner() {
+                return new GHRepository(){
+                    @Override
+                    public String getUrl() {
+                        return "http://example.com";
+                    }
+                };
+            }
+
+            @Override
+            public ShortInfo getCommitShortInfo() {
+                return new ShortInfo(){
+                    @Override
+                    public GitUser getCommitter() {
+                        return new GitUser();
+                    }
+                };
+            }
+        };
     }
 
 
@@ -95,6 +121,7 @@ public class DynamicBuildModelTest {
         DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().get();
         when(dynamicBuild.getCause()).thenReturn(BuildCause.NULL_BUILD_CAUSE);
         GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
+        when(githubRepositoryService.getHeadCommitForBranch(null)).thenReturn(getGHCommit());
         DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
         model.run();
         ArgumentCaptor<UnknownBuildCause> argument = ArgumentCaptor.forClass(UnknownBuildCause.class);
@@ -110,7 +137,7 @@ public class DynamicBuildModelTest {
         when(dynamicBuild.getEnvironment(null)).thenReturn(new EnvVars());
 
         GithubLogEntry logEntry1 = new GithubLogEntry("message","github_url","commitId", Arrays.asList("Readme.md"));
-        ChangeLogSet githubChangeLog= new GithubChangeLogSet(dynamicBuild,Arrays.asList(logEntry1));
+        ChangeLogSet githubChangeLog= new GithubChangeLogSet(null,Arrays.asList(logEntry1));
 
 
         when(dynamicBuild.getChangeSet()).thenReturn(githubChangeLog);
