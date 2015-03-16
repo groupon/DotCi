@@ -18,16 +18,17 @@
     "babel-core": "latest",
     "babel-loader": "latest",
     "css-loader": "^0.9.1",
+    "extract-text-webpack-plugin": "^0.3.8",
     "jest-cli": "^0.2.2",
     "less": "^2.4.0",
     "less-loader": "^2.0.0",
+    "lesshat": "^3.0.2",
     "minimist": "^1.1.0",
+    "react-hot-loader": "^1.1.1",
     "react-tools": "latest",
     "style-loader": "^0.8.3",
     "webpack": "latest",
-    "webpack-dev-server": "latest",
-    "lesshat": "^3.0.2",
-    "react-hot-loader": "^1.1.1"
+    "webpack-dev-server": "latest"
   },
   "jest": {
     "rootDir": "./src/main/jsx",

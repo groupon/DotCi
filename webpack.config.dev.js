@@ -28,6 +28,7 @@ var AUTOPREFIXER_LOADER = 'autoprefixer-loader?{browsers:[' +
     '"Explorer >= 8", "iOS >= 6", "Opera >= 12", "Safari >= 6"]}';
 var argv = require('minimist')(process.argv.slice(2));
 var DEBUG = !argv.release;
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 module.exports = {
     entry:{
        dotci:  [
@@ -57,7 +58,7 @@ module.exports = {
         loaders: [
           {
             test: /\.less$/,
-            loader: 'style-loader!css-loader!' + AUTOPREFIXER_LOADER + '!less-loader'
+            loader:  ExtractTextPlugin.extract('css-loader!' + AUTOPREFIXER_LOADER + '!less-loader')
           },
           {
             test: /\.css$/,
@@ -68,9 +69,11 @@ module.exports = {
     },
     cache: DEBUG,
     debug: DEBUG,
-    devtool: 'eval',
+    devtool: 'source-map',
     plugins: DEBUG ? [
-        new webpack.NoErrorsPlugin()
+        new webpack.NoErrorsPlugin(),
+        new ExtractTextPlugin('styles.css')
+
     ] : [
             new webpack.optimize.DedupePlugin(),
             new webpack.optimize.UglifyJsPlugin(),

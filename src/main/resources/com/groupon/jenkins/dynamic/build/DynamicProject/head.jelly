@@ -42,6 +42,7 @@
         </script>
         <j:if test='${developmentMode}'>
             <script src="http://localhost:3000/assets/dotci.js"/>
+            <link rel="stylesheet" href="http://localhost:3000/assets/styles.css"/>
         </j:if>
         <j:if test='${!developmentMode}'>
             <script src="${resURL}/plugin/DotCi/js/dotci.js"/>
