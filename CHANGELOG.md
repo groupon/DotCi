@@ -1,5 +1,6 @@
 ##2.6.0(16/03/2015)
   - Optional new ui preview at ``<job-url>/newUi``
+  
 ##2.5.3(23/12/2014)
  Bugfix:
   - Fix issue #98. Parallization error for docker sub builds.
