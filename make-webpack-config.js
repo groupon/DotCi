@@ -30,13 +30,13 @@ return {
     entry: config.entry,
     output: config.output,
     module: {
-        preLoaders: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                loader: 'jshint'
-            }
-        ],
+        // preLoaders: [
+        //     {
+        //         test: /\.jsx?$/,
+        //         exclude: /node_modules/,
+        //         loader: 'jshint'
+        //     }
+        // ],
         loaders: [
             {
                 test: /\.less$/,
