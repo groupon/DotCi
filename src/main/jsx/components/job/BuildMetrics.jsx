@@ -23,28 +23,35 @@
  */
 
 import React from 'react';
-import rd3 from 'react-d3';
+import Chart from 'chart.js';
 export default React.createClass({
   componentWillMount(){
     const actions = this.props.flux.getActions('app');
     actions.getJobInfoFromServer('buildTimes[*]');
   },
-    render(){
-      
-      var lineData = [
+  componentDidUpdate(){
+    const buildTimesCtx = this.refs.buildTimes.getDOMNode().getContext('2d');
+    var data = {
+      labels: this.props.buildTimes.map(t =>t.x),
+      datasets: [
         {
-          name: "Successful master builds 30 days",
-          values:this.props.buildTimes.length>0?this.props.buildTimes:[{x:10, y: 22}]
+          label: 'Build Times',
+          fillColor: 'rgba(220,220,220,0.2)',
+          strokeColor: 'rgba(220,220,220,1)',
+          pointColor: 'rgba(0,0,0,1)',
+          pointStrokeColor: '#fff',
+          pointHighlightFill: '#fff',
+          pointHighlightStroke: 'rgba(220,220,220,1)',
+          data: this.props.buildTimes.map(t =>t.y)
         }
-      ];
-        return(
-<rd3.LineChart
-  legend={true}
-  data={lineData}
-  width={500}
-  height={300}
-  title="Build Times"
-/>
-        );
-    }
+      ]
+    };
+    const chart = new Chart(buildTimesCtx).Line(data, { scaleShowGridLines : false,legendTemplate : "<div><h5>Build Times( successful master)</h5><div>X - Build Number</div><div> Y - Build Time (Mins)</div></div>"});
+    this.refs.legend.getDOMNode().innerHTML = chart.generateLegend();
+  },
+  render(){
+    return (<div>
+  <div ref="legend"></div>
+<canvas ref='buildTimes' width='600' height='400'></canvas></div>);
+  }
 });
