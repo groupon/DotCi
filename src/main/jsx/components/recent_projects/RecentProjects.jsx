@@ -42,8 +42,7 @@ var RecentProject = React.createClass({
 
 var RecentProjectsWidget =React.createClass({
   componentWillMount(){
-    const actions = this.props.flux.getActions('app');
-    actions.getRecentProjectsFromServer();
+    this.props.flux.getRecentProjectsFromServer();
   },
    render(){
         var recentProjects = this.props.recentProjects.map(function (project) {

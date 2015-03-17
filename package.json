@@ -18,32 +18,31 @@
     "babel-core": "latest",
     "babel-loader": "latest",
     "css-loader": "^0.9.1",
+    "expect": "^1.1.0",
     "extract-text-webpack-plugin": "^0.3.8",
     "jest-cli": "^0.2.2",
+    "karma": "^0.12.28",
+    "karma-chrome-launcher": "^0.1.7",
+    "karma-cli": "0.0.4",
+    "karma-firefox-launcher": "^0.1.3",
+    "karma-mocha": "^0.1.10",
+    "karma-sourcemap-loader": "^0.3.2",
+    "karma-webpack": "^1.3.1",
     "less": "^2.4.0",
     "less-loader": "^2.0.0",
     "lesshat": "^3.0.2",
     "minimist": "^1.1.0",
+    "mocha": "^2.0.1",
     "react-hot-loader": "^1.1.1",
     "react-tools": "latest",
     "style-loader": "^0.8.3",
     "webpack": "latest",
     "webpack-dev-server": "latest"
   },
-  "jest": {
-    "rootDir": "./src/main/jsx",
-    "scriptPreprocessor": "preprocessor.js",
-    "unmockedModulePathPatterns": [
-      "react"
-    ],
-    "testFileExtensions": [
-      "jsx"
-    ]
-  },
   "scripts": {
     "package": "npm install && webpack --release=true  --colors --progress  src/main/jsx/app.jsx",
     "lint": "eslint src/main/jsx/**/*",
     "watch": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.config.dev.js --colors --progress --hot --inline  --port  3000",
-    "test": "jest"
+    "test": "karma start"
   }
 }

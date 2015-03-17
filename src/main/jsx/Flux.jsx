@@ -34,5 +34,9 @@ import JobStore from './stores/JobStore.jsx';
         this.createStore('recentProjects', RecentProjectsStore, this);
         this.createStore('job', JobStore, this);
     }
+    getRecentProjectsFromServer(){
+    const actions = this.getActions('app');
+    actions.getRecentProjectsFromServer();
+    }
 
 }

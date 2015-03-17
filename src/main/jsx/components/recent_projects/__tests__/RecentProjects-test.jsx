@@ -22,17 +22,33 @@
  * THE SOFTWARE.
  */
 
-jest.dontMock('../RecentProjects.jsx');
-describe('CheckboxWithLabel', function() {
-    it('changes the text after click', function() {
-        var React = require('react/addons');
-        var RecentProjects = require('../RecentProjects.jsx');
-        var TestUtils = React.addons.TestUtils;
+import React from 'react/addons';
+import  expect from 'expect';
+import RecentProjects from '../RecentProjects.jsx';
+import {Flummox,Store} from 'flummox';
 
-        var RecentProjects = TestUtils.renderIntoDocument(
-            <RecentProjects url="url" />
+class RecentProjectsStore extends Store{
+  constructor(flux){
+    super();
+    this.state = {recentProjects: []};
+  }
+}
+class Flux extends Flummox{
+  constructor(){
+    super();
+   this.createStore('recentProjects',RecentProjectsStore,this) ;
+  }
+  getRecentProjectsFromServer(){
+    this.getStore('recentProjects').setState({recentProjects:[]});
+  }
+
+}
+var TestUtils = React.addons.TestUtils;
+describe('RecentProjects', function() {
+    it('should load recent projects for the user on componentWillMount', function() {
+      const flux= new Flux();
+        var RecentProjectsWidget = TestUtils.renderIntoDocument(
+            <RecentProjects url="url" flux={flux}/>
         );
-
-        expect("change-me").toEqual('change-me');
     });
 });
