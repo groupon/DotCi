@@ -1,3 +1,6 @@
+##2.6.0(17/03/2015)
+  - Replace `d3.js` with `chart.js` for build metrics.
+  
 ##2.6.0(16/03/2015)
   - Optional new ui preview at ``<job-url>/newUi``
   
