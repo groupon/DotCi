@@ -36,18 +36,14 @@
                     </j:otherwise>
                 </j:choose>
 
-                <div class="ui item right">
                     <a href="${rootURL}/user/${user.id}"><i class="fa fa-user"></i> &amp;nbsp;${userName}</a>
                     <j:if test="${app.securityRealm.canLogOut()}">
                         <span>&amp;nbsp;|&amp;nbsp;</span>
                         <a href="${rootURL}/logout">${%logout}</a>
                     </j:if>
-                </div>
             </j:when>
             <j:otherwise>
-                <div class="ui item right">
                 <st:include it="${app.securityRealm}" page="loginLink.jelly" />
-                </div>
             </j:otherwise>
         </j:choose>
     </j:if>

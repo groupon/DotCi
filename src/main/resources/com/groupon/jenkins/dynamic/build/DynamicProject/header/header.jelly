@@ -29,7 +29,16 @@
 
   <div class="ui menu inverted">
       <st:include page="header/breadcrumb.jelly" />
+    <div class="ui item right">
+        <div class="ui simple dropdown item" style="padding-right: 20px">
+        <i class="dropdown icon"></i>
+        <i class="icon fa fa-plus"/>
+            <div class="menu ">
+                <a  href="${rootURL}/mygithubprojects" class="ui labeled item"><i class="icon fa fa-certificate"/> New DotCi Job</a>
+            </div>
+        </div>
       <st:include page="header/login.jelly" />
+    </div>
   </div>
 
 
