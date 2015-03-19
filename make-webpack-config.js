@@ -54,7 +54,7 @@ return {
         ]
     },
     devtool: config.debug ? '#inline-source-map' : false,
-    plugins: config.debug ? [ new webpack.HotModuleReplacementPlugin()] : [
+    plugins: config.debug ? [] : [
             new webpack.optimize.DedupePlugin(),
             new webpack.optimize.UglifyJsPlugin(),
             new webpack.optimize.AggressiveMergingPlugin()
