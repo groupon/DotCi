@@ -48,10 +48,10 @@
 import fetch_polyfill from 'whatwg-fetch';
 import {stringify} from 'qs';
 export function recentProjects(){
-  return _get(window.rootURL + '/recentProjects');
+  return _get(window.rootURL + '/recentProjects/');
 }
 export function job(tree){
-    return _get(_jobApiUrl()+"/info",{tree:tree});
+  return _get(_jobApiUrl()+"/info/",{tree:tree});
 }
 export async function deleteCurrentProject(){
   const rsp = await fetch(window.location.pathname.replace('newUi','')+"/doDeleteAjax",{method: 'post' });
