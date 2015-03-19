@@ -30,11 +30,9 @@ require("./recent_projects.less");
 var RecentProject = React.createClass({
   render(){
     return (
-      <a className={"recent-project-"+this.props.lastBuildStatus+ " ui animated fade button  segment attached"} href={this.props.url}> 
-        <div className="visible content">{this.props.name}</div>
-        <div className="hidden content">
-          {this.props.lastCommit}
-        </div>
+      <a className={"recent-project-"+this.props.lastBuildResult+ " ui animated fade button  segment attached"} href={this.props.url}> 
+        <div className="visible content">{this.props.projectName}</div>
+        <div className="hidden content"><b>{this.props.commit.message}</b></div>
       </a>
     );
   }
