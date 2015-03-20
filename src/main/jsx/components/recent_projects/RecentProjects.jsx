@@ -42,28 +42,30 @@ var RecentProjectsWidget =React.createClass({
   componentWillMount(){
     this.props.flux.getRecentProjectsFromServer();
   },
-   render(){
-        var recentProjects = this.props.recentProjects.map(function (project) {
-            return (
-                <RecentProject key={project.url} {...project}/>
-            );
-        });
-        return (
-<div className="ui segment">
-<h5 className="ui top block header">Recent Projects</h5>
-{recentProjects}
-</div>
+  render(){
+    var recentProjects = this.props.recentProjects.map(function (project) {
+      return (
+        <RecentProject key={project.url} {...project}/>
+      );
+    });
+    return (
+      <div>
+        <h5 className="ui top block header">Recent Projects</h5>
+        {recentProjects}
+      </div>
 
 
-        );
-    }
+    );
+  }
 });
 export default React.createClass({
-    render(){
-        return (
-            <FluxComponent connectToStores={['recentProjects']} flux={this.props.flux}>
-                <RecentProjectsWidget/>
-            </FluxComponent>
-        );
-    }
+  render(){
+    return (
+      <div className={this.props.className}>
+      <FluxComponent connectToStores={['recentProjects']} flux={this.props.flux}>
+        <RecentProjectsWidget/>
+      </FluxComponent>
+    </div>
+    );
+  }
 });
