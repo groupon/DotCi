@@ -24,6 +24,7 @@
 
 import React from 'react';
 import BuildRow from './BuildRow.jsx';
+import Dialog from './../lib/Dialog.jsx';
 require('./build_history.less');
 
 
@@ -54,13 +55,18 @@ var BuildHistoryTabs = React.createClass({
     return {currentSelection: 0};
   },
   render()  {
-      // <a className="ui icon button"  href="#" onClick={this._addTab}> <i className="icon fa fa-plus-circle"></i></a>
     return (<div className="ui  buttons">
       {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i))}
+      <a className="ui icon button"  href="#" onClick={this._addTab}> <i className="icon fa fa-plus-circle"></i></a>
+      <Dialog ref="addDialog" title="Add new brach tab" >
+
+      </Dialog>
     </div>
-           );
+       );
   },
   _addTab(){
+    const addDialog = this.refs.addDialog;
+    addDialog.open();
   },
   _notifyTabSelection: function (tabIndex) {
     let actions = this.props.flux.getActions('app');
