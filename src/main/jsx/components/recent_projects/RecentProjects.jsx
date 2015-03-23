@@ -30,9 +30,9 @@ require("./recent_projects.less");
 var RecentProject = React.createClass({
   render(){
     return (
-      <a className={"recent-project-"+this.props.lastBuildResult+ " ui animated fade button  segment attached"} href={this.props.url}> 
-        <div className="visible content">{this.props.projectName}</div>
-        <div className="hidden content"><b>{this.props.commit.message}</b></div>
+      <a className={"recent-project-"+this.props.lastBuildResult+ ""} href="/meow"> 
+        <div>{this.props.projectName}</div>
+        <div>{this.props.commit.message}</div>
       </a>
     );
   }
@@ -51,7 +51,9 @@ var RecentProjectsWidget =React.createClass({
     return (
       <div>
         <h5 className="ui top block header">Recent Projects</h5>
-        {recentProjects}
+        <div id='project-list' >
+          {recentProjects}
+        </div>
       </div>
 
 
