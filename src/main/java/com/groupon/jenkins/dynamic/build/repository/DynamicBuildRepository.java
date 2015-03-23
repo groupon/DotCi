@@ -37,6 +37,8 @@ import com.mongodb.DBObject;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.util.RunList;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -50,6 +52,7 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
 import static  com.google.common.collect.ImmutableMap.of;
 import static  java.util.Arrays.asList;
+import static com.groupon.jenkins.dynamic.build.repository.MongoQueryProjectionBuilder.projection;
 
 
 import javax.inject.Inject;
@@ -314,16 +317,9 @@ public class DynamicBuildRepository extends MongoRepository {
 
         ));
         BasicDBObject sortQuery =  new BasicDBObject(of("$sort",of( "timestamp", -1 )));
-        //{$project: {"_id": 0,commit:"$actions.causes.commitInfo"}}
-        BasicDBObject projectQuery = new BasicDBObject(of("$project",
-                of(
-                       "_id" ,0
-                        ,"projectId", 1
-                        ,"result", 1
-                        ,"number", 1
-                       ,"commit", "$actions.causes.commitInfo"
-                )
-                ));
+        Map buildFields = projection( "projectId","result","number","startTime").noId().field("commit","$actions.causes.commitInfo").get();
+        //Project == Projection not BuildProject
+        BasicDBObject projectQuery = new BasicDBObject(of("$project", buildFields ));
         AggregationOutput builds = getDatastore().getDB().getCollection("run").aggregate(filterQuery,sortQuery,projectQuery,groupQuery);
         List output = new ArrayList();
         DynamicProjectRepository repo = SetupConfig.get().getDynamicProjectRepository();
@@ -335,6 +331,7 @@ public class DynamicBuildRepository extends MongoRepository {
            String parentName = repo.getProjectById(parentId).getFullName();
           output.add(of("projectName", parentName,
                   "number", buildObject.get("number"),
+                  "startTime", buildObject.get("startTime"),
                   "lastBuildResult", buildObject.get("result"),
                   "commit", commit.toMap()));
 

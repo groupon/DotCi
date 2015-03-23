@@ -30,9 +30,13 @@ require("./recent_projects.less");
 var RecentProject = React.createClass({
   render(){
     return (
-      <a className={"recent-project-"+this.props.lastBuildResult+ ""} href="/meow"> 
-        <div>{this.props.projectName}</div>
-        <div>{this.props.commit.message}</div>
+      <a className={"recent-project-"+this.props.lastBuildResult+ ""} href={this.props.url}> 
+        <div className="ui label">
+          <i className="icon fa fa-clock-o"></i> 
+          <span className="detail">{this.props.startTime}</span>
+        </div>
+        <div><b>{this.props.projectName}</b></div>
+        <div><span className="octicon octicon-git-commit"/>{this.props.commit.message}</div>
       </a>
     );
   }
