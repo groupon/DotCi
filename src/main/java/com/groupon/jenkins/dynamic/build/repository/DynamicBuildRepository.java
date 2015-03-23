@@ -23,24 +23,37 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.repository;
 
+import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.*;
 import com.groupon.jenkins.mongo.BuildInfo;
 import com.groupon.jenkins.mongo.MongoRepository;
 import com.groupon.jenkins.mongo.MongoRunMap;
 import com.groupon.jenkins.util.GReflectionUtils;
+import com.mongodb.AggregationOutput;
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.util.RunList;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import jenkins.model.Jenkins;
+import org.bson.types.BasicBSONList;
+import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
+import static  com.google.common.collect.ImmutableMap.of;
+import static  java.util.Arrays.asList;
+import static com.groupon.jenkins.dynamic.build.repository.MongoQueryProjectionBuilder.projection;
+
 
 import javax.inject.Inject;
 
@@ -265,18 +278,9 @@ public class DynamicBuildRepository extends MongoRepository {
         }
     }
 
-    public Iterable<DynamicBuild> getLastBuildsForUser(String pusher, int numberOfBuilds) {
+    public Iterable<DynamicBuild> getLastBuildsForUser(String user, int numberOfBuilds) {
 
-        Query<DynamicBuild> query = getDatastore().createQuery(DynamicBuild.class)
-            .limit(numberOfBuilds)
-            .disableValidation()
-            .order("-timestamp")
-            .field("className").equal("com.groupon.jenkins.dynamic.build.DynamicBuild");
-
-        query.or(
-            query.criteria("actions.causes.user").equal(Jenkins.getAuthentication().getName()),
-            query.criteria("actions.causes.pusher").equal(Jenkins.getAuthentication().getName())
-        );
+        Query<DynamicBuild> query = getDynamicBuildsForUser(user, numberOfBuilds);
 
         List<DynamicBuild> builds = query.asList();
 
@@ -287,6 +291,54 @@ public class DynamicBuildRepository extends MongoRepository {
         }
 
         return builds;
+    }
+
+    private Query<DynamicBuild> getDynamicBuildsForUser(String user, int numberOfBuilds) {
+        Query<DynamicBuild> query = getDatastore().createQuery(DynamicBuild.class)
+            .limit(numberOfBuilds)
+            .disableValidation()
+            .order("-timestamp")
+            .field("className").equal("com.groupon.jenkins.dynamic.build.DynamicBuild");
+
+        query.or(
+            query.criteria("actions.causes.user").equal(user),
+            query.criteria("actions.causes.pusher").equal(user)
+        );
+        return query;
+    }
+
+    public  List getLastBuildsPerProjectForUser(String user){
+        BasicDBObject groupQuery = new BasicDBObject(of("$group", of("_id", "$projectId", "build", of("$first", "$$ROOT"))));
+        BasicDBObject filterQuery = new BasicDBObject(
+                of("$match",
+                   of( "className","com.groupon.jenkins.dynamic.build.DynamicBuild"
+                           ,"$or",asList( of("actions.causes.user", user), of("actions.causes.pusher",user))
+                   )
+
+        ));
+        BasicDBObject sortQuery =  new BasicDBObject(of("$sort",of( "timestamp", -1 )));
+        Map buildFields = projection( "projectId","result","number","startTime").noId().field("commit","$actions.causes.commitInfo").get();
+        //Project == Projection not BuildProject
+        BasicDBObject projectQuery = new BasicDBObject(of("$project", buildFields ));
+        AggregationOutput builds = getDatastore().getDB().getCollection("run").aggregate(filterQuery,sortQuery,projectQuery,groupQuery);
+        List output = new ArrayList();
+        DynamicProjectRepository repo = SetupConfig.get().getDynamicProjectRepository();
+       for(DBObject build : builds.results()) {
+           DBObject buildObject = (DBObject) build.get("build");
+           BasicDBList list = (BasicDBList) ((BasicDBList) buildObject.get("commit")).get(0);
+           BasicDBObject commit = (BasicDBObject) list.get(0);
+           ObjectId parentId = (ObjectId) buildObject.get("projectId");
+           String parentName = repo.getProjectById(parentId).getFullName();
+          output.add(of("projectName", parentName,
+                  "number", buildObject.get("number"),
+                  "startTime", buildObject.get("startTime"),
+                  "lastBuildResult", buildObject.get("result"),
+                  "commit", commit.toMap()));
+
+       }
+
+        return output;
+
     }
 
     public <T extends DbBackedBuild> T getLastBuild(DbBackedProject project, String branch) {

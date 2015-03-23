@@ -22,19 +22,38 @@
  * THE SOFTWARE.
  */
 
-import { Store } from 'flummox';
-import Build from './../models/Build.jsx';
-export default class RecentProjectsStore extends Store {
-    constructor(flux) {
-        super();
-        let actionIds = flux.getActionIds('app');
-        this.register(actionIds.recentProjectsChanged, this.recentProjectsChanged);
-        this.state = {recentProjects: []};
+package com.groupon.jenkins.dynamic.build.repository;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class MongoQueryProjectionBuilder {
+    private final String[] includes;
+    private final HashMap fields;
+    private boolean noId;
+
+    public MongoQueryProjectionBuilder(String[] fields) {
+       this.includes = fields;
+        this.fields = new HashMap();
     }
-    recentProjectsChanged(recentBuilds){
-      this.setState({recentProjects: recentBuilds.map(build => this._toBuildModel(build)) });
+    public static MongoQueryProjectionBuilder projection(String ... fields){
+       return new MongoQueryProjectionBuilder(fields);
     }
-    _toBuildModel(build){
-      return Build(build);
+    public MongoQueryProjectionBuilder noId(){
+       this.noId = true;
+        return this;
+    }
+    public MongoQueryProjectionBuilder field(String key, String value){
+        fields.put(key,value);
+        return this;
+    }
+    public Map get(){
+        for(String field : includes){
+           fields.put(field,1);
+        }
+        if(noId){
+            fields.put("_id",0);
+        }
+        return fields;
     }
 }

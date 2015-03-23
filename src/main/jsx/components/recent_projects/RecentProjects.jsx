@@ -30,11 +30,13 @@ require("./recent_projects.less");
 var RecentProject = React.createClass({
   render(){
     return (
-      <a className={"recent-project-"+this.props.lastBuildStatus+ " ui animated fade button  segment attached"} href={this.props.url}> 
-        <div className="visible content">{this.props.name}</div>
-        <div className="hidden content">
-          {this.props.lastCommit}
+      <a className={"recent-project-"+this.props.lastBuildResult+ ""} href={this.props.url}> 
+        <div className="ui label">
+          <i className="icon fa fa-clock-o"></i> 
+          <span className="detail">{this.props.startTime}</span>
         </div>
+        <div><b>{this.props.projectName}</b></div>
+        <div><span className="octicon octicon-git-commit"/>{this.props.commit.message}</div>
       </a>
     );
   }
@@ -44,28 +46,32 @@ var RecentProjectsWidget =React.createClass({
   componentWillMount(){
     this.props.flux.getRecentProjectsFromServer();
   },
-   render(){
-        var recentProjects = this.props.recentProjects.map(function (project) {
-            return (
-                <RecentProject key={project.url} {...project}/>
-            );
-        });
-        return (
-<div className="ui segment">
-<h5 className="ui top block header">Recent Projects</h5>
-{recentProjects}
-</div>
+  render(){
+    var recentProjects = this.props.recentProjects.map(function (project) {
+      return (
+        <RecentProject key={project.url} {...project}/>
+      );
+    });
+    return (
+      <div>
+        <h5 className="ui top block header">Recent Projects</h5>
+        <div id='project-list' >
+          {recentProjects}
+        </div>
+      </div>
 
 
-        );
-    }
+    );
+  }
 });
 export default React.createClass({
-    render(){
-        return (
-            <FluxComponent connectToStores={['recentProjects']} flux={this.props.flux}>
-                <RecentProjectsWidget/>
-            </FluxComponent>
-        );
-    }
+  render(){
+    return (
+      <div className={this.props.className}>
+      <FluxComponent connectToStores={['recentProjects']} flux={this.props.flux}>
+        <RecentProjectsWidget/>
+      </FluxComponent>
+    </div>
+    );
+  }
 });

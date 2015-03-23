@@ -23,20 +23,37 @@
  */
 
 @import './../../build-colors.less';
+@import '~lesshat/build/lesshat.less';
+#project-list{
+  .display(flex);
+  .flex-direction(column);
+}
 
+.recent-project{
+  border-left: 1px solid #eee;
+  height: 70px;
+  .link-no-decoration;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 10px ;
+  *{
+    margin-left: 10px ;
+    margin-bottom: 2px ;
+  }
+}
 
 .recent-project-FAILURE{
   .border-failure !important;
+  .recent-project
 }
 .recent-project-SUCCESS{
   .border-success !important;
+  .recent-project
 }
-
-
 .recent-project-ABORTED {
-  .border-aborted;
+  .border-aborted !important;
+  .recent-project
 }
-
 .recent-project-IN_PROGRESS {
-  .border-in-progress;
+  .border-in-progress !important;
+  .recent-project
 }

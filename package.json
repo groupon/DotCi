@@ -6,6 +6,7 @@
   "dependencies": {
     "chart.js": "^1.0.2",
     "flummox": "2.7.2",
+    "moment": "^2.9.0",
     "qs": "^2.3.3",
     "react": "0.12.2",
     "react-proxy-loader": "^0.3.1",

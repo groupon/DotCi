@@ -63,44 +63,8 @@ public class RecentProjects implements RootAction{
     }
 
     public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-        rsp.setContentType("application/json");
-        Map<DynamicProject, List<DynamicBuild>> recentProjects = getRecentProjects();
-        List<Map<String, Object>> output = new ArrayList<Map<String, Object>>();
-        for(DynamicProject project: recentProjects.keySet()){
-            HashMap<String, Object> projectMap = new HashMap<String, Object>();
-            projectMap.put("name",project.getFullName());
-            projectMap.put("url",project.getAbsoluteUrl());
-            DynamicBuild lastBuild = project.getLastBuild();
-            if(lastBuild!=null){
-                projectMap.put("lastBuildStatus",lastBuild.getResult().toString());
-                if(lastBuild.getCause().getCommitInfo() !=null){
-                    projectMap.put("lastCommit", StringUtils.abbreviate(lastBuild.getCause().getCommitInfo().getMessage(),30));
-                    projectMap.put("avatarDigest", lastBuild.getCause().getCommitInfo().getEmailDigest());
-                }
-            }else{
-                projectMap.put("lastBuildStatus", Result.ABORTED.toString());
-            }
-            output.add(projectMap);
-        }
-        JsonResponse.render(req,rsp,new RecentProjectsRsp(output));
-
+        JsonResponse.render(req,rsp,new RecentProjectsRsp(getDynamicBuildRepository().getLastBuildsPerProjectForUser(getCurrentUser())));
     }
-    public Map<DynamicProject, List<DynamicBuild>> getRecentProjects(){
-        Map<DynamicProject,List<DynamicBuild>> recentProjects = new HashMap<DynamicProject, List<DynamicBuild>>();
-        Iterable<DynamicBuild> builds = getDynamicBuildRepository().getLastBuildsForUser(getCurrentUser(), 20);
-        for(DynamicBuild build : builds){
-            if(recentProjects.containsKey(build.getParent())){
-                List<DynamicBuild> parentBuilds = recentProjects.get(build.getParent());
-                parentBuilds.add(build);
-            }else{
-                ArrayList<DynamicBuild> parentBuilds = new ArrayList<DynamicBuild>();
-                parentBuilds.add(build);
-                recentProjects.put(build.getParent(),parentBuilds);
-            }
-        }
-        return recentProjects;
-    }
-
     private DynamicBuildRepository getDynamicBuildRepository() {
         return SetupConfig.get().getDynamicBuildRepository();
     }

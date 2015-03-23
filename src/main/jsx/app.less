@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-@import "./flex.less";
+@import '~lesshat/build/lesshat.less';
 @import "./css/reset.css";
 @import "./css/site.css";
 @import "./css/button.css";
@@ -39,15 +39,22 @@ body{
 background: white !important;
 }
 .app{
-  .flex-row;
-  padding: 10px;
+  .display(flex);
+  .flex-direction(row);
+  .align-content(space-between);
+  .align-items(stretch);
+  margin-left: 1%;
+  margin-right: 1%;
+  position: relative;
 }
 .job{
-  flex-basis: 79%;
-  max-width: 80%;
   margin-left: 1%;
+  .flex(auto);
 }
-.recent-projects{
-  flex-basis: 20%;
-  max-width: 20%;
+#divider{
+  margin-left: 10px;
+  border-width: 1px;
+   border-style: solid;
+   border-color: rgba(0, 0, 0, 0.1);
 }
+
