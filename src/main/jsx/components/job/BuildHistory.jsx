@@ -57,9 +57,10 @@ var BuildHistoryTabs = React.createClass({
   render()  {
     return (<div className="ui  buttons">
       {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i))}
-      <a className="ui icon button"  href="#" onClick={this._addTab}> <i className="icon fa fa-plus-circle"></i></a>
-      <Dialog ref="addDialog" title="Add new brach tab" >
-
+      <a className="ui icon button" href="#" onClick={this._addTab} > <i className="icon fa fa-plus-circle"></i></a>
+      <Dialog ref="addDialog" title="Add new brach tab" onSave={this._onTabSave} >
+        <div className="ui label"> Branch Regex </div>
+        <input type="text" ref="newBranchTab" defaultValue=""/>
       </Dialog>
     </div>
        );
@@ -67,6 +68,10 @@ var BuildHistoryTabs = React.createClass({
   _addTab(){
     const addDialog = this.refs.addDialog;
     addDialog.open();
+  },
+  _onTabSave(){
+    const tabExpr = this.refs.newBranchTab.getDOMNode().value
+    this.props.flux.addBranchTab(tabExpr);
   },
   _notifyTabSelection: function (tabIndex) {
     let actions = this.props.flux.getActions('app');

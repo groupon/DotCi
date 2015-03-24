@@ -1,4 +1,3 @@
-
 /*
  * The MIT License (MIT)
  *
@@ -37,6 +36,10 @@ import JobStore from './stores/JobStore.jsx';
     getRecentProjectsFromServer(){
     const actions = this.getActions('app');
     actions.getRecentProjectsFromServer();
+    }
+    addBranchTab(tabRegex){
+    const actions = this.getActions('app');
+    actions.addBranchTab(tabRegex);
     }
 
 }

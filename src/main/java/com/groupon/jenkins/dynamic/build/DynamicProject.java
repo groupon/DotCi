@@ -44,6 +44,7 @@ import hudson.util.CaseInsensitiveComparator;
 import hudson.util.CopyOnWriteMap;
 import hudson.widgets.HistoryWidget;
 import jenkins.model.Jenkins;
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -294,6 +295,19 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     public void doDoDeleteAjax(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
         rsp.setHeader("Location", getParent().getAbsoluteUrl());
         delete();
+    }
+
+    public void doAddBranchTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+        String tabRegex = req.getParameter("tabRegex");
+        if(StringUtils.isBlank(tabRegex)) throw new RuntimeException("Branch Regex cannot be exmpty");
+        DynamicProjectBranchTabsProperty branchTabsProperty = getProperty(DynamicProjectBranchTabsProperty.class);
+        branchTabsProperty.addBranch(tabRegex);
+    }
+    public void doRemoveBranchTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+        String tabRegex = req.getParameter("tabRegex");
+        if(StringUtils.isBlank(tabRegex)) throw new RuntimeException("Branch Regex cannot be exmpty");
+        DynamicProjectBranchTabsProperty branchTabsProperty = getProperty(DynamicProjectBranchTabsProperty.class);
+        branchTabsProperty.removeBranch(tabRegex);
     }
 
     public DynamicProjectApi getJson() throws IOException {

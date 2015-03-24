@@ -24,12 +24,14 @@
 
 import { Store } from 'flummox';
 import React from 'react';
+var update =React.addons.update;
 export default class JobStore extends Store {
     constructor(flux) {
         super();
         let actionIds = flux.getActionIds('app');
         this.register(actionIds.jobInfoChanged, this.jobInfoChanged);
         this.register(actionIds.buildHistoryChanged, this.buildHistoryChanged);
+        this.register(actionIds.tabAdded, this.tabAdded);
         this.state = {buildHistoryTabs:[], builds: [],buildTimes:[]};
     }
     jobInfoChanged(jobInfo){
@@ -37,12 +39,17 @@ export default class JobStore extends Store {
       this.setState(React.addons.update(this.getState(),{$merge: newJobInfo}));
     }
     addAllMineNewTabs(jobInfo) {
-        return React.addons.update(jobInfo, {
+        return update(jobInfo, {
             buildHistoryTabs: {$push: ['All','Mine']}
         });
     }
+    tabAdded(newTabRegex){
+        this.setState(update(this.getState(), {
+            buildHistoryTabs: {$push: [newTabRegex]}
+        }));
+    }
     buildHistoryChanged(builds){
-        this.setState( React.addons.update(this.getState(), {
+        this.setState(update(this.getState(), {
             builds: {$set: builds}
         }));
     }
