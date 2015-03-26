@@ -25,6 +25,7 @@
 import React from 'react';
 import BuildRow from './BuildRow.jsx';
 import Dialog from './../lib/Dialog.jsx';
+import contains from 'ramda/src/contains'
 require('./build_history.less');
 
 
@@ -56,7 +57,7 @@ var BuildHistoryTabs = React.createClass({
   },
   render()  {
     return (<div className="ui  buttons">
-      {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i))}
+      {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab)))}
       <a className="ui icon button" href="#" onClick={this._addTab} > <i className="icon fa fa-plus-circle"></i></a>
       <Dialog ref="addDialog" title="Add new brach tab" onSave={this._onTabSave} >
         <div className="ui label"> Branch Regex </div>
@@ -64,6 +65,9 @@ var BuildHistoryTabs = React.createClass({
       </Dialog>
     </div>
        );
+  },
+  _isTabRemovable(tab){
+    return !contains(tab)(['master','All','Mine']);
   },
   _addTab(){
     const addDialog = this.refs.addDialog;
@@ -82,7 +86,7 @@ var BuildHistoryTabs = React.createClass({
     this.setState({currentSelection: tab});
     this._notifyTabSelection(tab);
   },
-  _getHistoryTab(tab,i) {
+  _getHistoryTab(tab,i,closable) {
     var cx = React.addons.classSet;
     var classes = cx({
       'ui':true,
@@ -92,10 +96,11 @@ var BuildHistoryTabs = React.createClass({
       'branch-tab': true,
       'tab-active': this.state.currentSelection==i
     });
-    return (<a className={classes} key={i} data-tab={i}  onClick={this._onActiveTabChange} href="#" >
-            <i className={"icon octicon octicon-git-branch "}></i>
+    return (<div className={classes} key={i} data-tab={i}  onClick={this._onActiveTabChange} href="#" >
+            <i className="icon octicon octicon-git-branch "></i>
       {tab}
-    </a>);
+      {closable?<a className="tab-close fa fa-times-circle-o"></a>: ''}
+    </div>);
   }
 });
 const FilterBar = React.createClass({
