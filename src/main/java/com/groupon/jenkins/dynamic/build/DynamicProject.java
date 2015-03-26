@@ -302,6 +302,7 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         if(StringUtils.isBlank(tabRegex)) throw new RuntimeException("Branch Regex cannot be exmpty");
         DynamicProjectBranchTabsProperty branchTabsProperty = getProperty(DynamicProjectBranchTabsProperty.class);
         branchTabsProperty.addBranch(tabRegex);
+        save();
     }
     public void doRemoveBranchTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
         String tabRegex = req.getParameter("tabRegex");
