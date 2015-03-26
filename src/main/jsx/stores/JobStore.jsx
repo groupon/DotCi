@@ -23,6 +23,7 @@
  */
 
 import { Store } from 'flummox';
+import reject from 'ramda/src/reject';
 import React from 'react';
 var update =React.addons.update;
 export default class JobStore extends Store {
@@ -32,6 +33,7 @@ export default class JobStore extends Store {
         this.register(actionIds.jobInfoChanged, this.jobInfoChanged);
         this.register(actionIds.buildHistoryChanged, this.buildHistoryChanged);
         this.register(actionIds.tabAdded, this.tabAdded);
+        this.register(actionIds.tabRemoved, this.tabRemoved);
         this.state = {buildHistoryTabs:[], builds: [],buildTimes:[]};
     }
     jobInfoChanged(jobInfo){
@@ -42,6 +44,12 @@ export default class JobStore extends Store {
         return update(jobInfo, {
             buildHistoryTabs: {$push: ['All','Mine']}
         });
+    }
+    tabRemoved(tab){
+      const updatedTabs = reject((t)=> t==tab,this.state.buildHistoryTabs);
+        this.setState(update(this.getState(), {
+            buildHistoryTabs: {$set: updatedTabs}
+        }));
     }
     tabAdded(newTabRegex){
         this.setState(update(this.getState(), {

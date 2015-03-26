@@ -22,7 +22,8 @@
  * THE SOFTWARE.
  */
 import { Actions } from 'flummox';
-import {addBranchTab as addBranchTabOnServer, recentProjects,job,deleteCurrentProject, fetchBuildHistory} from '../api/Api.jsx';
+import {addBranchTab as addBranchTabOnServer, removeBranchTab as removeBranchTabOnServer,
+  recentProjects,job,deleteCurrentProject, fetchBuildHistory} from '../api/Api.jsx';
 import babel_polyfill from 'babel/polyfill';
 export default class AppActions extends Actions {
 
@@ -54,6 +55,13 @@ export default class AppActions extends Actions {
 
     buildHistoryChanged(builds){
         return builds;
+    }
+    async removeBranchTab(tab){
+      await removeBranchTabOnServer(tab);
+      this.tabRemoved(tab);
+    }
+    tabRemoved(tab){
+      return tab;
     }
     async addBranchTab(tabRegex){
       await addBranchTabOnServer(tabRegex);

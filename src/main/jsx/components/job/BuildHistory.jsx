@@ -83,8 +83,16 @@ var BuildHistoryTabs = React.createClass({
   },
   _onActiveTabChange(event){
     var tab =parseInt(event.currentTarget.getAttribute('data-tab'));
-    this.setState({currentSelection: tab});
+    this.replaceState({currentSelection: tab});
     this._notifyTabSelection(tab);
+  },
+  _onTabRemove(event){
+    event.stopPropagation();
+    this.replaceState(this.getInitialState());
+    this._notifyTabSelection(this.state.currentSelection);
+    var tabIndex =parseInt(event.currentTarget.getAttribute('data-tab'));
+    var tab = this.props.tabs[tabIndex]; 
+    this.props.flux.removeBranchTab(tab);
   },
   _getHistoryTab(tab,i,closable) {
     var cx = React.addons.classSet;
@@ -99,10 +107,11 @@ var BuildHistoryTabs = React.createClass({
     return (<div className={classes} key={i} data-tab={i}  onClick={this._onActiveTabChange} href="#" >
             <i className="icon octicon octicon-git-branch "></i>
       {tab}
-      {closable?<a className="tab-close fa fa-times-circle-o"></a>: ''}
+      {closable?<a data-tab={i} className="tab-close fa fa-times-circle-o" onClick={this._onTabRemove}></a>: ''}
     </div>);
   }
 });
+
 const FilterBar = React.createClass({
   render(){
     return (<div id="filter-bar" className=" ui icon input">

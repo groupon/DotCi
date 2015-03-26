@@ -37,6 +37,11 @@ import JobStore from './stores/JobStore.jsx';
     const actions = this.getActions('app');
     actions.getRecentProjectsFromServer();
     }
+
+    removeBranchTab(tab){
+    const actions = this.getActions('app');
+    actions.removeBranchTab(tab);
+    }
     addBranchTab(tabRegex){
     const actions = this.getActions('app');
     actions.addBranchTab(tabRegex);

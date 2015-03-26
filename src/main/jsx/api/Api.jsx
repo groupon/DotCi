@@ -34,8 +34,11 @@ export async function deleteCurrentProject(){
   window.location = rsp.headers.get('location');
 }
 
-export async function addBranchTab(tabRegex){
-  const rsp = await fetch(window.location.pathname.replace('newUi','')+"/addBranchTab?tabRegex="+tabRegex,{method: 'post'});
+export function removeBranchTab(tabRegex){
+  fetch(window.location.pathname.replace('newUi','')+"/removeBranchTab?tabRegex="+tabRegex,{method: 'post'});
+}
+export function addBranchTab(tabRegex){
+  fetch(window.location.pathname.replace('newUi','')+"/addBranchTab?tabRegex="+tabRegex,{method: 'post'});
 }
 
 export function fetchBuildHistory(tab) {
