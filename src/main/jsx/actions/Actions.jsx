@@ -23,10 +23,18 @@
  */
 import { Actions } from 'flummox';
 import {addBranchTab as addBranchTabOnServer, removeBranchTab as removeBranchTabOnServer,
-  recentProjects,job,deleteCurrentProject, fetchBuildHistory} from '../api/Api.jsx';
+        buildLog ,
+        recentProjects,
+        job,
+        deleteCurrentProject, 
+        fetchBuildHistory} from '../api/Api.jsx';
 import babel_polyfill from 'babel/polyfill';
 export default class AppActions extends Actions {
 
+    async currentBuildChanged(buildNumber){
+      const logText = await buildLog(buildNumber);
+      this.jobInfoChanged({build:{log: logText.split("\n")}})
+    }
     deleteProject(){
         deleteCurrentProject().then(()=>console.log('project deleted'));
     }

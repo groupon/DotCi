@@ -26,6 +26,8 @@ import {stringify} from 'qs';
 export function recentProjects(){
   return _get(window.rootURL + '/recentProjects/');
 }
+export function buildLog(buildNumber){
+  return fetch(`${_jobUrl()}/${buildNumber}/consoleText`).then(response => response.text()); }
 export function job(tree){
   return _get(_jobApiUrl()+"/info/",{tree:tree});
 }
@@ -44,9 +46,11 @@ export function addBranchTab(tabRegex){
 export function fetchBuildHistory(tab) {
     return _get(`${_jobApiUrl()}/buildHistory/${tab}`,{depth:2});
 }
-
+function _jobUrl(){
+  return window.location.pathname.replace('newUi','');
+}
 function _jobApiUrl() {
-    const url = window.location.pathname.replace('newUi','') + 'json';
+    const url =  _jobUrl()+ 'json';
     return url;
 }
 function _get(url, params){
