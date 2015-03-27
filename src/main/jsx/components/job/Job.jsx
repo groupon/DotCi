@@ -29,6 +29,7 @@ import BuildMetrics from 'react-proxy!./BuildMetrics.jsx';
 import Widgets from '../lib/Widgets.jsx';
 import Header from './Header.jsx';
 import Router from 'react-router';
+import Build from './Build.jsx';
 var RouteHandler = Router.RouteHandler;
 var DefaultRoute = Router.DefaultRoute;
 var Redirect = Router.Redirect;
@@ -40,12 +41,6 @@ var JobWidgets = React.createClass({
       <BuildHistory icon="fa fa-history" url="buildHistory" name="Build History" tabs={this.props.buildHistoryTabs} builds={this.props.builds} flux={this.props.flux}/>
       <BuildMetrics icon="fa fa-bar-chart" url="buildMetrics" name="Build Metrics" buildTimes={this.props.buildTimes} flux={this.props.flux} />
       </Widgets>;
-  }
-});
-const Build = React.createClass({
-  mixins: [Router.State],
-  render(){
-    return <h1> {this.getParams().buildNumber} </h1>;
   }
 });
 

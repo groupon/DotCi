@@ -25,15 +25,16 @@
 
 import React from 'react';
 import Avatar from '../lib/Avatar.jsx';
+import Router from 'react-router';
 require('./build_row.less');
 var BuildRow = React.createClass({
     render(){
         return (
-          <a className ={"build-row-"+this.props.result}  href={this.props.number+'/console'} >
+          <Router.Link className ={"build-row-"+this.props.result}  to={'/build/'+this.props.number} >
                <Avatar emailDigest={this.props.commit.emailDigest} />
                {this._commitInfo()}
                 {this._buildDuration()}
-            </a>
+            </Router.Link>
         );
     },
     _commitInfo(){
