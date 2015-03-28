@@ -32,10 +32,9 @@ import Router from 'react-router';
 import Build from './Build.jsx';
 var RouteHandler = Router.RouteHandler;
 var DefaultRoute = Router.DefaultRoute;
-var Redirect = Router.Redirect;
 var Route = Router.Route;
 var JobWidgets = React.createClass({
-    mixins: [Router.State],
+  mixins: [Router.State],
   render(){
     return  <Widgets activeWidget={this.getParams().widget? this.getParams().widget:"buildHistory"}>
       <BuildHistory icon="fa fa-history" url="buildHistory" name="Build History" tabs={this.props.buildHistoryTabs} builds={this.props.builds} flux={this.props.flux}/>
@@ -51,7 +50,8 @@ export default React.createClass({
   },
   statics:{
     Routes:[ <DefaultRoute key="defaultRoute" handler= {JobWidgets} />,
-      <Route name="job-widgets" key="job-widgets" path=":widget" handler={JobWidgets}/>
+      <Route name="job-widgets" key="job-widgets" path="w/:widget" handler={JobWidgets}/>,
+      <Route name="build" key="build" path=":buildNumber" handler={Build}/>
     ] 
   },
   render(){
