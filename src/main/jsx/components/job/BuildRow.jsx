@@ -30,7 +30,7 @@ require('./build_row.less');
 var BuildRow = React.createClass({
     render(){
         return (
-          <Router.Link className ={"build-row-"+this.props.result}  to={'/build/'+this.props.number} >
+          <Router.Link className ={"build-row-"+this.props.result}  to={'build'} params={{buildNumber: this.props.number}}>
                <Avatar emailDigest={this.props.commit.emailDigest} />
                {this._commitInfo()}
                 {this._buildDuration()}
