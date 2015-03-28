@@ -37,7 +37,7 @@ var Route = Router.Route;
 var JobWidgets = React.createClass({
     mixins: [Router.State],
   render(){
-    return  <Widgets activeWidget={this.getParams().widget}>
+    return  <Widgets activeWidget={this.getParams().widget? this.getParams().widget:"buildHistory"}>
       <BuildHistory icon="fa fa-history" url="buildHistory" name="Build History" tabs={this.props.buildHistoryTabs} builds={this.props.builds} flux={this.props.flux}/>
       <BuildMetrics icon="fa fa-bar-chart" url="buildMetrics" name="Build Metrics" buildTimes={this.props.buildTimes} flux={this.props.flux} />
       </Widgets>;
@@ -50,12 +50,9 @@ export default React.createClass({
     actions.getJobInfoFromServer("buildHistoryTabs,fullName,githubUrl,permissions,builds[*,commit[*]]");
   },
   statics:{
-    Routes: (<Route>
-      <Route name="build" path="build/:buildNumber" handler={Build}/>
-      <Route name="job-widgets" path="w/:widget" handler={JobWidgets}/>
-      <Route name="w/buildHistory" handler={JobWidgets} />
-      <Redirect from="/" to="w/buildHistory" />
-    </Route>)
+    Routes:[ <DefaultRoute key="defaultRoute" handler= {JobWidgets} />,
+      <Route name="job-widgets" key="job-widgets" path=":widget" handler={JobWidgets}/>
+    ] 
   },
   render(){
     return (

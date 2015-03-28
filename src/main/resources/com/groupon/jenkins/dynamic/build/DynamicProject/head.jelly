@@ -48,6 +48,7 @@
         </j:if>
         <script>
             rootURL = '${rootURL}'
+            jobUrl = rootURL+'/' + '${it.url}'
             DEVELOPMENT_MODE = '${developmentMode}'
         </script>
 

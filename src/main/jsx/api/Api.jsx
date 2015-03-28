@@ -47,7 +47,7 @@ export function fetchBuildHistory(tab) {
     return _get(`${_jobApiUrl()}/buildHistory/${tab}`,{depth:2});
 }
 function _jobUrl(){
-  return window.location.pathname.replace('newUi','');
+  return jobUrl;
 }
 function _jobApiUrl() {
     const url =  _jobUrl()+ 'json';

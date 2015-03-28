@@ -174,8 +174,18 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         );
     }
 
-    @Override
+        @Override
     public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
+        if(isNewUi()){
+            try {
+                rsp.forward(this,"newUi",req);
+                return null;
+            } catch (ServletException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         if ("sha".equals(token)) {
             String sha = req.getParameter("value");
             return dynamicBuildRepository.getBuildBySha(this, sha);
@@ -190,6 +200,11 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
         return permalink;
     }
+
+    public boolean isNewUi() {
+        return getProperty(JobUiProperty.class)!=null && getProperty(JobUiProperty.class).isNewUi();
+    }
+
     protected String getCurrentBranch(){
         return (String) Stapler.getCurrentRequest().getSession().getAttribute("branchView" + getName());
     }
@@ -309,6 +324,7 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         if(StringUtils.isBlank(tabRegex)) throw new RuntimeException("Branch Regex cannot be exmpty");
         DynamicProjectBranchTabsProperty branchTabsProperty = getProperty(DynamicProjectBranchTabsProperty.class);
         branchTabsProperty.removeBranch(tabRegex);
+        save();
     }
 
     public DynamicProjectApi getJson() throws IOException {
