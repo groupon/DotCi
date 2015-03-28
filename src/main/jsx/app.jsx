@@ -28,7 +28,6 @@ import RecentProjects from "./components/recent_projects/RecentProjects.jsx";
 import Job from "./components/job/Job.jsx";
 import Flux from "./Flux.jsx";
 import Router from 'react-router';
-import Build from './components/job/Build.jsx';
 require('./app.less');
 var RouteHandler = Router.RouteHandler;
 var Route = Router.Route;

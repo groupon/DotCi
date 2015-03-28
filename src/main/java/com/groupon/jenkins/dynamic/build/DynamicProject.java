@@ -200,6 +200,9 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
         return permalink;
     }
+    public String getJobUrl(){
+       return "job/"+ getParent().getName() +"/job/" + getName();
+    }
 
     public boolean isNewUi() {
         return getProperty(JobUiProperty.class)!=null && getProperty(JobUiProperty.class).isNewUi();

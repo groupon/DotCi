@@ -47,8 +47,8 @@
             <script src="${resURL}/plugin/DotCi/js/dotci.js"/>
         </j:if>
         <script>
-            rootURL = '${rootURL}'
-            jobUrl = rootURL+'/' + '${it.url}'
+            rootURL = '${rootURL}';
+            jobUrl = rootURL+'/' + '${it.jobUrl}' +"/";
             DEVELOPMENT_MODE = '${developmentMode}'
         </script>
 
