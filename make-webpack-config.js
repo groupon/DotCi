@@ -39,6 +39,10 @@ return {
         // ],
         loaders: [
             {
+                  test: /\.(svg)$/,
+                  loader: 'file-loader'
+            },
+            {
                 test: /\.less$/,
                 loader: 'style-loader!css-loader!' + AUTOPREFIXER_LOADER + '!less-loader'
             },

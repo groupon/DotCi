@@ -26,6 +26,7 @@ export default React.createClass({
     return <span/>;
   },
   _onLineSelect(event){
+    event.stopPropagation();
     const lineNumber = event.target.getAttribute('data-line');
     const lineId =`L${lineNumber}`
     Router.HashLocation.push(lineId);
@@ -47,8 +48,44 @@ export default React.createClass({
   _isLineSelected(lineNumber){
     return `L${lineNumber}`  == this._selectedLineHash();
   },
+  _openFold(e){
+      e.currentTarget.classList.toggle('closed');
+      e.currentTarget.classList.toggle('open');
+  },
+  _logFold(log,idx){
+ return (
+        <div className="fold closed" onClick={this._openFold}>
+          {mapIndexed((line,lineNo) => this._logLine(line,idx+lineNo),log)}
+      </div>
+ ) },
+ _logLine(log,idx){
+      return (<p className={this._isLineSelected(idx+1)?'highlight':''} id={`L${idx}`}>
+        <a data-line={idx} onClick={this._onLineSelect}/>{log}
+      </p>);
+ },
+
   _renderLog(logLines){
-    return mapIndexed((log,idx) => <p className={this._isLineSelected(idx+1)?'highlight':''} id={`L${idx+1}`}key={idx}><a data-line={idx+1} onClick={this._onLineSelect}/>{log}</p>,logLines); 
+    var groupedLines = [[]];
+    for (let i = 0; i < logLines.length; i++) {
+      let line =logLines[i];
+      if(line.startsWith('$')){
+        groupedLines.push([line]);
+      }else{
+        groupedLines[ groupedLines.length-1].push(line);
+      }
+    }
+    var lineNo = 1;
+    return mapIndexed((log,idx) => {
+      if(log.length  == 1){
+        const logLine =this._logLine(log[0],lineNo);
+        lineNo = lineNo + 1;
+        return logLine;
+      }else{
+        var fold = this._logFold(log,lineNo);
+        lineNo = lineNo + log.length
+        return fold;
+      }
+     },groupedLines); 
   }
 
 });

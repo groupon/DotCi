@@ -17,6 +17,25 @@
 #buildLog p.highlight a {
   color: #fff;
 }
+#buildLog .fold.open {
+  p:first-of-type{
+    background-image: url('log.fold.open.svg');
+  }
+}
+#buildLog .fold.closed {
+  height: 16px;
+  p:first-of-type{
+    background-image: url('log.fold.closed.svg');
+  }
+}
+#buildLog .fold {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  p:first-of-type{
+    background:  8px 3px no-repeat #333;
+  }
+}
  #buildLog  p.highlight {
    background-color: #666;
  }

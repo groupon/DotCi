@@ -23,6 +23,7 @@
     "css-loader": "^0.9.1",
     "expect": "^1.1.0",
     "extract-text-webpack-plugin": "^0.3.8",
+    "file-loader": "^0.8.1",
     "jest-cli": "^0.2.2",
     "karma": "^0.12.28",
     "karma-chrome-launcher": "^0.1.7",
