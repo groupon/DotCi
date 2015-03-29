@@ -36,7 +36,7 @@ export default React.createClass({
     if(lineId && lineId != ""){
       const line = document.getElementById(lineId);
       if(line)
-      line.scrollIntoView();
+        line.scrollIntoView();
     }
   },
   componentDidUpdate(){
@@ -49,20 +49,21 @@ export default React.createClass({
     return `L${lineNumber}`  == this._selectedLineHash();
   },
   _openFold(e){
-      e.currentTarget.classList.toggle('closed');
-      e.currentTarget.classList.toggle('open');
+    e.currentTarget.classList.toggle('closed');
+    e.currentTarget.classList.toggle('open');
   },
   _logFold(log,idx,isOpen){
- return (
-   <div className={"fold "+ (isOpen? "open":"closed")} onClick={this._openFold}>
-          {mapIndexed((line,lineNo) => this._logLine(line,idx+lineNo),log)}
+    return (
+      <div key={'fold'+idx} className={"fold "+ (isOpen? "open":"closed")} onClick={this._openFold}>
+        {mapIndexed((line,lineNo) => this._logLine(line,idx+lineNo),log)}
       </div>
- ) },
- _logLine(log,idx){
-      return (<p className={this._isLineSelected(idx+1)?'highlight':''} id={`L${idx}`}>
-        <a data-line={idx} onClick={this._onLineSelect}/>{log}
-      </p>);
- },
+    ) 
+  },
+  _logLine(log,idx){
+    return (<p key={idx} className={this._isLineSelected(idx)?'highlight':''} id={`L${idx}`}>
+      <a data-line={idx} onClick={this._onLineSelect}/>{log}
+    </p>);
+  },
 
   _renderLog(logLines){
     var groupedLines = [[]];
@@ -81,11 +82,13 @@ export default React.createClass({
         lineNo = lineNo + 1;
         return logLine;
       }else{
-        var fold = this._logFold(log,lineNo,idx == groupedLines.length -1);
+        const selectedLine = this._selectedLineHash()!=''? parseInt(this._selectedLineHash().replace("L",'')) :0;
+        var lineSelectedInFold = selectedLine > lineNo && selectedLine < lineNo + log.length;
+        var fold = this._logFold(log,lineNo,idx == groupedLines.length -1 || lineSelectedInFold);
         lineNo = lineNo + log.length
         return fold;
       }
-     },groupedLines); 
+    },groupedLines); 
   }
 
 });
