@@ -15,4 +15,5 @@ _site
 *.iml
 npm-debug.log
 src/main/webapp/js/*dotci.js
+src/main/webapp/js/*.svg
 src/main/webapp/js/*dotci.js.map

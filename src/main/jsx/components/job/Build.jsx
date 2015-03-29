@@ -52,9 +52,9 @@ export default React.createClass({
       e.currentTarget.classList.toggle('closed');
       e.currentTarget.classList.toggle('open');
   },
-  _logFold(log,idx){
+  _logFold(log,idx,isOpen){
  return (
-        <div className="fold closed" onClick={this._openFold}>
+   <div className={"fold "+ (isOpen? "open":"closed")} onClick={this._openFold}>
           {mapIndexed((line,lineNo) => this._logLine(line,idx+lineNo),log)}
       </div>
  ) },
@@ -81,7 +81,7 @@ export default React.createClass({
         lineNo = lineNo + 1;
         return logLine;
       }else{
-        var fold = this._logFold(log,lineNo);
+        var fold = this._logFold(log,lineNo,idx == groupedLines.length -1);
         lineNo = lineNo + log.length
         return fold;
       }
