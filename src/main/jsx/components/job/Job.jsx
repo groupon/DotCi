@@ -51,7 +51,8 @@ export default React.createClass({
   statics:{
     Routes:[ <DefaultRoute key="defaultRoute" handler= {JobWidgets} />,
       <Route name="job-widgets" key="job-widgets" path="w/:widget" handler={JobWidgets}/>,
-      <Route name="build" key="build" path=":buildNumber" handler={Build}/>
+      <Route name="build" key="build" path=":buildNumber" handler={Build}/>,
+      <Router.Redirect key="trailingRedirect" from=":buildNumber/" to="build" />
     ] 
   },
   render(){
