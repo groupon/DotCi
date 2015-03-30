@@ -24,7 +24,9 @@ export default React.createClass({
   render(){
     if( this.props.build)
       return <span id="buildLog"><pre> {this._renderLog(this.props.build.log)}</pre></span>;
-    return <span/>;
+    return <div id="log-loading" className="ui  active dimmer">
+    <div className="ui content large text loader">Loading</div>
+  </div>
   },
   _onLineSelect(event){
     if(event.target.tagName == 'A'){
