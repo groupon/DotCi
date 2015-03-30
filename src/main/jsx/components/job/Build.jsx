@@ -4,10 +4,9 @@ import mapIndexed from 'ramda/src/mapIndexed';
 import Convert from  'ansi-to-html';
 require('./build.less');
 export default React.createClass({
-  mixins: [Router.State],
   componentDidMount(){
     const actions = this.props.flux.getActions('app');
-    actions.currentBuildChanged(11)//this.getParams().buildNumber);
+    actions.currentBuildChanged(this.props.url);
     window.addEventListener("hashchange", this._onLineSelectionChange, false);
   },
   componentWillUnmount(){

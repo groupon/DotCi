@@ -41,7 +41,7 @@ var JobWidgets = React.createClass({
     return  <Widgets activeWidget={activeWidget}>
       <BuildHistory icon="fa fa-history" url="buildHistory" name="Build History" tabs={this.props.buildHistoryTabs} builds={this.props.builds} flux={this.props.flux}/>
       <BuildMetrics icon="fa fa-bar-chart" url="buildMetrics" name="Build Metrics" buildTimes={this.props.buildTimes} flux={this.props.flux} />
-      <Build icon="fa fa-bar-chart" url={this._isNumeric(activeWidget)? activeWidget: ''} name={"Build " + widgetParam} build={this.props.build} flux={this.props.flux} tabVisibleWhenActive />
+      <Build icon="fa fa-file" url={this._isNumeric(activeWidget)? activeWidget: ''} name={"Build - " + widgetParam} build={this.props.build} flux={this.props.flux} tabVisibleWhenActive />
       </Widgets>;
   },
   _isNumeric(n) {

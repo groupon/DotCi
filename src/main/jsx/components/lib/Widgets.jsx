@@ -42,7 +42,7 @@ export default React.createClass({
         );
     },
     _isWidgetSelected(widget){
-      return widget.props.url ==this.props.activeWidget 
+      return widget.props.url ==this.props.activeWidget;
     },
     _activeWidget(){
      return this.props.children.find((widget)=> this._isWidgetSelected(widget));
