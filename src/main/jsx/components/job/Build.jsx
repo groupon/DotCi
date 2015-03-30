@@ -1,6 +1,7 @@
 import React from "react";
 import Router from 'react-router';
 import mapIndexed from 'ramda/src/mapIndexed';
+import Convert from  'ansi-to-html';
 require('./build.less');
 export default React.createClass({
   mixins: [Router.State],
@@ -26,11 +27,12 @@ export default React.createClass({
     return <span/>;
   },
   _onLineSelect(event){
-    event.stopPropagation();
-    const lineNumber = event.target.getAttribute('data-line');
-    const lineId =`L${lineNumber}`
-    Router.HashLocation.push(lineId);
-    this._scrollToLine(lineId);
+    if(event.target.tagName == 'A'){
+      event.stopPropagation();
+      const lineId = event.currentTarget.getAttribute('id');
+      Router.HashLocation.push(lineId);
+      this._scrollToLine(lineId);
+    }
   },
   _scrollToLine(lineId){
     if(lineId && lineId != ""){
@@ -49,6 +51,7 @@ export default React.createClass({
     return `L${lineNumber}`  == this._selectedLineHash();
   },
   _openFold(e){
+    e.stopPropagation();
     e.currentTarget.classList.toggle('closed');
     e.currentTarget.classList.toggle('open');
   },
@@ -60,11 +63,10 @@ export default React.createClass({
     ) 
   },
   _logLine(log,idx){
-    return (<p key={idx} className={this._isLineSelected(idx)?'highlight':''} id={`L${idx}`}>
-      <a data-line={idx} onClick={this._onLineSelect}/>{log}
+    return (<p dangerouslySetInnerHTML={{__html: "<a></a>"+new Convert().toHtml(log)}}
+      key={idx} className={this._isLineSelected(idx)?'highlight':''} id={`L${idx}`} onClick={this._onLineSelect}>
     </p>);
   },
-
   _renderLog(logLines){
     var groupedLines = [[]];
     for (let i = 0; i < logLines.length; i++) {
