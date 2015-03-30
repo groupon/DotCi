@@ -7,7 +7,7 @@ export default React.createClass({
   mixins: [Router.State],
   componentDidMount(){
     const actions = this.props.flux.getActions('app');
-    actions.currentBuildChanged(this.getParams().buildNumber);
+    actions.currentBuildChanged(11)//this.getParams().buildNumber);
     window.addEventListener("hashchange", this._onLineSelectionChange, false);
   },
   componentWillUnmount(){

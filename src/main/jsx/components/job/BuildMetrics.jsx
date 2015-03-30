@@ -24,6 +24,7 @@
 
 import React from 'react';
 import Chart from 'chart.js';
+require("./build_metrics.less");
 export default React.createClass({
   componentWillMount(){
     const actions = this.props.flux.getActions('app');
@@ -50,7 +51,7 @@ export default React.createClass({
     this.refs.legend.getDOMNode().innerHTML = chart.generateLegend();
   },
   render(){
-    return (<div>
+    return (<div id="build-metrics">
   <div ref="legend"></div>
 <canvas ref='buildTimes' width='600' height='400'></canvas></div>);
   }

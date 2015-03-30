@@ -23,11 +23,12 @@
  */
 import React from 'react';
 require('./widgets.less');
+import filter from 'ramda/src/filter';
 import Router from 'react-router';
 export default React.createClass({
     render(){
       const activeWidget = this._activeWidget();
-      var navs = this.props.children.map((widget,index) => this._tabItem(widget,index,widget===activeWidget));
+      var navs = filter(widget => !widget.props.tabVisibleWhenActive || this._isWidgetSelected(widget), this.props.children).map((widget,index) => this._tabItem(widget,index,widget===activeWidget));
         return(
             <div className="flex-row top-buffer">
                 <div className="activeWidget">
@@ -40,8 +41,11 @@ export default React.createClass({
 
         );
     },
+    _isWidgetSelected(widget){
+      return widget.props.url ==this.props.activeWidget 
+    },
     _activeWidget(){
-      return this.props.children.find((widget)=> widget.props.url ==this.props.activeWidget );
+     return this.props.children.find((widget)=> this._isWidgetSelected(widget));
     },
     _tabItem(widget,index,isActive){
       var className = isActive? 'active':'';
