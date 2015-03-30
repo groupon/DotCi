@@ -11,6 +11,9 @@ export default React.createClass({
     window.addEventListener("hashchange", this._onLineSelectionChange, false);
   },
   componentWillUnmount(){
+    if(this._isBuildLoaded()) {
+      this.props.build.log = [];
+    }
     window.removeEventListener("hashchange", this._onLineSelectionChange, false);
   },
   _onLineSelectionChange(event){
@@ -21,8 +24,11 @@ export default React.createClass({
     }
     document.getElementById(newId).classList.add('highlight');
   },
+  _isBuildLoaded(){
+    return this.props.build && this.props.build.log && this.props.build.log.length > 1;
+  },
   render(){
-    if( this.props.build)
+    if(this._isBuildLoaded())
       return <span id="buildLog"><pre> {this._renderLog(this.props.build.log)}</pre></span>;
     return <div id="log-loading" className="ui  active dimmer">
     <div className="ui content large text loader">Loading</div>
