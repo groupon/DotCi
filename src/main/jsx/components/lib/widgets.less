@@ -21,14 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-@import '../../flex.less';
-
+@import '~lesshat/build/lesshat.less';
 .activeWidget{
+  margin-top: 10px;
   margin-right: 10px;
-  flex-grow: 100%;
+  flex: 1 1 auto; //grow when space available, shrink otherwise
 }
-// .top-buffer { margin-top:10px; }
+.widgets{
+  .display(flex);
+  >.menu{
+   padding-top: 25px;
+  }
+}
 .widget.active{
   border-right: 1px solid #eee !important;
   border-right-width: 3px !important;

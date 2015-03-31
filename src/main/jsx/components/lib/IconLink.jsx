@@ -26,7 +26,7 @@ import React from 'react';
 export default React.createClass({
     render: function () {
         return(
-          <a href={this.props.href} className={"item ui left attached button labeled icon "+ (this.props.disabled? " disabled": "")}>
+          <a href={this.props.href} className={"circular ui icon button labeled positive"+ (this.props.disabled? " disabled": "")}>
             <i className={"icon "+ this.props.icon}></i>
             {this.props.children}
               </a>

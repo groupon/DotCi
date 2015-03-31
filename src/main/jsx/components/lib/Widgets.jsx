@@ -30,7 +30,7 @@ export default React.createClass({
       const activeWidget = this._activeWidget();
       var navs = filter(widget => !widget.props.tabVisibleWhenActive || this._isWidgetSelected(widget), this.props.children).map((widget,index) => this._tabItem(widget,index,widget===activeWidget));
         return(
-            <div className="flex-row top-buffer">
+            <div className="widgets">
                 <div className="activeWidget">
                     {activeWidget}
                 </div>

@@ -132,10 +132,6 @@ export default React.createClass({
     return(
       <div id="build-history">
         <BuildHistoryTabs flux={this.props.flux} tabs={this.props.tabs}/>
-        <h4 className="ui horizontal header divider">
-          <i className="fa fa-server"></i>
-          Builds
-        </h4>
         <BuildHistoryTable builds ={this.props.builds}/>
       </div>
     );

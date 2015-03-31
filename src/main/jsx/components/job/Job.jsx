@@ -65,7 +65,6 @@ export default React.createClass({
       <div className={this.props.className}>
       <FluxComponent connectToStores={['job']} flux={this.props.flux}>
         <Header/>
-        <div className="ui clearing divider"/>
         <RouteHandler {...this.props}/>
       </FluxComponent>
     </div>
