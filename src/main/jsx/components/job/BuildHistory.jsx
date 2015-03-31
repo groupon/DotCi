@@ -60,8 +60,12 @@ var BuildHistoryTabs = React.createClass({
       {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab)))}
       <a className="ui icon button" href="#" onClick={this._addTab} > <i className="icon fa fa-plus-circle"></i></a>
       <Dialog ref="addDialog" title="Add new brach tab" onSave={this._onTabSave} >
-        <div className="ui label"> Branch Regex </div>
-        <input type="text" ref="newBranchTab" defaultValue=""/>
+        <div className="ui labeled input">
+          <div className="ui label">
+            Branch Regex
+          </div>
+          <input type="text" ref="newBranchTab" placeholder=""/>
+        </div>
       </Dialog>
     </div>
        );
