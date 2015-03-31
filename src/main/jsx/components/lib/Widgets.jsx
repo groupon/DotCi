@@ -50,7 +50,7 @@ export default React.createClass({
     _tabItem(widget,index,isActive){
       var className = isActive? 'active':'';
       className += " widget ui labeled icon button item";
-	    return <Router.Link data-index={index} className={className} to="job-widgets" params={{widget: widget.props.url}}> 
+	    return <Router.Link key={index} data-index={index} className={className} to="job-widgets" params={{widget: widget.props.url}}> 
 		        <i className={widget.props.icon + " ui icon"}/>{widget.props.name}
 		    </Router.Link>;
 		   
