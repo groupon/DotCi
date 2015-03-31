@@ -25,6 +25,7 @@
 package com.groupon.jenkins.dynamic.build;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import hudson.Extension;
@@ -76,10 +77,17 @@ public class DynamicProjectBranchTabsProperty extends JobProperty<Job<?, ?>> {
 
     public void addBranch(String branch) {
         this.branches.add(branch);
+        save();
     }
 
+
     public void removeBranch(String branch) {
-         this.branches.remove(branch);
+        this.branches.remove(branch);
+        save();
+    }
+
+    private void save() {
+        this.branchTabs= Joiner.on(",").join(branches);
     }
 
     @Extension

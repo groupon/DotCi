@@ -37,10 +37,10 @@ export async function deleteCurrentProject(){
 }
 
 export function removeBranchTab(tabRegex){
-  fetch(window.location.pathname.replace('newUi','')+"/removeBranchTab?tabRegex="+tabRegex,{method: 'post'});
+  fetch( `${_jobUrl()}/removeBranchTab?tabRegex=`+tabRegex,{method: 'post'});
 }
 export function addBranchTab(tabRegex){
-  fetch(window.location.pathname.replace('newUi','')+"/addBranchTab?tabRegex="+tabRegex,{method: 'post'});
+  fetch(`${_jobUrl()}/addBranchTab?tabRegex=`+tabRegex,{method: 'post'});
 }
 
 export function fetchBuildHistory(tab) {
