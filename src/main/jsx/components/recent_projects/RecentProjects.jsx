@@ -54,9 +54,9 @@ var RecentProjectsWidget =React.createClass({
     });
     return (
       <div>
-        <h4 className="ui horizontal header divider">
+        <h5 className="heading">
           <i className="fa fa-user"> Recent Builds</i>
-        </h4>
+        </h5>
         <div id='project-list' >
           {recentProjects}
         </div>

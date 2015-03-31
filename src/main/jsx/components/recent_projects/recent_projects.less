@@ -51,11 +51,14 @@
   border-left: 1px solid #eee;
   height: 70px;
   .link-no-decoration;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 10px ;
+  border-bottom: .46rem solid #FAF9F7;
+  overflow: hidden;
   div{
     margin-left: 10px ;
     margin-bottom: 2px ;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   * .icon{
     margin-right: 3px;
@@ -77,4 +80,7 @@
 .recent-project-IN_PROGRESS {
   .border-in-progress !important;
   .recent-project
+}
+.recent-projects * .heading {
+  text-align: center;
 }
