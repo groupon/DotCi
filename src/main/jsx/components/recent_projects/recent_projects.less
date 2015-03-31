@@ -29,15 +29,36 @@
   .flex-direction(column);
 }
 
+.project-name-FAILURE{
+  color: @failure;
+}
+.project-name-SUCCESS{
+  color: @success;
+}
+.project-name-IN_PROGRESS  {
+  color: @in-progress;
+}
+.project-name-ABORTED  {
+  color: @aborted;
+}
+.commit-message{
+  color: @build-finished-date;
+}
+.finished{
+  color: @build-finished-date;
+}
 .recent-project{
   border-left: 1px solid #eee;
   height: 70px;
   .link-no-decoration;
   border-bottom: 1px solid #eee;
   margin-bottom: 10px ;
-  *{
+  div{
     margin-left: 10px ;
     margin-bottom: 2px ;
+  }
+  * .icon{
+    margin-right: 3px;
   }
 }
 

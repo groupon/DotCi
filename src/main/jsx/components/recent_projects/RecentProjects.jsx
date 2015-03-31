@@ -30,13 +30,13 @@ require("./recent_projects.less");
 var RecentProject = React.createClass({
   render(){
     return (
-      <a className={"recent-project-"+this.props.lastBuildResult+ ""} href={this.props.url}> 
-        <div className="ui label">
-          <i className="icon fa fa-clock-o"></i> 
-          <span className="detail">{this.props.startTime}</span>
+      <a className={"recent-project-"+this.props.lastBuildResult} href={this.props.url}> 
+        <div className={"project-name-"+this.props.lastBuildResult}>{this.props.projectName}</div>
+        <div className="commit-message"><span className="icon octicon octicon-git-commit"/>{this.props.commit.message}</div>
+        <div className="finished">
+          <i className="icon fa fa-calendar"></i> 
+          <span className="detail">Finished: {this.props.startTime}</span>
         </div>
-        <div><b>{this.props.projectName}</b></div>
-        <div><span className="octicon octicon-git-commit"/>{this.props.commit.message}</div>
       </a>
     );
   }
@@ -54,7 +54,10 @@ var RecentProjectsWidget =React.createClass({
     });
     return (
       <div>
-        <h5 className="ui top block header">Recent Projects</h5>
+        <h4 className="ui horizontal header divider">
+          <i className="fa fa-user"></i>
+          Recent Projects
+        </h4>
         <div id='project-list' >
           {recentProjects}
         </div>
