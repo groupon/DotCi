@@ -31,11 +31,11 @@ export default React.createClass({
       var navs = filter(widget => !widget.props.tabVisibleWhenActive || this._isWidgetSelected(widget), this.props.children).map((widget,index) => this._tabItem(widget,index,widget===activeWidget));
         return(
             <div className="widgets">
+                <div className="ui secondary vertical pointing menu">
+                    {navs}
+                </div>
                 <div className="activeWidget">
                     {activeWidget}
-                </div>
-                <div className="ui vertical menu  buttons">
-                    {navs}
                 </div>
             </div>
 
@@ -49,7 +49,7 @@ export default React.createClass({
     },
     _tabItem(widget,index,isActive){
       var className = isActive? 'active':'';
-      className += " widget ui labeled icon button item";
+      className += " item";
 	    return <Router.Link key={index} data-index={index} className={className} to="job-widgets" params={{widget: widget.props.url}}> 
 		        <i className={widget.props.icon + " ui icon"}/>{widget.props.name}
 		    </Router.Link>;

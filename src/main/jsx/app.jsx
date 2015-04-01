@@ -35,8 +35,8 @@ const App=  React.createClass({
   render(){
     const flux = this.props.flux;
     return    <div className="app" >
-      <RecentProjects className="recent-projects" flux={flux} />
       <RouteHandler className="job"  {...this.props}/>
+      <RecentProjects className="recent-projects" flux={flux} />
     </div>;
   }
 });
