@@ -29,7 +29,7 @@ import BuildMetrics from 'react-proxy!./BuildMetrics.jsx';
 import Widgets from '../lib/Widgets.jsx';
 import Header from './Header.jsx';
 import Router from 'react-router';
-import Build from './Build.jsx';
+import Build from './build/Build.jsx';
 var RouteHandler = Router.RouteHandler;
 var DefaultRoute = Router.DefaultRoute;
 var Route = Router.Route;

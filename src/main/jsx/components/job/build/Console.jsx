@@ -2,7 +2,7 @@ import React from "react";
 import Router from 'react-router';
 import mapIndexed from 'ramda/src/mapIndexed';
 import Convert from  'ansi-to-html';
-require('./build.less');
+require('./console.less');
 export default React.createClass({
   componentDidMount(){
     const actions = this.props.flux.getActions('app');
