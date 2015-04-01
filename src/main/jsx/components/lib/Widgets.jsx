@@ -26,6 +26,14 @@ require('./widgets.less');
 import filter from 'ramda/src/filter';
 import Router from 'react-router';
 export default React.createClass({
+  componentWillUpdate(){
+    this.refs.activeWidget.getDOMNode().classList.remove('animated');
+    this.refs.activeWidget.getDOMNode().classList.remove('fadeIn');
+  },
+  componentDidUpdate(){
+    this.refs.activeWidget.getDOMNode().classList.add('animated');
+    this.refs.activeWidget.getDOMNode().classList.add('fadeIn');
+  },
     render(){
       const activeWidget = this._activeWidget();
       var navs = filter(widget => !widget.props.tabVisibleWhenActive || this._isWidgetSelected(widget), this.props.children).map((widget,index) => this._tabItem(widget,index,widget===activeWidget));
@@ -34,7 +42,7 @@ export default React.createClass({
                 <div className="ui secondary vertical pointing menu">
                     {navs}
                 </div>
-                <div className="activeWidget">
+                <div ref="activeWidget" className="activeWidget">
                     {activeWidget}
                 </div>
             </div>
