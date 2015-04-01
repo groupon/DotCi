@@ -26,12 +26,15 @@
   margin-top: 10px;
   margin-right: 10px;
   margin-left: 10px;
-  flex: 1 1 auto; //grow when space available, shrink otherwise
+  width: 100%;
+  // flex: 1 1 auto; //grow when space available, shrink otherwise
 }
 .widgets{
   .display(flex);
   >.menu{
-   padding-top: 20px;
-   border: none !important;
+    min-width: 10%;
+    max-width: 10%;
+    padding-top: 20px;
+    border: none !important;
   }
 }
