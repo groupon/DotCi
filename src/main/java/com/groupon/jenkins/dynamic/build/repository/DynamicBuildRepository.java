@@ -399,10 +399,4 @@ public class DynamicBuildRepository extends MongoRepository {
         return output;
 
     }
-
-    public String getBuildJson(String number, ObjectId projectId) {
-        BasicDBObject query = new BasicDBObject("number", Integer.parseInt(number)).append("projectId", projectId);
-        DBObject build = getDatastore().getDB().getCollection("run").findOne(query);
-        return build.toString();
-    }
 }

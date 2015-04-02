@@ -43,8 +43,8 @@ public class DynamicProjectApi extends ApiModel {
     }
 
 
-   public Build getBuild(){
-      return new Build(dynamicProject);
+   public BuildApi getBuild(){
+      return new BuildApi(dynamicProject);
    }
 
 

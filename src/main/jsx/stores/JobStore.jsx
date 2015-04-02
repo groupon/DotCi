@@ -35,16 +35,10 @@ export default class JobStore extends Store {
         this.register(actionIds.buildHistoryChanged, this.buildHistoryChanged);
         this.register(actionIds.tabAdded, this.tabAdded);
         this.register(actionIds.tabRemoved, this.tabRemoved);
-        this.state = {buildHistoryTabs:[], builds: [],buildTimes:[],build:{}};
+        this.state = {buildHistoryTabs:[], builds: [],buildTimes:[]};
     }
     jobInfoChanged(jobInfo){
-      const newJobInfo = jobInfo.buildHistoryTabs? this.addAllMineNewTabs(jobInfo):jobInfo;
       this.setState(Immutable.fromJS(this.getState()).mergeDeep(jobInfo).toJS() );
-    }
-    addAllMineNewTabs(jobInfo) {
-        return update(jobInfo, {
-            buildHistoryTabs: {$push: ['All','Mine']}
-        });
     }
     tabRemoved(tab){
       const updatedTabs = reject((t)=> t==tab,this.state.buildHistoryTabs);

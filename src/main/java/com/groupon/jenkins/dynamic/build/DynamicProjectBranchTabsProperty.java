@@ -68,7 +68,11 @@ public class DynamicProjectBranchTabsProperty extends JobProperty<Job<?, ?>> {
 
 
     public List<String> getBranches(){
-        return branches;
+        ArrayList<String> branchList = new ArrayList<String>();
+        if(!branchList.contains("Mine")) branchList.add("Mine");
+        if(!branchList.contains("All")) branchList.add("All");
+        branchList.addAll(branches);
+        return branchList;
     }
 
     public String getBranchTabs() {

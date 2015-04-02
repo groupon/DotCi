@@ -24,32 +24,34 @@
 
 package com.groupon.jenkins.dynamic.build.api;
 
-import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.util.JsonResponse;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import com.groupon.jenkins.dynamic.build.cause.BuildCause;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
-import java.io.Writer;
 
-public class Build {
-    private DynamicProject dynamicProject;
 
-    public Build(DynamicProject dynamicProject) {
+@ExportedBean
+public abstract class Build {
 
-        this.dynamicProject = dynamicProject;
-    }
-    public void getDynamic(String buildNumber, StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-        String buildJson = getBuild(buildNumber);
-        rsp.setContentType("application/json");
-        Writer writer = rsp.getCompressedWriter(req);
-        writer.write(buildJson);
-        writer.close();
-    }
+    @Exported
+    public abstract int getNumber();
+    @Exported
+    public abstract String getResult();
 
-    private String getBuild(String buildNumber) {
-        return SetupConfig.get().getDynamicBuildRepository().getBuildJson(buildNumber,dynamicProject.getId());
-    }
+
+    @Exported(inline = true)
+    public abstract BuildCause.CommitInfo getCommit();
+
+
+    @Exported
+    public abstract String getDisplayTime();
+    @Exported
+    public abstract String getDuration();
+
+    @Exported
+    public abstract boolean isCancelable();
+    @Exported
+    public abstract String getCancelUrl();
+
 }

@@ -24,23 +24,27 @@
 
 package com.groupon.jenkins.dynamic.build.api;
 
-import com.google.common.collect.Lists;
-import org.kohsuke.stapler.export.Exported;
-import org.kohsuke.stapler.export.ExportedBean;
+import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.dynamic.build.DbBackedBuild;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.util.JsonResponse;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
-import java.util.ArrayList;
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.io.Writer;
 
-@ExportedBean
-public class BuildHistoryRsp {
+public class BuildApi {
+    private DynamicProject dynamicProject;
 
-    private final ArrayList<Build> builds;
+    public BuildApi(DynamicProject dynamicProject) {
 
-    public BuildHistoryRsp(Iterable<Build> builds) {
-         this.builds = Lists.newArrayList(builds);
+        this.dynamicProject = dynamicProject;
     }
-
-    @Exported
-    public ArrayList<Build> getBuilds() {
-        return builds;
+    public void getDynamic(String buildNumber, StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+        DynamicBuild build = SetupConfig.get().getDynamicBuildRepository().getBuild(dynamicProject, Integer.parseInt(buildNumber));
+        JsonResponse.render(req,rsp,new ProcessedBuild(build));
     }
 }

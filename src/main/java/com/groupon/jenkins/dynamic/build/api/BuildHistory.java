@@ -50,7 +50,7 @@ public class BuildHistory extends ApiModel {
         JsonResponse.render(req, rsp,new BuildHistoryRsp( getBuilds(branch)));
     }
 
-    public Iterable<BuildHistoryRow> getBuilds(String branch) {
+    public Iterable<Build> getBuilds(String branch) {
         if("All".equalsIgnoreCase(branch)){
            branch =null;
         }
@@ -58,11 +58,11 @@ public class BuildHistory extends ApiModel {
         return toUiBuilds(filterSkipped(builds));
     }
 
-    private Iterable<BuildHistoryRow> toUiBuilds(Iterable<DynamicBuild> builds) {
-        return Iterables.transform(builds, new Function<DynamicBuild, BuildHistoryRow>() {
+    private Iterable<Build> toUiBuilds(Iterable<DynamicBuild> builds) {
+        return Iterables.transform(builds, new Function<DynamicBuild, Build>() {
             @Override
-            public BuildHistoryRow apply(DynamicBuild input) {
-                return new ProcessedBuildHistoryRow(input);
+            public Build apply(DynamicBuild input) {
+                return new ProcessedBuild(input);
             }
         });
     }

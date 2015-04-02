@@ -66,7 +66,7 @@ public class JobInfo extends  ApiModel{
         return tabsProperty == null ? Collections.<String>emptyList() : tabsProperty.getBranches();
     }
     @Exported
-    public List<BuildHistoryRow> getBuilds(){
+    public List<Build> getBuilds(){
         return Lists.newArrayList( new BuildHistory(dynamicProject).getBuilds("master"));
     }
     @Exported

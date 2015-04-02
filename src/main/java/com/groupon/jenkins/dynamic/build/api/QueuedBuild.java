@@ -24,15 +24,14 @@
 
 package com.groupon.jenkins.dynamic.build.api;
 
-import com.groupon.jenkins.dynamic.build.api.BuildHistoryRow;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import hudson.model.Queue;
 
-public class QueuedBuildHistoryRow extends BuildHistoryRow {
+public class QueuedBuild extends Build {
     private Queue.Item item;
     private int number;
 
-    public QueuedBuildHistoryRow(Queue.Item item, int number) {
+    public QueuedBuild(Queue.Item item, int number) {
         this.item = item;
         this.number = number;
     }

@@ -24,34 +24,55 @@
 
 package com.groupon.jenkins.dynamic.build.api;
 
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
-import org.kohsuke.stapler.export.Exported;
-import org.kohsuke.stapler.export.ExportedBean;
 
-import java.io.IOException;
+public class ProcessedBuild extends Build {
+    private DynamicBuild build;
+
+    public ProcessedBuild(DynamicBuild build){
+        this.build = build;
+    }
+
+    @Override
+    public int getNumber(){
+        return build.getNumber();
+    }
+    @Override
+    public String getResult(){
+        if(build.isBuilding()){
+            return "IN_PROGRESS";
+        }
+        return build.getResult().toString();
+    }
+
+    @Override
+    public BuildCause.CommitInfo getCommit() {
+        BuildCause.CommitInfo commitInfo = build.getCause().getCommitInfo();
+        if(commitInfo == null){
+           return BuildCause.CommitInfo.NULL_INFO;
+        }
+        return commitInfo;
+    }
 
 
-@ExportedBean
-public abstract class BuildHistoryRow {
+    @Override
+    public String getDisplayTime(){
+        return  build.getDisplayTime();
+    }
 
-    @Exported
-    public abstract int getNumber();
-    @Exported
-    public abstract String getResult();
+    @Override
+    public String getDuration() {
+        return build.getDurationString();
+    }
 
+    @Override
+    public boolean isCancelable() {
+        return build.isBuilding();
+    }
 
-    @Exported(inline = true)
-    public abstract BuildCause.CommitInfo getCommit();
-
-
-    @Exported
-    public abstract String getDisplayTime();
-    @Exported
-    public abstract String getDuration();
-
-    @Exported
-    public abstract boolean isCancelable();
-    @Exported
-    public abstract String getCancelUrl();
-
+    @Override
+    public String getCancelUrl() {
+        return build.getUrl() + "/stop";
+    }
 }
