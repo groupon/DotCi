@@ -27,7 +27,11 @@ export function recentProjects(){
   return _get(window.rootURL + '/recentProjects/');
 }
 export function buildLog(buildNumber){
-  return fetch(`${_jobUrl()}/${buildNumber}/consoleText`).then(response => response.text()); }
+  return fetch(`${_jobUrl()}/${buildNumber}/consoleText`).then(response => response.text()); 
+}
+export function build(buildNumber){
+  return _get(`${_jobApiUrl()}/build/${buildNumber}`);
+}
 export function job(tree){
   return _get(_jobApiUrl()+"/info/",{tree:tree});
 }

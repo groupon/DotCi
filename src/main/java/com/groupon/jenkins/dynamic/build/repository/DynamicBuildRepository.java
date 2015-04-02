@@ -307,39 +307,7 @@ public class DynamicBuildRepository extends MongoRepository {
         return query;
     }
 
-    public  List getLastBuildsPerProjectForUser(String user){
-        BasicDBObject groupQuery = new BasicDBObject(of("$group", of("_id", "$projectId", "build", of("$first", "$$ROOT"))));
-        BasicDBObject filterQuery = new BasicDBObject(
-                of("$match",
-                   of( "className","com.groupon.jenkins.dynamic.build.DynamicBuild"
-                           ,"$or",asList( of("actions.causes.user", user), of("actions.causes.pusher",user))
-                   )
 
-        ));
-        BasicDBObject sortQuery =  new BasicDBObject(of("$sort",of( "timestamp", -1 )));
-        Map buildFields = projection( "projectId","result","number","startTime").noId().field("commit","$actions.causes.commitInfo").get();
-        //Project == Projection not BuildProject
-        BasicDBObject projectQuery = new BasicDBObject(of("$project", buildFields ));
-        AggregationOutput builds = getDatastore().getDB().getCollection("run").aggregate(filterQuery,sortQuery,projectQuery,groupQuery);
-        List output = new ArrayList();
-        DynamicProjectRepository repo = SetupConfig.get().getDynamicProjectRepository();
-       for(DBObject build : builds.results()) {
-           DBObject buildObject = (DBObject) build.get("build");
-           BasicDBList list = (BasicDBList) ((BasicDBList) buildObject.get("commit")).get(0);
-           BasicDBObject commit = (BasicDBObject) list.get(0);
-           ObjectId parentId = (ObjectId) buildObject.get("projectId");
-           String parentName = repo.getProjectById(parentId).getFullName();
-          output.add(of("projectName", parentName,
-                  "number", buildObject.get("number"),
-                  "startTime", buildObject.get("startTime"),
-                  "lastBuildResult", buildObject.get("result"),
-                  "commit", commit.toMap()));
-
-       }
-
-        return output;
-
-    }
 
     public <T extends DbBackedBuild> T getLastBuild(DbBackedProject project, String branch) {
         Query<DbBackedBuild> query = getQuery(project);
@@ -397,5 +365,44 @@ public class DynamicBuildRepository extends MongoRepository {
         }
 
         return (Iterable<T>) builds;
+    }
+    public  List getLastBuildsPerProjectForUser(String user){
+        BasicDBObject groupQuery = new BasicDBObject(of("$group", of("_id", "$projectId", "build", of("$first", "$$ROOT"))));
+        BasicDBObject filterQuery = new BasicDBObject(
+                of("$match",
+                        of( "className","com.groupon.jenkins.dynamic.build.DynamicBuild"
+                                ,"$or",asList( of("actions.causes.user", user), of("actions.causes.pusher",user))
+                        )
+
+                ));
+        BasicDBObject sortQuery =  new BasicDBObject(of("$sort",of( "timestamp", -1 )));
+        Map buildFields = projection( "projectId","result","number","startTime").noId().field("commit","$actions.causes.commitInfo").get();
+        //Project == Projection not BuildProject
+        BasicDBObject projectQuery = new BasicDBObject(of("$project", buildFields ));
+        AggregationOutput builds = getDatastore().getDB().getCollection("run").aggregate(filterQuery,sortQuery,projectQuery,groupQuery);
+        List output = new ArrayList();
+        DynamicProjectRepository repo = SetupConfig.get().getDynamicProjectRepository();
+        for(DBObject build : builds.results()) {
+            DBObject buildObject = (DBObject) build.get("build");
+            BasicDBList list = (BasicDBList) ((BasicDBList) buildObject.get("commit")).get(0);
+            BasicDBObject commit = (BasicDBObject) list.get(0);
+            ObjectId parentId = (ObjectId) buildObject.get("projectId");
+            String parentName = repo.getProjectById(parentId).getFullName();
+            output.add(of("projectName", parentName,
+                    "number", buildObject.get("number"),
+                    "startTime", buildObject.get("startTime"),
+                    "lastBuildResult", buildObject.get("result"),
+                    "commit", commit.toMap()));
+
+        }
+
+        return output;
+
+    }
+
+    public String getBuildJson(String number, ObjectId projectId) {
+        BasicDBObject query = new BasicDBObject("number", Integer.parseInt(number)).append("projectId", projectId);
+        DBObject build = getDatastore().getDB().getCollection("run").findOne(query);
+        return build.toString();
     }
 }

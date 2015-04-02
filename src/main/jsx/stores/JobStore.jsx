@@ -25,6 +25,7 @@
 import { Store } from 'flummox';
 import reject from 'ramda/src/reject';
 import React from 'react';
+import Immutable from 'immutable';
 var update =React.addons.update;
 export default class JobStore extends Store {
     constructor(flux) {
@@ -34,11 +35,11 @@ export default class JobStore extends Store {
         this.register(actionIds.buildHistoryChanged, this.buildHistoryChanged);
         this.register(actionIds.tabAdded, this.tabAdded);
         this.register(actionIds.tabRemoved, this.tabRemoved);
-        this.state = {buildHistoryTabs:[], builds: [],buildTimes:[]};
+        this.state = {buildHistoryTabs:[], builds: [],buildTimes:[],build:{}};
     }
     jobInfoChanged(jobInfo){
       const newJobInfo = jobInfo.buildHistoryTabs? this.addAllMineNewTabs(jobInfo):jobInfo;
-      this.setState(React.addons.update(this.getState(),{$merge: newJobInfo}));
+      this.setState(Immutable.fromJS(this.getState()).mergeDeep(jobInfo).toJS() );
     }
     addAllMineNewTabs(jobInfo) {
         return update(jobInfo, {

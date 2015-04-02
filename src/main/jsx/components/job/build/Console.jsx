@@ -6,7 +6,7 @@ require('./console.less');
 export default React.createClass({
   componentDidMount(){
     const actions = this.props.flux.getActions('app');
-    actions.currentBuildChanged(this.props.url);
+    actions.currentBuildLogChanged(this.props.url);
     window.addEventListener("hashchange", this._onLineSelectionChange, false);
   },
   componentWillUnmount(){

@@ -24,29 +24,32 @@
 
 package com.groupon.jenkins.dynamic.build.api;
 
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.util.JsonResponse;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
-public class DynamicProjectApi extends ApiModel {
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.io.Writer;
+
+public class Build {
     private DynamicProject dynamicProject;
 
-    public DynamicProjectApi(DynamicProject dynamicProject) {
+    public Build(DynamicProject dynamicProject) {
+
         this.dynamicProject = dynamicProject;
     }
-
-
-    public JobInfo getInfo(){
-       return new JobInfo(dynamicProject) ;
+    public void getDynamic(String buildNumber, StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+        String buildJson = getBuild(buildNumber);
+        rsp.setContentType("application/json");
+        Writer writer = rsp.getCompressedWriter(req);
+        writer.write(buildJson);
+        writer.close();
     }
 
-    public BuildHistory getBuildHistory(){
-      return new BuildHistory(dynamicProject);
+    private String getBuild(String buildNumber) {
+        return SetupConfig.get().getDynamicBuildRepository().getBuildJson(buildNumber,dynamicProject.getId());
     }
-
-
-   public Build getBuild(){
-      return new Build(dynamicProject);
-   }
-
-
-
 }
