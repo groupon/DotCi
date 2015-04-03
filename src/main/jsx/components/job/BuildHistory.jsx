@@ -26,18 +26,19 @@ import React from 'react';
 import BuildRow from './BuildRow.jsx';
 import Dialog from './../lib/Dialog.jsx';
 import contains from 'ramda/src/contains'
+import classNames from 'classnames';
 require('./build_history.less');
 
 
 var BuildHistoryTable = React.createClass({
   getInitialState: function() {
-      return {filter: ''};
-    },
+    return {filter: ''};
+  },
   render(){
     let builds = this.props.builds.filter(this._applyFilter).map((build) => <BuildRow key={build.number} {...build}/>);
     return(
       <div className="builds">
-         <FilterBar onChange={this._onFilterChange}/> 
+        <FilterBar onChange={this._onFilterChange}/> 
         {builds}
       </div>
     );
@@ -68,7 +69,7 @@ var BuildHistoryTabs = React.createClass({
         </div>
       </Dialog>
     </div>
-       );
+           );
   },
   _isTabRemovable(tab){
     return !contains(tab)(['master','All','Mine']);
@@ -99,8 +100,7 @@ var BuildHistoryTabs = React.createClass({
     this.props.flux.removeBranchTab(tab);
   },
   _getHistoryTab(tab,i,closable) {
-    var cx = React.addons.classSet;
-    var classes = cx({
+    var classes = classNames({
       'ui':true,
       'labeled':true ,
       'icon':true ,
@@ -109,7 +109,7 @@ var BuildHistoryTabs = React.createClass({
       'tab-active': this.state.currentSelection==i
     });
     return (<div className={classes} key={i} data-tab={i}  onClick={this._onActiveTabChange} href="#" >
-            <i className="icon octicon octicon-git-branch "></i>
+      <i className="icon octicon octicon-git-branch "></i>
       {tab}
       {closable?<a data-tab={i} className="tab-close fa fa-times-circle-o" onClick={this._onTabRemove}></a>: ''}
     </div>);
