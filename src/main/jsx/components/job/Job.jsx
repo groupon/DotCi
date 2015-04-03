@@ -34,9 +34,11 @@ var RouteHandler = Router.RouteHandler;
 var DefaultRoute = Router.DefaultRoute;
 var Route = Router.Route;
 var JobWidgets = React.createClass({
-  mixins: [Router.State],
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   render(){
-    let widgetParam = this.getParams().widget;
+    let widgetParam = this.context.router.getCurrentParams().widget;
     let activeWidget = widgetParam? widgetParam:"buildHistory";
     return  <Widgets activeWidget={activeWidget}>
       <BuildHistory icon="fa fa-history" url="buildHistory" name="Build History" tabs={this.props.buildHistoryTabs} builds={this.props.builds} flux={this.props.flux}/>
