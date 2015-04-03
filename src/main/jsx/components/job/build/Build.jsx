@@ -4,6 +4,27 @@ import BuildRow from '../BuildRow.jsx'
 require('./build.less');
 export default  React.createClass({
   componentDidMount(){
+    this._fetchBuild()
+  },
+  componentDidUpdate(){
+    if( this.props.build && this.props.build.result == 'IN_PROGRESS' ){
+      this._setRefreshTimer();
+    }else{
+      this._clearRefreshTimer();
+    }
+  },
+  componentWillUnmount: function() {
+    this._clearRefreshTimer(); 
+  },
+  _setRefreshTimer(){
+    if(!this.refreshTimer){
+      this.refreshTimer = setInterval(this._fetchBuild, 5000);
+    }
+  },
+  _clearRefreshTimer(){
+    if(this.refreshTimer) clearInterval(this.refreshTimer);
+  },
+  _fetchBuild(){
     const actions = this.props.flux.getActions('app');
     actions.currentBuildChanged(this.props.url);
   },
@@ -19,12 +40,12 @@ export default  React.createClass({
   },
   _restartButton(){
     return <a className="circular ui icon button" href="#" onClick={this._restartBuild}>
-      <i className="fa fa-refresh"></i>
+      <i className="build-action fa fa-refresh"></i>
     </a>
   },
   _cancelButton(){
     return <div className="circular ui icon button" href="#" onClick={this._cancelBuild}>
-      <i className="fa fa-times-circle-o"></i>
+      <i className="build-action fa fa-times-circle-o"></i>
     </div>
   },
   _cancelBuild(e){

@@ -26,43 +26,35 @@ require('./widgets.less');
 import filter from 'ramda/src/filter';
 import Router from 'react-router';
 export default React.createClass({
-  componentWillUpdate(){
-    this.refs.activeWidget.getDOMNode().classList.remove('animated');
-    this.refs.activeWidget.getDOMNode().classList.remove('fadeIn');
-  },
-  componentDidUpdate(){
-    this.refs.activeWidget.getDOMNode().classList.add('animated');
-    this.refs.activeWidget.getDOMNode().classList.add('fadeIn');
-  },
-    render(){
-      const activeWidget = this._activeWidget();
-      var navs = filter(widget => !widget.props.tabVisibleWhenActive || this._isWidgetSelected(widget), this.props.children).map((widget,index) => this._tabItem(widget,index,widget===activeWidget));
-        return(
-            <div className="widgets">
-                <div className="ui secondary vertical pointing menu">
-                    {navs}
-                </div>
-                <div ref="activeWidget" className="activeWidget">
-                    {activeWidget}
-                </div>
-            </div>
+  render(){
+    const activeWidget = this._activeWidget();
+    var navs = filter(widget => !widget.props.tabVisibleWhenActive || this._isWidgetSelected(widget), this.props.children).map((widget,index) => this._tabItem(widget,index,widget===activeWidget));
+    return(
+      <div className="widgets">
+        <div className="ui secondary vertical pointing menu">
+          {navs}
+        </div>
+        <div ref="activeWidget" className="activeWidget">
+          {activeWidget}
+        </div>
+      </div>
 
-        );
-    },
-    _isWidgetSelected(widget){
-      return widget.props.url ==this.props.activeWidget;
-    },
-    _activeWidget(){
-     return this.props.children.find((widget)=> this._isWidgetSelected(widget));
-    },
-    _tabItem(widget,index,isActive){
-      var className = isActive? 'active':'';
-      className += " item";
-	    return <Router.Link key={index} data-index={index} className={className} to="job-widgets" params={{widget: widget.props.url}}> 
-		        <i className={widget.props.icon + " ui icon"}/>{widget.props.name}
-		    </Router.Link>;
-		   
+    );
+  },
+  _isWidgetSelected(widget){
+    return widget.props.url ==this.props.activeWidget;
+  },
+  _activeWidget(){
+    return this.props.children.find((widget)=> this._isWidgetSelected(widget));
+  },
+  _tabItem(widget,index,isActive){
+    var className = isActive? 'active':'';
+    className += " item";
+    return <Router.Link key={index} data-index={index} className={className} to="job-widgets" params={{widget: widget.props.url}}> 
+      <i className={widget.props.icon + " ui icon"}/>{widget.props.name}
+    </Router.Link>;
 
-    }
+
+  }
 });
 
