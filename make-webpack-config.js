@@ -57,7 +57,7 @@ return {
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                loaders: config.debug? ['react-hot', 'babel-loader?experimental']: ['babel-loader?experimental']
+                loaders: config.debug? ['react-hot', 'babel-loader']: ['babel-loader']
             }
         ]
     },

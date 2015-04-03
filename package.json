@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "autoprefixer-loader": "^1.1.0",
-    "babel": "latest",
+    "babel": "^5.0.0",
     "babel-core": "latest",
     "babel-loader": "latest",
     "css-loader": "^0.9.1",
