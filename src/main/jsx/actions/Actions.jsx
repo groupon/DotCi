@@ -23,51 +23,53 @@
  */
 import { Actions } from 'flummox';
 import {addBranchTab as addBranchTabOnServer, removeBranchTab as removeBranchTabOnServer,
-        build,
-        buildLog ,
-        recentProjects,
-        job,
-        deleteCurrentProject, 
-        fetchBuildHistory} from '../api/Api.jsx';
-import babel_polyfill from 'babel/polyfill';
-export default class AppActions extends Actions {
+  build,
+  buildLog ,
+  recentProjects,
+  job,
+  deleteCurrentProject, 
+  fetchBuildHistory} from '../api/Api.jsx';
+  import babel_polyfill from 'babel/polyfill';
+  export default class AppActions extends Actions {
 
     async currentBuildLogChanged(buildNumber){
       const logText = await buildLog(buildNumber);
       this.jobInfoChanged({build:{log: logText.split("\n")}})
     }
-   async   currentBuildChanged(buildNumber){
-     const buildInfo = await build(buildNumber);
+    async currentBuildChanged(buildNumber){
+      const buildInfo = await build(buildNumber);
+      const logText = await buildLog(buildNumber);
+      buildInfo['log'] = logText.split("\n");
       this.jobInfoChanged({build:buildInfo})
     }
     deleteProject(){
-        deleteCurrentProject().then(()=>console.log('project deleted'));
+      deleteCurrentProject().then(()=>console.log('project deleted'));
     }
 
     async getRecentProjectsFromServer(){
-       let  projects = await recentProjects();
-       this.recentProjectsChanged(projects.recentProjects);
+      let  projects = await recentProjects();
+      this.recentProjectsChanged(projects.recentProjects);
     }
     async getJobInfoFromServer(tree){
-        let jobInfo = await job(tree);
-        this.jobInfoChanged(jobInfo);
+      let jobInfo = await job(tree);
+      this.jobInfoChanged(jobInfo);
     }
 
     jobInfoChanged(jobInfo){
-        return jobInfo;
+      return jobInfo;
     }
 
     recentProjectsChanged(recentProjects) {
-        return recentProjects;
+      return recentProjects;
     }
 
     async buildHistorySelected(branch){
-        let  builds = await fetchBuildHistory(branch);
-        this.buildHistoryChanged(builds.builds);
+      let  builds = await fetchBuildHistory(branch);
+      this.buildHistoryChanged(builds.builds);
     }
 
     buildHistoryChanged(builds){
-        return builds;
+      return builds;
     }
     async removeBranchTab(tab){
       await removeBranchTabOnServer(tab);
@@ -83,4 +85,4 @@ export default class AppActions extends Actions {
     tabAdded(tabRegex){
       return tabRegex;
     }
-}
+  }

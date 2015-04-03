@@ -5,8 +5,6 @@ import Convert from  'ansi-to-html';
 require('./console.less');
 export default React.createClass({
   componentDidMount(){
-    const actions = this.props.flux.getActions('app');
-    actions.currentBuildLogChanged(this.props.url);
     window.addEventListener("hashchange", this._onLineSelectionChange, false);
   },
   componentWillUnmount(){
@@ -30,8 +28,8 @@ export default React.createClass({
     if(this._isBuildLoaded())
       return <span id="buildLog"><pre> {this._renderLog(this.props.build.log)}</pre></span>;
     return <div id="log-loading" className="ui  active dimmer">
-    <div className="ui content large text loader">Loading</div>
-  </div>
+      <div className="ui content large text loader">Loading</div>
+    </div>
   },
   _onLineSelect(event){
     if(event.target.tagName == 'A'){
