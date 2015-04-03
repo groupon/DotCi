@@ -42,7 +42,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import javax.annotation.Nullable;
 
 public class DynamicProjectBranchTabsProperty extends JobProperty<Job<?, ?>> {
-    private final ArrayList<String> branches;
+    private transient final ArrayList<String> branches;
     private String branchTabs;
     public DynamicProjectBranchTabsProperty(String branchTabs) {
         this.branchTabs = branchTabs;
@@ -68,10 +68,11 @@ public class DynamicProjectBranchTabsProperty extends JobProperty<Job<?, ?>> {
 
 
     public List<String> getBranches(){
+        ArrayList<String> configuredBranches = parseBranches();
         ArrayList<String> branchList = new ArrayList<String>();
-        if(!branchList.contains("Mine")) branchList.add("Mine");
-        if(!branchList.contains("All")) branchList.add("All");
-        branchList.addAll(branches);
+        if(!configuredBranches.contains("Mine")) branchList.add("Mine");
+        if(!configuredBranches.contains("All")) branchList.add("All");
+        branchList.addAll(configuredBranches);
         return branchList;
     }
 
@@ -91,15 +92,15 @@ public class DynamicProjectBranchTabsProperty extends JobProperty<Job<?, ?>> {
     }
 
     private void save() {
-        this.branchTabs= Joiner.on(",").join(branches);
+        this.branchTabs= Joiner.on("\n").join(branches);
     }
 
     @Extension
-    public static final class BuildTypePropertyDescriptor extends JobPropertyDescriptor {
+    public static final class BranchTabsPropertyDescriptor extends JobPropertyDescriptor {
 
         @Override
         public String getDisplayName() {
-            return "Build Type";
+            return "Branch Tabs";
         }
 
         @Override
