@@ -176,7 +176,7 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
         @Override
     public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
-        if(isNewUi() && !req.getRequestURI().contains("consoleText") && !req.getRequestURI().contains("rebuild/") ){
+        if(isNewUi() && !req.getRequestURI().contains("consoleText") && !req.getRequestURI().contains("rebuild/") && !req.getRequestURI().contains("/stop")  ){
             try {
                 rsp.forward(this,"newUi",req);
                 return null;

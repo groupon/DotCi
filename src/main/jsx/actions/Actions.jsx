@@ -24,6 +24,7 @@
 import { Actions } from 'flummox';
 import {addBranchTab as addBranchTabOnServer, removeBranchTab as removeBranchTabOnServer,
   build,
+  cancelBuild as cancelBuildApi,
   buildLog ,
   recentProjects,
   job,
@@ -41,6 +42,9 @@ import {addBranchTab as addBranchTabOnServer, removeBranchTab as removeBranchTab
       const logText = await buildLog(buildNumber);
       buildInfo['log'] = logText.split("\n");
       this.jobInfoChanged({build:buildInfo})
+    }
+    async cancelBuild(url){
+      cancelBuildApi(url);
     }
     deleteProject(){
       deleteCurrentProject().then(()=>console.log('project deleted'));

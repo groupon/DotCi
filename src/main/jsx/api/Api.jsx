@@ -26,6 +26,9 @@ import {stringify} from 'qs';
 export function recentProjects(){
   return _get(window.rootURL + '/recentProjects/');
 }
+export function cancelBuild(url){
+  return fetch(`${window.rootURL}/${url}`,{method:'post'})
+}
 export function buildLog(buildNumber){
   return fetch(`${_jobUrl()}/${buildNumber}/consoleText`).then(response => response.text()); 
 }
@@ -48,14 +51,14 @@ export function addBranchTab(tabRegex){
 }
 
 export function fetchBuildHistory(tab) {
-    return _get(`${_jobApiUrl()}/buildHistory/${tab}`,{depth:2});
+  return _get(`${_jobApiUrl()}/buildHistory/${tab}`,{depth:2});
 }
 function _jobUrl(){
   return jobUrl;
 }
 function _jobApiUrl() {
-    const url =  _jobUrl()+ 'json';
-    return url;
+  const url =  _jobUrl()+ 'json';
+  return url;
 }
 function _get(url, params){
   let fetchUrl = params?`${url}?${stringify(params)}`: url;
