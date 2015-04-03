@@ -301,8 +301,8 @@ public class DynamicBuildRepository extends MongoRepository {
             .field("className").equal("com.groupon.jenkins.dynamic.build.DynamicBuild");
 
         query.or(
-            query.criteria("actions.causes.user").equal(user),
-            query.criteria("actions.causes.pusher").equal(user)
+                query.criteria("actions.causes.user").equal(user),
+                query.criteria("actions.causes.pusher").equal(user)
         );
         return query;
     }
@@ -388,10 +388,12 @@ public class DynamicBuildRepository extends MongoRepository {
             BasicDBObject commit = (BasicDBObject) list.get(0);
             ObjectId parentId = (ObjectId) buildObject.get("projectId");
             String parentName = repo.getProjectById(parentId).getFullName();
+            Object result =  buildObject.get("result");
+            result = result==null? "IN_PROGRESS" :result;
             output.add(of("projectName", parentName,
                     "number", buildObject.get("number"),
                     "startTime", buildObject.get("startTime"),
-                    "lastBuildResult", buildObject.get("result"),
+                    "lastBuildResult", result,
                     "commit", commit.toMap()));
 
         }
