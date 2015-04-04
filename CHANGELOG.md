@@ -1,4 +1,4 @@
-#2.6.3 (3/03/2015)
+##2.6.3 (3/03/2015)
 - Add build header for new build page
 - Add cancel/restart button in the new ui
 
