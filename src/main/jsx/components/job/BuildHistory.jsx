@@ -55,7 +55,13 @@ var BuildHistoryTable = React.createClass({
   }
 });
 var BuildHistoryTabs = React.createClass({
-  mixins: [LocationHashHelper ], 
+  mixins: [LocationHashHelper], 
+  componentDidMount(){
+    this.addHashListener(this._onActiveTabChange);
+  },
+  componentWillUnmount(){
+    this.removeHashListener(this._onActiveTabChange);
+  },
   getInitialState(){
     return {currentSelection: this.selectedHash()?this.selectedHash(): 'master'};
   },
@@ -86,14 +92,13 @@ var BuildHistoryTabs = React.createClass({
     this.props.flux.addBranchTab(tabExpr);
   },
   _notifyTabSelection: function (tab) {
+    this.replaceState({currentSelection: tab});
     let actions = this.props.flux.getActions('app');
     actions.buildHistorySelected(tab);
   },
   _onActiveTabChange(event){
-    var tab =event.currentTarget.getAttribute('data-tab');
-    Router.HashLocation.push(tab);
-    this.replaceState({currentSelection: tab});
-    this._notifyTabSelection(tab);
+    const selectedTab = Router.HashLocation.getCurrentPath();
+    this._notifyTabSelection(selectedTab?selectedTab:'master');
   },
   _onTabRemove(event){
     event.stopPropagation();
@@ -111,11 +116,11 @@ var BuildHistoryTabs = React.createClass({
       'branch-tab': true,
       'tab-active': this.state.currentSelection== tab
     });
-    return (<div className={classes} key={i} data-tab={tab}  onClick={this._onActiveTabChange}>
+    return (<a className={classes} key={i} href={'#'+tab}>
       <i className="icon octicon octicon-git-branch "></i>
       {tab}
-      {closable?<a data-tab={tab} className="tab-close fa fa-times-circle-o" onClick={this._onTabRemove}></a>: ''}
-    </div>);
+      {closable?<div data-tab={tab} className="tab-close fa fa-times-circle-o" onClick={this._onTabRemove}></div>: ''}
+    </a>);
   }
 });
 
