@@ -44,7 +44,7 @@ return {
             },
             {
                   test: /\.(svg)$/,
-                  loader: 'file-loader'
+                  loader: 'url-loader'
             },
             {
                 test: /\.less$/,

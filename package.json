@@ -44,6 +44,7 @@
     "react-hot-loader": "^1.1.1",
     "react-tools": "latest",
     "style-loader": "^0.8.3",
+    "url-loader": "^0.5.5",
     "webpack": "latest",
     "webpack-dev-server": "latest"
   },
