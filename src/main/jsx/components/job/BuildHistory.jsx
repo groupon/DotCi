@@ -26,7 +26,9 @@ import React from 'react';
 import BuildRow from './BuildRow.jsx';
 import Dialog from './../lib/Dialog.jsx';
 import contains from 'ramda/src/contains'
-import classNames from 'classnames';
+import classNames from 'classnames'; 
+import LocationHashHelper from './../mixins/LocationHashHelper.jsx'
+import Router from 'react-router';
 require('./build_history.less');
 
 
@@ -53,8 +55,9 @@ var BuildHistoryTable = React.createClass({
   }
 });
 var BuildHistoryTabs = React.createClass({
+  mixins: [LocationHashHelper ], 
   getInitialState(){
-    return {currentSelection: 'master'};
+    return {currentSelection: this.selectedHash()?this.selectedHash(): 'master'};
   },
   render()  {
     return (<div className="ui  buttons">
@@ -88,6 +91,7 @@ var BuildHistoryTabs = React.createClass({
   },
   _onActiveTabChange(event){
     var tab =event.currentTarget.getAttribute('data-tab');
+    Router.HashLocation.push(tab);
     this.replaceState({currentSelection: tab});
     this._notifyTabSelection(tab);
   },
@@ -107,7 +111,7 @@ var BuildHistoryTabs = React.createClass({
       'branch-tab': true,
       'tab-active': this.state.currentSelection== tab
     });
-    return (<div className={classes} key={i} data-tab={tab}  onClick={this._onActiveTabChange} href="#" >
+    return (<div className={classes} key={i} data-tab={tab}  onClick={this._onActiveTabChange}>
       <i className="icon octicon octicon-git-branch "></i>
       {tab}
       {closable?<a data-tab={tab} className="tab-close fa fa-times-circle-o" onClick={this._onTabRemove}></a>: ''}

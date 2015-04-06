@@ -59,7 +59,8 @@ export default React.createClass({
     ] ,
     routerWillRun: async function({flux}){
       const actions =flux.getActions('app');
-      return await    actions.getJobInfoFromServer("buildHistoryTabs,fullName,githubUrl,permissions,builds[*,commit[*]]");
+      const selectedTab = Router.HashLocation.getCurrentPath();
+      return await actions.getJobInfoFromServer("buildHistoryTabs,fullName,githubUrl,permissions,builds[*,commit[*]]",selectedTab? selectedTab:'master');
     }
   },
   render(){

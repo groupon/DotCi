@@ -35,8 +35,8 @@ export function buildLog(buildNumber){
 export function build(buildNumber){
   return _get(`${_jobApiUrl()}/build/${buildNumber}`,{tree:'*,commit[*]'});
 }
-export function job(tree){
-  return _get(_jobApiUrl()+"/info/",{tree:tree});
+export function job(tree, branchTab){
+  return _get(_jobApiUrl()+"/info/",{tree,branchTab});
 }
 export async function deleteCurrentProject(){
   const rsp = await fetch(window.location.pathname.replace('newUi','')+"/doDeleteAjax",{method: 'post' });

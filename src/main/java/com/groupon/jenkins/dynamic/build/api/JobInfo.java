@@ -29,9 +29,13 @@ import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import javax.servlet.ServletException;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -41,10 +45,16 @@ import  static com.google.common.collect.ImmutableMap.of;
 public class JobInfo extends  ApiModel{
 
     private DynamicProject dynamicProject;
+    private String branchTab;
 
     public JobInfo(DynamicProject dynamicProject) {
-
         this.dynamicProject = dynamicProject;
+    }
+
+    @Override
+    public void doIndex(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+        setBranchTab(req.getParameter("branchTab"));
+        super.doIndex(req, rsp);
     }
 
     @Exported
@@ -57,7 +67,7 @@ public class JobInfo extends  ApiModel{
     }
     @Exported
     public Map getPermissions(){
-        return of("configure",dynamicProject.hasPermission(DynamicProject.CONFIGURE),
+        return of("configure", dynamicProject.hasPermission(DynamicProject.CONFIGURE),
                 "build", dynamicProject.hasPermission(DynamicProject.BUILD)) ;
     }
     @Exported
@@ -72,7 +82,7 @@ public class JobInfo extends  ApiModel{
     }
     @Exported
     public List<Build> getBuilds(){
-        return Lists.newArrayList( new BuildHistory(dynamicProject).getBuilds("master"));
+        return Lists.newArrayList(new BuildHistory(dynamicProject).getBuilds(branchTab));
     }
     @Exported
     public List<BuildTime> getBuildTimes(){
@@ -88,5 +98,11 @@ public class JobInfo extends  ApiModel{
 
         return buildTimes;
     }
+    public void setBranchTab(String branchTab) {
+        this.branchTab = branchTab;
+    }
 
+    private String getBranchTab() {
+        return branchTab;
+    }
 }

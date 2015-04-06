@@ -43,7 +43,7 @@ export default React.createClass({
     }
   },
   _scrollToLine(lineId){
-    if(lineId && lineId != ""){
+    if(lineId){
       const line = document.getElementById(lineId);
       if(line)
         line.scrollIntoView();

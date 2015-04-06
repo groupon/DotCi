@@ -33,6 +33,7 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 public class ApiModel implements ModelObject{
+
     @Override
     public String getDisplayName() {
         return "api";
@@ -40,4 +41,5 @@ public class ApiModel implements ModelObject{
     public void doIndex(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
         JsonResponse.render(req, rsp, this);
     }
+
 }
