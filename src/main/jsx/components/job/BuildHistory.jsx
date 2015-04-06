@@ -54,7 +54,7 @@ var BuildHistoryTable = React.createClass({
 });
 var BuildHistoryTabs = React.createClass({
   getInitialState(){
-    return {currentSelection: 0};
+    return {currentSelection: 'master'};
   },
   render()  {
     return (<div className="ui  buttons">
@@ -82,12 +82,12 @@ var BuildHistoryTabs = React.createClass({
     const tabExpr = this.refs.newBranchTab.getDOMNode().value
     this.props.flux.addBranchTab(tabExpr);
   },
-  _notifyTabSelection: function (tabIndex) {
+  _notifyTabSelection: function (tab) {
     let actions = this.props.flux.getActions('app');
-    actions.buildHistorySelected(this.props.tabs[tabIndex]);
+    actions.buildHistorySelected(tab);
   },
   _onActiveTabChange(event){
-    var tab =parseInt(event.currentTarget.getAttribute('data-tab'));
+    var tab =event.currentTarget.getAttribute('data-tab');
     this.replaceState({currentSelection: tab});
     this._notifyTabSelection(tab);
   },
@@ -95,8 +95,7 @@ var BuildHistoryTabs = React.createClass({
     event.stopPropagation();
     this.replaceState(this.getInitialState());
     this._notifyTabSelection(this.state.currentSelection);
-    var tabIndex =parseInt(event.currentTarget.getAttribute('data-tab'));
-    var tab = this.props.tabs[tabIndex]; 
+    var tab = event.currentTarget.getAttribute('data-tab');
     this.props.flux.removeBranchTab(tab);
   },
   _getHistoryTab(tab,i,closable) {
@@ -106,12 +105,12 @@ var BuildHistoryTabs = React.createClass({
       'icon':true ,
       'button':true,
       'branch-tab': true,
-      'tab-active': this.state.currentSelection==i
+      'tab-active': this.state.currentSelection== tab
     });
-    return (<div className={classes} key={i} data-tab={i}  onClick={this._onActiveTabChange} href="#" >
+    return (<div className={classes} key={i} data-tab={tab}  onClick={this._onActiveTabChange} href="#" >
       <i className="icon octicon octicon-git-branch "></i>
       {tab}
-      {closable?<a data-tab={i} className="tab-close fa fa-times-circle-o" onClick={this._onTabRemove}></a>: ''}
+      {closable?<a data-tab={tab} className="tab-close fa fa-times-circle-o" onClick={this._onTabRemove}></a>: ''}
     </div>);
   }
 });

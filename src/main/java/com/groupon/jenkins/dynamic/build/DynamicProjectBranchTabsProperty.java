@@ -42,11 +42,12 @@ import org.kohsuke.stapler.StaplerRequest;
 import javax.annotation.Nullable;
 
 public class DynamicProjectBranchTabsProperty extends JobProperty<Job<?, ?>> {
-    private transient final ArrayList<String> branches;
+    //For backward compatability
+    private transient ArrayList<String> branches;
+
     private String branchTabs;
     public DynamicProjectBranchTabsProperty(String branchTabs) {
         this.branchTabs = branchTabs;
-        this.branches = parseBranches();
     }
 
     private ArrayList<String> parseBranches() {
@@ -76,17 +77,19 @@ public class DynamicProjectBranchTabsProperty extends JobProperty<Job<?, ?>> {
     }
 
     public void addBranch(String branch) {
-        this.branches.add(branch);
-        save();
+        ArrayList<String> branches = parseBranches();
+        branches.add(branch);
+        save(branches);
     }
 
 
     public void removeBranch(String branch) {
-        this.branches.remove(branch);
-        save();
+        ArrayList<String> branches = parseBranches();
+        branches.remove(branch);
+        save(branches);
     }
 
-    private void save() {
+    private void save(ArrayList<String> branches) {
         this.branchTabs= Joiner.on("\n").join(branches);
     }
 
