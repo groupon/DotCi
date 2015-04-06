@@ -63,7 +63,12 @@ public class JobInfo extends  ApiModel{
     @Exported
     public Iterable<String> getBuildHistoryTabs(){
         DynamicProjectBranchTabsProperty tabsProperty =dynamicProject.getProperty(DynamicProjectBranchTabsProperty.class);
-        return tabsProperty == null ? Collections.<String>emptyList() : tabsProperty.getBranches();
+        List<String> tabs = tabsProperty == null ? new ArrayList<String>() : tabsProperty.getBranches();
+        ArrayList<String> configuredTabs = new ArrayList<String>();
+        if(!tabs.contains("Mine")) configuredTabs.add("Mine");
+        if(!tabs.contains("All")) configuredTabs.add("All");
+        configuredTabs.addAll(tabs);
+        return configuredTabs;
     }
     @Exported
     public List<Build> getBuilds(){
@@ -71,15 +76,15 @@ public class JobInfo extends  ApiModel{
     }
     @Exported
     public List<BuildTime> getBuildTimes(){
-            List<BuildTime> buildTimes = new ArrayList<BuildTime>();
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.MONTH, -1);
-            List<DbBackedBuild> builds = SetupConfig.get().getDynamicBuildRepository().getSuccessfulBuilds(dynamicProject, "master", cal, Calendar.getInstance());;
+        List<BuildTime> buildTimes = new ArrayList<BuildTime>();
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -1);
+        List<DbBackedBuild> builds = SetupConfig.get().getDynamicBuildRepository().getSuccessfulBuilds(dynamicProject, "master", cal, Calendar.getInstance());;
 
-            for(DbBackedBuild build : builds){
-                BuildTime buildTime = new BuildTime(build.getNumber(),TimeUnit.MILLISECONDS.toMinutes(build.getDuration()));
-                buildTimes.add(buildTime);
-            }
+        for(DbBackedBuild build : builds){
+            BuildTime buildTime = new BuildTime(build.getNumber(),TimeUnit.MILLISECONDS.toMinutes(build.getDuration()));
+            buildTimes.add(buildTime);
+        }
 
         return buildTimes;
     }
