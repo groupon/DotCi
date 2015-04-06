@@ -2,24 +2,27 @@ import React from "react";
 import Router from 'react-router';
 import mapIndexed from 'ramda/src/mapIndexed';
 import Convert from  'ansi-to-html';
+import LocationHashHelper from './../../mixins/LocationHashHelper.jsx'
 require('./console.less');
 export default React.createClass({
+  mixins: [LocationHashHelper ], 
   componentDidMount(){
-    window.addEventListener("hashchange", this._onLineSelectionChange, false);
+    this.addHashListener(this._onLineSelectionChange);
   },
   componentWillUnmount(){
+    this.removeHashListener(this._onLineSelectionChange);
     if(this._isBuildLoaded()) {
       this.props.build.log = [];
     }
-    window.removeEventListener("hashchange", this._onLineSelectionChange, false);
   },
   _onLineSelectionChange(event){
-    const newId = event.newURL.split('#')[1];
-    const oldId = event.oldURL.split('#')[1];
+    const [oldId, newId] = this.getHashIds(event);
     if(oldId){
       document.getElementById(oldId).classList.remove('highlight');
     }
-    document.getElementById(newId).classList.add('highlight');
+    if(newId){
+      document.getElementById(newId).classList.add('highlight');
+    }
   },
   _isBuildLoaded(){
     return this.props.build && this.props.build.log && this.props.build.log.length > 1;
@@ -47,13 +50,10 @@ export default React.createClass({
     }
   },
   componentDidUpdate(){
-    this._scrollToLine(this._selectedLineHash());
-  },
-  _selectedLineHash(){
-    return Router.HashLocation.getCurrentPath();
+    this._scrollToLine(this.selectedHash());
   },
   _isLineSelected(lineNumber){
-    return `L${lineNumber}`  == this._selectedLineHash();
+    return `L${lineNumber}`  == this.selectedHash();
   },
   _openFold(e){
     e.stopPropagation();
@@ -89,7 +89,7 @@ export default React.createClass({
         lineNo = lineNo + 1;
         return logLine;
       }else{
-        const selectedLine = this._selectedLineHash()!=''? parseInt(this._selectedLineHash().replace("L",'')) :0;
+        const selectedLine = this.selectedHash()!=''? parseInt(this.selectedHash().replace("L",'')) :0;
         var lineSelectedInFold = selectedLine > lineNo && selectedLine < lineNo + log.length;
         var fold = this._logFold(log,lineNo,idx == groupedLines.length -1 || lineSelectedInFold);
         lineNo = lineNo + log.length
