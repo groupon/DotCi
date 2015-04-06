@@ -31,7 +31,7 @@ import Router from 'react-router';
 require('./app.less');
 var RouteHandler = Router.RouteHandler;
 var Route = Router.Route;
-const App=  React.createClass({
+class  App extends  React.Component {
   render(){
     const flux = this.props.flux;
     return    <div className="app" >
@@ -39,7 +39,24 @@ const App=  React.createClass({
       <RecentProjects className="recent-projects" flux={flux} />
     </div>;
   }
-});
+};
+async function performRouteHandlerStaticMethod(routes, methodName, ...args) {
+  return Promise.all(routes
+                     .map(route => route.handler[methodName])
+                     .filter(method => typeof method === 'function')
+                     .map(method => method(...args))
+                    );
+}
+function fetchData(routes, params) {
+  var data = {};
+  return Promise.all(routes
+                     .filter(route => route.handler.fetchData)
+                     .map(route => {
+                       return route.handler.fetchData(params).then(d => {data[route.name] = d;});
+                     })
+                    ).then(() => data);
+}
+
 window.onload = function(){
   let flux = new Flux();
   var routes = (
@@ -49,10 +66,13 @@ window.onload = function(){
       </Route>
     </Route>
   );
-  Router.create({
+  const router = Router.create({
     routes: routes,
     location: Router.HistoryLocation
-  }).run(function (Handler, state) {
+  })
+  router.run(async  (Handler, state) => {
+    const routeHandlerInfo = { state, flux };
+    await performRouteHandlerStaticMethod(state.routes, 'routerWillRun', routeHandlerInfo);
     React.render(<Handler flux ={flux}/>, document.getElementById('app'));
   });
 };

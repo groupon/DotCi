@@ -55,12 +55,7 @@ import {addBranchTab as addBranchTabOnServer, removeBranchTab as removeBranchTab
       this.recentProjectsChanged(projects.recentProjects);
     }
     async getJobInfoFromServer(tree){
-      let jobInfo = await job(tree);
-      this.jobInfoChanged(jobInfo);
-    }
-
-    jobInfoChanged(jobInfo){
-      return jobInfo;
+      return await job(tree);
     }
 
     recentProjectsChanged(recentProjects) {

@@ -44,7 +44,7 @@ var JobWidgets = React.createClass({
       <BuildHistory icon="fa fa-history" url="buildHistory" name="Build History" tabs={this.props.buildHistoryTabs} builds={this.props.builds} flux={this.props.flux}/>
       <BuildMetrics icon="fa fa-bar-chart" url="buildMetrics" name="Build Metrics" buildTimes={this.props.buildTimes} flux={this.props.flux} />
       <Build icon="fa fa-file" url={this._isNumeric(activeWidget)? activeWidget: ''} name={"Build - " + widgetParam} build={this.props.build} flux={this.props.flux} tabVisibleWhenActive />
-      </Widgets>;
+    </Widgets>;
   },
   _isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
@@ -52,24 +52,24 @@ var JobWidgets = React.createClass({
 });
 
 export default React.createClass({
-  componentWillMount(){
-    const actions = this.props.flux.getActions('app');
-    actions.getJobInfoFromServer("buildHistoryTabs,fullName,githubUrl,permissions,builds[*,commit[*]]");
-  },
   statics:{
     Routes:[ <DefaultRoute key="defaultRoute" handler= {JobWidgets} />,
       <Route name="job-widgets" key="job-widgets" path=":widget" handler={JobWidgets}/>,
       <Router.Redirect key="trailingRedirect" from=":widget/" to="job-widgets" />
-    ] 
+    ] ,
+    routerWillRun: async function({flux}){
+      const actions =flux.getActions('app');
+      return await    actions.getJobInfoFromServer("buildHistoryTabs,fullName,githubUrl,permissions,builds[*,commit[*]]");
+    }
   },
   render(){
     return (
       <div className={this.props.className}>
-      <FluxComponent connectToStores={['job']} flux={this.props.flux}>
-        <Header/>
-        <RouteHandler {...this.props}/>
-      </FluxComponent>
-    </div>
+        <FluxComponent connectToStores={['job']} flux={this.props.flux}>
+          <Header/>
+          <RouteHandler {...this.props}/>
+        </FluxComponent>
+      </div>
     );
   }
 });
