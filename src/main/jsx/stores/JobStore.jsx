@@ -32,6 +32,7 @@ export default class JobStore extends Store {
     super();
     let actionIds = flux.getActionIds('app');
     this.register(actionIds.getJobInfoFromServer, this.jobInfoChanged);
+    this.register(actionIds.currentBuildChanged, this.jobInfoChanged);
     this.register(actionIds.buildHistoryChanged, this.buildHistoryChanged);
     this.register(actionIds.tabAdded, this.tabAdded);
     this.register(actionIds.tabRemoved, this.tabRemoved);

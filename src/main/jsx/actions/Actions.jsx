@@ -41,7 +41,7 @@ import {addBranchTab as addBranchTabOnServer, removeBranchTab as removeBranchTab
       const buildInfo = await build(buildNumber);
       const logText = await buildLog(buildNumber);
       buildInfo['log'] = logText.split("\n");
-      this.jobInfoChanged({build:buildInfo})
+      return {build:buildInfo};
     }
     async cancelBuild(url){
       cancelBuildApi(url);
