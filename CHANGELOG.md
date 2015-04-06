@@ -1,3 +1,13 @@
+##2.6.3 (3/03/2015)
+- Add build header for new build page
+- Add cancel/restart button in the new ui
+
+##2.6.2(28/03/2015)
+ - Add console log with line numbers for the new UI
+
+##2.6.1(26/03/2015)
+ - Add option in build configuration to switch to new ui
+
 ##2.6.0(17/03/2015)
   - Replace `d3.js` with `chart.js` for build metrics.
   
