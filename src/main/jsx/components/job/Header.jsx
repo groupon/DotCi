@@ -31,7 +31,7 @@ export default React.createClass({
       <div className="job-header">
         <a id="github-link" href={this.props.githubUrl}><i className="octicon octicon-mark-github"> {this.props.fullName}</i> <i className="fa fa-external-link"/></a>
         <IconLink href="build?delay=0sec" disabled={!this._hasBuildPermission()} icon="fa fa-rocket"> Build Now</IconLink>
-        <div id="settings" className="right ui compact menu">
+        <div  className="ui compact menu">
           <div className={"ui simple dropdown item"+(this._hasConfigurePermission()?"":" disabled")}>
             <i className="dropdown icon"></i>
             <i className="icon fa fa-cog"/>  Settings
