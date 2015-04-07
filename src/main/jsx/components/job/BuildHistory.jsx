@@ -37,7 +37,7 @@ var BuildHistoryTable = React.createClass({
     return {filter: ''};
   },
   render(){
-    let builds = this.props.builds.filter(this._applyFilter).map((build) => <BuildRow key={build.number} {...build}/>);
+    let builds = this.props.builds.filter(this._applyFilter).map((build) => <BuildRow key={build.get('number')} build={build}/>);
     return(
       <div className="builds">
         <FilterBar onChange={this._onFilterChange}/> 

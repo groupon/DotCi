@@ -29,7 +29,7 @@ export default React.createClass({
   render(){
     return(
       <div className="job-header">
-        <a id="github-link" href={this.props.githubUrl}><i className="octicon octicon-mark-github"> {this.props.fullName}</i> <i className="fa fa-external-link"/></a>
+        <a id="github-link" href={this._get('githubUrl')}><i className="octicon octicon-mark-github"> {this._get('fullName')}</i> <i className="fa fa-external-link"/></a>
         <IconLink href="build?delay=0sec" disabled={!this._hasBuildPermission()} icon="fa fa-rocket"> Build Now</IconLink>
         <div  className="ui compact menu">
           <div className={"ui simple dropdown item"+(this._hasConfigurePermission()?"":" disabled")}>
@@ -46,13 +46,19 @@ export default React.createClass({
     );
   },
   _hasBuildPermission(){
-    return this.props.permissions? this.props.permissions.build :false;
+    return this._getPermissions()? this._getPermissions().build :false;
   },
   _hasConfigurePermission(){
-    return this.props.permissions? this.props.permissions.configure :false;
+    return this._getPermissions()? this._getPermissions().configure :false;
   },
   _deleteJob(){
     let actions = this.props.flux.getActions('app');
     actions.deleteProject();
+  },
+  _getPermissions(){
+    return this._get('permissions').toObject();
+  },
+  _get(key){
+    return this.props.job.get(key);
   }
 });
