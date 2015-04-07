@@ -39,12 +39,12 @@ export default  React.createClass({
     return this.props.build.cancelable? this._cancelButton():this._restartButton()
   },
   _restartButton(){
-    return <a className="circular ui icon button" href="#" onClick={this._restartBuild}>
+    return <a className="circular ui icon button hint--top"  data-hint="Restart Build"  href="#" onClick={this._restartBuild}>
       <i className="build-action fa fa-refresh"></i>
     </a>
   },
   _cancelButton(){
-    return <div className="circular ui icon button" href="#" onClick={this._cancelBuild}>
+    return <div className="circular ui icon button hint--top" href="#" data-hint="Abort Build" onClick={this._cancelBuild}>
       <i className="build-action fa fa-times-circle-o"></i>
     </div>
   },
