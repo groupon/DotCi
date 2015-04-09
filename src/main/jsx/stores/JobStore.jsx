@@ -48,10 +48,12 @@ export default class JobStore extends Store {
   _setState(newData){
     return this.setState({job: newData});
   }
-  tabRemoved(tab){
-    let {buildHistoryTabs}= this._getState().toObject();
-    buildHistoryTabs = buildHistoryTabs.deleteIn(tab);
-    const newState = this._getState().merge({buildHistoryTabs})
+  tabRemoved(tabToBeRemoved){
+    let {buildHistoryTabs} = this._getState().toObject();
+    let filteredTabs = buildHistoryTabs.toSeq().filter(tab => tab != tabToBeRemoved);
+    const newState = this._getState().withMutations(map => {
+      map.set('buildHistoryTabs', fromJS(filteredTabs.toArray()))
+    });
     this._setState(newState);
   }
   tabAdded(newTabRegex){

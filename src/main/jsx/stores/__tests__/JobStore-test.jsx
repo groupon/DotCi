@@ -11,18 +11,18 @@ describe('JobStore', ()=>{
   }
   it('should remove tab from state when removed', ()=>{
     let jobStore = _getJobStore();
-    jobStore.jobInfoChanged({buildHistoryTabs: ['1','2']})
+    jobStore.jobInfoChanged({buildHistoryTabs: ['a','b']})
     let {buildHistoryTabs} = jobStore._getState().toObject();
 
     //assert Initial state
     assert.equal(buildHistoryTabs.size,2)
-    assert.equal(buildHistoryTabs.get(0),'1')
-    assert.equal(buildHistoryTabs.get(1),'2')
+    assert.equal(buildHistoryTabs.get(0),'a')
+    assert.equal(buildHistoryTabs.get(1),'b')
 
-    jobStore.tabRemoved('1')
+    jobStore.tabRemoved('a')
     let {buildHistoryTabs:newBuildHistoryTabs} = jobStore._getState().toObject();
     assert.equal(newBuildHistoryTabs.size,1)
-    assert.equal(newBuildHistoryTabs.get(0),'1')
+    assert.equal(newBuildHistoryTabs.get(0),'b')
   })
 
   it('should add tab from state when removed', ()=>{
