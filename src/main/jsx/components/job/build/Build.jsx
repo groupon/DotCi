@@ -7,7 +7,7 @@ export default  React.createClass({
     this._fetchBuild()
   },
   componentDidUpdate(){
-    if( this.props.build && this.props.build.result == 'IN_PROGRESS' ){
+    if( this.props.build && this.props.build.get('result') == 'IN_PROGRESS' ){
       this._setRefreshTimer();
     }else{
       this._clearRefreshTimer();
@@ -31,12 +31,12 @@ export default  React.createClass({
   render(){
     return this.props.build? (<div id="build">
       {this._buildActions()}
-      <BuildRow  {...this.props.build}/>
-      <Console {...this.props} />
+      <BuildRow  build={this.props.build}/>
+      <Console log={this.props.build.get('log')}/>
     </div>):<div/>;
   },
   _buildActions(){
-    return this.props.build.cancelable? this._cancelButton():this._restartButton()
+    return this.props.build.get('cancelable')? this._cancelButton():this._restartButton()
   },
   _restartButton(){
     return <a className="circular ui icon button hint--top"  data-hint="Restart Build"  href="#" onClick={this._restartBuild}>
@@ -51,7 +51,7 @@ export default  React.createClass({
   _cancelBuild(e){
     e.preventDefault();
     const appActions = this.props.flux.getActions('app');
-    appActions.cancelBuild(this.props.build.cancelUrl);
+    appActions.cancelBuild(this.props.build.get('cancelUrl'));
   },
   _restartBuild(e){
     e.preventDefault();

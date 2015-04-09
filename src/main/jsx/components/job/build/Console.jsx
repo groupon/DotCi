@@ -11,9 +11,6 @@ export default React.createClass({
   },
   componentWillUnmount(){
     this.removeHashListener(this._onLineSelectionChange);
-    if(this._isBuildLoaded()) {
-      this.props.build.log = [];
-    }
   },
   _onLineSelectionChange(event){
     const [oldId, newId] = this.getHashIds(event);
@@ -25,11 +22,11 @@ export default React.createClass({
     }
   },
   _isBuildLoaded(){
-    return this.props.build && this.props.build.log && this.props.build.log.length > 1;
+    return this.props.log && this.props.log.size > 1;
   },
   render(){
     if(this._isBuildLoaded())
-      return <span id="buildLog"><pre> {this._renderLog(this.props.build.log)}</pre></span>;
+      return <span id="buildLog"><pre> {this._renderLog(this.props.log)}</pre></span>;
     return <div id="log-loading" className="ui  active dimmer">
       <div className="ui content large text loader">Loading</div>
     </div>
@@ -74,8 +71,8 @@ export default React.createClass({
   },
   _renderLog(logLines){
     var groupedLines = [[]];
-    for (let i = 0; i < logLines.length; i++) {
-      let line =logLines[i];
+    for (let i = 0; i < logLines.size; i++) {
+      let line =logLines.get(i);
       if(line.startsWith('$')){
         groupedLines.push([line]);
       }else{
