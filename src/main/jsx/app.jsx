@@ -35,8 +35,8 @@ class  App extends  React.Component {
   render(){
     const flux = this.props.flux;
     return    <div className="app" >
-      <RouteHandler className="job"  {...this.props}/>
-      <RecentProjects className="recent-projects" flux={flux} />
+      <RouteHandler   {...this.props}/>
+      <RecentProjects flux={flux} />
     </div>;
   }
 };
