@@ -25,7 +25,7 @@
 import { Store } from 'flummox';
 import reject from 'ramda/src/reject';
 import React from 'react';
-import {fromJS,Map} from 'immutable';
+import {fromJS,Map,List} from 'immutable';
 var update =React.addons.update;
 export default class JobStore extends Store {
   constructor(flux) {
@@ -39,24 +39,28 @@ export default class JobStore extends Store {
     this.state = {job: Map()};
   }
   jobInfoChanged(jobInfo){
-    const newData = this.state.job.mergeDeep(fromJS(jobInfo));
-    this.setState({job: newData});
+    const newData = this._getState().mergeDeep(fromJS(jobInfo));
+    this._setState(newData);
+  }
+  _getState(){
+    return this.state.job;
+  }
+  _setState(newData){
+    return this.setState({job: newData});
   }
   tabRemoved(tab){
-    const updatedTabs = reject((t)=> t==tab,this.state.buildHistoryTabs);
-    this.setState(update(this.getState(), {
-      buildHistoryTabs: {$set: updatedTabs}
-    }));
+    let {buildHistoryTabs}= this._getState().toObject();
+    buildHistoryTabs = buildHistoryTabs.deleteIn(tab);
+    const newState = this._getState().merge({buildHistoryTabs})
+    this._setState(newState);
   }
   tabAdded(newTabRegex){
-    this.setState(update(this.getState(), {
-      buildHistoryTabs: {$push: [newTabRegex]}
-    }));
+    let {buildHistoryTabs}= this._getState().toObject();
+    buildHistoryTabs = buildHistoryTabs.push(newTabRegex);
+    const newState = this._getState().merge({buildHistoryTabs});
+    this._setState(newState);
   }
   buildHistoryChanged(builds){
-    debugger
-    this.setState(update(this.getState(), {
-      builds: {$set: builds}
-    }));
+    this._setState(this._getState().set('builds',fromJS(builds)))
   }
 }

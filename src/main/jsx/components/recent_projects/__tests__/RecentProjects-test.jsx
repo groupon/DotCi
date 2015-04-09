@@ -23,7 +23,6 @@
  */
 
 import React from 'react/addons';
-import  expect from 'expect';
 import RecentProjects from '../RecentProjects.jsx';
 import {Flummox,Store} from 'flummox';
 
@@ -36,7 +35,7 @@ class RecentProjectsStore extends Store{
 class Flux extends Flummox{
   constructor(){
     super();
-   this.createStore('recentProjects',RecentProjectsStore,this) ;
+    this.createStore('recentProjects',RecentProjectsStore,this) ;
   }
   getRecentProjectsFromServer(){
     this.getStore('recentProjects').setState({recentProjects:[]});
@@ -45,10 +44,10 @@ class Flux extends Flummox{
 }
 var TestUtils = React.addons.TestUtils;
 describe('RecentProjects', function() {
-    it('should load recent projects for the user on componentWillMount', function() {
-      const flux= new Flux();
-        var RecentProjectsWidget = TestUtils.renderIntoDocument(
-            <RecentProjects url="url" flux={flux}/>
-        );
-    });
+  it('should load recent projects for the user on componentWillMount', function() {
+    const flux= new Flux();
+    var RecentProjectsWidget = TestUtils.renderIntoDocument(
+      <RecentProjects url="url" flux={flux}/>
+    );
+  });
 });

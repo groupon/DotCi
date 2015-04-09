@@ -32,8 +32,10 @@ export default React.createClass({
   },
   componentDidUpdate(){
     const buildTimesCtx = this.refs.buildTimes.getDOMNode().getContext('2d');
-    var data = {
-      labels: this.props.buildTimes.map(t =>t.x),
+    const labels = this.props.buildTimes.map(t =>t.get('x')).toArray();
+    const data= this.props.buildTimes.map(t =>t.get('y')).toArray();
+    var chartData = {
+      labels ,
       datasets: [
         {
           label: 'Build Times',
@@ -43,16 +45,16 @@ export default React.createClass({
           pointStrokeColor: '#fff',
           pointHighlightFill: '#fff',
           pointHighlightStroke: 'rgba(220,220,220,1)',
-          data: this.props.buildTimes.map(t =>t.y)
+          data
         }
       ]
     };
-    const chart = new Chart(buildTimesCtx).Line(data, { scaleShowGridLines : false,legendTemplate : "<div><h5>Build Times( successful master)</h5><div>X - Build Number</div><div> Y - Build Time (Mins)</div></div>"});
+    const chart = new Chart(buildTimesCtx).Line(chartData, { scaleShowGridLines : false,legendTemplate : "<div><h5>Build Times( successful master)</h5><div>X - Build Number</div><div> Y - Build Time (Mins)</div></div>"});
     this.refs.legend.getDOMNode().innerHTML = chart.generateLegend();
   },
   render(){
     return (<div id="build-metrics">
-  <div ref="legend"></div>
-<canvas ref='buildTimes' width='600' height='400'></canvas></div>);
+      <div ref="legend"></div>
+      <canvas ref='buildTimes' width='600' height='400'></canvas></div>);
   }
 });
