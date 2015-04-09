@@ -48,7 +48,8 @@ var BuildHistoryTable = React.createClass({
   _applyFilter(build){
     const filter = this.state.filter.trim();
     const filterRegex = new RegExp(filter, 'gi');
-    return !filter || build.commit.message.match(filterRegex) || build.commit.branch.match(filterRegex)|| build.commit.committerName.match(filterRegex);
+    let {message,branch,committerName} = build.get('commit').toObject();
+    return !filter || message.match(filterRegex) || branch.match(filterRegex)|| committerName.match(filterRegex);
   },
   _onFilterChange(filter){
     this.replaceState({filter:filter });
