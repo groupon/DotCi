@@ -8,6 +8,7 @@ export default React.createClass({
   mixins: [LocationHashHelper ], 
   componentDidMount(){
     this.addHashListener(this._onLineSelectionChange);
+    this._scrollToLine(this.selectedHash());
   },
   componentWillUnmount(){
     this.removeHashListener(this._onLineSelectionChange);
@@ -36,7 +37,6 @@ export default React.createClass({
       event.stopPropagation();
       const lineId = event.currentTarget.getAttribute('id');
       Router.HashLocation.push(lineId);
-      this._scrollToLine(lineId);
     }
   },
   _scrollToLine(lineId){
