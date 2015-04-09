@@ -39,10 +39,7 @@ import hudson.model.Run;
 import hudson.util.RunList;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import jenkins.model.Jenkins;
@@ -385,7 +382,7 @@ public class DynamicBuildRepository extends MongoRepository {
         for(DBObject build : builds.results()) {
             DBObject buildObject = (DBObject) build.get("build");
             BasicDBList list = (BasicDBList) ((BasicDBList) buildObject.get("commit")).get(0);
-            BasicDBObject commit = (BasicDBObject) list.get(0);
+            Map commit = list ==null? new HashMap():((BasicDBObject) list.get(0)).toMap();
             ObjectId parentId = (ObjectId) buildObject.get("projectId");
             String parentName = repo.getProjectById(parentId).getFullName();
             Object result =  buildObject.get("result");
@@ -394,7 +391,7 @@ public class DynamicBuildRepository extends MongoRepository {
                     "number", buildObject.get("number"),
                     "startTime", buildObject.get("startTime"),
                     "lastBuildResult", result,
-                    "commit", commit.toMap()));
+                    "commit", commit));
 
         }
 
