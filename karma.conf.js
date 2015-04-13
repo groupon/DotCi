@@ -1,4 +1,9 @@
 var webpack = require('webpack');
+var webpack_config = require('./make-webpack-config.js')(
+  { 
+    debug: true 
+  }
+);
 
 module.exports = function (config) {
   config.set({
@@ -19,31 +24,7 @@ module.exports = function (config) {
 
     reporters: [ 'dots' ],
 
-    webpack: {
-      devtool: 'inline-source-map',
-      module: {
-        loaders: [
-            {
-                test: /\.less$/,
-                loader: 'style-loader!css-loader!less-loader'
-            },
-            {
-                test: /\.css$/,
-                loader: 'style-loader!css-loader'
-            },
-            {
-                test: /\.jsx?$/,
-                exclude: /node_modules/,
-                loaders:  ['babel-loader']
-            }
-        ]
-      },
-      plugins: [
-        new webpack.DefinePlugin({
-          'process.env.NODE_ENV': JSON.stringify('test')
-        })
-      ]
-    },
+    webpack: webpack_config,
 
     webpackServer: {
       noInfo: true
