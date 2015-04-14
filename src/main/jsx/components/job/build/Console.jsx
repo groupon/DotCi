@@ -33,8 +33,8 @@ export default React.createClass({
     </div>
   },
   _onLineSelect(event){
+    event.stopPropagation();
     if(event.target.tagName == 'A'){
-      event.stopPropagation();
       const lineId = event.currentTarget.getAttribute('id');
       Router.HashLocation.push(lineId);
     }
@@ -59,7 +59,7 @@ export default React.createClass({
   },
   _logFold(log,idx,isOpen){
     return (
-      <div key={'fold'+idx} className={"fold "+ (isOpen? "open":"closed")} onClick={this._openFold}>
+      <div key={'fold'+(idx)} className={"fold "+ (isOpen? "open":"closed")} onClick={this._openFold}>
         {mapIndexed((line,lineNo) => this._logLine(line,idx+lineNo),log)}
       </div>
     ) 
