@@ -42,9 +42,11 @@ public abstract class DotCiPluginAdapter extends DotCiExtension{
     protected DotCiPluginAdapter(String name, String pluginInputFiles) {
         this.name = name;
         this.pluginInputFiles = pluginInputFiles;
-
     }
 
+    protected DotCiPluginAdapter(String name) {
+        this.name = name;
+    }
     public void setOptions(Object options) {
         this.options = options;
     }
@@ -56,12 +58,16 @@ public abstract class DotCiPluginAdapter extends DotCiExtension{
     public abstract boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener);
 
     public void runFinished(DynamicSubBuild run, DynamicBuild parent, BuildListener listener) throws IOException {
-        if(StringUtils.isNotEmpty(pluginInputFiles)){
-            copyFiles(run, parent, pluginInputFiles, listener);
+        if(StringUtils.isNotEmpty(getPluginInputFiles())){
+            copyFiles(run, parent, getPluginInputFiles(), listener);
         }
     }
 
-     public void copyFiles(DynamicSubBuild run, DynamicBuild parent, String outputFiles, BuildListener listener) throws IOException {
+    public String getPluginInputFiles() {
+        return pluginInputFiles;
+    }
+
+    public void copyFiles(DynamicSubBuild run, DynamicBuild parent, String outputFiles, BuildListener listener) throws IOException {
         String baseWorkSpace;
         try {
             listener.getLogger().println("Copying files :" + outputFiles);

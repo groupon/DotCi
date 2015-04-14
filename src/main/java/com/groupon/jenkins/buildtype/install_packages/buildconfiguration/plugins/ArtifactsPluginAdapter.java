@@ -37,7 +37,12 @@ import java.io.IOException;
 public class ArtifactsPluginAdapter extends DotCiPluginAdapter {
 
     public ArtifactsPluginAdapter() {
-        super("artifacts", "");
+        super("artifacts");
+    }
+
+    @Override
+    public String getPluginInputFiles() {
+        return (String) options;
     }
 
     @Override
