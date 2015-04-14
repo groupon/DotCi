@@ -24,11 +24,8 @@ module.exports = function (config) {
 
     reporters: [ 'dots' ],
 
-    webpack: webpack_config,
+    webpack: webpack_config
 
-    webpackServer: {
-      noInfo: true
-    }
 
   });
 };
