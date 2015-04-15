@@ -31,6 +31,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 import java.util.regex.Pattern;
+
+import com.google.common.escape.Escaper;
+import com.google.common.escape.Escapers;
 import org.apache.commons.lang.StringUtils;
 
 public class ShellCommands {
@@ -71,11 +74,18 @@ public class ShellCommands {
     }
 
     private String echoCommand(String command) {
-        return "echo $ \" " + escapeForShell(command) + "\"";
+        return "echo $ ' " + escapeForShell(command) + "'";
+    }
+
+    public static final Escaper SHELL_ESCAPE;
+    static {
+        final Escapers.Builder builder = Escapers.builder();
+        builder.addEscape('\'', "'\"'\"'");
+        SHELL_ESCAPE = builder.build();
     }
 
     private String escapeForShell(String command) {
-        return command.replaceAll("\"", "\\\\\"");
+        return SHELL_ESCAPE.escape((String) command);
     }
 
     public Pattern regexp(String re) {
