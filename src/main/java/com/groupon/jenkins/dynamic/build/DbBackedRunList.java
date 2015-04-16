@@ -57,7 +57,7 @@ public class DbBackedRunList<P extends DbBackedProject<P, B>, B extends DbBacked
     public List<R> subList(int fromIndex, int toIndex) {
         List<R> r = new LinkedList<R>();
         Iterator<R> itr = iterator();
-        Iterators.skip(itr, fromIndex);
+        Iterators.advance(itr, fromIndex);
         for (int i = toIndex - fromIndex; i > 0; i--) {
             if (itr.hasNext()) {
                 r.add(itr.next());
