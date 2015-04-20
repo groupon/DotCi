@@ -23,7 +23,7 @@
     "autoprefixer-loader": "^1.1.0",
     "babel": "^5.0.0",
     "babel-core": "latest",
-    "babel-eslint": "^2.0.2",
+    "babel-eslint": "^3.0.1",
     "babel-loader": "latest",
     "chai": "latest",
     "css-loader": "^0.9.1",
