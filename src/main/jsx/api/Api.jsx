@@ -30,7 +30,9 @@ export function cancelBuild(url){
   return qwest.post(`${window.rootURL}/${url}`)
 }
 export function buildLog(buildNumber){
-  return qwest.get(`${_jobUrl()}/${buildNumber}/consoleText`);
+  return qwest.get(`${_jobUrl()}/${buildNumber}/logTail`).catch((error,url)=> {
+    console.log(error)
+  });
 }
 export function build(buildNumber){
   return _get(`${_jobApiUrl()}/build/${buildNumber}`,{tree:'*,commit[*]'});
@@ -62,6 +64,6 @@ function _jobApiUrl() {
 }
 function _get(url, params){
   let fetchUrl = params?`${url}?${stringify(params)}`: url;
-  return qwest.get(fetchUrl,{responseType: 'json',withCredentials: true});
+  return qwest.get(fetchUrl);
 }
 

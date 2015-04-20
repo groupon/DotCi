@@ -23,15 +23,18 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
+import com.google.common.base.Joiner;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.WorkspaceFileExporter;
 import com.groupon.jenkins.git.GitBranch;
 import com.groupon.jenkins.github.DeployKeyPair;
+import com.groupon.jenkins.util.JsonResponse;
 import com.mongodb.DBObject;
 import hudson.EnvVars;
 import hudson.Launcher;
 import hudson.Util;
+import hudson.console.PlainTextConsoleOutputStream;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Build;
@@ -46,6 +49,7 @@ import hudson.scm.ChangeLogSet;
 import hudson.scm.ChangeLogSet.Entry;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Calendar;
 import java.util.Date;
@@ -54,14 +58,21 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+
+import hudson.util.FlushProofOutputStream;
 import jenkins.model.Jenkins;
+import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.PostLoad;
 import org.mongodb.morphia.annotations.PrePersist;
 import org.springframework.util.ReflectionUtils;
+
+import javax.servlet.ServletException;
 
 @Entity("run")
 public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> extends Build<P, B> {
@@ -335,5 +346,26 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
     }
 
     public abstract String getSha();
+
+    public void doLogTail(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+        rsp.setContentType("text/plain;charset=UTF-8");
+        Joiner joiner = Joiner.on("\n");
+        PlainTextConsoleOutputStream out = new PlainTextConsoleOutputStream( new FlushProofOutputStream(rsp.getCompressedOutputStream(req)));
+        try{
+            out.write(joiner.join(getLog(5000)).getBytes());
+        } catch (IOException e) {
+            // see comment in writeLogTo() method
+            InputStream input = getLogInputStream();
+            try {
+                IOUtils.copy(input, out);
+            } finally {
+                IOUtils.closeQuietly(input);
+            }
+        } finally {
+            IOUtils.closeQuietly(out);
+        }
+    }
+
+
 
 }

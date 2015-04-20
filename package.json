@@ -17,7 +17,7 @@
     "ramda": "^0.13.0",
     "react": "0.13.1",
     "react-proxy-loader": "^0.3.1",
-    "react-router": "^0.13.0",
+    "react-router": "^0.13.0"
   },
   "devDependencies": {
     "autoprefixer-loader": "^1.1.0",
