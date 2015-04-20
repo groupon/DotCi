@@ -21,16 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-import fetch_polyfill from 'whatwg-fetch';
+import qwest from 'qwest';
 import {stringify} from 'qs';
 export function recentProjects(){
   return _get(window.rootURL + '/recentProjects/');
 }
 export function cancelBuild(url){
-  return fetch(`${window.rootURL}/${url}`,{method:'post'})
+  return qwest.post(`${window.rootURL}/${url}`)
 }
 export function buildLog(buildNumber){
-  return fetch(`${_jobUrl()}/${buildNumber}/consoleText`).then(response => response.text()); 
+  return qwest.get(`${_jobUrl()}/${buildNumber}/consoleText`);
 }
 export function build(buildNumber){
   return _get(`${_jobApiUrl()}/build/${buildNumber}`,{tree:'*,commit[*]'});
@@ -39,15 +39,15 @@ export function job(tree, branchTab){
   return _get(_jobApiUrl()+"/info/",{tree,branchTab});
 }
 export async function deleteCurrentProject(){
-  const rsp = await fetch(window.location.pathname.replace('newUi','')+"/doDeleteAjax",{method: 'post' });
+  const rsp = await qwest.post(window.location.pathname.replace('newUi','')+"/doDeleteAjax");
   window.location = rsp.headers.get('location');
 }
 
 export function removeBranchTab(tabRegex){
-  fetch( `${_jobUrl()}/removeBranchTab?tabRegex=`+tabRegex,{method: 'post'});
+  qwest.post( `${_jobUrl()}/removeBranchTab?tabRegex=`+tabRegex);
 }
 export function addBranchTab(tabRegex){
-  fetch(`${_jobUrl()}/addBranchTab?tabRegex=`+tabRegex,{method: 'post'});
+  qwest.post(`${_jobUrl()}/addBranchTab?tabRegex=`+tabRegex);
 }
 
 export function fetchBuildHistory(tab) {
@@ -62,6 +62,6 @@ function _jobApiUrl() {
 }
 function _get(url, params){
   let fetchUrl = params?`${url}?${stringify(params)}`: url;
-  return fetch(fetchUrl).then(response=>response.json());
+  return qwest.get(fetchUrl,{responseType: 'json',withCredentials: true});
 }
 
