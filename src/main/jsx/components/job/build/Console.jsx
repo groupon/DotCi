@@ -33,8 +33,8 @@ export default React.createClass({
     </div>
   },
   _onLineSelect(event){
-    event.stopPropagation();
     if(event.target.tagName == 'A'){
+      event.stopPropagation();
       const lineId = event.currentTarget.getAttribute('id');
       Router.HashLocation.push(lineId);
     }

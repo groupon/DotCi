@@ -9,7 +9,7 @@ var findById = function(component,id){
 }
 
 describe('Console', ()=> {
-  it('should not fold if clicked on a line',()=>{
+  it('should  fold if clicked on the arrow',()=>{
     const console=TestUtils.renderIntoDocument(<Console log={Immutable.fromJS(["$1","1.1","1.2", "$2","2.1","2.2"])}/>);
 
     const line4Node =findById(console,'L4');
@@ -19,7 +19,7 @@ describe('Console', ()=> {
 
     TestUtils.Simulate.click(line4Node);
 
-    assert.isTrue(parentDiv.classList.contains('open'));
+    assert.isTrue(parentDiv.classList.contains('closed'));
   })
 });
 
