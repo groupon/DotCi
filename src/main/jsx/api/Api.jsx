@@ -57,7 +57,7 @@ function _jobUrl(){
   return jobUrl;
 }
 function _jobApiUrl() {
-  const url =  _jobUrl()+ 'json';
+  const url =  _jobUrl()+ 'appData';
   return url;
 }
 function _get(url, params){

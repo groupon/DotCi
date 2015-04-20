@@ -330,7 +330,7 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         save();
     }
 
-    public DynamicProjectApi getJson() throws IOException {
+    public DynamicProjectApi getAppData() throws IOException {
         return new DynamicProjectApi(this);
     }
 
