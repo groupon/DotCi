@@ -1,25 +1,35 @@
-Docker builds expect a  `.ci.yml` in the root of the repository in the following format.
+Docker builds in DotCi require Docker Compose  https://docs.docker.com/compose/
 
-```yaml
-image: ubuntu #name of image to run the build against
-run_params: "-e PASSWORD=moew"  
-command:
-  - mvn setup
-  - mvn test
-links: #links to parent image using docker links
-  - image: redis
-    name: content-uat4 #optional; defaults to image name
-    run_params: "-v `pwd`:/content" #optional run params
-    links: # Links to parent container; links can be nested indefinitely
-      - image: mysql
+To use this build type, select the "Docker Compose" build type in your project's configure page, as documented in the [Usage](Usage.md#override-default-build-type) section.
 
-```
+.ci.yml has three main sections
 
-### Running builds in parallel
+##Run
+*  Run a container defined with the name 'test' in docker-compose.yml with the default `CMD` as defined in the `Dockerfile`
 
-`command` key in `.ci.yml` can be a map
-```yaml
-command:
-    unit: mvn unit
-    integration: mvn integration
-```
+   ```
+    run:
+     test:
+    ```
+*  Run a container from docker-compose.yml with command defined in .ci.yml
+
+   ```
+    run:
+      test: 'npm test'
+    ```
+* Run multiple services/tests in parallel
+
+     ```
+    run:
+      test: 'rspec'
+      cuke_test: 'cucumber'
+      integration:
+    ```
+   This will launch 3 test services in parallel
+
+# Plugins
+  Run plugins defined in .ci.yml
+
+# Notifications
+  Run notifications defined in .ci.yml
+
