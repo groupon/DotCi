@@ -54,7 +54,8 @@ public class ArtifactsPluginAdapter extends DotCiPluginAdapter {
             Thread.currentThread().interrupt();
             e.printStackTrace(listener.getLogger());
         } catch (IOException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
+            e.printStackTrace(listener.getLogger());
         }
         return false;
     }
