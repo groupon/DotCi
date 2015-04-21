@@ -26,7 +26,7 @@ package com.groupon.jenkins;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.groupon.jenkins.buildtype.install_packages.InstallPackagesBuild;
+import com.groupon.jenkins.buildtype.dockercompose.DockerComposeBuild;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
@@ -154,7 +154,7 @@ public class SetupConfig extends GlobalConfiguration {
 
     public String getDefaultBuildType() {
         if (StringUtils.isEmpty(defaultBuildType)) {
-            InstallPackagesBuild type = new InstallPackagesBuild();
+            DockerComposeBuild type = new DockerComposeBuild();
             return type.getId();
         }
         return defaultBuildType;

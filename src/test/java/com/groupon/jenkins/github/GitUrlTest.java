@@ -56,7 +56,7 @@ public class GitUrlTest {
     @Test
     public void should_convert_http_url_into_git_url() {
         String projectUrl = new GitUrl("https://github.com/groupon/DotCi").getGitUrl();
-        assertEquals("git://github.com/groupon/DotCi.git", projectUrl);
+        assertEquals("git@github.com:groupon/DotCi.git", projectUrl);
     }
     @Test
     public void should_convert_git_url_into_https_url() {

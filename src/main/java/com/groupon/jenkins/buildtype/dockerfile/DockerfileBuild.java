@@ -35,7 +35,7 @@ public class DockerfileBuild extends DockerBuild{
 
     @Override
     public String getDescription() {
-        return "Dockerfile Build";
+        return "Dockerfile Build (Deprecated, use Docker Compose Build)";
     }
 
 

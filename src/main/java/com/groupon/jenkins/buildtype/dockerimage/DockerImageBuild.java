@@ -35,7 +35,7 @@ public class DockerImageBuild extends DockerBuild  {
 
     @Override
     public String getDescription() {
-        return "Docker Build";
+        return "Docker Build (Deperecated, use Docker Compose Build)";
     }
 
 

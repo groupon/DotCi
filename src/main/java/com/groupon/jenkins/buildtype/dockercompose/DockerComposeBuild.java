@@ -29,7 +29,7 @@ import java.util.Map;
 import static java.lang.String.format;
 
 @Extension
-public class DockerComposeBuildType extends BuildType implements SubBuildRunner {
+public class DockerComposeBuild extends BuildType implements SubBuildRunner {
     private BuildConfiguration buildConfiguration;
 
     @Override
@@ -63,15 +63,28 @@ public class DockerComposeBuildType extends BuildType implements SubBuildRunner 
     }
     public ShellCommands getCheckoutCommands(Map<String, Object> dotCiEnvVars) {
         GitUrl gitRepoUrl = new GitUrl((String) dotCiEnvVars.get("GIT_URL"));
-        String gitUrl = gitRepoUrl.getHttpsUrl();
+        boolean isPrivateRepo = Boolean.parseBoolean((String) dotCiEnvVars.get("DOTCI_IS_PRIVATE_REPO"));
+        String gitUrl = gitRepoUrl.getGitUrl();
         ShellCommands shellCommands = new ShellCommands();
-        shellCommands.add("find . -delete");
+        shellCommands.add("find . ! -path \"./deploykey_rsa.pub\" ! -path \"./deploykey_rsa\" -delete");
+        shellCommands.add("git init");
+        shellCommands.add(format("git remote add origin %s",gitUrl));
+
         if(dotCiEnvVars.get("DOTCI_PULL_REQUEST") != null){
-            shellCommands.add(format("git clone %s %s",gitUrl,"."));
-            shellCommands.add(format("git fetch origin \"+refs/pull/%s/merge:\"", dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
+            if(isPrivateRepo){
+
+                shellCommands.add(format("ssh-agent bash -c \"ssh-add -D && ssh-add \\%s/deploykey_rsa && git fetch origin '+refs/pull/%s/merge:' \"",dotCiEnvVars.get("WORKSPACE"), dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
+            }else {
+                shellCommands.add(format("git fetch origin \"+refs/pull/%s/merge:\"", dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
+            }
             shellCommands.add("git reset --hard FETCH_HEAD");
         }else {
-            shellCommands.add(format("git clone --branch=%s %s %s", dotCiEnvVars.get("DOTCI_BRANCH"), gitUrl,"."));
+            if(isPrivateRepo){
+
+                shellCommands.add(format("ssh-agent bash -c \"ssh-add -D && ssh-add \\%s/deploykey_rsa && git fetch origin %s \"",dotCiEnvVars.get("WORKSPACE"), dotCiEnvVars.get("DOTCI_BRANCH")));
+            }else{
+               shellCommands.add(format("git fetch origin %s",dotCiEnvVars.get("DOTCI_BRANCH")));
+            }
             shellCommands.add(format("git reset --hard  %s", dotCiEnvVars.get("SHA")));
         }
         return shellCommands;

@@ -64,7 +64,7 @@ public class GitUrl {
     }
 
     public String getGitUrl(){
-       return String.format("git://%s/%s/%s.git",domain,orgName,name);
+       return String.format("git@%s:%s/%s.git",domain,orgName,name);
     }
 
 
