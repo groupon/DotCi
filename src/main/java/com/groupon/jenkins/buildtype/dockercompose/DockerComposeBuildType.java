@@ -89,10 +89,13 @@ public class DockerComposeBuildType extends BuildType implements SubBuildRunner 
         }
     }
 
-    private Result runMultiConfigbuildRunner(DynamicBuild dynamicBuild, final BuildConfiguration buildConfiguration, final BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
+    private Result runMultiConfigbuildRunner(final DynamicBuild dynamicBuild, final BuildConfiguration buildConfiguration, final BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
         SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, this, new SubBuildScheduler.SubBuildFinishListener() {
             @Override
             public void runFinished(DynamicSubBuild subBuild) throws IOException {
+                for (DotCiPluginAdapter plugin : buildConfiguration.getPlugins()) {
+                    plugin.runFinished(subBuild, dynamicBuild, listener);
+                }
             }
         });
 
