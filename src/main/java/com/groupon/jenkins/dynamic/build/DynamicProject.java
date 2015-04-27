@@ -109,6 +109,10 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         return DESCRIPTOR;
     }
 
+    public boolean shouldBuildTags() {
+        return getProperty(BuildTagsProperty.class)!=null && getProperty(BuildTagsProperty.class).isShouldBuildTags();
+    }
+
     public static final class DescriptorImpl extends AbstractProjectDescriptor {
         /**
          * We are hiding the "DotCI" project from "/newJob" page, because we'll

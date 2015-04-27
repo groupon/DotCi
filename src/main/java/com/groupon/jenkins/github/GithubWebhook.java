@@ -25,6 +25,7 @@ package com.groupon.jenkins.github;
 
 import com.google.common.io.CharStreams;
 import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import hudson.Extension;
 import hudson.model.AbstractProject;
@@ -78,10 +79,10 @@ public class GithubWebhook implements UnprotectedRootAction {
         SecurityContextHolder.getContext().setAuthentication(ACL.SYSTEM);
         final Payload payload = makePayload(payloadData);
         LOGGER.info("Received POST by " + payload.getPusher());
-        if (payload.needsBuild()) {
-            LOGGER.info("Received kicking off build for " + payload.getProjectUrl());
-            for (final AbstractProject<?, ?> job : makeDynamicProjectRepo().getJobsFor(payload.getProjectUrl())) {
+        LOGGER.info("Received kicking off build for " + payload.getProjectUrl());
+        for (final DynamicProject job : makeDynamicProjectRepo().getJobsFor(payload.getProjectUrl())) {
 
+            if (payload.needsBuild(job.shouldBuildTags())) {
                 LOGGER.info("starting job" + job.getName());
                 queue.execute(new Runnable() {
                     @Override
@@ -89,7 +90,6 @@ public class GithubWebhook implements UnprotectedRootAction {
                         job.scheduleBuild(0, payload.getCause(), new NoDuplicatesParameterAction(getParametersValues(job, payload.getBranch())));
                     }
                 });
-
             }
         }
     }
@@ -101,7 +101,7 @@ public class GithubWebhook implements UnprotectedRootAction {
         {
             if("BRANCH".equals(paramDefinition.getName())){
                 StringParameterValue branchParam = new StringParameterValue("BRANCH", branch);
-               defValues.add(branchParam);
+                defValues.add(branchParam);
             }else{
                 ParameterValue defaultValue  = paramDefinition.getDefaultParameterValue();
                 if(defaultValue != null)

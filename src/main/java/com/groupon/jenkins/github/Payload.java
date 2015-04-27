@@ -74,12 +74,12 @@ public class Payload {
         if (isPullRequest()) {
             return "Pull Request: " + getPullRequestNumber();
         }
-        return payloadJson.getString("ref").replaceAll("refs/heads/", "");
+        return payloadJson.getString("ref").replaceAll("refs/", "").replaceAll("heads/","");
     }
 
-    public boolean needsBuild() {
+    public boolean needsBuild(boolean shouldBuildTags) {
         if (payloadJson.has("ref") && payloadJson.getString("ref").startsWith("refs/tags/")) {
-            return false;
+            return shouldBuildTags;
         }
         if (isPullRequest()) {
             return !isPullRequestClosed() && !isPullRequestFromWithinSameRepo();
@@ -96,11 +96,6 @@ public class Payload {
         String pullRequestRepoUrl = getPullRequest().getJSONObject("base").getJSONObject("repo").getString("ssh_url");
         return headRepoUrl.equals(pullRequestRepoUrl);
     }
-
-//    public String getBuildDescription() {
-//        String shortSha = getSha().substring(0, 7);
-//        return String.format("<b>%s</b> (<a href=\"%s\">%s...</a>) <br> %s", getBranchDescription(), getDiffUrl(), shortSha, getPusher());
-//    }
 
     public String getBranchDescription() {
         if (isPullRequest()) {
