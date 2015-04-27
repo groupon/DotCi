@@ -282,7 +282,11 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
 
     public Map<String, String> getDotCiEnvVars(EnvVars jenkinsEnvVars) {
         Map<String, String> envVars = new HashMap<String, String>();
-        envVars.put("DOTCI_BRANCH", jenkinsEnvVars.get("BRANCH"));
+        String branch = jenkinsEnvVars.get("BRANCH");
+        envVars.put("DOTCI_BRANCH", branch);
+        if(branch.startsWith("tags/")){
+            envVars.put("DOTCI_TAG", branch.replace("tags/",""));
+        }
         envVars.put("DOTCI", "true");
         envVars.put("CI", "true");
         if (getCause() != null) {
