@@ -108,6 +108,9 @@ THE SOFTWARE.
                 </executions>
                 <configuration>
                     <executable>${npm-executable}</executable>
+                    <environmentVariables>
+                      <NODE_ENV>production</NODE_ENV>
+                    </environmentVariables>
                     <arguments>
                         <argument>run</argument>
                         <argument>package</argument>

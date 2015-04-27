@@ -63,6 +63,7 @@ return {
     },
     devtool: config.debug ? '#inline-source-map' : false,
     plugins: config.debug ? [] : [
+            new webpack.EnvironmentPlugin('NODE_EN'),
             new webpack.optimize.DedupePlugin(),
             new webpack.optimize.UglifyJsPlugin(),
             new webpack.optimize.AggressiveMergingPlugin()
