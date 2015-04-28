@@ -27,6 +27,7 @@
     "babel-loader": "latest",
     "chai": "latest",
     "css-loader": "^0.9.1",
+    "cssnext-loader": "^1.0.1",
     "eslint": "^0.18.0",
     "extract-text-webpack-plugin": "^0.3.8",
     "file-loader": "^0.8.1",

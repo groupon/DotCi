@@ -22,8 +22,7 @@
  * THE SOFTWARE.
  */
 
-@import '~hint.css/hint.base.min.css';
-@import '~lesshat/build/lesshat.less';
+@import 'hint.css/hint.base.min.css';
 @import "./css/reset.css";
 @import "./css/site.css";
 @import "./css/button.css";
@@ -43,11 +42,11 @@ background: white !important;
 }
 html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; }
 .app{
-  .display(flex);
-  .flex-direction(row);
+   display: flex; 
+   flex-direction: row;
 }
 .app > :nth-child(1){
-  flex: 1 1 auto; //grow when space available, shrink otherwise
+  flex: 1 1 auto; /*grow when space available, shrink otherwise*/
   margin-right: 10px;
   margin-left: 10px;
 }

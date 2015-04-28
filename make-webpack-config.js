@@ -22,21 +22,11 @@
  * THE SOFTWARE.
  */
 var webpack = require('webpack');
-var AUTOPREFIXER_LOADER = 'autoprefixer-loader?{browsers:[' +
-    '"Android 2.3", "Android >= 4", "Chrome >= 20", "Firefox >= 24", ' +
-    '"Explorer >= 8", "iOS >= 6", "Opera >= 12", "Safari >= 6"]}';
 module.exports = function(config){
 return {
     entry: config.entry,
     output: config.output,
     module: {
-        // preLoaders: [
-        //     {
-        //         test: /\.jsx?$/,
-        //         exclude: /node_modules/,
-        //         loader: 'jshint'
-        //     }
-        // ],
         loaders: [
             {
                   test: /\.(json)$/,
@@ -48,11 +38,11 @@ return {
             },
             {
                 test: /\.less$/,
-                loader: 'style-loader!css-loader!' + AUTOPREFIXER_LOADER + '!less-loader'
+                loader: 'style-loader!css-loader!less-loader'
             },
             {
                 test: /\.css$/,
-                loader: 'style-loader!css-loader!' + AUTOPREFIXER_LOADER
+                loader: 'style-loader!css-loader!cssnext-loader' 
             },
             {
                 test: /\.jsx?$/,
@@ -63,7 +53,7 @@ return {
     },
     devtool: config.debug ? '#inline-source-map' : false,
     plugins: config.debug ? [] : [
-            new webpack.EnvironmentPlugin('NODE_EN'),
+            new webpack.EnvironmentPlugin('NODE_ENV'),
             new webpack.optimize.DedupePlugin(),
             new webpack.optimize.UglifyJsPlugin(),
             new webpack.optimize.AggressiveMergingPlugin()
