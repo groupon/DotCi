@@ -31,7 +31,7 @@
         </j:invokeStatic>
         ${h.initPageVariables(context)}
         <title>${it.displayName}${not empty it.parent.fullDisplayName?' ['+it.parent.fullDisplayName+']':''}</title>
-        <link rel="shortcut icon" href="${resURL}/favicon.ico" type="image/vnd.microsoft.icon" />
+        <link rel="icon" href="${resURL}/plugin/DotCi/favicons/defualt.ico" type="image/vnd.microsoft.icon" />
 
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet"/>
         <link rel="stylesheet" href="${resURL}/plugin/DotCi/octicons/octicons.css"/>

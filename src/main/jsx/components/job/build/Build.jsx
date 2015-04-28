@@ -1,20 +1,26 @@
 import React from "react";
 import Console from './Console.jsx';
 import BuildRow from '../BuildRow.jsx'
+import FaviconHelper from './../../mixins/FaviconHelper.jsx';
 require('./build.less');
 export default  React.createClass({
+  mixins: [FaviconHelper],
   componentDidMount(){
     this._fetchBuild()
   },
   componentDidUpdate(){
-    if( this.props.build && this.props.build.get('result') == 'IN_PROGRESS' ){
+    if( this.props.build && this._getBuildResult() == 'IN_PROGRESS' ){
       this._setRefreshTimer();
     }else{
       this._clearRefreshTimer();
     }
+    this.setFavicon(this._getBuildResult());
   },
   componentWillUnmount: function() {
     this._clearRefreshTimer(); 
+  },
+  _getBuildResult(){
+    return this.props.build.get('result')
   },
   _setRefreshTimer(){
     if(!this.refreshTimer){
