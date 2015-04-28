@@ -23,20 +23,11 @@
  */
 @import '~lesshat/build/lesshat.less';
 .activeWidget{
-  margin-top: 10px;
-  margin-right: 10px;
-  margin-left: 10px;
-  width: 100%;
-  // flex: 1 1 auto; //grow when space available, shrink otherwise
+  margin-top: 1rem;
+  flex: 1 1 auto; //grow when space available, shrink otherwise
 }
 .widgets{
   .display(flex);
-  >.menu{
-    min-width: 10%;
-    max-width: 10%;
-    padding-top: 20px;
-    border: none !important;
-  }
 }
 .recent-projects{
    min-width: 15%;

@@ -22,18 +22,34 @@
  * THE SOFTWARE.
  */
 
-#github-link{
-  color: grey;
-}
-.fa-trash-o{
- color:red;
-}
-.job-header{
-  padding-bottom: 5px;
-}
-.job-header a:first-child{
-  padding: 15px;
-}
-.job-header div:last-child{
-  float: right;
-}
+import React from "react";
+import IconLink from '../lib/IconLink.jsx';
+export default React.createClass({
+  render(){
+    return(
+      <div className={"ui simple dropdown item"+(this._hasConfigurePermission()?"":" disabled")}>
+        <i className="dropdown icon"></i>
+        <i className="icon fa fa-cog"/>  Settings
+        <div className="fa-stack menu">
+          <a  href="configure" className="ui labeled item"><i className="icon fa fa-wrench "/> Configure</a>
+          <a  href="#" onClick={this._deleteJob} className="ui labeled item"><i className="icon fa fa-trash-o "/>Delete</a>
+        </div>
+      </div>
+    ); },
+    _hasBuildPermission(){
+      return this._getPermissions()? this._getPermissions().build :false;
+    },
+    _hasConfigurePermission(){
+      return this._getPermissions()? this._getPermissions().configure :false;
+    },
+    _deleteJob(){
+      let actions = this.props.flux.getActions('app');
+      actions.deleteProject();
+    },
+    _getPermissions(){
+      return this._get('permissions').toObject();
+    },
+    _get(key){
+      return this.props.job.get(key);
+    }
+});

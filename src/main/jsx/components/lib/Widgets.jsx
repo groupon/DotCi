@@ -25,26 +25,24 @@ import React from 'react';
 require('./widgets.less');
 import filter from 'ramda/src/filter';
 import Router from 'react-router';
-import RecentProjects from './../recent_projects/RecentProjects.jsx'
+import Header from './../job/SettingsMenu.jsx';
 export default React.createClass({
   render(){
     const activeWidget = this._activeWidget();
-    const recentProjects =activeWidget.props.hideRecentProjects? <span/>: <RecentProjects className="recent-projects" flux={this.props.flux} /> ;
+    const header = <Header job={this.props.job} />
     var navs = filter(widget => !widget.props.tabVisibleWhenActive || this._isWidgetSelected(widget), this.props.children).map((widget,index) => this._tabItem(widget,index,widget===activeWidget));
     return(
-      <div>
-        {this.props.header}
-        <div className="widgets">
-          <div className="ui secondary vertical pointing menu">
+      <div className="widgets">
+        <div ref="activeWidget" className="activeWidget">
+          <div className="ui secondary pointing menu">
             {navs}
+            <div className="right menu">
+              {header}
+            </div>
           </div>
-          <div ref="activeWidget" className="activeWidget">
-            {activeWidget}
-          </div>
-          {recentProjects}
+          {activeWidget}
         </div>
       </div>
-
     );
   },
   _isWidgetSelected(widget){

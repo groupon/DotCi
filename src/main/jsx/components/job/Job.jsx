@@ -27,7 +27,6 @@ import BuildHistory from './BuildHistory.jsx';
 //Lazy load BuildMetrics; not used frequently
 import BuildMetrics from 'react-proxy!./BuildMetrics.jsx';
 import Widgets from '../lib/Widgets.jsx';
-import Header from './Header.jsx';
 import Router from 'react-router';
 import Build from './build/Build.jsx';
 var RouteHandler = Router.RouteHandler;
@@ -40,11 +39,10 @@ var JobWidgets = React.createClass({
   render(){
     let widgetParam = this.context.router.getCurrentParams().widget;
     let activeWidget = widgetParam? widgetParam:"buildHistory";
-    const header = <Header job={this.props.job}/>
-    return  <Widgets activeWidget={activeWidget} header ={header}>
+    return  <Widgets activeWidget={activeWidget} job={this.props.job}>
       <BuildHistory icon="fa fa-history" url="buildHistory" name="Build History" tabs={this._get('buildHistoryTabs')} builds={this._get('builds')} flux={this.props.flux}/>
       <BuildMetrics icon="fa fa-bar-chart" url="buildMetrics" name="Build Metrics" buildTimes={this._get('buildTimes')} flux={this.props.flux} />
-      <Build icon="fa fa-file" url={this._isNumeric(activeWidget)? activeWidget: ''} name={"Build - " + widgetParam} build={this._get('build')} flux={this.props.flux} tabVisibleWhenActive  hideRecentProjects/>
+      <Build icon="fa fa-file" url={this._isNumeric(activeWidget)? activeWidget: ''} name={"Build - " + widgetParam} build={this._get('build')} flux={this.props.flux} tabVisibleWhenActive/>
     </Widgets>;
   },
   _isNumeric(n) {

@@ -33,7 +33,11 @@ var RouteHandler = Router.RouteHandler;
 var Route = Router.Route;
 class  App extends  React.Component {
   render(){
-    return <RouteHandler   {...this.props}/>
+    const flux = this.props.flux;  
+    return    <div className="app" >   
+      <RecentProjects flux={flux} />   
+      <RouteHandler   {...this.props}/>    
+    </div>;
   }
 };
 async function performRouteHandlerStaticMethod(routes, methodName, ...args) {
