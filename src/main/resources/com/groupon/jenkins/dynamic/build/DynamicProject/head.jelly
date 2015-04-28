@@ -37,7 +37,7 @@
         <link rel="stylesheet" href="${resURL}/plugin/DotCi/octicons/octicons.css"/>
         <script>
             rootURL = '${rootURL}'
-            resURL= '${resURL}/plugin/DotCi/js/'
+            resURL= '${resURL}/plugin/DotCi/'
             DEVELOPMENT_MODE = '${developmentMode}'
         </script>
         <j:if test='${developmentMode}'>
