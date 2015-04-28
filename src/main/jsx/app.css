@@ -42,17 +42,3 @@ body{
 background: white !important;
 }
 html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; }
-.app{
-   display: flex; 
-   flex-direction: row;
-}
-.app > :nth-child(1){
-  flex: 1 1 auto; /*grow when space available, shrink otherwise*/
-  margin-right: 10px;
-  margin-left: 10px;
-}
-.app > :nth-child(2){
-   min-width: 15%;
-   max-width: 15%;
-   border-left: 2px solid #f2f2f2;
-}

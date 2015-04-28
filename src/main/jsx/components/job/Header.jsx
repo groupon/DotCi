@@ -24,7 +24,7 @@
 
 import React from "react";
 import IconLink from '../lib/IconLink.jsx';
-require('./header.less');
+require('./header.css');
 export default React.createClass({
   render(){
     return(

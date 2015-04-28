@@ -40,10 +40,11 @@ var JobWidgets = React.createClass({
   render(){
     let widgetParam = this.context.router.getCurrentParams().widget;
     let activeWidget = widgetParam? widgetParam:"buildHistory";
-    return  <Widgets activeWidget={activeWidget}>
+    const header = <Header job={this.props.job}/>
+    return  <Widgets activeWidget={activeWidget} header ={header}>
       <BuildHistory icon="fa fa-history" url="buildHistory" name="Build History" tabs={this._get('buildHistoryTabs')} builds={this._get('builds')} flux={this.props.flux}/>
       <BuildMetrics icon="fa fa-bar-chart" url="buildMetrics" name="Build Metrics" buildTimes={this._get('buildTimes')} flux={this.props.flux} />
-      <Build icon="fa fa-file" url={this._isNumeric(activeWidget)? activeWidget: ''} name={"Build - " + widgetParam} build={this._get('build')} flux={this.props.flux} tabVisibleWhenActive />
+      <Build icon="fa fa-file" url={this._isNumeric(activeWidget)? activeWidget: ''} name={"Build - " + widgetParam} build={this._get('build')} flux={this.props.flux} tabVisibleWhenActive  hideRecentProjects/>
     </Widgets>;
   },
   _isNumeric(n) {
@@ -70,7 +71,6 @@ export default React.createClass({
     return (
       <div className={this.props.className}>
         <FluxComponent connectToStores={['job']} flux={this.props.flux}>
-          <Header />
           <RouteHandler/>
         </FluxComponent>
       </div>

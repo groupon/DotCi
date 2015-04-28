@@ -29,6 +29,7 @@ import contains from 'ramda/src/contains'
 import classNames from 'classnames'; 
 import LocationHashHelper from './../mixins/LocationHashHelper.jsx'
 import Router from 'react-router';
+import Header from './Header.jsx';
 require('./build_history.less');
 
 

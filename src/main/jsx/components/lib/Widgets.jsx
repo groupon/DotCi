@@ -25,17 +25,23 @@ import React from 'react';
 require('./widgets.less');
 import filter from 'ramda/src/filter';
 import Router from 'react-router';
+import RecentProjects from './../recent_projects/RecentProjects.jsx'
 export default React.createClass({
   render(){
     const activeWidget = this._activeWidget();
+    const recentProjects =activeWidget.props.hideRecentProjects? <span/>: <RecentProjects className="recent-projects" flux={this.props.flux} /> ;
     var navs = filter(widget => !widget.props.tabVisibleWhenActive || this._isWidgetSelected(widget), this.props.children).map((widget,index) => this._tabItem(widget,index,widget===activeWidget));
     return(
-      <div className="widgets">
-        <div className="ui secondary vertical pointing menu">
-          {navs}
-        </div>
-        <div ref="activeWidget" className="activeWidget">
-          {activeWidget}
+      <div>
+        {this.props.header}
+        <div className="widgets">
+          <div className="ui secondary vertical pointing menu">
+            {navs}
+          </div>
+          <div ref="activeWidget" className="activeWidget">
+            {activeWidget}
+          </div>
+          {recentProjects}
         </div>
       </div>
 
@@ -53,8 +59,6 @@ export default React.createClass({
     return <Router.Link key={index} data-index={index} className={className} to="job-widgets" params={{widget: widget.props.url}}> 
       <i className={widget.props.icon + " ui icon"}/>{widget.props.name}
     </Router.Link>;
-
-
   }
 });
 
