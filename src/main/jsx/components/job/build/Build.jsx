@@ -17,7 +17,9 @@ export default  React.createClass({
       this._clearRefreshTimer();
       this._webNotifyCompletion();
     }
-    this.setFavicon(this._getBuildResult());
+    if(this.build){
+      this.setFavicon(this._getBuildResult());
+    }
   },
   componentWillUnmount: function() {
     this._clearRefreshTimer(); 
@@ -48,7 +50,7 @@ export default  React.createClass({
     return  this.props.build.get('cancelable')? this._inProgressActions():[this._restartButton()];
   },
   _inProgressActions(){
-    return [this._cancelButton(), this_watchButton()];
+    return [this._cancelButton(), this._watchButton()];
   },
   _watchButton(){
     return this._supportsNotifications()?<ActionButton ref="watchButton" onClick={this._watchBuild} tooltip="Notify when done( web notification)" icon="fa fa-eye"/>: <span/>;
