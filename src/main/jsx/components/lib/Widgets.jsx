@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 import React from 'react';
-require('./widgets.less');
 import filter from 'ramda/src/filter';
 import Router from 'react-router';
 import Header from './../job/SettingsMenu.jsx';
@@ -32,8 +31,8 @@ export default React.createClass({
     const header = <Header job={this.props.job} />
     var navs = filter(widget => !widget.props.tabVisibleWhenActive || this._isWidgetSelected(widget), this.props.children).map((widget,index) => this._tabItem(widget,index,widget===activeWidget));
     return(
-      <div className="widgets">
-        <div ref="activeWidget" className="activeWidget">
+      <div>
+        <div ref="activeWidget">
           <div className="ui secondary pointing menu">
             {navs}
             <div className="right menu">
