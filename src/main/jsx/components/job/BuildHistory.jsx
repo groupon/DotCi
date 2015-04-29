@@ -23,6 +23,7 @@
  */
 
 import React from 'react';
+import IconLink from './../lib/IconLink.jsx';
 import BuildRow from './BuildRow.jsx';
 import Dialog from './../lib/Dialog.jsx';
 import contains from 'ramda/src/contains'
@@ -31,7 +32,6 @@ import LocationHashHelper from './../mixins/LocationHashHelper.jsx'
 import Router from 'react-router';
 import FilterBar from './../FilterBar.jsx';
 require('./build_history.less');
-
 
 var BuildHistoryTable = React.createClass({
   getInitialState: function() {
@@ -130,6 +130,7 @@ export default React.createClass({
   render(){
     return(
       <div id="build-history">
+        <IconLink href="build?delay=0sec" disabled={false} icon="fa fa-rocket"></IconLink>
         <BuildHistoryTabs flux={this.props.flux} tabs={this.props.tabs}/>
         <BuildHistoryTable builds ={this.props.builds}/>
       </div>

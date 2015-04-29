@@ -1,6 +1,7 @@
 import React from "react";
 import Console from './Console.jsx';
 import BuildRow from '../BuildRow.jsx'
+import ActionButton from './../../lib/ActionButton.jsx';
 import FaviconHelper from './../../mixins/FaviconHelper.jsx';
 require('./build.less');
 export default  React.createClass({
@@ -9,18 +10,18 @@ export default  React.createClass({
     this._fetchBuild()
   },
   componentDidUpdate(){
-    if( this.props.build && this._getBuildResult() == 'IN_PROGRESS' ){
+    if(this._getBuildResult() == 'IN_PROGRESS' ){
       this._setRefreshTimer();
+      this.setFavicon(this._getBuildResult());
     }else{
       this._clearRefreshTimer();
     }
-    this.setFavicon(this._getBuildResult());
   },
   componentWillUnmount: function() {
     this._clearRefreshTimer(); 
   },
   _getBuildResult(){
-    return this.props.build.get('result')
+    return this.props.build && this.props.build.get('result')
   },
   _setRefreshTimer(){
     if(!this.refreshTimer){
@@ -42,17 +43,13 @@ export default  React.createClass({
     </div>):<div/>;
   },
   _buildActions(){
-    return this.props.build.get('cancelable')? this._cancelButton():this._restartButton()
+    return this.props.build.get('cancelable')? this._cancelButton():this._restartButton();
   },
   _restartButton(){
-    return <a className="circular ui icon button hint--top"  data-hint="Restart Build"  href="#" onClick={this._restartBuild}>
-      <i className="build-action fa fa-refresh"></i>
-    </a>
+    return <ActionButton onClick={this._restartBuild} tooltip="Restart Build" icon="fa fa-refresh" />;
   },
   _cancelButton(){
-    return <div className="circular ui icon button hint--top" href="#" data-hint="Abort Build" onClick={this._cancelBuild}>
-      <i className="build-action fa fa-times-circle-o"></i>
-    </div>
+    return <ActionButton onClick={this._cancelBuild} tooltip="Cancel Build" icon="fa fa-times-circle-o"/>;
   },
   _cancelBuild(e){
     e.preventDefault();
