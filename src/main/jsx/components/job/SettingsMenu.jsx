@@ -23,7 +23,6 @@
  */
 
 import React from "react";
-import IconLink from '../lib/IconLink.jsx';
 export default React.createClass({
   render(){
     return(

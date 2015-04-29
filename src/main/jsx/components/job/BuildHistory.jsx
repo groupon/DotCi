@@ -23,7 +23,7 @@
  */
 
 import React from 'react';
-import IconLink from './../lib/IconLink.jsx';
+import ActionButton from './../lib/ActionButton.jsx';
 import BuildRow from './BuildRow.jsx';
 import Dialog from './../lib/Dialog.jsx';
 import contains from 'ramda/src/contains'
@@ -130,7 +130,7 @@ export default React.createClass({
   render(){
     return(
       <div id="build-history">
-        <IconLink href="build?delay=0sec" disabled={false} icon="fa fa-rocket"></IconLink>
+        <ActionButton  tooltip="Build Now" href="build?delay0sec" icon="fa fa-rocket" primary/>
         <BuildHistoryTabs flux={this.props.flux} tabs={this.props.tabs}/>
         <BuildHistoryTable builds ={this.props.builds}/>
       </div>
