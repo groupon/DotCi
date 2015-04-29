@@ -29,6 +29,7 @@ import contains from 'ramda/src/contains'
 import classNames from 'classnames'; 
 import LocationHashHelper from './../mixins/LocationHashHelper.jsx'
 import Router from 'react-router';
+import FilterBar from './../FilterBar.jsx';
 require('./build_history.less');
 
 
@@ -40,7 +41,7 @@ var BuildHistoryTable = React.createClass({
     let builds = this.props.builds.filter(this._applyFilter).map((build) => <BuildRow key={build.get('number')} build={build}/>);
     return(
       <div className="builds">
-        <FilterBar onChange={this._onFilterChange}/> 
+        <FilterBar id="filter-bar" onChange={this._onFilterChange}/> 
         {builds.toArray()}
       </div>
     );
@@ -125,17 +126,6 @@ var BuildHistoryTabs = React.createClass({
   }
 });
 
-const FilterBar = React.createClass({
-  render(){
-    return (<div id="filter-bar" className=" ui icon input">
-      <input type="text" onChange={this._onChange} placeholder="Filter..."/>
-      <i className="fa fa-filter icon"></i>
-    </div>);
-  },
-  _onChange(event){
-    this.props.onChange(event.target.value);
-  }
-});
 export default React.createClass({
   render(){
     return(
