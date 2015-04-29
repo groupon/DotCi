@@ -41,7 +41,7 @@ var BuildHistoryTable = React.createClass({
     return(
       <div className="builds">
         <FilterBar onChange={this._onFilterChange}/> 
-        {builds}
+        {builds.toArray()}
       </div>
     );
   },
@@ -68,7 +68,7 @@ var BuildHistoryTabs = React.createClass({
   },
   render()  {
     return (<div className="ui  buttons">
-      {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab)))}
+      {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab))).toArray()}
       <a className="ui icon button" href="#" onClick={this._addTab} > <i className="icon fa fa-plus-circle"></i></a>
       <Dialog ref="addDialog" title="Add new brach tab" onSave={this._onTabSave} >
         <div className="ui labeled input">
