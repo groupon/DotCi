@@ -17,9 +17,7 @@ export default  React.createClass({
       this._clearRefreshTimer();
       this._webNotifyCompletion();
     }
-    if(this.build){
-      this.setFavicon(this._getBuildResult());
-    }
+    this.setFavicon(this._getBuildResult());
   },
   componentWillUnmount: function() {
     this._clearRefreshTimer(); 
