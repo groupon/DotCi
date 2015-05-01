@@ -58,12 +58,7 @@ export default React.createClass({
     Routes:[ <DefaultRoute key="defaultRoute" handler= {JobWidgets} />,
       <Route name="job-widgets" key="job-widgets" path=":widget" handler={JobWidgets}/>,
       <Router.Redirect key="trailingRedirect" from=":widget/" to="job-widgets" />
-    ] ,
-    routerWillRun: async function({flux}){
-      const actions =flux.getActions('app');
-      const selectedTab = Router.HashLocation.getCurrentPath();
-      return await actions.getJobInfoFromServer("buildHistoryTabs,fullName,githubUrl,permissions,builds[*,commit[*]]",selectedTab? selectedTab:'master');
-    }
+    ]
   },
   render(){
     return (

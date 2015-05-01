@@ -31,7 +31,13 @@ import Router from 'react-router';
 require('./app.css');
 var RouteHandler = Router.RouteHandler;
 var Route = Router.Route;
-class  App extends  React.Component {
+const App = React.createClass( {
+  statics:{
+    routerWillRun({flux}){
+      const actions =flux.getActions('app');
+      return actions.getJobInfoFromServer("fullName,githubUrl,permissions");
+    }
+  },
   render(){
     const flux = this.props.flux;  
     return    <div className="app" >   
@@ -39,22 +45,14 @@ class  App extends  React.Component {
       <RouteHandler   {...this.props}/>    
     </div>;
   }
-};
+});
+
 async function performRouteHandlerStaticMethod(routes, methodName, ...args) {
   return Promise.all(routes
                      .map(route => route.handler[methodName])
                      .filter(method => typeof method === 'function')
                      .map(method => method(...args))
                     );
-}
-function fetchData(routes, params) {
-  var data = {};
-  return Promise.all(routes
-                     .filter(route => route.handler.fetchData)
-                     .map(route => {
-                       return route.handler.fetchData(params).then(d => {data[route.name] = d;});
-                     })
-                    ).then(() => data);
 }
 
 window.onload = function(){

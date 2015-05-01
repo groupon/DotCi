@@ -31,6 +31,7 @@ import classNames from 'classnames';
 import LocationHashHelper from './../mixins/LocationHashHelper.jsx'
 import Router from 'react-router';
 import FilterBar from './../FilterBar.jsx';
+import LoadingHelper from './../mixins/LoadingHelper.jsx';
 require('./build_history.less');
 
 var BuildHistoryTable = React.createClass({
@@ -127,13 +128,19 @@ var BuildHistoryTabs = React.createClass({
 });
 
 export default React.createClass({
+  mixins:[LoadingHelper],
+  componentDidMount(){
+    const actions =this.props.flux.getActions('app');
+    const selectedTab = Router.HashLocation.getCurrentPath();
+    actions.getJobInfoFromServer("buildHistoryTabs,builds[*,commit[*]]",selectedTab||'master');
+  },
   render(){
-    return(
+    return this.props.builds?(
       <div id="build-history">
         <ActionButton  tooltip="Build Now" href="build?delay0sec" icon="fa fa-rocket" primary/>
         <BuildHistoryTabs flux={this.props.flux} tabs={this.props.tabs}/>
         <BuildHistoryTable builds ={this.props.builds}/>
       </div>
-    );
+    ):this.loading();
   }
 });
