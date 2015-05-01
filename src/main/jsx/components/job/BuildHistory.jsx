@@ -134,13 +134,11 @@ export default React.createClass({
     const selectedTab = Router.HashLocation.getCurrentPath();
     actions.getJobInfoFromServer("buildHistoryTabs,builds[*,commit[*]]",selectedTab||'master');
   },
-  render(){
-    return this.props.builds?(
-      <div id="build-history">
-        <ActionButton  tooltip="Build Now" href="build?delay0sec" icon="fa fa-rocket" primary/>
-        <BuildHistoryTabs flux={this.props.flux} tabs={this.props.tabs}/>
-        <BuildHistoryTable builds ={this.props.builds}/>
-      </div>
-    ):this.loading();
+  _render(){
+    return(<div id="build-history">
+      <ActionButton  tooltip="Build Now" href="build?delay0sec" icon="fa fa-rocket" primary/>
+      <BuildHistoryTabs flux={this.props.flux} tabs={this.props.tabs}/>
+      <BuildHistoryTable builds ={this.props.builds}/>
+    </div>);
   }
 });

@@ -3,10 +3,12 @@ import Console from './Console.jsx';
 import BuildRow from '../BuildRow.jsx'
 import ActionButton from './../../lib/ActionButton.jsx';
 import FaviconHelper from './../../mixins/FaviconHelper.jsx';
+import LoadingHelper from './../../mixins/LoadingHelper.jsx';
+
 import simpleStorage from './../../../vendor/simpleStorage.js';
 require('./build.less');
 export default  React.createClass({
-  mixins: [FaviconHelper],
+  mixins: [FaviconHelper,LoadingHelper],
   componentDidMount(){
     this._fetchBuild()
   },
@@ -37,7 +39,7 @@ export default  React.createClass({
     const actions = this.props.flux.getActions('app');
     actions.currentBuildChanged(this.props.url);
   },
-  render(){
+  _render(){
     return this.props.build? (<div id="build">
       {this._buildActions()}
       <BuildRow  build={this.props.build}/>
