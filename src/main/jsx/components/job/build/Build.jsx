@@ -4,7 +4,6 @@ import BuildRow from '../BuildRow.jsx'
 import ActionButton from './../../lib/ActionButton.jsx';
 import FaviconHelper from './../../mixins/FaviconHelper.jsx';
 import LoadingHelper from './../../mixins/LoadingHelper.jsx';
-
 import simpleStorage from './../../../vendor/simpleStorage.js';
 require('./build.less');
 export default  React.createClass({
@@ -12,39 +11,38 @@ export default  React.createClass({
   componentDidMount(){
     this._fetchBuild()
   },
+  componentWillUnmount() {
+    clearInterval(this.refreshTimer);
+  },
   componentDidUpdate(){
     if(this._getBuildResult() == 'IN_PROGRESS' ){
       this._setRefreshTimer();
     }else{
-      this._clearRefreshTimer();
       this._webNotifyCompletion();
     }
     this.setFavicon(this._getBuildResult());
-  },
-  componentWillUnmount: function() {
-    this._clearRefreshTimer(); 
   },
   _getBuildResult(){
     return this.props.build && this.props.build.get('result')
   },
   _setRefreshTimer(){
-    if(!this.refreshTimer){
-      this.refreshTimer = setInterval(this._fetchBuild, 5000);
-    }
-  },
-  _clearRefreshTimer(){
-    if(this.refreshTimer) clearInterval(this.refreshTimer);
+    if(!this.refreshTimer)
+      this.refreshTimer = setInterval(this._refreshCurrentBuild, 5000);
   },
   _fetchBuild(){
     const actions = this.props.flux.getActions('app');
     actions.currentBuildChanged(this.props.url);
   },
+  _refreshCurrentBuild(){
+    const actions = this.props.flux.getActions('app');
+    actions.refreshBuild(this.props.url);
+  },
   _render(){
-    return this.props.build? (<div id="build">
+    return(<div id="build">
       {this._buildActions()}
       <BuildRow  build={this.props.build}/>
       <Console log={this.props.build.get('log')}/>
-    </div>):<div/>;
+    </div>);
   },
   _buildActions(){
     return  this.props.build.get('cancelable')? this._inProgressActions():[this._restartButton()];

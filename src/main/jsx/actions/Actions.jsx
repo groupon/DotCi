@@ -32,8 +32,11 @@ import {addBranchTab as addBranchTabOnServer, removeBranchTab as removeBranchTab
   fetchBuildHistory} from '../api/Api.jsx';
   import babel_polyfill from 'babel/polyfill';
   export default class AppActions extends Actions {
-    async currentBuildChanged(buildNumber){
+    currentBuildChanged(buildNumber){
       this.jobInfoChanged({build:null});
+      this.refreshBuild(buildNumber);
+    }
+    async refreshBuild(buildNumber){
       const buildInfo = await build(buildNumber);
       const logText = await buildLog(buildNumber);
       buildInfo['log'] = logText.split("\n");
