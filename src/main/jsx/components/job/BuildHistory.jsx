@@ -32,6 +32,7 @@ import LocationHashHelper from './../mixins/LocationHashHelper.jsx'
 import Router from 'react-router';
 import FilterBar from './../FilterBar.jsx';
 import LoadingHelper from './../mixins/LoadingHelper.jsx';
+import AutoRefreshHelper from './../mixins/AutoRefreshHelper.jsx';
 require('./build_history.less');
 
 var BuildHistoryTable = React.createClass({
@@ -128,8 +129,12 @@ var BuildHistoryTabs = React.createClass({
 });
 
 export default React.createClass({
-  mixins:[LoadingHelper],
+  mixins:[LoadingHelper,AutoRefreshHelper],
   componentDidMount(){
+    this._loadBuildHistory();
+    this.setRefreshTimer(this._loadBuildHistory);
+  },
+  _loadBuildHistory(){
     const actions =this.props.flux.getActions('app');
     const selectedTab = Router.HashLocation.getCurrentPath();
     actions.getJobInfoFromServer("buildHistoryTabs,builds[*,commit[*]]",selectedTab||'master');

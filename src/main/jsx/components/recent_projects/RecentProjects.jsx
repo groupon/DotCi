@@ -25,6 +25,7 @@
 import React from "react";
 import FluxComponent from 'flummox/component';
 import Avatar from '../lib/Avatar.jsx';
+import AutoRefreshHelper from './../mixins/AutoRefreshHelper.jsx'
 require("./recent_projects.less");
 
 var RecentProject = React.createClass({
@@ -43,7 +44,12 @@ var RecentProject = React.createClass({
 });
 
 var RecentProjectsWidget =React.createClass({
+  mixins: [AutoRefreshHelper],
   componentWillMount(){
+    this._loadRecentProjects()
+    this.setRefreshTimer(this._loadRecentProjects);
+  },
+  _loadRecentProjects(){
     this.props.flux.getRecentProjectsFromServer();
   },
   render(){
@@ -70,10 +76,10 @@ export default React.createClass({
   render(){
     return (
       <div className={this.props.className}>
-      <FluxComponent connectToStores={['recentProjects']} flux={this.props.flux}>
-        <RecentProjectsWidget/>
-      </FluxComponent>
-    </div>
+        <FluxComponent connectToStores={['recentProjects']} flux={this.props.flux}>
+          <RecentProjectsWidget/>
+        </FluxComponent>
+      </div>
     );
   }
 });
