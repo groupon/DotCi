@@ -4,30 +4,25 @@ import BuildRow from '../BuildRow.jsx'
 import ActionButton from './../../lib/ActionButton.jsx';
 import FaviconHelper from './../../mixins/FaviconHelper.jsx';
 import LoadingHelper from './../../mixins/LoadingHelper.jsx';
+import AutoRefreshHelper from './../../mixins/AutoRefreshHelper.jsx';
 import simpleStorage from './../../../vendor/simpleStorage.js';
 require('./build.less');
 export default  React.createClass({
-  mixins: [FaviconHelper,LoadingHelper],
+  mixins: [FaviconHelper,LoadingHelper,AutoRefreshHelper],
   componentDidMount(){
     this._fetchBuild()
   },
-  componentWillUnmount() {
-    clearInterval(this.refreshTimer);
-  },
   componentDidUpdate(){
     if(this._getBuildResult() == 'IN_PROGRESS' ){
-      this._setRefreshTimer();
+      this.setRefreshTimer(this._refreshCurrentBuild);
     }else{
+      this.clearAutoRefresh();
       this._webNotifyCompletion();
     }
     this.setFavicon(this._getBuildResult());
   },
   _getBuildResult(){
     return this.props.build && this.props.build.get('result')
-  },
-  _setRefreshTimer(){
-    if(!this.refreshTimer)
-      this.refreshTimer = setInterval(this._refreshCurrentBuild, 5000);
   },
   _fetchBuild(){
     const actions = this.props.flux.getActions('app');
