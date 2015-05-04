@@ -70,9 +70,10 @@ var BuildHistoryTabs = React.createClass({
     return {currentSelection: this.selectedHash()?this.selectedHash(): 'master'};
   },
   render()  {
-    return (<div className="ui  buttons">
+    return (<div className="ui text menu">
+      <div className="ui item"><ActionButton tooltip="Build Now" href="build?delay0sec" icon="fa fa-rocket" primary/></div>
       {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab))).toArray()}
-      <a className="ui icon button" href="#" onClick={this._addTab} > <i className="icon fa fa-plus-circle"></i></a>
+      <ActionButton className="ui item" tooltip="Add new tab" onClick={this._addTab} icon="fa fa-plus-circle"/>
       <Dialog ref="addDialog" title="Add new brach tab" onSave={this._onTabSave} >
         <div className="ui labeled input">
           <div className="ui label">
@@ -81,8 +82,7 @@ var BuildHistoryTabs = React.createClass({
           <input type="text" ref="newBranchTab" placeholder=""/>
         </div>
       </Dialog>
-    </div>
-           );
+    </div>);
   },
   _isTabRemovable(tab){
     return !contains(tab)(['master','All','Mine']);
@@ -114,11 +114,9 @@ var BuildHistoryTabs = React.createClass({
   _getHistoryTab(tab,i,closable) {
     var classes = classNames({
       'ui':true,
-      'labeled':true ,
-      'icon':true ,
-      'button':true,
-      'branch-tab': true,
-      'tab-active': this.state.currentSelection== tab
+      'item':true ,
+      'green':true ,
+      'active': this.state.currentSelection== tab
     });
     return (<a className={classes} key={i} href={'#'+tab}>
       <i className="icon octicon octicon-git-branch "></i>
@@ -141,7 +139,6 @@ export default React.createClass({
   },
   _render(){
     return(<div id="build-history">
-      <ActionButton  tooltip="Build Now" href="build?delay0sec" icon="fa fa-rocket" primary/>
       <BuildHistoryTabs flux={this.props.flux} tabs={this.props.tabs}/>
       <BuildHistoryTable builds ={this.props.builds}/>
     </div>);
