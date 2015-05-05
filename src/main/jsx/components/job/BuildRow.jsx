@@ -34,7 +34,7 @@ class CommitInfo {
       <span className="commit-info-column">
         <h5>{message}</h5>
         <object>
-          <a className="commit-link"  href={commitUrl} >
+          <a className="commit-link"  onClick={this._onCommitLinkClick} href={commitUrl} >
             <span className="icon octicon octicon-git-compare"></span> {shortSha} <i className="fa fa-external-link-square"></i>
           </a>
         </object>
@@ -44,6 +44,10 @@ class CommitInfo {
         <span>{branch}</span>
       </span>
     </span>);
+  }
+  _onCommitLinkClick(e){
+    e.preventDefault();
+    window.location = e.target.parentNode.href
   }
 }
 var BuildRow = React.createClass({
