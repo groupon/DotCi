@@ -28,7 +28,7 @@
   ${h.initPageVariables(context)}
 
   <div class="ui menu" style="font-size: 16px; background-color: #eff0ec; color: #A6ADAD;">
-      <img class="ui item" alt="title" src="${resURL}/images/headshot.png"/>
+      <img class="ui item" height="70" width="60" alt="title" src="${resURL}/plugin/DotCi/logo.png"/>
       <st:include page="header/breadcrumb.jelly" />
     <div class="ui item right">
         <div class="ui simple dropdown item" style="padding-right: 20px">
