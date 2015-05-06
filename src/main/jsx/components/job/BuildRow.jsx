@@ -55,7 +55,10 @@ var BuildRow = React.createClass({
     let {result,number, cancelUrl,commit} = this.props.build.toObject();
     return (
       <Router.Link className ={"build-row-"+result}  to={'job-widgets'} params={{widget: number}}>
-        <Avatar emailDigest={commit.get('emailDigest')} />
+        <div>
+          <div className="build-number">#{number}</div>
+          <Avatar emailDigest={commit.get('emailDigest')} />
+        </div>
         <CommitInfo commit={commit} />
         {this._buildDuration()}
       </Router.Link>

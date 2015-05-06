@@ -26,8 +26,7 @@
 @import './../../build-colors.less';
 
 .build-row(@color, @background-color){
-  padding: 10px;
-  border: 1px solid #eee;
+  border-left: 1px solid #eee;
   background-color: #FAFAF8;
   .link-no-decoration;
   .display(flex);
@@ -36,6 +35,7 @@
     padding:5px; 
   }
 }
+
 .commit-link{
   padding-left: 20px;
   color: #212121;
@@ -75,7 +75,7 @@
   text-align: start;
   margin-left: auto !important;
   .ui.label{
-     background-color: white;
+     background-color: #FAFAF8;
   }
 }
 .commit-info{
@@ -92,4 +92,7 @@
     padding-left:10px; 
     display: inline;
     }
+}
+.build-number{
+  padding-bottom: 5px;
 }
