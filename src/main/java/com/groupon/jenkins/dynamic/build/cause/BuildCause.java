@@ -77,6 +77,7 @@ public abstract class BuildCause extends Cause {
     @ExportedBean(defaultVisibility = 99)
     public static class CommitInfo{
         public static CommitInfo NULL_INFO =  new CommitInfo();
+        private final String avatarUrl;
         private  String committerEmail;
         private String message;
         private String committerName;
@@ -90,6 +91,7 @@ public abstract class BuildCause extends Cause {
             this.committerName="unknown";
             this.commitUrl="http://unknown.com";
             this.branch="unknown.com";
+            this.avatarUrl = null;
         }
         public CommitInfo(GHCommit commit, GitBranch branch){
             this.sha = commit.getSHA1();
@@ -98,11 +100,13 @@ public abstract class BuildCause extends Cause {
             this.committerEmail= commit.getCommitShortInfo().getCommitter().getEmail();
             this.commitUrl = commit.getOwner().getUrl()+"/commit/"+sha;
             this.branch = branch.toString();
+            this.avatarUrl = null;
         }
 
         public CommitInfo(String message, String committerName) {
             this.message = message;
             this.committerName = committerName;
+            this.avatarUrl = null;
         }
 
         public CommitInfo(Payload payload) {
@@ -110,6 +114,7 @@ public abstract class BuildCause extends Cause {
             this.message = payload.getCommitMessage();
             this.committerName = payload.getCommitterName();
             this.committerEmail = payload.getCommitterEmail();
+            this.avatarUrl = payload.getAvatarUrl();
             this.commitUrl = payload.getDiffUrl();
             this.branch = payload.getBranch();
         }
@@ -139,10 +144,14 @@ public abstract class BuildCause extends Cause {
             return branch;
         }
         @Exported
-        public String getEmailDigest(){
-            if(StringUtils.isEmpty(committerEmail)) return null;
-            byte[] md5 = DigestUtils.md5(committerEmail);
-            return  new BigInteger(1,md5).toString(16);
+        public String getAvatarUrl(){
+            if(avatarUrl == null){
+                if(committerEmail ==null) return null;
+                byte[] md5 = DigestUtils.md5(committerEmail);
+                String emailDigest = new BigInteger(1, md5).toString(16);
+                return "https://secure.gravatar.com/avatar/"+emailDigest+".png?";
+            }
+            return avatarUrl;
         }
     }
 

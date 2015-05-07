@@ -195,6 +195,40 @@ public class PayloadTest {
         assertNotNull("Log Entries not saved",dbObject.get("logEntries"));
         assertTrue(dbObject.get("logEntries") instanceof List);
     }
+    @Test
+    public void should_get_committer_name_from_push_payload() throws IOException {
+        Payload payload = new Payload(readFile("push.json"));
+        assertEquals("Surya Gaddipati", payload.getCommitterName());
+    }
+
+    @Test
+    public void should_get_committer_name_from_pr_payload() throws IOException {
+        Payload payload = new Payload(readFile("pull_request.json"));
+        assertEquals("suryagroupon", payload.getCommitterName());
+    }
+
+    @Test
+    public void should_get_email_from_push_payload() throws IOException {
+        Payload payload = new Payload(readFile("push.json"));
+        assertEquals("sgaddipati@example.com",payload.getCommitterEmail());
+    }
+
+    @Test
+    public void should_get_avatar_url_from_pr_payload() throws IOException {
+        Payload payload = new Payload(readFile("pull_request.json"));
+        assertEquals("https://avatars.githubusercontent.com/u/6909085?",payload.getAvatarUrl());
+    }
+
+    @Test
+    public void should_get_commit_message_from_push_payload() throws IOException {
+        Payload payload = new Payload(readFile("push.json"));
+        assertEquals("new commit",payload.getCommitMessage());
+    }
+    @Test
+    public void should_get_commit_message_from_pr_payload_description() throws IOException {
+        Payload payload = new Payload(readFile("pull_request.json"));
+        assertEquals("Update .ci.yml",payload.getCommitMessage());
+    }
 
     private String readFile(String fileName) throws IOException {
         InputStream stream = getClass().getResourceAsStream("/" + fileName);

@@ -74,7 +74,7 @@ public class Payload {
         if (isPullRequest()) {
             return "Pull Request: " + getPullRequestNumber();
         }
-        return payloadJson.getString("ref").replaceAll("refs/", "").replaceAll("heads/","");
+        return payloadJson.getString("ref").replaceAll("refs/", "").replaceAll("heads/", "");
     }
 
     public boolean needsBuild(boolean shouldBuildTags) {
@@ -151,7 +151,7 @@ public class Payload {
 
     public String getCommitterName() {
         if(isPullRequest()){
-            return null;
+            return  payloadJson.getJSONObject("sender").getString("login");
         }
         return  payloadJson.getJSONObject("head_commit").getJSONObject("committer").getString("name");
     }
@@ -162,11 +162,18 @@ public class Payload {
         }
         return  payloadJson.getJSONObject("head_commit").getJSONObject("committer").getString("email");
     }
+    public String getAvatarUrl() {
+        if(isPullRequest()){
+            return  payloadJson.getJSONObject("sender").getString("avatar_url");
+        }
+        return null;
+    }
 
     public String getCommitMessage() {
         if(isPullRequest()){
-            return null;
+            return  payloadJson.getJSONObject("pull_request").getString("title");
         }
         return  payloadJson.getJSONObject("head_commit").getString("message");
     }
+
 }
