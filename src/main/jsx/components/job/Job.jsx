@@ -37,12 +37,13 @@ var JobWidgets = React.createClass({
     router: React.PropTypes.func
   },
   render(){
-    let widgetParam = this.context.router.getCurrentParams().widget;
-    let activeWidget = widgetParam? widgetParam:"buildHistory";
+    let widget = this.context.router.getCurrentParams().widget;
+    let widgetParam = this.context.router.getCurrentParams().param;
+    let activeWidget = widget || "buildHistory";
     return  <Widgets activeWidget={activeWidget} job={this.props.job}>
       <BuildHistory icon="fa fa-history" url="buildHistory" name="Build History" tabs={this._get('buildHistoryTabs')} builds={this._get('builds')} flux={this.props.flux}/>
       <BuildMetrics icon="fa fa-bar-chart" url="buildMetrics" name="Build Metrics" buildTimes={this._get('buildTimes')} flux={this.props.flux} />
-      <Build icon="fa fa-file" url={this._isNumeric(activeWidget)? activeWidget: ''} name={"Build - " + widgetParam} build={this._get('build')} flux={this.props.flux} tabVisibleWhenActive/>
+      <Build subBuild={widgetParam||'main'} icon="fa fa-file" url={this._isNumeric(activeWidget)? activeWidget: ''} name={"Build - " + widget} build={this._get('build')} flux={this.props.flux} tabVisibleWhenActive/>
     </Widgets>;
   },
   _isNumeric(n) {
@@ -57,7 +58,9 @@ export default React.createClass({
   statics:{
     Routes:[ <DefaultRoute key="defaultRoute" handler= {JobWidgets} />,
       <Route name="job-widgets" key="job-widgets" path=":widget" handler={JobWidgets}/>,
-      <Router.Redirect key="trailingRedirect" from=":widget/" to="job-widgets" />
+      <Route name="job-widgets-param" key="job-widgets-param" path=":widget/:param" handler={JobWidgets}/>,
+      <Router.Redirect key="trailingRedirect" from=":widget/" to="job-widgets" />,
+      <Router.Redirect key="trailingParamRedirect" from=":widget/:param/" to="job-widgets-param" />
     ]
   },
   render(){

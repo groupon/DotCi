@@ -24,8 +24,13 @@
 
 package com.groupon.jenkins.dynamic.build.api;
 
+import com.google.common.collect.Lists;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
+import hudson.matrix.Combination;
+import org.kohsuke.stapler.export.Exported;
+
+import java.util.ArrayList;
 
 public class ProcessedBuild extends Build {
     private DynamicBuild build;
@@ -74,5 +79,9 @@ public class ProcessedBuild extends Build {
     @Override
     public String getCancelUrl() {
         return build.getUrl() + "/stop";
+    }
+    @Exported
+    public Iterable<Combination> getAxisList(){
+       return Lists.newArrayList(build.getLayouter().list());
     }
 }

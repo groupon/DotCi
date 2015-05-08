@@ -60,12 +60,6 @@ var BuildHistoryTable = React.createClass({
 });
 var BuildHistoryTabs = React.createClass({
   mixins: [LocationHashHelper], 
-  componentDidMount(){
-    this.addHashListener(this._onActiveTabChange);
-  },
-  componentWillUnmount(){
-    this.removeHashListener(this._onActiveTabChange);
-  },
   getInitialState(){
     return {currentSelection: this.selectedHash()?this.selectedHash(): 'master'};
   },
@@ -100,8 +94,8 @@ var BuildHistoryTabs = React.createClass({
     let actions = this.props.flux.getActions('app');
     actions.buildHistorySelected(tab);
   },
-  _onActiveTabChange(event){
-    const selectedTab = Router.HashLocation.getCurrentPath();
+  _onLocationHashChange(event){
+    const selectedTab = this.selectedHash();
     this._notifyTabSelection(selectedTab?selectedTab:'master');
   },
   _onTabRemove(event){

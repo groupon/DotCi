@@ -3,17 +3,14 @@ import Router from 'react-router';
 import mapIndexed from 'ramda/src/mapIndexed';
 import Convert from  'ansi-to-html';
 import LocationHashHelper from './../../mixins/LocationHashHelper.jsx'
+import LoadingHelper from './../../mixins/LoadingHelper.jsx'
 require('./console.less');
 export default React.createClass({
-  mixins: [LocationHashHelper ], 
+  mixins: [LocationHashHelper ,LoadingHelper], 
   componentDidMount(){
-    this.addHashListener(this._onLineSelectionChange);
     this._scrollToLine(this.selectedHash());
   },
-  componentWillUnmount(){
-    this.removeHashListener(this._onLineSelectionChange);
-  },
-  _onLineSelectionChange(event){
+  _onLocationHashChange(event){
     const [oldId, newId] = this.getHashIds(event);
     if(oldId){
       document.getElementById(oldId).classList.remove('highlight');
@@ -25,7 +22,7 @@ export default React.createClass({
   _isBuildLoaded(){
     return this.props.log && this.props.log.size > 1;
   },
-  render(){
+  _render(){
     return <span id="buildLog"><pre> {this._renderLog(this.props.log)}</pre></span>;
   },
   _onLineSelect(event){

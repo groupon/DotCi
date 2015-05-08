@@ -29,8 +29,9 @@ export function recentProjects(){
 export function cancelBuild(url){
   return qwest.post(`${window.rootURL}/${url}`)
 }
-export function buildLog(buildNumber){
-  return qwest.get(`${_jobUrl()}/${buildNumber}/logTail`).catch((error,url)=> {
+export function buildLog(buildNumber,subBuild){
+  const consoleUrl = subBuild === 'main'?`${_jobUrl()}/${buildNumber}/logTail`: `${_jobUrl()}/${buildNumber}/script=${subBuild}/logTail`;
+  return qwest.get(consoleUrl).catch((error,url)=> {
     console.log(error)
   });
 }

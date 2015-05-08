@@ -5,6 +5,7 @@ import ActionButton from './../../lib/ActionButton.jsx';
 import FaviconHelper from './../../mixins/FaviconHelper.jsx';
 import LoadingHelper from './../../mixins/LoadingHelper.jsx';
 import AutoRefreshHelper from './../../mixins/AutoRefreshHelper.jsx';
+import SubBuildsMenu from './SubBuildsMenu.jsx';
 import simpleStorage from './../../../vendor/simpleStorage.js';
 require('./build.less');
 export default  React.createClass({
@@ -21,23 +22,33 @@ export default  React.createClass({
     }
     this.setFavicon(this._getBuildResult());
   },
+  componentWillReceiveProps(nextProps){
+    if(nextProps.subBuild !== this.props.subBuild){
+      const actions = this.props.flux.getActions('app');
+      actions.loadBuildLog(this.props.url,nextProps.subBuild);
+    }
+  },
   _getBuildResult(){
     return this.props.build && this.props.build.get('result')
   },
   _fetchBuild(){
     const actions = this.props.flux.getActions('app');
-    actions.currentBuildChanged(this.props.url);
+    actions.currentBuildChanged(this.props.url,this.props.subBuild);
   },
   _refreshCurrentBuild(){
     const actions = this.props.flux.getActions('app');
-    actions.refreshBuild(this.props.url);
+    actions.refreshBuild(this.props.url,this.props.subBuild);
   },
   _render(){
     return(<div id="build">
       {this._buildActions()}
       <BuildRow  build={this.props.build}/>
+      <SubBuildsMenu buildNumber={this._get('number')} axisList={this._get('axisList')} selectedBuild={this.props.subBuild}/>
       <Console log={this.props.build.get('log')}/>
     </div>);
+  },
+  _onSubBuildSelect(subBuild){
+    console.log(subBuild);
   },
   _buildActions(){
     return  this.props.build.get('cancelable')? this._inProgressActions():[this._restartButton()];

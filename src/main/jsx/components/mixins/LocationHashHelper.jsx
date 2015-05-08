@@ -13,5 +13,11 @@ export default {
   },
   selectedHash(){
     return Router.HashLocation.getCurrentPath();
+  },
+  componentDidMount(){
+    this.addHashListener(this._onLocationHashChange);
+  },
+  componentWillUnmount(){
+    this.removeHashListener(this._onLocationHashChange);
   }
 }

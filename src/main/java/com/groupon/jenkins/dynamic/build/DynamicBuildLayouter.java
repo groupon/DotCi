@@ -32,7 +32,7 @@ public class DynamicBuildLayouter extends Layouter<DynamicRunPtr> {
     private  DynamicBuild dynamicBuild;
 
     public DynamicBuildLayouter(AxisList axisList, DynamicBuild dynamicBuild) {
-        super(axisList);
+        super(axisList == null? new AxisList():axisList);
         this.axisList = axisList;
         this.dynamicBuild = dynamicBuild;
     }
@@ -44,6 +44,6 @@ public class DynamicBuildLayouter extends Layouter<DynamicRunPtr> {
 
 
     public Iterable<Combination> list() {
-        return axisList.list() ;
+        return axisList ==null? new AxisList().list(): axisList.list() ;
     }
 }
