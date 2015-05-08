@@ -24,13 +24,20 @@
 
 package com.groupon.jenkins.dynamic.build.api;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import hudson.matrix.Combination;
+import hudson.model.Run;
 import org.kohsuke.stapler.export.Exported;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ProcessedBuild extends Build {
     private DynamicBuild build;
@@ -45,7 +52,10 @@ public class ProcessedBuild extends Build {
     }
     @Override
     public String getResult(){
-        if(build.isBuilding()){
+      return getResult(build);
+    }
+    private String getResult(Run build){
+        if(build==null || build.isBuilding()){
             return "IN_PROGRESS";
         }
         return build.getResult().toString();
@@ -81,7 +91,17 @@ public class ProcessedBuild extends Build {
         return build.getUrl() + "/stop";
     }
     @Exported
-    public Iterable<Combination> getAxisList(){
-       return Lists.newArrayList(build.getLayouter().list());
+    public Iterable<Map> getAxisList(){
+        Iterable<Combination> subBuilds = build.getLayouter().list();
+        Iterable<Map> subBuildInfo = Iterables.transform(subBuilds, new Function<Combination, Map>() {
+            @Override
+            public Map apply(@Nullable Combination combination) {
+                HashMap subBuild = new HashMap();
+                subBuild.putAll(combination);
+                subBuild.put("result", getResult(build.getRun(combination)));
+                return subBuild;
+            }
+        });
+        return Lists.newArrayList(subBuildInfo);
     }
 }

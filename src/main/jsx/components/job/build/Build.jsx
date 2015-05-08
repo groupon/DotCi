@@ -43,7 +43,7 @@ export default  React.createClass({
     return(<div id="build">
       {this._buildActions()}
       <BuildRow  build={this.props.build}/>
-      <SubBuildsMenu buildNumber={this._get('number')} axisList={this._get('axisList')} selectedBuild={this.props.subBuild}/>
+      <SubBuildsMenu buildNumber={this._get('number')} buildResult={this._get('result')} axisList={this._get('axisList')} selectedBuild={this.props.subBuild}/>
       <Console log={this.props.build.get('log')}/>
     </div>);
   },
