@@ -32,11 +32,18 @@ import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.util.JsonResponse;
+import hudson.model.Queue;
+import jenkins.model.Jenkins;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
+import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 public class BuildHistory extends ApiModel {
     private static final int BUILD_COUNT = 20;
@@ -55,7 +62,17 @@ public class BuildHistory extends ApiModel {
            branch =null;
         }
         Iterable<DynamicBuild> builds = isMyBuilds(branch) ? getDynamicBuildRepository().<DynamicBuild>getCurrentUserBuilds(dynamicProject, BUILD_COUNT) : getDynamicBuildRepository().<DynamicBuild>getLast(dynamicProject, BUILD_COUNT, branch);
-        return toUiBuilds(filterSkipped(builds));
+        return Iterables.concat(getQueuedBuilds(), toUiBuilds(filterSkipped(builds)));
+    }
+
+    private Iterable<QueuedBuild> getQueuedBuilds() {
+        int nextBuildNumber = dynamicProject.getNextBuildNumber();
+        List<QueuedBuild> queuedBuilds = new ArrayList<QueuedBuild>();
+        for(Queue.Item item: getQueuedItems()) {
+            queuedBuilds.add(new QueuedBuild(item, nextBuildNumber++));
+        }
+        Collections.reverse(queuedBuilds);
+        return queuedBuilds;
     }
 
     private Iterable<Build> toUiBuilds(Iterable<DynamicBuild> builds) {
@@ -83,7 +100,15 @@ public class BuildHistory extends ApiModel {
             }
         });
     }
-
+    public List<Queue.Item> getQueuedItems() {
+        LinkedList<Queue.Item> list = new LinkedList<Queue.Item>();
+        for (Queue.Item item : Jenkins.getInstance().getQueue().getApproximateItemsQuickly()) {
+            if (item.task == dynamicProject) {
+                list.addFirst(item);
+            }
+        }
+        return list;
+    }
 
 
 }

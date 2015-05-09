@@ -63,6 +63,10 @@
   .build-row(@aborted,@aborted-background);
   .border-aborted;
 }
+.build-row-QUEUED {
+  .build-row(@in-progress,@in-progress-background);
+  .border-in-progress;
+}
 
 .build-row-IN_PROGRESS {
   .build-row(@in-progress,@in-progress-background);
