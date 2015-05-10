@@ -25,6 +25,6 @@
 import React from 'react';
 export default React.createClass({
   render(){
-    return <img height="23" width="23" className="ui avatar image" alt={this.props.emailDigest}  src={this.props.avatarUrl+"s=23"}/>;
+    return this.props.avatarUrl? <img height="23" width="23" className="ui avatar image" alt={this.props.emailDigest}  src={this.props.avatarUrl+"s=23"}/>: <span/>;
   }
 });

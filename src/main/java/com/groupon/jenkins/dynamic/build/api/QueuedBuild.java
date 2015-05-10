@@ -26,6 +26,7 @@ package com.groupon.jenkins.dynamic.build.api;
 
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import hudson.model.Queue;
+import org.apache.commons.lang.StringUtils;
 
 public class QueuedBuild extends Build {
     private Queue.Item item;
@@ -48,7 +49,14 @@ public class QueuedBuild extends Build {
 
     @Override
     public BuildCause.CommitInfo getCommit() {
-        return new BuildCause.CommitInfo("Queued: " + item.getWhy(),item.getInQueueForString());
+        String[] buildParams = StringUtils.split(item.getParams(), "\n");
+        String branch = "";
+        for(String buildParam : buildParams ){
+           if(buildParam.startsWith("BRANCH=")){
+              branch = StringUtils.split(buildParam,"=")[1];
+           }
+        }
+        return new BuildCause.CommitInfo("Queued: " + item.getWhy(),item.getInQueueForString(), branch);
     }
 
 

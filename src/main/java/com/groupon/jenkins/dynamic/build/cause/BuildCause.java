@@ -82,7 +82,7 @@ public abstract class BuildCause extends Cause {
         private String message;
         private String committerName;
         private String branch;
-        private String sha;
+        private final String sha;
         private String commitUrl;
         //for backward compat
         private CommitInfo(){
@@ -92,6 +92,7 @@ public abstract class BuildCause extends Cause {
             this.commitUrl="http://unknown.com";
             this.branch="unknown.com";
             this.avatarUrl = null;
+            this.sha = "unknown";
         }
         public CommitInfo(GHCommit commit, GitBranch branch){
             this.sha = commit.getSHA1();
@@ -103,10 +104,12 @@ public abstract class BuildCause extends Cause {
             this.avatarUrl = null;
         }
 
-        public CommitInfo(String message, String committerName) {
+        public CommitInfo( String message, String committerName, String branch) {
             this.message = message;
             this.committerName = committerName;
             this.avatarUrl = null;
+            this.branch = branch;
+            this.sha = branch;
         }
 
         public CommitInfo(Payload payload) {
@@ -126,7 +129,7 @@ public abstract class BuildCause extends Cause {
 
         @Exported
         public String getShortSha(){
-            return sha==null?"master":sha.substring(0,7);
+            return sha.length()<9?sha:sha.substring(0,7);
         }
 
         @Exported
