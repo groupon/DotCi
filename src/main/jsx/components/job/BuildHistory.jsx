@@ -33,20 +33,28 @@ import Router from 'react-router';
 import FilterBar from './../FilterBar.jsx';
 import LoadingHelper from './../mixins/LoadingHelper.jsx';
 import AutoRefreshHelper from './../mixins/AutoRefreshHelper.jsx';
+import GroupedBuildsView from './GroupedBuildsView.jsx';
+import LinearBuildsView from './LinearBuildsView.jsx';
+import ToggleButton from './../lib/ToggleButton.jsx';
 require('./build_history.less');
-
 var BuildHistoryTable = React.createClass({
   getInitialState: function() {
-    return {filter: ''};
+    return {filter: '',grouped: false};
+  },
+  _filteredBuilds(){
+    return this.props.builds.filter(this._applyFilter);
   },
   render(){
-    let builds = this.props.builds.filter(this._applyFilter).map((build) => <BuildRow key={build.get('number')} build={build}/>);
     return(
-      <div className="builds">
+      <div>
+        <ToggleButton onClick={this._groupBuilds} tooltip="Group by commit"><i className="fa fa-bars"></i></ToggleButton>
         <FilterBar id="filter-bar" onChange={this._onFilterChange}/> 
-        {builds.toArray()}
+        {this.state.grouped? <GroupedBuildsView builds={this._filteredBuilds()} /> : <LinearBuildsView builds={this._filteredBuilds()} />}
       </div>
     );
+  },
+  _groupBuilds(grouped){
+    this.setState({grouped})
   },
   _applyFilter(build){
     const filter = this.state.filter.trim();
@@ -55,7 +63,7 @@ var BuildHistoryTable = React.createClass({
     return !filter || message.match(filterRegex) || branch.match(filterRegex)|| committerName.match(filterRegex);
   },
   _onFilterChange(filter){
-    this.replaceState({filter:filter });
+    this.setState({filter});
   }
 });
 var BuildHistoryTabs = React.createClass({
