@@ -43,7 +43,6 @@ export function job(tree, branchTab){
 }
 export async function deleteCurrentProject(){
   const rsp = await qwest.post(window.location.pathname.replace('newUi','')+"/doDeleteAjax");
-  window.location = rsp.headers.get('location');
 }
 
 export function removeBranchTab(tabRegex){

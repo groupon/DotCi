@@ -40,7 +40,7 @@ var JobWidgets = React.createClass({
     let widget = this.context.router.getCurrentParams().widget;
     let widgetParam = this.context.router.getCurrentParams().param;
     let activeWidget = widget || "buildHistory";
-    return  <Widgets activeWidget={activeWidget} job={this.props.job}>
+    return  <Widgets activeWidget={activeWidget} job={this.props.job} flux={this.props.flux}>
       <BuildHistory icon="fa fa-history" url="buildHistory" name="Build History" tabs={this._get('buildHistoryTabs')} builds={this._get('builds')} flux={this.props.flux}/>
       <BuildMetrics icon="fa fa-bar-chart" url="buildMetrics" name="Build Metrics" buildTimes={this._get('buildTimes')} flux={this.props.flux} />
       <Build subBuild={widgetParam||'main'} icon="fa fa-file" url={this._isNumeric(activeWidget)? activeWidget: ''} name={"Build - " + widget} build={this._get('build')} flux={this.props.flux} tabVisibleWhenActive/>

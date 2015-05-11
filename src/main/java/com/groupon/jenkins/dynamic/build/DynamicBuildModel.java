@@ -64,13 +64,14 @@ public class DynamicBuildModel {
 
     private void addBuildCauseForNonGithubCauses() throws IOException {
         String branch = build.getEnvVars().get("BRANCH");
-        GHCommit commit = githubRepositoryService.getHeadCommitForBranch(branch);
         if (build.getCause(UserIdCause.class) != null) {
+            GHCommit commit = githubRepositoryService.getHeadCommitForBranch(branch);
             String user = build.getCause(UserIdCause.class).getUserId();
             ManualBuildCause manualCause = new ManualBuildCause(new GitBranch(branch), commit, user);
             build.addCause(manualCause);
         }
         if (build.getCause() == BuildCause.NULL_BUILD_CAUSE) {
+            GHCommit commit = githubRepositoryService.getHeadCommitForBranch(branch);
             build.addCause(new UnknownBuildCause(new GitBranch(branch), commit));
         }
     }

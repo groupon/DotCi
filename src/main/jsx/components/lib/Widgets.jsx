@@ -24,11 +24,11 @@
 import React from 'react';
 import filter from 'ramda/src/filter';
 import Router from 'react-router';
-import Header from './../job/SettingsMenu.jsx';
+import SettingsMenu from './../job/SettingsMenu.jsx';
 export default React.createClass({
   render(){
     const activeWidget = this._activeWidget();
-    const header = <Header job={this.props.job} />
+    const settingsMenu = <SettingsMenu job={this.props.job} flux={this.props.flux}/>
     var navs = filter(widget => !widget.props.tabVisibleWhenActive || this._isWidgetSelected(widget), this.props.children).map((widget,index) => this._tabItem(widget,index,widget===activeWidget));
     return(
       <div>
@@ -36,7 +36,7 @@ export default React.createClass({
           <div className="ui secondary pointing menu">
             {navs}
             <div className="right menu">
-              {header}
+              {settingsMenu}
             </div>
           </div>
           {activeWidget}
