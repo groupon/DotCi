@@ -25,7 +25,7 @@ export default  React.createClass({
   componentWillReceiveProps(nextProps){
     if(nextProps.subBuild !== this.props.subBuild){
       const actions = this.props.flux.getActions('app');
-      actions.loadBuildLog(this.props.url,nextProps.subBuild);
+      actions.loadBuildLog(this.props.url,nextProps.subBuild.replace('dotCI',''));
     }
   },
   _getBuildResult(){
@@ -33,22 +33,22 @@ export default  React.createClass({
   },
   _fetchBuild(){
     const actions = this.props.flux.getActions('app');
-    actions.currentBuildChanged(this.props.url,this.props.subBuild);
+    actions.currentBuildChanged(this.props.url,this._subBuild());
+  },
+  _subBuild(){
+    return this.props.subBuild.replace('dotCI','');
   },
   _refreshCurrentBuild(){
     const actions = this.props.flux.getActions('app');
-    actions.refreshBuild(this.props.url,this.props.subBuild);
+    actions.refreshBuild(this.props.url,this._subBuild());
   },
   _render(){
     return(<div id="build">
       {this._buildActions()}
       <BuildRow  build={this.props.build}/>
-      <SubBuildsMenu buildNumber={this._get('number')} buildResult={this._get('result')} axisList={this._get('axisList')} selectedBuild={this.props.subBuild}/>
+      <SubBuildsMenu buildNumber={this._get('number')} buildResult={this._get('result')} axisList={this._get('axisList')} selectedBuild={this._subBuild()}/>
       <Console log={this.props.build.get('log')}/>
     </div>);
-  },
-  _onSubBuildSelect(subBuild){
-    console.log(subBuild);
   },
   _buildActions(){
     return  this.props.build.get('cancelable')? this._inProgressActions():[this._restartButton()];

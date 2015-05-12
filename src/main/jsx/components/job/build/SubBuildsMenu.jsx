@@ -17,7 +17,7 @@ export default  React.createClass({
     return subBuilds.map(subBuild =>{
       const build = subBuild.get('script');
       const classes = "ui item " + (this.props.selectedBuild === build? "active" : '');
-      return <Router.Link className={classes}  key={build} href='#' to="job-widgets-param" params={{widget:this.props.buildNumber , param: build}}>
+      return <Router.Link className={classes}  key={build} href='#' to="job-widgets-param" params={{widget:this.props.buildNumber , param: 'dotCI'+build}}>
         <span className= {"subbuild-"+ subBuild.get('result')}>{build}</span>
       </Router.Link>;
     }); 
