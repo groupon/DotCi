@@ -45,6 +45,7 @@ import hudson.util.CopyOnWriteMap;
 import hudson.widgets.HistoryWidget;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -180,7 +181,7 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
         @Override
     public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
-        if(isNewUi() && !req.getRequestURI().contains("logTail") && !req.getRequestURI().contains("rebuild/") && !req.getRequestURI().contains("/stop")  ){
+        if(useNewUi(token,req)){
             try {
                 rsp.forward(this,"newUi",req);
                 return null;
@@ -204,6 +205,11 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
         return permalink;
     }
+
+    private boolean useNewUi(String token, StaplerRequest req) {
+        return isNewUi() && NumberUtils.isNumber(token) && StringUtils.isEmpty( req.getRestOfPath());
+    }
+
     public String getJobUrl(){
        return "job/"+ getParent().getName() +"/job/" + getName();
     }
