@@ -38,6 +38,11 @@ export default  React.createClass({
   _subBuild(){
     return this.props.subBuild.replace('dotCI','');
   },
+  _selectedBuildUrl(){
+    const selectedSubBuild = this._subBuild();
+    const selectedAxis = this._get('axisList').toArray().find(axis => axis.get('script') === selectedSubBuild)
+    return selectedAxis.get('url');
+  },
   _refreshCurrentBuild(){
     const actions = this.props.flux.getActions('app');
     actions.refreshBuild(this.props.url,this._subBuild());
@@ -45,9 +50,10 @@ export default  React.createClass({
   _render(){
     return(<div id="build">
       {this._buildActions()}
+      <a className="ui circular icon button hint--top" data-hint="More Details" href={this._get('number')+"/detail"}><i className="fa fa-cogs"></i></a>
       <BuildRow  build={this.props.build}/>
-      <SubBuildsMenu buildNumber={this._get('number')} buildResult={this._get('result')} axisList={this._get('axisList')} selectedBuild={this._subBuild()}/>
-      <Console log={this.props.build.get('log')}/>
+      <SubBuildsMenu buildNumber={this._get('number')} axisList={this._get('axisList')} selectedBuild={this._subBuild()}/>
+      <Console log={this.props.build.get('log')} url={this._selectedBuildUrl()}/>
     </div>);
   },
   _buildActions(){

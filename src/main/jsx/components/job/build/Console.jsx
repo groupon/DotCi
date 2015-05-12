@@ -23,7 +23,25 @@ export default React.createClass({
     return this.props.log && this.props.log.size > 1;
   },
   _render(){
-    return <span id="buildLog"><pre> {this._renderLog(this.props.log)}</pre></span>;
+    return <span id="buildLog">
+      {this._consoleHeader()}
+      <pre> {this._renderLog(this.props.log)}</pre>
+      <span ref="bottom"/>
+    </span>;
+  },
+  _consoleHeader(){
+    return <div id="console-header">
+      <div className="ui right menu inverted basic icon buttons">
+        <a className="ui button" href={window.rootURL+"/"+this.props.url+"/consoleText"}><i className="fa fa-eye"></i>Full Log</a>
+        <div className="ui toggle button" onClick={this._scrollToBottom}>
+          <i className="fa fa-arrow-down"></i>
+        </div>
+      </div> 
+    </div>
+  },
+  _scrollToBottom(e){
+    e.preventDefault();
+    this.refs.bottom.getDOMNode().scrollIntoView();
   },
   _onLineSelect(event){
     if(event.target.tagName == 'A'){

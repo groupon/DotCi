@@ -92,16 +92,26 @@ public class ProcessedBuild extends Build {
     }
     @Exported
     public Iterable<Map> getAxisList(){
-        Iterable<Combination> subBuilds = build.getLayouter().list();
-        Iterable<Map> subBuildInfo = Iterables.transform(subBuilds, new Function<Combination, Map>() {
+
+        Iterable<Combination> layoutList = build.getLayouter().list();
+        Iterable<Map> subBuildInfo = Iterables.transform(layoutList, new Function<Combination, Map>() {
             @Override
             public Map apply(@Nullable Combination combination) {
                 HashMap subBuild = new HashMap();
                 subBuild.putAll(combination);
-                subBuild.put("result", getResult(build.getRun(combination)));
+                hudson.model.Build run = build.getRun(combination);
+                subBuild.put("result", getResult(run));
+                if (run != null) {
+                    subBuild.put("url", run.getUrl());
+                } else {
+                    subBuild.put("url", build.getUrl());
+                }
                 return subBuild;
             }
         });
-        return Lists.newArrayList(subBuildInfo);
+
+        ArrayList<Map> subBuilds = Iterables.size(layoutList)> 1? Lists.newArrayList(subBuildInfo): new ArrayList<Map>();
+        subBuilds.add(ImmutableMap.of("script", "main", "result", getResult(build), "url", build.getUrl()));
+        return subBuilds;
     }
 }
