@@ -49,7 +49,7 @@
     "react-tools": "latest",
     "style-loader": "^0.8.3",
     "url-loader": "^0.5.5",
-    "webpack": "latest",
+    "webpack": "1.9.5",
     "webpack-dev-server": "latest"
   },
   "scripts": {
