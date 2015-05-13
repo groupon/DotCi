@@ -41,8 +41,8 @@ public class BuildConfigurationTest {
     BuildConfiguration buildConfiguration = new BuildConfiguration("groupon/DotCi", ImmutableMap.of("run", of("unit","command","integration","integration")), "buildId", new ShellCommands(), "abc123", 8);
     Iterable<Combination> axisList = buildConfiguration.getAxisList().list();
     Assert.assertEquals(2,Iterables.size(axisList));
-    Assert.assertEquals("run=unit", Iterables.get(axisList,0).toString());
-    Assert.assertEquals("run=integration", Iterables.get(axisList,1).toString());
+    Assert.assertEquals("script=unit", Iterables.get(axisList,0).toString());
+    Assert.assertEquals("script=integration", Iterables.get(axisList,1).toString());
   }
   @Test
   public  void should_cleanup_after_test_run(){
@@ -70,7 +70,7 @@ public class BuildConfigurationTest {
 
   private ShellCommands getRunCommands() {
     BuildConfiguration buildConfiguration = new BuildConfiguration("groupon/DotCi", ImmutableMap.of("run", of("unit", "command", "integration", "integration")), "buildId", new ShellCommands(), "abc123", 8);
-    return buildConfiguration.getCommands(Combination.fromString("run=unit"));
+    return buildConfiguration.getCommands(Combination.fromString("script=unit"));
   }
 
 

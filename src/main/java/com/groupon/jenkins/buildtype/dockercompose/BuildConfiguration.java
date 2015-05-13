@@ -67,7 +67,7 @@ public class BuildConfiguration {
     }
 
     public ShellCommands getCommands(Combination combination) {
-        String dockerComposeContainerName = combination.get("run");
+        String dockerComposeContainerName = combination.get("script");
         String projectName = dockerComposeContainerName + this.dockerComposeProjectName;
         ShellCommands shellCommands = new ShellCommands();
         shellCommands.add(checkoutCommands);
@@ -98,10 +98,10 @@ public class BuildConfiguration {
 
     public AxisList getAxisList() {
         String dockerComposeContainerName = getOnlyRun();
-        AxisList  axisList = new AxisList(new Axis("run",dockerComposeContainerName));
+        AxisList  axisList = new AxisList(new Axis("script",dockerComposeContainerName));
         if (isParallelized()) {
             Set commandKeys =  ((Map) config.get("run")).keySet();
-            axisList = new AxisList(new Axis("run", new ArrayList<String>(commandKeys)));
+            axisList = new AxisList(new Axis("script", new ArrayList<String>(commandKeys)));
         }
         return axisList;
     }
