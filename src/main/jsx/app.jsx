@@ -57,8 +57,10 @@ async function performRouteHandlerStaticMethod(routes, methodName, ...args) {
 
 window.onload = function(){
   let flux = new Flux();
+  const jobPath = jobUrl.replace(rootURL,'');
+  const rootPath = window.location.pathname.split(jobPath)[0] +jobPath;
   var routes = (
-    <Route  path={jobUrl} handler={App} >
+    <Route  path={rootPath} handler={App} >
       <Route  handler={Job}>
         {Job.Routes }
       </Route>
