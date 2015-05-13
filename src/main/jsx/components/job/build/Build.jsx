@@ -53,7 +53,7 @@ export default  React.createClass({
       <a className="ui circular icon button hint--top" data-hint="More Details" href={this._get('number')+"/detail"}><i className="fa fa-cogs"></i></a>
       <BuildRow  build={this.props.build}/>
       <SubBuildsMenu buildNumber={this._get('number')} axisList={this._get('axisList')} selectedBuild={this._subBuild()}/>
-      <Console log={this.props.build.get('log')} url={this._selectedBuildUrl()}/>
+      <Console log={this.props.build.get('log')} url={this._selectedBuildUrl()} buildResult={this._get('result')}/>
     </div>);
   },
   _buildActions(){

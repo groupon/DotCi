@@ -4,6 +4,7 @@ import mapIndexed from 'ramda/src/mapIndexed';
 import Convert from  'ansi-to-html';
 import LocationHashHelper from './../../mixins/LocationHashHelper.jsx'
 import LoadingHelper from './../../mixins/LoadingHelper.jsx'
+import loadingsvg from './tail-spin.svg';
 require('./console.less');
 export default React.createClass({
   mixins: [LocationHashHelper ,LoadingHelper], 
@@ -25,9 +26,12 @@ export default React.createClass({
   _render(){
     return <span id="buildLog">
       {this._consoleHeader()}
-      <pre> {this._renderLog(this.props.log)}</pre>
+      <pre> {this._renderLog(this.props.log)} {this._spinner()} </pre>
       <span ref="bottom"/>
     </span>;
+  },
+  _spinner(){
+    return this.props.buildResult === 'IN_PROGRESS'? <img src={loadingsvg} />: <span/>;
   },
   _consoleHeader(){
     return <div id="console-header">
