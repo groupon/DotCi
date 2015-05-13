@@ -82,7 +82,7 @@ public class JobInfo extends  ApiModel{
     }
     @Exported
     public List<Build> getBuilds(){
-        return Lists.newArrayList(new BuildHistory(dynamicProject).getBuilds(branchTab));
+        return Lists.newArrayList(new BuildHistory(dynamicProject).getBuilds(branchTab,20));
     }
     @Exported
     public List<BuildTime> getBuildTimes(){

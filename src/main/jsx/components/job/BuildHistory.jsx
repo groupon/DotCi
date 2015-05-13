@@ -36,6 +36,7 @@ import AutoRefreshHelper from './../mixins/AutoRefreshHelper.jsx';
 import GroupedBuildsView from './GroupedBuildsView.jsx';
 import LinearBuildsView from './LinearBuildsView.jsx';
 import ToggleButton from './../lib/ToggleButton.jsx';
+import RangeSlider from './../lib/RangeSlider.jsx';
 require('./build_history.less');
 var BuildHistoryTable = React.createClass({
   getInitialState: function() {
@@ -49,6 +50,7 @@ var BuildHistoryTable = React.createClass({
       <div>
         <ToggleButton onClick={this._groupBuilds} tooltip="Group by commit"><i className="fa fa-bars"></i></ToggleButton>
         <FilterBar id="filter-bar" onChange={this._onFilterChange}/> 
+        {this.props.countSlider}
         {this.state.grouped? <GroupedBuildsView builds={this._filteredBuilds()} /> : <LinearBuildsView builds={this._filteredBuilds()} />}
       </div>
     );
@@ -73,7 +75,7 @@ var BuildHistoryTabs = React.createClass({
   },
   render()  {
     return (<div className="ui text menu">
-      <div className="ui item"><ActionButton tooltip="Build Now" href="build?delay0sec" icon="fa fa-rocket" primary/></div>
+      <div className="ui item"><ActionButton tooltip="Build Now" href="build?delay=0sec" icon="fa fa-rocket" primary/></div>
       {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab))).toArray()}
       <ActionButton className="ui item" tooltip="Add new tab" onClick={this._addTab} icon="fa fa-plus-circle"/>
       <Dialog ref="addDialog" title="Add new brach tab" onSave={this._onTabSave} >
@@ -99,8 +101,7 @@ var BuildHistoryTabs = React.createClass({
   },
   _notifyTabSelection: function (tab) {
     this.replaceState({currentSelection: tab});
-    let actions = this.props.flux.getActions('app');
-    actions.buildHistorySelected(tab);
+    this.props.onTabChange(tab);
   },
   _onLocationHashChange(event){
     const selectedTab = this.selectedHash();
@@ -136,13 +137,25 @@ export default React.createClass({
   },
   _loadBuildHistory(){
     const actions =this.props.flux.getActions('app');
+    actions.getJobInfoFromServer("buildHistoryTabs,builds[*,commit[*]]",this._currentTab());
+  },
+  _currentTab(){
     const selectedTab = Router.HashLocation.getCurrentPath();
-    actions.getJobInfoFromServer("buildHistoryTabs,builds[*,commit[*]]",selectedTab||'master');
+    return selectedTab||'master';
   },
   _render(){
+    const countSlider = <RangeSlider  queryParam="count" onChange={this._onCountChange} min={20}  max={100} step={10}  />
     return(<div id="build-history">
-      <BuildHistoryTabs flux={this.props.flux} tabs={this.props.tabs}/>
-      <BuildHistoryTable builds ={this.props.builds}/>
+      <BuildHistoryTabs  onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs}/>
+      <BuildHistoryTable countSlider={countSlider} builds ={this.props.builds}/>
     </div>);
+  },
+  _onTabChange(tab){
+    let actions = this.props.flux.getActions('app');
+    actions.buildHistorySelected(tab);
+  },
+  _onCountChange(count){
+    let actions = this.props.flux.getActions('app');
+    actions.buildHistorySelected(this._currentTab(),count);
   }
 });

@@ -69,8 +69,8 @@ import {addBranchTab as addBranchTabOnServer, removeBranchTab as removeBranchTab
       return recentProjects;
     }
 
-    async buildHistorySelected(branch){
-      let  builds = await fetchBuildHistory(branch);
+    async buildHistorySelected(branch,count){
+      let  builds = await fetchBuildHistory(branch,count);
       this.buildHistoryChanged(builds.builds);
     }
 

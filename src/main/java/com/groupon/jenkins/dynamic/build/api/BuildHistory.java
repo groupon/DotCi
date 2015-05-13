@@ -46,7 +46,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class BuildHistory extends ApiModel {
-    private static final int BUILD_COUNT = 20;
     private DynamicProject dynamicProject;
 
     public BuildHistory(DynamicProject dynamicProject) {
@@ -54,14 +53,15 @@ public class BuildHistory extends ApiModel {
     }
 
     public void getDynamic(String branch, StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-        JsonResponse.render(req, rsp,new BuildHistoryRsp( getBuilds(branch)));
+        int count = Integer.parseInt(req.getParameter("count"));
+        JsonResponse.render(req, rsp,new BuildHistoryRsp( getBuilds(branch, count)));
     }
 
-    public Iterable<Build> getBuilds(String branch) {
+    public Iterable<Build> getBuilds(String branch,int count) {
         if("All".equalsIgnoreCase(branch)){
            branch =null;
         }
-        Iterable<DynamicBuild> builds = isMyBuilds(branch) ? getDynamicBuildRepository().<DynamicBuild>getCurrentUserBuilds(dynamicProject, BUILD_COUNT) : getDynamicBuildRepository().<DynamicBuild>getLast(dynamicProject, BUILD_COUNT, branch);
+        Iterable<DynamicBuild> builds = isMyBuilds(branch) ? getDynamicBuildRepository().<DynamicBuild>getCurrentUserBuilds(dynamicProject, count) : getDynamicBuildRepository().<DynamicBuild>getLast(dynamicProject, count, branch);
         return Iterables.concat(getQueuedBuilds(), toUiBuilds(filterSkipped(builds)));
     }
 

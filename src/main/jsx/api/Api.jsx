@@ -52,8 +52,8 @@ export function addBranchTab(tabRegex){
   qwest.post(`${_jobUrl()}/addBranchTab?tabRegex=`+tabRegex);
 }
 
-export function fetchBuildHistory(tab) {
-  return _get(`${_jobApiUrl()}/buildHistory/${tab}`,{depth:2});
+export function fetchBuildHistory(tab,count) {
+  return _get(`${_jobApiUrl()}/buildHistory/${tab}`,{depth:2, count: count || 20});
 }
 function _jobUrl(){
   return jobUrl;
