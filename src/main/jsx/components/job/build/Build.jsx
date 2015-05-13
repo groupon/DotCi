@@ -97,7 +97,7 @@ export default  React.createClass({
   },
   _restartBuild(e){
     e.preventDefault();
-    window.location = window.location + '/rebuild/parameterized';
+    window.location = window.location + '/rebuild';
   },
   _get(key){
     return this.props.build.get(key)
