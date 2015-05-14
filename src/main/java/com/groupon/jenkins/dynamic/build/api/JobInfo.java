@@ -46,6 +46,7 @@ public class JobInfo extends  ApiModel{
 
     private DynamicProject dynamicProject;
     private String branchTab;
+    private String buildCount;
 
     public JobInfo(DynamicProject dynamicProject) {
         this.dynamicProject = dynamicProject;
@@ -54,6 +55,7 @@ public class JobInfo extends  ApiModel{
     @Override
     public void doIndex(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
         setBranchTab(req.getParameter("branchTab"));
+        setBuildCount(req.getParameter("count"));
         super.doIndex(req, rsp);
     }
 
@@ -82,7 +84,7 @@ public class JobInfo extends  ApiModel{
     }
     @Exported
     public List<Build> getBuilds(){
-        return Lists.newArrayList(new BuildHistory(dynamicProject).getBuilds(branchTab,20));
+        return Lists.newArrayList(new BuildHistory(dynamicProject).getBuilds(branchTab,Integer.parseInt(buildCount)));
     }
     @Exported
     public List<BuildTime> getBuildTimes(){
@@ -104,5 +106,9 @@ public class JobInfo extends  ApiModel{
 
     private String getBranchTab() {
         return branchTab;
+    }
+
+    public void setBuildCount(String buildCount) {
+        this.buildCount = buildCount;
     }
 }

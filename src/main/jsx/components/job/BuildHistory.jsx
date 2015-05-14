@@ -137,14 +137,14 @@ export default React.createClass({
   },
   _loadBuildHistory(){
     const actions =this.props.flux.getActions('app');
-    actions.getJobInfoFromServer("buildHistoryTabs,builds[*,commit[*]]",this._currentTab());
+    actions.getJobInfoFromServer("buildHistoryTabs,builds[*,commit[*]]",this._currentTab(),this._buildCount());
   },
   _currentTab(){
     const selectedTab = Router.HashLocation.getCurrentPath();
     return selectedTab||'master';
   },
   _render(){
-    const countSlider = <RangeSlider  queryParam="count" onChange={this._onCountChange} min={20}  max={100} step={10}  />
+    const countSlider = <RangeSlider ref="buildCount" queryParam="count" onChange={this._onCountChange} min={20}  max={100} step={5}  />
     return(<div id="build-history">
       <BuildHistoryTabs  onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs}/>
       <BuildHistoryTable countSlider={countSlider} builds ={this.props.builds}/>
@@ -152,10 +152,13 @@ export default React.createClass({
   },
   _onTabChange(tab){
     let actions = this.props.flux.getActions('app');
-    actions.buildHistorySelected(tab);
+    actions.buildHistorySelected(tab, this._buildCount());
   },
   _onCountChange(count){
     let actions = this.props.flux.getActions('app');
     actions.buildHistorySelected(this._currentTab(),count);
+  },
+  _buildCount(){
+    return this.refs.buildCount?this.refs.buildCount.value():20;
   }
 });

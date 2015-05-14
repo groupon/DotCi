@@ -38,8 +38,8 @@ export function buildLog(buildNumber,subBuild){
 export function build(buildNumber){
   return _get(`${_jobApiUrl()}/build/${buildNumber}`,{tree:'*,commit[*]'});
 }
-export function job(tree, branchTab){
-  return _get(_jobApiUrl()+"/info/",{tree,branchTab});
+export function job(tree, branchTab,count){
+  return _get(_jobApiUrl()+"/info/",{tree,branchTab,count});
 }
 export async function deleteCurrentProject(){
   const rsp = await qwest.post(window.location.pathname.replace('newUi','')+"/doDeleteAjax");
