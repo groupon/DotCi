@@ -208,8 +208,8 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
     private boolean useNewUi(String token, StaplerRequest req) {
         return isNewUi() &&
-                StringUtils.startsWith(token,"dotCI") || //job pages
-                 (NumberUtils.isNumber(token) &&(StringUtils.isEmpty(req.getRestOfPath()) || StringUtils.contains(req.getRestOfPath(), "dotCI"))); // build page
+                (StringUtils.startsWith(token,"dotCI") || //job pages
+                 (NumberUtils.isNumber(token) &&(StringUtils.isEmpty(req.getRestOfPath()) || StringUtils.contains(req.getRestOfPath(), "dotCI")))); // buildpages
     }
 
     public String getJobUrl(){
