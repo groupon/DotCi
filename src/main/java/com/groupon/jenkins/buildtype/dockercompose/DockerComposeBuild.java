@@ -75,7 +75,7 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
             if(Result.FAILURE.equals(checkoutResult)) return checkoutResult;
             result = runMultiConfigbuildRunner(build, buildConfiguration, listener,launcher);
         }else{
-            result = runSubBuild(new Combination(ImmutableMap.of("run", buildConfiguration.getOnlyRun())), buildExecutionContext, listener);
+            result = runSubBuild(new Combination(ImmutableMap.of("script", buildConfiguration.getOnlyRun())), buildExecutionContext, listener);
         }
         Result pluginResult = runPlugins(build, buildConfiguration.getPlugins(), listener, launcher);
         Result notifierResult = runNotifiers(build, buildConfiguration.getNotifiers(), listener);
