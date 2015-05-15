@@ -1,1 +1,12 @@
 # Summary
+* [Installation](Installation.md)
+* [User Guide](usage/README.md)
+    * [Create new DotCI Job](usage/CreateNewJob.md)
+    * [Configure Build](usage/ConfigureBuild.md)
+    * [.ci.yml](usage/DotCiYaml.md)
+        * [Docker Compose](usage/DockerBuild.md)
+        * [Install Packages](usage/InstallPackages.md)
+        * [Templating .ci.yml](usage/Templating.md)
+        * [Build url shortcuts](usage/Shortcuts.md)
+* [Development Setup](DevelopmentSetup.md)
+* [Extending DotCi](Extending.md)

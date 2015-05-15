@@ -4,7 +4,6 @@
    - [Notifications Section](#notifications-section)
    - [Plugins Section](#plugins-section)
 - [.ci.yml examples](#ciyml-examples)
-- [Templating .ci.yml](Templating.md)
 
 
 ## .ci.yml reference
