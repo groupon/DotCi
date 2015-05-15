@@ -5,6 +5,6 @@ publish:
 	cp -R docs/_book/* .;\
 	git add --all;\
 	git commit -am "Update docs";\
-	git push;\
+	git push -f;\
 	git checkout master
 
