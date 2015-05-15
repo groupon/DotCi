@@ -19,7 +19,7 @@ In addition to [Jenkins build variables](https://wiki.jenkins-ci.org/display/JEN
 
 Send extra notification to yourself when a build fails
 
-```yaml
+```groovy
 notifications:
   <% if( DOTCI_PUSHER == 'joe') { %>
    - sms: 1234344453

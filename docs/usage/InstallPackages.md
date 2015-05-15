@@ -5,7 +5,6 @@
    - [Plugins Section](#plugins-section)
 - [.ci.yml examples](#ciyml-examples)
 
-
 ## .ci.yml reference
 
 Build automatically inherits .ci.yml based on language that is autodetected.
@@ -32,7 +31,7 @@ Check in a .ci.yml with **overrides** for overriding the defaults.
 
 #### Build Section
 
-```yaml
+```groovy
 build:
   skip: true #skips build
   before: # single command or list of commands (run serially on each matrix job)
@@ -56,7 +55,7 @@ build:
   after: cap deploy staging
 ```
 #### Notifications Section
-```yaml
+```groovy
 notifications: #list of notifications, notified ONLY on build fail and branch recovery.
   - email: #as always it can be single value or a list
      - kittah@gmail.com
@@ -66,7 +65,7 @@ notifications: #list of notifications, notified ONLY on build fail and branch re
 ```
 
 #### Plugins Section
-```yaml
+```groovy
 plugins:
   - test_output:
      format: tap |junit
@@ -80,7 +79,7 @@ plugins:
 
 
 ###Parallelization
-```yaml
+```groovy
 build:
   run:
     unit: rake spec
@@ -90,7 +89,7 @@ build:
 ###Build Environment Configuration
 
 #### Ruby build parallelized across two language versions
-```yaml
+```groovy
   environment:
      language: ruby
      language_versions:
@@ -100,7 +99,7 @@ build:
 
 ## Build templating
 
-```yaml
+```groovy
  build:
     run: rake spec
     #run integration tests only on production branch
@@ -114,7 +113,7 @@ build:
 ```
 
 ## Plugin Configuration
- ```yaml
+ ```goovy
   plugins:
     <% if( DOTCI_BRANCH == 'master'){ %>
     - artifacts: 'packages/**/*.war'
@@ -127,7 +126,7 @@ build:
  ```
 
 ##Build skipping
- ```yaml
+ ```groovy
    build:
      #only build master
      <% if( DOTCI_BRANCH != 'master') {%>
