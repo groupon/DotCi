@@ -145,7 +145,7 @@ export default React.createClass({
     return selectedTab|| this.defaultTab;
   },
   _render(){
-    const countSlider = <RangeSlider ref="buildCount" queryParam="count" onChange={this._onCountChange} min={20}  max={100} step={5}  />
+    const countSlider = <RangeSlider ref="buildCount" tooltip="Build count" queryParam="count" onChange={this._onCountChange} min={20}  max={100} step={5}  />
     return(<div id="build-history">
       <BuildHistoryTabs  onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={this.defaultTab}/>
       <BuildHistoryTable countSlider={countSlider} builds ={this.props.builds}/>

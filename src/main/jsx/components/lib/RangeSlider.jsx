@@ -7,7 +7,7 @@ export default React.createClass({
     return {value: this._getQueryValue() || this.props.min}
   },
   render(){
-    return <span className="ui label"> {this.state.value} <input ref="input" onChange={this._onChange} onMouseUp={this._onInput} defaultValue={this.state.value} min={this.props.min} step={this.props.step} max={this.props.max} className="detail" type="range"/> </span>;
+    return <span className="ui label hint--top" data-hint={this.props.tooltip}> {this.state.value} <input ref="input" onChange={this._onChange} onMouseUp={this._onInput} defaultValue={this.state.value} min={this.props.min} step={this.props.step} max={this.props.max} className="detail" type="range"/> </span>;
   },
   _onInput(e){
     const u = new Url();
