@@ -26,57 +26,38 @@
 import React from 'react';
 import Avatar from '../lib/Avatar.jsx';
 import Router from 'react-router';
-require('./build_row.less');
-class CommitInfo {
+require('./build_row.css');
+export default React.createClass({
   render(){
-    let {message,commitUrl,shortSha,committerName,branch} = this.props.commit.toObject();
-    return(<span className="commit-info">
-      <span className="commit-info-column">
-        <h5>{message}</h5>
-        <object>
-          <a className="commit-link"  onClick={this._onCommitLinkClick} href={commitUrl} >
-            <span className="icon octicon octicon-git-compare"></span> {shortSha} <i className="fa fa-external-link-square"></i>
-          </a>
-        </object>
-      </span>
-      <span className="commit-info-column">
-        {committerName}
-        <span>{branch}</span>
-      </span>
-    </span>);
-  }
-  _onCommitLinkClick(e){
-    e.preventDefault();
-    window.location = e.target.parentNode.href
-  }
-}
-var BuildRow = React.createClass({
-  render(){
-    let {result,number, cancelUrl,commit} = this.props.build.toObject();
+    let {result,number, cancelUrl,commit,duration,displayTime} = this.props.build.toObject();
+    let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
     return (
-      <Router.Link className ={"build-row-"+result}  to={'job-widgets'} params={{widget: number}}>
-        <div>
-          <div className="build-number">#{number}</div>
-          <Avatar avatarUrl={commit.get('avatarUrl')} />
-        </div>
-        <CommitInfo commit={commit} />
-        {this._buildDuration()}
-      </Router.Link>
+      <div className ={"build-row build-row-"+result}>
+        <span/>
+        <span>
+          <h5><small>{branch}</small> 
+            <Router.Link  className="build-row--title" to={'job-widgets'} params={{widget: number}}>{message}</Router.Link>
+          </h5> 
+          <div className="build-row--committer">
+            <Avatar avatarUrl={avatarUrl} />
+            <span>{committerName}</span>
+          </div>
+        </span>
+        <span>  
+          <div>#<Router.Link  className="build-row--number" to={'job-widgets'} params={{widget: number}}>{number}{result.toLowerCase()}</Router.Link></div>
+          <div><i className="fa fa-github"></i><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>
+        </span>
+        <span>
+          <div>
+            <i className="fa fa-clock-o"></i>
+            <span className="detail">{duration}</span>
+          </div>
+          <div>
+            <i className="fa fa-calendar"></i>
+            <span className="detail">{displayTime}</span>
+          </div>
+        </span>
+      </div>
     );
-  },
-  _buildDuration(){
-    let {duration,displayTime} = this.props.build.toObject();
-    return( <span className="build-duration">
-      <div className="ui label">
-        <i className="icon fa fa-clock-o"></i> Duration:
-        <span className="detail">{duration}</span>
-      </div>
-      <div className="ui label">
-        <i className="icon fa fa-clock-o"></i> Started
-        <span className="detail">{displayTime}</span>
-      </div>
-    </span>
-          );
   }
 });
-export default BuildRow;

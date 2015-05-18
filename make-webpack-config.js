@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 var webpack = require('webpack');
+var postcss_nested = require('postcss-nested');
 module.exports = function(config){
 return {
     entry: config.entry,
@@ -42,7 +43,7 @@ return {
             },
             {
                 test: /\.css$/,
-                loader: 'style-loader!css-loader!cssnext-loader' 
+                loader: 'style-loader!css-loader!postcss-loader!cssnext-loader' 
             },
             {
                 test: /\.jsx?$/,
@@ -50,6 +51,9 @@ return {
                 loaders: config.debug? ['react-hot', 'babel-loader']: ['babel-loader']
             }
         ]
+    },
+    postcss: {
+      defaults: [postcss_nested]
     },
     devtool: config.debug ? '#inline-source-map' : false,
     plugins: config.debug ? [] : [

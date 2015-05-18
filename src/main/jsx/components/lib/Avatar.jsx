@@ -23,8 +23,9 @@
  */
 
 import React from 'react';
+require('./avatar.css')
 export default React.createClass({
   render(){
-    return this.props.avatarUrl? <img height="23" width="23" className="ui avatar image" alt={this.props.emailDigest}  src={this.props.avatarUrl+"s=23"}/>: <span/>;
+    return this.props.avatarUrl? <img className="user-avatar" alt={this.props.emailDigest}  src={this.props.avatarUrl+"s=40"}/>: <span/>;
   }
 });

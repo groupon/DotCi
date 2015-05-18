@@ -1,0 +1,106 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014, Groupon, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+@import './../../build-colors.css';
+.build-row{
+  background-color: #FAFAF8;
+  > *{
+    transition: background-color 1s ease-in;
+    padding-top: 1em;
+  }
+  &-FAILURE{
+    >:nth-child(1){
+      background-color: var(--failure);
+    }
+    .build-row--number{
+      color: var(--failure);
+    }
+  }
+  &-SUCCESS{
+    >:nth-child(1){
+      background-color: var(--success);
+    }
+    .build-row--number{
+      color: var(--success);
+    }
+  }
+  &-ABORTED{
+    >:nth-child(1){
+      background-color: var(--aborted);
+    }
+    .build-row--number{
+      color: var(--aborted);
+    }
+  }
+  &-IN_PROGRESS{
+    >:nth-child(1){
+      background-color: var(--in_progress);
+    }
+    .build-row--number{
+      color: var(--in_progress);
+    }
+  }
+
+  display: flex;
+
+  >:nth-child(1){
+    width: 2%;
+  }
+
+  >:nth-child(2){
+    width: 48%;
+    text-align: left;
+    *{
+     margin-left: 0.3em;
+     }
+     .build-row--committer{
+       color: #A6ADAD;
+     }
+  }
+
+  >:nth-child(3){
+    width: 25%;
+    color: #A6ADAD;
+    text-align: left;
+    *{
+     margin-left: 0.2em;
+     height: 1.3em;
+     }
+     .github-link{
+       color: #A6ADAD;
+     }
+  }
+  >:nth-child(4){
+    text-align: left;
+    color: #A6ADAD;
+    width: 25%;
+    *{
+     margin-left: 0.5em;
+     }
+  }
+}
+
+.build-row--title{
+  color: #212121;
+}
+
