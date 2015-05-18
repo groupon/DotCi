@@ -71,7 +71,7 @@ var BuildHistoryTable = React.createClass({
 var BuildHistoryTabs = React.createClass({
   mixins: [LocationHashHelper], 
   getInitialState(){
-    return {currentSelection: this.selectedHash()?this.selectedHash(): 'master'};
+    return {currentSelection: this.selectedHash()?this.selectedHash(): this.props.defaultTab};
   },
   render()  {
     return (<div className="ui text menu">
@@ -105,7 +105,7 @@ var BuildHistoryTabs = React.createClass({
   },
   _onLocationHashChange(event){
     const selectedTab = this.selectedHash();
-    this._notifyTabSelection(selectedTab?selectedTab:'master');
+    this._notifyTabSelection(selectedTab?selectedTab:this.defaultTab);
   },
   _onTabRemove(event){
     event.stopPropagation();
@@ -131,6 +131,7 @@ var BuildHistoryTabs = React.createClass({
 
 export default React.createClass({
   mixins:[LoadingHelper,AutoRefreshHelper],
+  defaultTab: 'All',
   componentDidMount(){
     this._loadBuildHistory();
     this.setRefreshTimer(this._loadBuildHistory);
@@ -141,12 +142,12 @@ export default React.createClass({
   },
   _currentTab(){
     const selectedTab = Router.HashLocation.getCurrentPath();
-    return selectedTab||'master';
+    return selectedTab|| this.defaultTab;
   },
   _render(){
     const countSlider = <RangeSlider ref="buildCount" queryParam="count" onChange={this._onCountChange} min={20}  max={100} step={5}  />
     return(<div id="build-history">
-      <BuildHistoryTabs  onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs}/>
+      <BuildHistoryTabs  onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={this.defaultTab}/>
       <BuildHistoryTable countSlider={countSlider} builds ={this.props.builds}/>
     </div>);
   },
