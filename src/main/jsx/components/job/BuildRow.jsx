@@ -27,6 +27,7 @@ import React from 'react';
 import Avatar from '../lib/Avatar.jsx';
 import Router from 'react-router';
 import BuildIcon from './BuildIcon.jsx';
+import BuildCauseIcon from './BuildCauseIcon.jsx';
 require('./build_row.css');
 export default React.createClass({
   render(){
@@ -36,6 +37,7 @@ export default React.createClass({
       <div className ={"build-row build-row-"+result}>
         <span>
           <BuildIcon result={result} />
+          <BuildCauseIcon cause={cause.get('name')} />
         </span>
         <span>
           <div className="build-row--title"><small>{branch}</small> 
@@ -45,7 +47,7 @@ export default React.createClass({
             <Avatar avatarUrl={avatarUrl} />
             <span>{committerName}</span>
           </div>
-          <div className="build-row--cause">{cause}</div>
+          <div className="build-row--cause">{cause.get('shortDescription')}</div>
         </span>
         <span>  
           <div>#<Router.Link  className="build-row--number" to={'job-widgets'} params={{widget: number}}>{number}{result.toLowerCase()}</Router.Link></div>

@@ -92,8 +92,8 @@ public class ProcessedBuild extends Build {
     }
 
     @Override
-    public String getCause() {
-        return build.getCause().getShortDescription();
+    public BuildCause getCause() {
+        return build.getCause();
     }
 
     @Exported

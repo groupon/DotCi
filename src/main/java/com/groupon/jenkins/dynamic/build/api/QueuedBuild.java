@@ -25,6 +25,7 @@
 package com.groupon.jenkins.dynamic.build.api;
 
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
+import hudson.model.Cause;
 import hudson.model.Queue;
 import org.apache.commons.lang.StringUtils;
 
@@ -81,7 +82,13 @@ public class QueuedBuild extends Build {
     }
 
     @Override
-    public String getCause() {
-        return item.getCausesDescription();
+    public BuildCause getCause() {
+        for (Cause cause: item.getCauses()){
+           if(cause instanceof  BuildCause) {
+               return (BuildCause) cause;
+           }
+        }
+        return BuildCause.NULL_BUILD_CAUSE;
     }
+
 }

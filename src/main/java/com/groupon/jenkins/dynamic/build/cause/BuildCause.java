@@ -54,6 +54,8 @@ public abstract class BuildCause extends Cause {
     public abstract String getPullRequestNumber();
 
     public abstract CommitInfo getCommitInfo();
+    @Exported
+    public abstract String getName();
 
     public Map<String, String> getEnvVars() {
         Map<String, String> vars = new HashMap<String, String>();

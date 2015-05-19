@@ -56,6 +56,11 @@ public class NullBuildCause extends BuildCause {
     }
 
     @Override
+    public String getName() {
+        return "UNKNOWN";
+    }
+
+    @Override
     public Iterable<GithubLogEntry> getChangeLogEntries() {
         return new ArrayList<GithubLogEntry>();
     }

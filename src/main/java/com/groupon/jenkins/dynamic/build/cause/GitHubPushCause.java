@@ -50,4 +50,8 @@ public class GitHubPushCause extends GithubCause {
         return pushedBy;
     }
 
+    @Override
+    public String getName() {
+        return "GITHUB_PUSH";
+    }
 }

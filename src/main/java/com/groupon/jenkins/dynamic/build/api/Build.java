@@ -25,6 +25,7 @@
 package com.groupon.jenkins.dynamic.build.api;
 
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
+import hudson.model.Cause;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
@@ -54,6 +55,6 @@ public abstract class Build {
     @Exported
     public abstract String getCancelUrl();
     @Exported
-    public abstract String getCause();
+    public abstract Cause getCause();
 
 }

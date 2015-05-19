@@ -40,4 +40,9 @@ public class GitHubPullRequestCause extends GithubCause {
     public String getShortDescription() {
         return "Started by Github pull request  " + label + "( Number : " + number + ")";
     }
+
+    @Override
+    public String getName() {
+        return "GITHUB_PULL_REQUEST";
+    }
 }

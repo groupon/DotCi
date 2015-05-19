@@ -72,6 +72,11 @@ public class ManualBuildCause extends BuildCause {
     }
 
     @Override
+    public String getName() {
+        return "MANUAL";
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hashCode(branch, sha, user);
     }

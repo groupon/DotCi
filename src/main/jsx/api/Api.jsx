@@ -36,7 +36,7 @@ export function buildLog(buildNumber,subBuild){
   });
 }
 export function build(buildNumber){
-  return _get(`${_jobApiUrl()}/build/${buildNumber}`,{tree:'*,commit[*]'});
+  return _get(`${_jobApiUrl()}/build/${buildNumber}`,{tree:'*,commit[*],cause[*]'});
 }
 export function job(tree, branchTab,count){
   return _get(_jobApiUrl()+"/info/",{tree,branchTab,count});

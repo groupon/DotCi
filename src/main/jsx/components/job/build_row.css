@@ -71,9 +71,12 @@
     border-bottom-left-radius: 4px;
     text-align: center;
     *{
-      display: block;
       color: white;
     }
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 1em;
   }
 
   >:nth-child(2){

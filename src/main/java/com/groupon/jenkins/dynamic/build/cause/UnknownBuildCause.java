@@ -63,6 +63,11 @@ public class UnknownBuildCause extends BuildCause {
     }
 
     @Override
+    public String getName() {
+        return "UNKNOWN";
+    }
+
+    @Override
     public GitBranch getBranch() {
         return branch;
     }

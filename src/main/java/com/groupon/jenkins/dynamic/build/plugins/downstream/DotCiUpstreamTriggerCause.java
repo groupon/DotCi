@@ -87,6 +87,11 @@ public class DotCiUpstreamTriggerCause extends BuildCause {
         return this.commitInfo;
     }
 
+    @Override
+    public String getName() {
+        return "UPSTREAM";
+    }
+
     private GHCommit getCommitFromSha(DynamicProject targetJob, String sha) {
         try {
             return new GithubRepositoryService(targetJob.getGithubRepoUrl()).getGithubRepository().getCommit(sha);
