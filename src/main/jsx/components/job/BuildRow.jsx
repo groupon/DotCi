@@ -26,6 +26,7 @@
 import React from 'react';
 import Avatar from '../lib/Avatar.jsx';
 import Router from 'react-router';
+import BuildIcon from './BuildIcon.jsx';
 require('./build_row.css');
 export default React.createClass({
   render(){
@@ -33,7 +34,9 @@ export default React.createClass({
     let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
     return (
       <div className ={"build-row build-row-"+result}>
-        <span/>
+        <span>
+          <BuildIcon result={result} />
+        </span>
         <span>
           <h5><small>{branch}</small> 
             <Router.Link  className="build-row--title" to={'job-widgets'} params={{widget: number}}>{message}</Router.Link>
