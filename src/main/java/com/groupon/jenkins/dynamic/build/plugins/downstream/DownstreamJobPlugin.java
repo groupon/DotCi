@@ -30,7 +30,6 @@ import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.git.GitUrl;
 import com.groupon.jenkins.github.NoDuplicatesParameterAction;
 import hudson.Extension;
 import hudson.Launcher;
@@ -86,6 +85,6 @@ public class DownstreamJobPlugin extends DotCiPluginAdapter {
     }
 
     public Cause getCause(DynamicBuild sourceBuild, DynamicProject targetJob, Object jobOptions) {
-        return new DotCiDownstreamCause(sourceBuild, targetJob, (Map<String, String>) jobOptions);
+        return new DotCiUpstreamTriggerCause(sourceBuild, targetJob, (Map<String, String>) jobOptions);
     }
 }

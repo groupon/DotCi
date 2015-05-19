@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
-public class DotCiDownstreamCause extends BuildCause {
+public class DotCiUpstreamTriggerCause extends BuildCause {
 
     private final String pusher;
     private final String description;
@@ -45,7 +45,7 @@ public class DotCiDownstreamCause extends BuildCause {
     private final String sha;
     private GitBranch branch;
 
-    public DotCiDownstreamCause(DynamicBuild sourceBuild, DynamicProject targetJob, Map<String,String> jobOptions) {
+    public DotCiUpstreamTriggerCause(DynamicBuild sourceBuild, DynamicProject targetJob, Map<String, String> jobOptions) {
         branch=  new GitBranch(jobOptions.get("BRANCH"));
         GHCommit commit ;
         if(jobOptions.containsKey("SHA")){
