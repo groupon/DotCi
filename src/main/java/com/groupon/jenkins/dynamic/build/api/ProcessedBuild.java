@@ -90,6 +90,12 @@ public class ProcessedBuild extends Build {
     public String getCancelUrl() {
         return build.getUrl() + "/stop";
     }
+
+    @Override
+    public String getCause() {
+        return build.getCause().getShortDescription();
+    }
+
     @Exported
     public Iterable<Map> getAxisList(){
 

@@ -46,7 +46,7 @@ public class ManualBuildCause extends BuildCause {
     @Override
     @Exported(visibility = 3)
     public String getShortDescription() {
-        return null;
+        return "Started by: " + user;
     }
 
     @Override

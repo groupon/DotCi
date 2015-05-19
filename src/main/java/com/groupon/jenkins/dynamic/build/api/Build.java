@@ -53,5 +53,7 @@ public abstract class Build {
     public abstract boolean isCancelable();
     @Exported
     public abstract String getCancelUrl();
+    @Exported
+    public abstract String getCause();
 
 }

@@ -30,7 +30,7 @@ import BuildIcon from './BuildIcon.jsx';
 require('./build_row.css');
 export default React.createClass({
   render(){
-    let {result,number, cancelUrl,commit,duration,displayTime} = this.props.build.toObject();
+    let {result,number, cancelUrl,commit,duration,displayTime,cause} = this.props.build.toObject();
     let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
     return (
       <div className ={"build-row build-row-"+result}>
@@ -38,13 +38,14 @@ export default React.createClass({
           <BuildIcon result={result} />
         </span>
         <span>
-          <h5><small>{branch}</small> 
-            <Router.Link  className="build-row--title" to={'job-widgets'} params={{widget: number}}>{message}</Router.Link>
-          </h5> 
+          <div className="build-row--title"><small>{branch}</small> 
+            <Router.Link  to={'job-widgets'} params={{widget: number}}>{message}</Router.Link>
+          </div> 
           <div className="build-row--committer">
             <Avatar avatarUrl={avatarUrl} />
             <span>{committerName}</span>
           </div>
+          <div className="build-row--cause">{cause}</div>
         </span>
         <span>  
           <div>#<Router.Link  className="build-row--number" to={'job-widgets'} params={{widget: number}}>{number}{result.toLowerCase()}</Router.Link></div>

@@ -24,6 +24,8 @@
 @import './../../build-colors.css';
 .build-row{
   background-color: #FAFAF8;
+  font-size: 16px;
+  color: #A6ADAD;
   > *{
     transition: background-color 1s ease-in;
     padding-top: 1em;
@@ -64,7 +66,9 @@
   display: flex;
 
   >:nth-child(1){
-    width: 2%;
+    width: 1.5%;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
     text-align: center;
     *{
       display: block;
@@ -73,23 +77,32 @@
   }
 
   >:nth-child(2){
-    width: 48%;
-    text-align: left;
-    *{
-      margin-left: 0.3em;
-    }
-    .build-row--committer{
-      color: #A6ADAD;
-    }
-    .build-row--title{
-      color: #212121;
+    width: 48.5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+     > div {
+       margin-left: 0.3em;
+       margin-bottom: 0.3em;
+       > *{
+         margin-left: 0.5em;
+        }
+     }
+    .build-row--title {
+      font-weight: 400;
+      font-size: 16px;
+      color: gray;
+      line-height: 1;
+      > a{
+        color: gray;
+      }
     }
     border-right: solid 1px #e6e8e8;
   }
 
   >:nth-child(3){
     width: 25%;
-    color: #A6ADAD;
     text-align: left;
     *{
      margin-left: 0.2em;
@@ -102,7 +115,6 @@
   }
   >:nth-child(4){
     text-align: left;
-    color: #A6ADAD;
     width: 25%;
     *{
      margin-left: 0.5em;

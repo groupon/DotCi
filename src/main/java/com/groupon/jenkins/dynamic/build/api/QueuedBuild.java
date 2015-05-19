@@ -79,4 +79,9 @@ public class QueuedBuild extends Build {
     public String getCancelUrl() {
         return "/queue/cancelItem?id="+item.id;
     }
+
+    @Override
+    public String getCause() {
+        return item.getCausesDescription();
+    }
 }

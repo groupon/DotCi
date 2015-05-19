@@ -1,7 +1,7 @@
 import React from 'react';
 export default React.createClass({
   render(){
-    return <i className={"fa  fa-2x "+ this._resultIcon()}></i>;
+    return <i className={"fa  fa-lg "+ this._resultIcon()}></i>;
   },
   _resultIcon(){
     switch(this.props.result){
