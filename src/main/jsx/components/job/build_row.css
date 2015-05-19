@@ -65,17 +65,25 @@
 
   >:nth-child(1){
     width: 2%;
+    *{
+      display: block;
+      color: white;
+    }
   }
 
   >:nth-child(2){
     width: 48%;
     text-align: left;
     *{
-     margin-left: 0.3em;
-     }
-     .build-row--committer{
-       color: #A6ADAD;
-     }
+      margin-left: 0.3em;
+    }
+    .build-row--committer{
+      color: #A6ADAD;
+    }
+    .build-row--title{
+      color: #212121;
+    }
+    border-right: solid 1px #e6e8e8;
   }
 
   >:nth-child(3){
@@ -89,6 +97,7 @@
      .github-link{
        color: #A6ADAD;
      }
+     border-right: solid 1px #e6e8e8;
   }
   >:nth-child(4){
     text-align: left;
@@ -100,7 +109,4 @@
   }
 }
 
-.build-row--title{
-  color: #212121;
-}
 
