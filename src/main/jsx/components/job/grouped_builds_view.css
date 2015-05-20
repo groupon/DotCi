@@ -1,0 +1,12 @@
+.pipeline{
+  display: flex;
+  justify-content: space-between;
+  > * {
+    flex: 1 1 auto; /*grow when space available, shrink otherwise*/    
+  }
+
+}
+ .grouped-builds > div  {
+  margin-top: 10px;
+}
+

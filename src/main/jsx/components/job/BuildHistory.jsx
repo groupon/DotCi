@@ -138,7 +138,7 @@ export default React.createClass({
   },
   _loadBuildHistory(){
     const actions =this.props.flux.getActions('app');
-    actions.getJobInfoFromServer("buildHistoryTabs,builds[*,commit[*],cause[*]]",this._currentTab(),this._buildCount());
+    actions.getJobInfoFromServer("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]",this._currentTab(),this._buildCount());
   },
   _currentTab(){
     const selectedTab = Router.HashLocation.getCurrentPath();

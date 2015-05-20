@@ -40,6 +40,7 @@ import hudson.model.StringParameterValue;
 import jenkins.model.Jenkins;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,16 +58,17 @@ public class DownstreamJobPlugin extends DotCiPluginAdapter {
         Map<String,Object> jobOptions = (Map<String,Object>) options;
         for(String jobName: jobOptions.keySet()){
             DynamicProject job = findJob(jobName);
-            job.scheduleBuild(0, getCause(dynamicBuild,job, jobOptions.get(jobName)), getParamsAction(jobOptions.get(jobName)));
+            Map<String,String> jobParams = new HashMap<String, String>((Map<String, String>) jobOptions.get(jobName));
+            jobParams.put("SOURCE_BUILD",""+dynamicBuild.getNumber());
+            job.scheduleBuild(0, getCause(dynamicBuild,job, jobOptions.get(jobName)), getParamsAction(jobParams));
         }
 
         return true;
     }
 
-    private NoDuplicatesParameterAction getParamsAction(Object options) {
-        Map<String, String> paramOptions = (Map<String, String>) options;
+    private NoDuplicatesParameterAction getParamsAction(Map<String,String> jobParams) {
         List<ParameterValue> params = new ArrayList<ParameterValue>();
-        for(Map.Entry<String, String> entry : paramOptions.entrySet()){
+        for(Map.Entry<String, String> entry : jobParams.entrySet()){
             params.add(new StringParameterValue(entry.getKey(),entry.getValue()));
         }
 

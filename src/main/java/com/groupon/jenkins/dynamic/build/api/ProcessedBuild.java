@@ -31,12 +31,15 @@ import com.google.common.collect.Lists;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import hudson.matrix.Combination;
+import hudson.model.ParameterValue;
+import hudson.model.ParametersAction;
 import hudson.model.Run;
 import org.kohsuke.stapler.export.Exported;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ProcessedBuild extends Build {
@@ -94,6 +97,14 @@ public class ProcessedBuild extends Build {
     @Override
     public BuildCause getCause() {
         return build.getCause();
+    }
+
+    @Override
+    public List<ParameterValue> getParameters() {
+        if(build.getAction(ParametersAction.class)!=null){
+            return build.getAction(ParametersAction.class).getParameters();
+        }
+        return Lists.newArrayList();
     }
 
     @Exported

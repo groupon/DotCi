@@ -26,10 +26,12 @@ package com.groupon.jenkins.dynamic.build.api;
 
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import hudson.model.Cause;
+import hudson.model.ParameterValue;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import java.io.IOException;
+import java.util.List;
 
 
 @ExportedBean
@@ -56,5 +58,8 @@ public abstract class Build {
     public abstract String getCancelUrl();
     @Exported
     public abstract Cause getCause();
+
+    @Exported
+    public abstract List<ParameterValue> getParameters();
 
 }

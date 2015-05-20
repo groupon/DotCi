@@ -24,10 +24,14 @@
 
 package com.groupon.jenkins.dynamic.build.api;
 
+import com.google.common.collect.Lists;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import hudson.model.Cause;
+import hudson.model.ParameterValue;
 import hudson.model.Queue;
 import org.apache.commons.lang.StringUtils;
+
+import java.util.List;
 
 public class QueuedBuild extends Build {
     private Queue.Item item;
@@ -89,6 +93,11 @@ public class QueuedBuild extends Build {
            }
         }
         return BuildCause.NULL_BUILD_CAUSE;
+    }
+
+    @Override
+    public List<ParameterValue> getParameters() {
+        return Lists.newArrayList();
     }
 
 }
