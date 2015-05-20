@@ -35,23 +35,11 @@ export default React.createClass({
     let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
     return (
       <div className ={"build-row build-row-"+result}>
-        <span>
-          <BuildIcon result={result} />
-          <BuildCauseIcon cause={cause.get('name')} />
-        </span>
-        <span>
-          <div className="build-row--title"><small>{branch}</small> 
-            <Router.Link  to={'job-widgets'} params={{widget: number}}>{message}</Router.Link>
-          </div> 
-          <div className="build-row--committer">
-            <Avatar avatarUrl={avatarUrl} />
-            <span>{committerName}</span>
-          </div>
-          <div className="build-row--cause">{cause.get('shortDescription')}</div>
-        </span>
+        {this._status(result, cause)}
+        {this._commitInfo(number,commit,cause)}
         <span>  
           <div>#<Router.Link  className="build-row--number" to={'job-widgets'} params={{widget: number}}>{number}{result.toLowerCase()}</Router.Link></div>
-          <div><i className="fa fa-github"></i><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>
+          {this.props.compact?<span/>: <div><i className="fa fa-github"></i><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>}
         </span>
         <span>
           <div>
@@ -65,5 +53,24 @@ export default React.createClass({
         </span>
       </div>
     );
+  },
+  _status(result,cause){
+    return this.props.compact? <span/>:<span>
+      <BuildIcon result={result} />
+      <BuildCauseIcon cause={cause.get('name')} />
+    </span>
+  },
+  _commitInfo(number,commit,cause){
+    let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
+    return this.props.compact?<div className="build-row--cause">{cause.get('shortDescription')}</div>
+      : <span> <div className="build-row--title"><small>{branch}</small> 
+          <Router.Link  to={'job-widgets'} params={{widget: number}}>{message}</Router.Link>
+        </div> 
+        <div className="build-row--committer">
+          <Avatar avatarUrl={avatarUrl} />
+          <span>{committerName}</span>
+        </div>
+        <div className="build-row--cause">{cause.get('shortDescription')}</div>
+      </span>
   }
 });

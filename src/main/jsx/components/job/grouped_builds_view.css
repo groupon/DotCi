@@ -1,12 +1,21 @@
-.pipeline{
+.pipeline-build-view{
   display: flex;
-  justify-content: space-between;
-  > * {
-    flex: 1 1 auto; /*grow when space available, shrink otherwise*/    
+  flex-direction: column;
+  > *{
+    margin-top: 10px;
   }
-
 }
- .grouped-builds > div  {
-  margin-top: 10px;
+
+.pipeline-steps  *{
+  /* background-color: #FAFAF8; */
+  /* font-size: 16px; */
+  /* color: #A6ADAD; */
+}
+.pipeline-step{
+  box-shadow-top: 0px !important;
+  padding-top: 0px !important;
+  .content {
+  width: 100%;
+  }
 }
 

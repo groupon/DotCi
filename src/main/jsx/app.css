@@ -37,6 +37,7 @@
 @import "./css/header.css";
 @import "./css/loader.css";
 @import "./css/dimmer.css";
+@import "./css/step.css";
 body{
 background: white !important;
 }

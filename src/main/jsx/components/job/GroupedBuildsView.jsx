@@ -1,22 +1,25 @@
 import React from 'react';
 import LinearBuildsView from './LinearBuildsView.jsx';
-import BuildRow from './BuildRow.jsx';
 import {OrderedMap,List} from 'immutable';
+import BuildStep from './BuildStep.jsx';
+import Avatar from '../lib/Avatar.jsx';
 require('./grouped_builds_view.css')
 const PipeLineBuild =  React.createClass({
   render(){
-    return <span className="grouped-builds">
-      <div>
-        <BuildRow build={this.props.builds.get(0)} />
-        <div className="pipeline">
-          {this._getSteps()} 
-        </div>
+    const build =this.props.builds.get(0);
+    let {commit} = build.toObject();
+    let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
+    return <span className="pipeline-steps"> 
+      <div> {message} </div>
+      <div className="build-row--committer">
+        <Avatar avatarUrl={avatarUrl} />
+        <span>{committerName}</span>
+      </div>
+      <div className="ui steps fluid ">
+        {this.props.builds.map(build =><BuildStep key={build.get('number')} build={build}/> )}
       </div>
     </span>
   },
-  _getSteps(){
-    return this.props.builds.map(build => <BuildRow key={build.get('number')} build={build}/> )
-  }
 });
 
 
@@ -31,7 +34,7 @@ export default React.createClass({
     },sourceBuilds)
 
     const buildGroups = groupedBuilds.map((builds,buildNumber) => <PipeLineBuild key={buildNumber} builds={builds}/>);
-    return(<span>{buildGroups.toArray()}</span>);
+    return(<span className="pipeline-build-view">{buildGroups.toArray()}</span>);
   },
   _isTriggeredBuild(build) {
     return build.get('cause').get('name') === 'UPSTREAM';
