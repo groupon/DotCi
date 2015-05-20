@@ -48,7 +48,7 @@ var BuildHistoryTable = React.createClass({
   render(){
     return(
       <div>
-        <ToggleButton onClick={this._groupBuilds} tooltip="Group by commit"><i className="fa fa-bars"></i></ToggleButton>
+        <ToggleButton onClick={this._groupBuilds} tooltip="Pipeline View"><i className="fa fa-indent"></i></ToggleButton>
         <FilterBar id="filter-bar" onChange={this._onFilterChange}/> 
         {this.props.countSlider}
         {this.state.grouped? <GroupedBuildsView builds={this._filteredBuilds()} /> : <LinearBuildsView builds={this._filteredBuilds()} />}

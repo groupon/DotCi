@@ -10,13 +10,16 @@ const PipeLineBuild =  React.createClass({
     let {commit} = build.toObject();
     let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
     return <span className="pipeline-steps"> 
-      <div> {message} </div>
-      <div className="build-row--committer">
-        <Avatar avatarUrl={avatarUrl} />
-        <span>{committerName}</span>
-      </div>
+      <span className="commit">
+        <div> {message} </div>
+        <span>
+          <Avatar avatarUrl={avatarUrl} />
+          <span>{committerName}</span>
+        </span>
+        <div><i className="fa fa-github"></i><a className="github-link link-no-decoration" href={commitUrl}>{shortSha}</a></div>
+      </span>
       <div className="ui steps fluid ">
-        {this.props.builds.map(build =><BuildStep key={build.get('number')} build={build}/> )}
+        {this.props.builds.sortBy(b => b.get('number')).map(build =><BuildStep key={build.get('number')} build={build}/> )}
       </div>
     </span>
   },
@@ -30,6 +33,9 @@ export default React.createClass({
     const groupedBuilds = this.props.builds.filter(build => this._isTriggeredBuild(build)).reduce((map,build) => {
       const sourceBuildNumber = this._sourceBuildNumber(build);
       const builds =map.get(sourceBuildNumber);
+      if(!builds){ //Source Build might not be fetched && show only complete pipelines
+        return map;
+      }
       return map.set(sourceBuildNumber, builds.push(build));
     },sourceBuilds)
 

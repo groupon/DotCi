@@ -34,7 +34,6 @@ import com.groupon.jenkins.github.services.GithubRepositoryService;
 import org.kohsuke.github.GHCommit;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 
 public class DotCiUpstreamTriggerCause extends BuildCause {

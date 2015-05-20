@@ -4,7 +4,7 @@ export default React.createClass({
     return {active: false}
   },
   render(){
-    return <div data-hint={this.props.tooltip} className={"ui toggle button hint--top " +( this.state.active? "active":"") } onClick={this._onClick}>
+    return <div data-hint={this.props.tooltip} className={"ui circular toggle button hint--top " +( this.state.active? "active":"") } onClick={this._onClick}>
       {this.props.children}
     </div>
   },

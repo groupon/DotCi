@@ -33,10 +33,7 @@ import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.github.NoDuplicatesParameterAction;
 import hudson.Extension;
 import hudson.Launcher;
-import hudson.model.BuildListener;
-import hudson.model.Cause;
-import hudson.model.ParameterValue;
-import hudson.model.StringParameterValue;
+import hudson.model.*;
 import jenkins.model.Jenkins;
 
 import java.util.ArrayList;
@@ -59,11 +56,23 @@ public class DownstreamJobPlugin extends DotCiPluginAdapter {
         for(String jobName: jobOptions.keySet()){
             DynamicProject job = findJob(jobName);
             Map<String,String> jobParams = new HashMap<String, String>((Map<String, String>) jobOptions.get(jobName));
-            jobParams.put("SOURCE_BUILD",""+dynamicBuild.getNumber());
-            job.scheduleBuild(0, getCause(dynamicBuild,job, jobOptions.get(jobName)), getParamsAction(jobParams));
+            jobParams.put("SOURCE_BUILD",getSourceBuildNumber(dynamicBuild));
+            job.scheduleBuild(0, getCause(dynamicBuild, job, jobOptions.get(jobName)), getParamsAction(jobParams));
         }
 
         return true;
+    }
+
+    private String getSourceBuildNumber(DynamicBuild dynamicBuild) {
+        if(dynamicBuild.getCause() instanceof  DotCiUpstreamTriggerCause){
+            List<ParameterValue> params = dynamicBuild.getAction(ParametersAction.class).getParameters();
+            for(ParameterValue param : params){
+               if(param.getName().equals("SOURCE_BUILD")){
+                  return (String) param.getValue();
+               }
+            }
+        }
+        return "" +dynamicBuild.getNumber();
     }
 
     private NoDuplicatesParameterAction getParamsAction(Map<String,String> jobParams) {
