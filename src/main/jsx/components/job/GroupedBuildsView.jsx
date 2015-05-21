@@ -9,16 +9,17 @@ const PipeLineBuild =  React.createClass({
     const build =this.props.builds.get(0);
     let {commit} = build.toObject();
     let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
-    return <span className="pipeline-steps"> 
+    return <span className="pipeline-build"> 
       <span className="commit">
         <div> {message} </div>
         <span>
           <Avatar avatarUrl={avatarUrl} />
           <span>{committerName}</span>
         </span>
+        <div> {branch} </div>
         <div><i className="fa fa-github"></i><a className="github-link link-no-decoration" href={commitUrl}>{shortSha}</a></div>
       </span>
-      <div className="ui steps fluid ">
+      <div className="pipeline-steps">
         {this.props.builds.sortBy(b => b.get('number')).map(build =><BuildStep key={build.get('number')} build={build}/> )}
       </div>
     </span>

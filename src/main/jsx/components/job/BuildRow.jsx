@@ -38,7 +38,7 @@ export default React.createClass({
         {this._status(result, cause)}
         {this._commitInfo(number,commit,cause)}
         <span>  
-          <div>#<Router.Link  className="build-row--number" to={'job-widgets'} params={{widget: number}}>{number}{result.toLowerCase()}</Router.Link></div>
+          <Router.Link  className="build-row--number" to={'job-widgets'} params={{widget: number}}>#{number}{result.toLowerCase()}</Router.Link>
           {this.props.compact?<span/>: <div><i className="fa fa-github"></i><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>}
         </span>
         <span>

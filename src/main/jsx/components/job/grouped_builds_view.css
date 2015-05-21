@@ -6,10 +6,7 @@
   }
 }
 
-.pipeline-steps{
-  box-shadow: 0px 0px 0px 1px #d4d4d5 !important;
-}
-.pipeline-steps  .commit{
+.pipeline-build  .commit{
   display: flex;
   justify-content: center;
   padding-top: 1em;
@@ -22,13 +19,23 @@
   border-bottom: 5px black;
 }
 .pipeline-step{
-  box-shadow: 0px 0px 0px 0px #d4d4d5 !important;
+   /* flex-grow: 1; */
+   /* flex-basis: 0; */
   .content {
     width: 100%;
   }
+  .right-arrow{
+    font-size: 20px;
+  }
+  display: flex;
+  align-items: center;
 }
-.pipeline-step:after{
-  border-bottom: 2px solid #27292B !important;
-  border-right: 2px solid #27292B !important;
-}  
 
+.pipeline-steps{
+  display:flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: center;
+  align-items: center;
+}
