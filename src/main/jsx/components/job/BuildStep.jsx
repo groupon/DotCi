@@ -9,7 +9,7 @@ export default React.createClass({
     </div>
   },
   _compact(){
-    return <div className={"ui button content compact-"+this.props.build.get('result')}  data-number={this.props.build.get('number')} onClick={this._onClick} >{this._dotCiStep()} </div>
+    return <div className={"ui button circular content compact-"+this.props.build.get('result')}  data-number={this.props.build.get('number')} onClick={this._onClick} >{this._dotCiStep()} </div>
   },
   _onClick(e){
     this.props.onClick(parseInt(e.target.getAttribute('data-number')));
