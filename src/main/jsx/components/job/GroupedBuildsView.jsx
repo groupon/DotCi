@@ -4,6 +4,7 @@ import {OrderedMap,List} from 'immutable';
 import BuildStep from './BuildStep.jsx';
 import Avatar from '../lib/Avatar.jsx';
 require('./grouped_builds_view.css')
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 const PipeLineBuild =  React.createClass({
   getInitialState(){
     return {detail: 0}
@@ -22,9 +23,9 @@ const PipeLineBuild =  React.createClass({
         <div> {branch} </div>
         <div><i className="fa fa-github"></i><a className="github-link link-no-decoration" href={commitUrl}>{shortSha}</a></div>
       </span>
-      <div className="pipeline-steps">
+      <ReactCSSTransitionGroup className="pipeline-steps" transitionName="build-transition">
         {this.props.builds.sortBy(b => b.get('number')).map(build =><BuildStep onClick={this._onBuildStepClick} detail={this._isDetail(build)} key={build.get('number')} build={build}/> )}
-      </div>
+      </ReactCSSTransitionGroup>
     </span>
   },
   _isDetail(build){
