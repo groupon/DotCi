@@ -22,6 +22,9 @@
  * THE SOFTWARE.
  */
 @import './../../build-colors.css';
+.full-width{
+  width: 100%;
+}
 .build-row{
   background-color: #FAFAF8;
   font-size: 16px;

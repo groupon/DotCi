@@ -1,7 +1,7 @@
 import React from 'react';
 export default React.createClass({
   render(){
-    return <i className={"fa  fa-lg "+ this._resultIcon()}></i>;
+    return <i className={"fa  full-width "+ this._resultIcon()}></i>;
   },
   _resultIcon(){
     switch(this.props.cause){
