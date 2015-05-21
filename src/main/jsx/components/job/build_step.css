@@ -1,0 +1,42 @@
+@import './../../build-colors.css';
+.pipeline-step{
+  flex-grow: 1;
+  .content {
+    width: 100%;
+  }
+  .right-arrow{
+    font-size: 20px;
+  }
+  display: flex;
+  align-items: center;
+  .compact{
+    &-SUCCESS{
+      border: 3px solid var(--success) !important;
+    }
+    &-FAILURE{
+      border: 3px solid var(--failure) !important;
+    }
+    &-ABORTED{
+      border: 3px solid var(--aborted) !important;
+    }
+    &-IN_PROGRESS{
+      border: 3px solid var(--in_progress) !important;
+      animation: pulse 4s ;
+      animation-iteration-count: infinite;
+    }
+  }
+}
+@keyframes pulse {
+  0% {
+    transform: scale3d(1, 1, 1);
+  }
+
+  50% {
+    transform: scale3d(.95, .95, .95);
+  }
+
+  100% {
+    transform: scale3d(1, 1, 1);
+  }
+}
+

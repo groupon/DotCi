@@ -5,6 +5,9 @@ import BuildStep from './BuildStep.jsx';
 import Avatar from '../lib/Avatar.jsx';
 require('./grouped_builds_view.css')
 const PipeLineBuild =  React.createClass({
+  getInitialState(){
+    return {detail: 0}
+  },
   render(){
     const build =this.props.builds.get(0);
     let {commit} = build.toObject();
@@ -20,10 +23,16 @@ const PipeLineBuild =  React.createClass({
         <div><i className="fa fa-github"></i><a className="github-link link-no-decoration" href={commitUrl}>{shortSha}</a></div>
       </span>
       <div className="pipeline-steps">
-        {this.props.builds.sortBy(b => b.get('number')).map(build =><BuildStep key={build.get('number')} build={build}/> )}
+        {this.props.builds.sortBy(b => b.get('number')).map(build =><BuildStep onClick={this._onBuildStepClick} detail={this._isDetail(build)} key={build.get('number')} build={build}/> )}
       </div>
     </span>
   },
+  _isDetail(build){
+    return this.state.detail === build.get('number');
+  },
+  _onBuildStepClick(number){
+    this.setState({detail: number})
+  }
 });
 
 
