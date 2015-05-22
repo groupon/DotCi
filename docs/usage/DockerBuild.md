@@ -1,6 +1,6 @@
 Docker builds in DotCi require Docker Compose  https://docs.docker.com/compose/
 
-To use this build type, select the "Docker Compose" build type in your project's configure page, as documented in the [Usage](Usage.md#override-default-build-type) section.
+To use this build type, select the "Docker Compose" build type in your project's configure page, as documented in the [Configuration](ConfigureBuild.md#override-default-build-type) section.
 
 .ci.yml has three main sections
 
