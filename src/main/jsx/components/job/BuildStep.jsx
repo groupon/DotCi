@@ -1,20 +1,23 @@
 import React from 'react';
 import BuildRow from './BuildRow.jsx';
 require('./build_step.css');
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 export default React.createClass({
   render(){
     return <div className="pipeline-step">
-      {this._isDownstreamBuild()? this._step() : <span/>}
-      {this.props.detail? <span className="content"> <BuildRow build={this.props.build} compact/> </span>: this._compact()}
+      {this._isDownstreamBuild()? this._arrow() : <span/>}
+      <ReactCSSTransitionGroup transitionLeave={false}   className="content"  transitionName="flip">
+        {this.props.detail?  <BuildRow key="build-row" build={this.props.build} compact/> : this._compact()} 
+      </ReactCSSTransitionGroup>
     </div>
   },
   _compact(){
-    return <div className={"ui button circular content compact-"+this.props.build.get('result')}  data-number={this.props.build.get('number')} onClick={this._onClick} >{this._dotCiStep()} </div>
+    return <div className={"summary ui button circular compact-"+this.props.build.get('result')} key="summary"  data-number={this.props.build.get('number')} onClick={this._onClick} >{this._dotCiStep()}</div>
   },
   _onClick(e){
     this.props.onClick(parseInt(e.target.getAttribute('data-number')));
   },
-  _step(){
+  _arrow(){
     return <i className="right-arrow fa fa-arrow-right"/>;
   },
   _dotCiStep(){

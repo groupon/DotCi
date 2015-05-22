@@ -4,6 +4,10 @@
   .content {
     width: 100%;
   }
+  .summary{
+    width: 100%;
+  }
+
   .right-arrow{
     font-size: 20px;
   }
@@ -39,4 +43,21 @@
     transform: scale3d(1, 1, 1);
   }
 }
+.flip-enter.build-row {
+  transform: rotateX(-90deg);
+  transition:transform .3s linear;
+  transform-style: preserve-3d;
+}
 
+.flip-enter.flip-enter-active.build-row {
+  transform: rotateX(0deg);
+}
+
+.flip-enter.summary {
+  opacity: 0.01;
+  transition: opacity .0s ease-in;
+}
+
+.flip-enter.flip-enter-active.summary {
+  opacity: 1;
+}
