@@ -27,7 +27,7 @@ import com.groupon.jenkins.git.GitBranch;
 import com.groupon.jenkins.github.Payload;
 import java.util.List;
 
-public class GithubCause extends BuildCause {
+public abstract class GithubCause extends BuildCause {
     private final String sha;
     private final String pullRequestNumber;
     private final String pusher;
