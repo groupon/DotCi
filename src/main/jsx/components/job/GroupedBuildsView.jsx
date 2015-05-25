@@ -23,8 +23,8 @@ const PipeLineBuild =  React.createClass({
         <div> {branch} </div>
         <div><i className="fa fa-github"></i><a className="github-link link-no-decoration" href={commitUrl}>{shortSha}</a></div>
       </span>
-      <ReactCSSTransitionGroup className="pipeline-steps" transitionName="build-transition">
-        {this.props.builds.sortBy(b => b.get('number')).map(build =><BuildStep onClick={this._onBuildStepClick} detail={this._isDetail(build)} key={build.get('number')} build={build}/> )}
+      <ReactCSSTransitionGroup  transitionLeave={false} className="pipeline-steps" transitionName="build-step">
+        {this.props.builds.sortBy(b => b.get('number')).map(build =><BuildStep ref={build.get('number')} onClick={this._onBuildStepClick} detail={this._isDetail(build)} key={build.get('number')} build={build}/> )}
       </ReactCSSTransitionGroup>
     </span>
   },
