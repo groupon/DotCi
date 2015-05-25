@@ -30,7 +30,7 @@
 }
 
 .build-step-enter {
-  transform: translateX(-10em);
+  transform: translateX(-100%);
   transition:transform 1s linear;
   transform-style: preserve-3d;
 }
