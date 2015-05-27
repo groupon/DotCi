@@ -83,9 +83,20 @@ export default React.createClass({
     return <div key={'fold'+(startIdx)} className={"fold "+ (isOpen? "open":"closed")} onClick={this._openFold}>{logLines}</div>
   },
   _logLine(log,idx){
-    return (<p dangerouslySetInnerHTML={{__html: "<a></a>"+new Convert().toHtml(log)}}
+    return (<p dangerouslySetInnerHTML={{__html: "<a></a>"+new Convert().toHtml(this.escapeHtml(log))}}
       key={idx} className={this._isLineSelected(idx)?'highlight':''} id={`L${idx}`} onClick={this._onLineSelect}>
     </p>);
+  },
+  entityMap:{
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': '&quot;',
+    "'": '&#39;',
+    "/": '&#x2F;'
+  },
+  escapeHtml(string) {
+    return String(string).replace(/[&<>"'\/]/g,s =>  this.entityMap[s])
   },
   _renderLog(logLines){
     const groupedLines = logLines.reduce((list,line)=>{
