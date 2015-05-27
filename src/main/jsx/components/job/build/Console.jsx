@@ -1,10 +1,10 @@
 import React from "react";
 import Router from 'react-router';
-import mapIndexed from 'ramda/src/mapIndexed';
 import Convert from  'ansi-to-html';
 import LocationHashHelper from './../../mixins/LocationHashHelper.jsx'
 import LoadingHelper from './../../mixins/LoadingHelper.jsx'
 import loadingsvg from './tail-spin.svg';
+import {OrderedMap,List} from 'immutable';
 require('./console.less');
 export default React.createClass({
   mixins: [LocationHashHelper ,LoadingHelper], 
@@ -72,12 +72,15 @@ export default React.createClass({
     e.currentTarget.classList.toggle('closed');
     e.currentTarget.classList.toggle('open');
   },
-  _logFold(log,idx,isOpen){
-    return (
-      <div key={'fold'+(idx)} className={"fold "+ (isOpen? "open":"closed")} onClick={this._openFold}>
-        {mapIndexed((line,lineNo) => this._logLine(line,idx+lineNo),log)}
-      </div>
-    ) 
+  _logFold(lines,startIdx,isLast){
+    if(lines.size  === 1){
+      return this._logLine(lines.get(0),startIdx);
+    }
+    const selectedLine = this.selectedHash()!=''? parseInt(this.selectedHash().replace("L",'')) :0;
+    const lineSelectedInFold = selectedLine > startIdx && selectedLine < startIdx + lines.size;
+    const isOpen = isLast || lineSelectedInFold; 
+    const logLines = lines.reduce((list,line,idx) => list.push( this._logLine(line,idx+startIdx)), List());
+    return <div key={'fold'+(startIdx)} className={"fold "+ (isOpen? "open":"closed")} onClick={this._openFold}>{logLines}</div>
   },
   _logLine(log,idx){
     return (<p dangerouslySetInnerHTML={{__html: "<a></a>"+new Convert().toHtml(log)}}
@@ -85,29 +88,21 @@ export default React.createClass({
     </p>);
   },
   _renderLog(logLines){
-    var groupedLines = [[]];
-    for (let i = 0; i < logLines.size; i++) {
-      let line =logLines.get(i);
-      if(line.startsWith('$')){
-        groupedLines.push([line]);
-      }else{
-        groupedLines[ groupedLines.length-1].push(line);
+    const groupedLines = logLines.reduce((list,line)=>{
+      if( line.startsWith('$')){
+        return  list.push(List.of(line))
       }
-    }
-    var lineNo = 1;
-    return mapIndexed((log,idx) => {
-      if(log.length  == 1){
-        const logLine =this._logLine(log[0],lineNo);
-        lineNo = lineNo + 1;
-        return logLine;
-      }else{
-        const selectedLine = this.selectedHash()!=''? parseInt(this.selectedHash().replace("L",'')) :0;
-        var lineSelectedInFold = selectedLine > lineNo && selectedLine < lineNo + log.length;
-        var fold = this._logFold(log,lineNo,idx == groupedLines.length -1 || lineSelectedInFold);
-        lineNo = lineNo + log.length
-        return fold;
+      const newLast = list.last().push(line)
+      return list.set(-1,newLast);
+    } , List.of(List()));
+    //Add start indexes Turn [[..],[...],..] => [[[...],1] [[....],4], ..]
+    const groupedLinesWithIdx =  groupedLines.reduce((list,group) => {
+      if(list.last()){
+        return list.push(List.of(group,list.last().get(0).size+ list.last().get(1)))
       }
-    },groupedLines); 
+      return list.push(List.of(group,1));
+    }, List());
+    return groupedLinesWithIdx.reduce((list,group) => list.push(this._logFold(group.get(0),group.get(1), groupedLinesWithIdx.last() == group  ) ), List() )
   }
 
 });
