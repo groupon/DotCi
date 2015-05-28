@@ -32,6 +32,7 @@ environment:
     BUNDLE_PATH: /tmp/`echo $WORKSPACE | awk -F "/" '{print \$5"/"\$6}'`/`jruby -v 2>&1 | awk '{print \$1"-"\$2}' | grep jruby || ruby -v | awk '{print \$1"-"\$2}'`/bundle_cache
     BUNDLE_FROZEN: true
     BUNDLE_WITHOUT: production:development
+    BUNDLER_VERSION: 1.9.9
     GEM_HOME: /tmp
     PATH: $GEM_HOME/bin:$PATH
 
@@ -40,7 +41,7 @@ build:
     - gem env
   before:
     - 'test -f Gemfile && [[ "`gem env gempath`" =~ jruby ]] && export RUN_AS_JRUBY="jruby -S"'
-    - test -f Gemfile && $RUN_AS_JRUBY gem install bundler
+    - test -f Gemfile && $RUN_AS_JRUBY gem install bundler -v $BUNDLER_VERSION
     - test -f Gemfile && $RUN_AS_JRUBY bundle install --no-deployment -j 10
 
   run:
