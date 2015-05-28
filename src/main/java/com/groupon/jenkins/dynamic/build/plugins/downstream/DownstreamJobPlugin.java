@@ -36,13 +36,13 @@ import hudson.Launcher;
 import hudson.model.*;
 import jenkins.model.Jenkins;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Extension
 public class DownstreamJobPlugin extends DotCiPluginAdapter {
+
+    public static final String ON_RESULT_KEY = "on_result";
+
     public DownstreamJobPlugin() {
         super("downstream_job");
     }
@@ -50,16 +50,31 @@ public class DownstreamJobPlugin extends DotCiPluginAdapter {
     @Override
     public boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener) {
         if(!(options instanceof Map)){
-           throw new InvalidBuildConfigurationException("Invalid format specified for " + getName()+" . Expecting a Map.") ;
+            throw new InvalidBuildConfigurationException("Invalid format specified for " + getName()+" . Expecting a Map.") ;
         }
         Map<String,Object> jobOptions = (Map<String,Object>) options;
-        for(String jobName: jobOptions.keySet()){
+        if(shouldKickOffJob(dynamicBuild,jobOptions)){
+            String jobName = getJobName(jobOptions);
             DynamicProject job = findJob(jobName);
             Map<String,String> jobParams = new HashMap<String, String>((Map<String, String>) jobOptions.get(jobName));
             jobParams.put("SOURCE_BUILD",getSourceBuildNumber(dynamicBuild));
-            job.scheduleBuild(0, getCause(dynamicBuild, job, jobOptions.get(jobName)), getParamsAction(jobParams));
+            listener.getLogger().println("Lauching dowstream job :" +job.getFullName());
+            return job.scheduleBuild(0, getCause(dynamicBuild, job, jobOptions.get(jobName)), getParamsAction(jobParams));
         }
+        return true;
+    }
 
+    private String getJobName(Map<String, Object> jobOptions) {
+        Set<String> keySet = jobOptions.keySet();
+        keySet.remove(ON_RESULT_KEY);
+        return Iterables.getOnlyElement(keySet);
+    }
+
+    private boolean shouldKickOffJob(DynamicBuild dynamicBuild, Map<String, Object> jobOptions){
+        if(jobOptions.keySet().contains(ON_RESULT_KEY)){
+            String onResult = jobOptions.get(ON_RESULT_KEY).toString().toUpperCase() ;
+            return dynamicBuild.getResult().toString().equals(onResult);
+        }
         return true;
     }
 
@@ -67,9 +82,9 @@ public class DownstreamJobPlugin extends DotCiPluginAdapter {
         if(dynamicBuild.getCause() instanceof  DotCiUpstreamTriggerCause){
             List<ParameterValue> params = dynamicBuild.getAction(ParametersAction.class).getParameters();
             for(ParameterValue param : params){
-               if(param.getName().equals("SOURCE_BUILD")){
-                  return (String) param.getValue();
-               }
+                if(param.getName().equals("SOURCE_BUILD")){
+                    return (String) param.getValue();
+                }
             }
         }
         return "" +dynamicBuild.getNumber();
