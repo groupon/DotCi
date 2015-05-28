@@ -27,6 +27,7 @@ import com.google.common.base.Joiner;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.WorkspaceFileExporter;
+import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.git.GitBranch;
 import com.groupon.jenkins.github.DeployKeyPair;
 import com.groupon.jenkins.util.JsonResponse;
@@ -138,7 +139,11 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
     @Override
     public synchronized void save() throws IOException {
         LOGGER.info("saving build:" + getName() + ": " + getNumber());
-        SetupConfig.get().getDynamicBuildRepository().save(this);
+        getDynamicBuildRepository().save(this);
+    }
+
+    private DynamicBuildRepository getDynamicBuildRepository() {
+        return SetupConfig.get().getDynamicBuildRepository();
     }
 
     @Override
@@ -317,7 +322,7 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
     }
 
     public Run getPreviousFinishedBuildOfSameBranch(BuildListener listener) {
-        return SetupConfig.get().getDynamicBuildRepository()
+        return getDynamicBuildRepository()
                 .getPreviousFinishedBuildOfSameBranch(this, getCurrentBranch().toString());
     }
 
@@ -370,6 +375,8 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
         }
     }
 
-
-
+    @Override
+    public long getEstimatedDuration() {
+        return getDynamicBuildRepository().getEstimatedDuration(this);
+    }
 }

@@ -25,7 +25,7 @@
 .full-width{
   width: 100%;
 }
-.build-row{
+.build-info{
   background-color: #FAFAF8;
   font-size: 16px;
   color: #A6ADAD;
@@ -128,4 +128,6 @@
   }
 }
 
-
+.build-progress-bar{
+  background-color: var(--in_progress) !important;
+}

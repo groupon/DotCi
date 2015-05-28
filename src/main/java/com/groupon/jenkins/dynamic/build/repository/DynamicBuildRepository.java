@@ -24,6 +24,7 @@ THE SOFTWARE.
 package com.groupon.jenkins.dynamic.build.repository;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.*;
 import com.groupon.jenkins.mongo.BuildInfo;
@@ -347,22 +348,6 @@ public class DynamicBuildRepository extends MongoRepository {
         return builds;
 
     }
-    public <T extends DbBackedBuild> Iterable<T> getBuildsInProgress(DbBackedProject project, String branch, int firstBuildNumber, int lastBuildNumber) {
-        Query<DbBackedBuild> query = getQuery(project);
-       if(branch !=null) filterBranch(branch,query);
-        //TODO: add this  for efficiency filter("state !=", "COMPLETED")
-        List<DbBackedBuild> builds;
-        if(lastBuildNumber > 0){
-            builds = query.filter("number in", new Integer[]{firstBuildNumber, lastBuildNumber}).asList();
-        }else{
-          builds = query.filter("number >=", firstBuildNumber).asList();
-        }
-        for(DbBackedBuild build : builds) {
-            associateProject(project, build);
-        }
-
-        return (Iterable<T>) builds;
-    }
     public  List getLastBuildsPerProjectForUser(String user){
         BasicDBObject groupQuery = new BasicDBObject(of("$group", of("_id", "$projectId", "build", of("$first", "$$ROOT"))));
         BasicDBObject filterQuery = new BasicDBObject(
@@ -397,5 +382,23 @@ public class DynamicBuildRepository extends MongoRepository {
 
         return output;
 
+    }
+
+    public <P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> long getEstimatedDuration(DbBackedBuild<P, B> build) {
+        BasicDBObject groupStage = new BasicDBObject(of("$group", of("_id", "$projectId","duration",of("$avg", "$duration"))));
+        BasicDBObject filterStage = new BasicDBObject(
+                of("$match", of("$and" ,asList(
+                                of("actions.causes.branch.branch", build.getCurrentBranch().toString()),
+                                of("projectId", build.getParent().getId()),
+                                of("state", "COMPLETED"),
+                                of("result", Result.SUCCESS.toString())
+                              )
+                )));
+        BasicDBObject sortStage =  new BasicDBObject(of("$sort",of( "timestamp", -1 )));
+        BasicDBObject limitStage =  new BasicDBObject(of("$limit",5));
+        AggregationOutput avgDurations = getDatastore().getDB().getCollection("run").aggregate(filterStage,sortStage,limitStage,groupStage);
+        if(Iterables.size(avgDurations.results()) != 1) return -1;
+        Double avgDuration = (Double) Iterables.getOnlyElement(avgDurations.results()).get("duration");
+        return avgDuration.longValue();
     }
 }

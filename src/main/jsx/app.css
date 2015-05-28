@@ -23,6 +23,7 @@
  */
 
 @import 'hint.css/hint.base.min.css';
+@import 'semantic-ui-progress/progress.min.css';
 @import "./css/reset.css";
 @import "./css/site.css";
 @import "./css/button.css";

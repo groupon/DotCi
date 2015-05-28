@@ -38,6 +38,7 @@
     "react-proxy-loader": "^0.3.1",
     "react-router": "^0.13.0",
     "react-tools": "latest",
+    "semantic-ui-progress": "^1.12.3",
     "style-loader": "^0.8.3",
     "url-loader": "latest",
     "webpack": "1.9.5"

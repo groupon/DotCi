@@ -50,7 +50,9 @@ public abstract class Build {
     @Exported
     public abstract String getDisplayTime();
     @Exported
-    public abstract String getDuration();
+    public abstract long getDuration();
+    @Exported
+    public abstract String getDurationString();
 
     @Exported
     public abstract boolean isCancelable();
@@ -61,5 +63,7 @@ public abstract class Build {
 
     @Exported
     public abstract List<ParameterValue> getParameters();
+    @Exported
+    public abstract long getEstimatedDuration();
 
 }

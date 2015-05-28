@@ -71,7 +71,12 @@ public class QueuedBuild extends Build {
     }
 
     @Override
-    public String getDuration() {
+    public long getDuration() {
+        return -1;
+    }
+
+    @Override
+    public String getDurationString() {
         return "-"  ;
     }
 
@@ -98,6 +103,11 @@ public class QueuedBuild extends Build {
     @Override
     public List<ParameterValue> getParameters() {
         return Lists.newArrayList();
+    }
+
+    @Override
+    public long getEstimatedDuration() {
+        return -1;
     }
 
 }

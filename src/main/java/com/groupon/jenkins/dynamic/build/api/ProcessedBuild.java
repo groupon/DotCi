@@ -80,7 +80,12 @@ public class ProcessedBuild extends Build {
     }
 
     @Override
-    public String getDuration() {
+    public long getDuration() {
+        return build.isBuilding()?System.currentTimeMillis()-build.getStartTimeInMillis():   build.getDuration();
+    }
+
+    @Override
+    public String getDurationString() {
         return build.getDurationString();
     }
 
@@ -107,6 +112,11 @@ public class ProcessedBuild extends Build {
         return Lists.newArrayList();
     }
 
+    @Override
+    public long getEstimatedDuration() {
+        return build.getEstimatedDuration();
+    }
+
     @Exported
     public Iterable<Map> getAxisList(){
 
@@ -120,6 +130,7 @@ public class ProcessedBuild extends Build {
                 subBuild.put("result", getResult(run));
                 if (run != null) {
                     subBuild.put("url", run.getUrl());
+                    subBuild.put("estimatedDuration", run.getEstimatedDuration());
                 } else {
                     subBuild.put("url", build.getUrl());
                 }

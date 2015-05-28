@@ -31,35 +31,39 @@ import BuildCauseIcon from './BuildCauseIcon.jsx';
 require('./build_row.css');
 export default React.createClass({
   render(){
-    let {result,number, cancelUrl,commit,duration,displayTime,cause} = this.props.build.toObject();
+    let {result,number, cancelUrl,commit,durationString,displayTime,cause, estimatedDuration,duration} = this.props.build.toObject();
     let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
     return (
-      <div className ={"build-row build-row-"+result}>
-        {this._statusRow(result,cause)}
-        <span>
-          <div className="build-row--title"><small>{branch}</small> 
-            <Router.Link  to={'job-widgets'} params={{widget: number}}>{message}</Router.Link>
-          </div> 
-          <div className="build-row--committer">
-            <Avatar avatarUrl={avatarUrl} />
-            <span>{committerName}</span>
-          </div>
-          <div className="build-row--cause">{cause.get('shortDescription')}</div>
-        </span>
-        <span>  
-          <div>#<Router.Link  className="build-row--number" to={'job-widgets'} params={{widget: number}}>{number}{result.toLowerCase()}</Router.Link></div>
-          <div><i className="fa fa-github"></i><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>
-        </span>
-        <span>
-          <div>
-            <i className="fa fa-clock-o"></i>
-            <span className="detail">{duration}</span>
-          </div>
-          <div>
-            <i className="fa fa-calendar"></i>
-            <span className="detail">{displayTime}</span>
-          </div>
-        </span>
+      <div className="build-row">
+        <div className ={"build-info build-info-"+result}>
+          {this._statusRow(result,cause)}
+          <span>
+            <div className="build-row--title"><small>{branch}</small> 
+              <Router.Link  to={'job-widgets'} params={{widget: number}}>{message}</Router.Link>
+            </div> 
+            <div className="build-row--committer">
+              <Avatar avatarUrl={avatarUrl} />
+              <span>{committerName}</span>
+            </div>
+            <div className="build-row--cause">{cause.get('shortDescription')}</div>
+          </span>
+          <span>  
+            <div>#<Router.Link  className="build-row--number" to={'job-widgets'} params={{widget: number}}>{number}{result.toLowerCase()}</Router.Link></div>
+            <div><i className="fa fa-github"></i><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>
+          </span>
+          <span>
+            <div>
+              <i className="fa fa-clock-o"></i>
+              <span className="detail">{durationString}</span>
+            </div>
+            <div>
+              <i className="fa fa-calendar"></i>
+              <span className="detail">{displayTime}</span>
+            </div>
+          </span>
+
+        </div>
+        {this._progressBar(result,duration,estimatedDuration)}
       </div>
     );
   },
@@ -68,5 +72,10 @@ export default React.createClass({
       <BuildIcon result={result} />
       <BuildCauseIcon cause={cause.get('name')} />
     </span>
+  },
+  _progressBar(result,duration,estimatedDuration){
+    return result === 'IN_PROGRESS'? <div className=" ui bottom attached progress">
+      <div className="build-progress-bar bar" style={{width:((duration/estimatedDuration)*100)+"%"}}></div>
+    </div>:<span/>
   }
 });
