@@ -377,6 +377,6 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
 
     @Override
     public long getEstimatedDuration() {
-        return getDynamicBuildRepository().getEstimatedDuration(this);
+        return isBuilding()? getDynamicBuildRepository().getEstimatedDuration(this):-1;
     }
 }
