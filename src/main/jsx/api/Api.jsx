@@ -31,7 +31,7 @@ export function cancelBuild(url){
 }
 export function buildLog(buildNumber,subBuild){
   const consoleUrl = subBuild === 'main'?`${_jobUrl()}/${buildNumber}/logTail`: `${_jobUrl()}/${buildNumber}/script=${subBuild}/logTail`;
-  return qwest.get(consoleUrl).catch((error,url)=> {
+  return qwest.get(consoleUrl,{},{responseType: 'text'}).catch((error,url)=> {
     console.log(error)
   });
 }
@@ -64,6 +64,6 @@ function _jobApiUrl() {
 }
 function _get(url, params){
   let fetchUrl = params?`${url}?${stringify(params)}`: url;
-  return qwest.get(fetchUrl);
+  return qwest.get(fetchUrl,{},{responseType: 'json'});
 }
 
