@@ -1,6 +1,7 @@
 import React from "react";
 import Router from 'react-router';
 import Immutable from 'immutable';
+import BuildProgressBar from './../BuildProgressBar.jsx';
 require('./sub_builds_menu.less');
 export default  React.createClass({
   render(){
@@ -15,10 +16,14 @@ export default  React.createClass({
   _subBuilds(){
     return this.props.axisList.map(subBuild =>{
       const build = subBuild.get('script');
-      const classes = "ui item " + (this.props.selectedBuild === build? "active" : '');
-      return <Router.Link className={classes}  key={build} href='#' to="job-widgets-param" params={{widget:this.props.buildNumber , param: 'dotCI'+build}}>
-        <span className= {"subbuild-"+ subBuild.get('result')}>{build}</span>
-      </Router.Link>;
+      const classes = " item " + (this.props.selectedBuild === build? "active" : '');
+      return <span key={build} className="item">
+        <BuildProgressBar build={subBuild} />
+        <Router.Link className={classes}   href='#' to="job-widgets-param" params={{widget:this.props.buildNumber , param: 'dotCI'+build}}>
+          <span className= {"subbuild-"+ subBuild.get('result')}>{build}</span>
+          <span className="subbuild-duration">{subBuild.get('duration')?Math.floor(subBuild.get('duration')/ 60000) +' mins': '-'}</span> 
+        </Router.Link>
+      </span>
     }); 
   }
 });

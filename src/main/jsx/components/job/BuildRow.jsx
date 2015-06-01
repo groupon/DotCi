@@ -28,6 +28,7 @@ import Avatar from '../lib/Avatar.jsx';
 import Router from 'react-router';
 import BuildIcon from './BuildIcon.jsx';
 import BuildCauseIcon from './BuildCauseIcon.jsx';
+import BuildProgressBar from './BuildProgressBar.jsx';
 require('./build_row.css');
 export default React.createClass({
   render(){
@@ -35,6 +36,7 @@ export default React.createClass({
     let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
     return (
       <div className="build-row">
+        <BuildProgressBar build={this.props.build}/>
         <div className ={"build-info build-info-"+result}>
           {this._statusRow(result,cause)}
           <span>
@@ -63,7 +65,6 @@ export default React.createClass({
           </span>
 
         </div>
-        {this._progressBar(result,duration,estimatedDuration)}
       </div>
     );
   },
@@ -73,9 +74,4 @@ export default React.createClass({
       <BuildCauseIcon cause={cause.get('name')} />
     </span>
   },
-  _progressBar(result,duration,estimatedDuration){
-    return result === 'IN_PROGRESS'? <div className=" ui bottom attached progress">
-      <div className="build-progress-bar bar" style={{width:((duration/estimatedDuration)*100)+"%"}}></div>
-    </div>:<span/>
-  }
 });

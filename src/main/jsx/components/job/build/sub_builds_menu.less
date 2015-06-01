@@ -1,14 +1,25 @@
 @import './../../../build-colors.less';
 
 .subbuild-SUCCESS{
+  margin-right: 4px;
   color: @success;
 }
 .subbuild-FAILURE{
+  margin-right: 2px;
   color: @failure;
 }
 .subbuild-IN_PROGRESS{
+  margin-right: 2px;
   color: @in-progress;
 }
 .subbuild-ABORTED{
+  margin-right: 2px;
   color: @aborted;
+}
+.subbuild-duration{
+  font-size: 0.6em;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  color: rgba(0, 0, 0, 0.6);
+  padding: 4px;
 }

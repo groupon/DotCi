@@ -81,7 +81,11 @@ public class ProcessedBuild extends Build {
 
     @Override
     public long getDuration() {
-        return build.isBuilding()?System.currentTimeMillis()-build.getStartTimeInMillis():   build.getDuration();
+        return getBuildDuration(build);
+    }
+
+    private long getBuildDuration(Run build) {
+        return  build.isBuilding()?System.currentTimeMillis()-build.getStartTimeInMillis():   build.getDuration();
     }
 
     @Override
@@ -127,21 +131,36 @@ public class ProcessedBuild extends Build {
                 HashMap subBuild = new HashMap();
                 subBuild.putAll(combination);
                 hudson.model.Build run = build.getRun(combination);
-                subBuild.put("result", getResult(run));
-                if (run != null) {
-                    subBuild.put("url", run.getUrl());
-                    subBuild.put("estimatedDuration",run.getEstimatedDuration());
-                } else {
-                    subBuild.put("url", build.getUrl());
-                }
+                subBuild.putAll(getSubBuildInfo(run));
                 return subBuild;
             }
         });
 
         ArrayList<Map> subBuilds = Iterables.size(layoutList)> 1? Lists.newArrayList(subBuildInfo): new ArrayList<Map>();
-        subBuilds.add(ImmutableMap.of("script", "main", "result", getResult(build), "url", build.getUrl()));
+        subBuilds.add(getMainBuildInfo(build));
         return subBuilds;
     }
+
+    private Map getMainBuildInfo(DynamicBuild build) {
+        HashMap<String, Object> buildInfo = new HashMap<String, Object>();
+        buildInfo.put("script","main");
+        buildInfo.putAll(getSubBuildInfo(build));
+        return buildInfo;
+    }
+
+    private Map getSubBuildInfo(Run run){
+        HashMap<String, Object> subBuild = new HashMap<String, Object>();
+        subBuild.put("result", getResult(run));
+        if (run != null) {
+            subBuild.put("url", run.getUrl());
+            subBuild.put("estimatedDuration",run.getEstimatedDuration());
+            subBuild.put("duration",getBuildDuration(run));
+        } else {
+            subBuild.put("url", build.getUrl());
+        }
+        return subBuild;
+    }
+
     private  boolean isBuildInProgress(){
        return build==null || build.isBuilding() ;
     }
