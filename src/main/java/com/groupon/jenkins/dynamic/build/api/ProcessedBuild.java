@@ -58,7 +58,7 @@ public class ProcessedBuild extends Build {
       return getResult(build);
     }
     private String getResult(Run build){
-        if(build==null || build.isBuilding()){
+        if(isBuildInProgress()){
             return "IN_PROGRESS";
         }
         return build.getResult().toString();
@@ -114,7 +114,7 @@ public class ProcessedBuild extends Build {
 
     @Override
     public long getEstimatedDuration() {
-        return build.getEstimatedDuration();
+        return isBuildInProgress()? build.getEstimatedDuration(): -1;
     }
 
     @Exported
@@ -141,5 +141,8 @@ public class ProcessedBuild extends Build {
         ArrayList<Map> subBuilds = Iterables.size(layoutList)> 1? Lists.newArrayList(subBuildInfo): new ArrayList<Map>();
         subBuilds.add(ImmutableMap.of("script", "main", "result", getResult(build), "url", build.getUrl()));
         return subBuilds;
+    }
+    private  boolean isBuildInProgress(){
+       return build==null || build.isBuilding() ;
     }
 }
