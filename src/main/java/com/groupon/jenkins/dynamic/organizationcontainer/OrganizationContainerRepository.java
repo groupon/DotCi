@@ -37,7 +37,7 @@ public class OrganizationContainerRepository {
     public OrganizationContainer getOrganizationContainer(String viewName) {
         List<OrganizationContainer> containers = Jenkins.getInstance().getItems(OrganizationContainer.class);
         for (OrganizationContainer container : containers) {
-            if (container.getName().equals(viewName)) {
+            if (container.getName().equalsIgnoreCase(viewName)) {
                 return container;
             }
         }
