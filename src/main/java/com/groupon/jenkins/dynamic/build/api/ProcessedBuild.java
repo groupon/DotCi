@@ -57,11 +57,11 @@ public class ProcessedBuild extends Build {
     public String getResult(){
       return getResult(build);
     }
-    private String getResult(Run build){
-        if(isBuildInProgress()){
+    private String getResult(Run run){
+        if(isBuildInProgress(run)){
             return "IN_PROGRESS";
         }
-        return build.getResult().toString();
+        return run.getResult().toString();
     }
 
     @Override
@@ -161,7 +161,7 @@ public class ProcessedBuild extends Build {
         return subBuild;
     }
 
-    private  boolean isBuildInProgress(){
-       return build==null || build.isBuilding() ;
+    private  boolean isBuildInProgress(Run run){
+       return run ==null || run.isBuilding() ;
     }
 }
