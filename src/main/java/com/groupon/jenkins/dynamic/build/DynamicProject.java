@@ -345,5 +345,12 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     public DynamicProjectApi getAppData() throws IOException {
         return new DynamicProjectApi(this);
     }
+    public String getColor(){
+        int h = Math.abs(getFullName().hashCode());
+        int r = h % 250;
+        int g = h % 251;
+        int b = h % 252;
+        return String.format("rgb(%s,%s,%s)", r,g,b);
+    }
 
 }
