@@ -25,10 +25,10 @@
 package com.groupon.jenkins.dynamic.build.api;
 
 import com.google.common.collect.Lists;
-import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
+import com.groupon.jenkins.dynamic.build.api.metrics.BuildTimeMetric;
+import com.groupon.jenkins.dynamic.build.api.metrics.JobMetric;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
@@ -37,7 +37,6 @@ import org.kohsuke.stapler.export.ExportedBean;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import  static com.google.common.collect.ImmutableMap.of;
 
@@ -87,18 +86,10 @@ public class JobInfo extends  ApiModel{
         return Lists.newArrayList(new BuildHistory(dynamicProject).getBuilds(branchTab,Integer.parseInt(buildCount)));
     }
     @Exported
-    public List<BuildTime> getBuildTimes(){
-        List<BuildTime> buildTimes = new ArrayList<BuildTime>();
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MONTH, -1);
-        List<DbBackedBuild> builds = SetupConfig.get().getDynamicBuildRepository().getSuccessfulBuilds(dynamicProject, "master", cal, Calendar.getInstance());;
-
-        for(DbBackedBuild build : builds){
-            BuildTime buildTime = new BuildTime(build.getNumber(),TimeUnit.MILLISECONDS.toMinutes(build.getDuration()));
-            buildTimes.add(buildTime);
-        }
-
-        return buildTimes;
+    public List<JobMetric> getMetrics(){
+        List<JobMetric> metrics =  new ArrayList< JobMetric>();
+        metrics.add(new BuildTimeMetric(dynamicProject));
+        return metrics;
     }
     public void setBranchTab(String branchTab) {
         this.branchTab = branchTab;
