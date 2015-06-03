@@ -25,9 +25,9 @@
 package com.groupon.jenkins.dynamic.build.api;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import hudson.matrix.Combination;
@@ -118,7 +118,7 @@ public class ProcessedBuild extends Build {
 
     @Override
     public long getEstimatedDuration() {
-        return build.getEstimatedDuration();
+        return build.getEstimatedDurationForDefaultBranch();
     }
 
     @Exported
@@ -131,7 +131,7 @@ public class ProcessedBuild extends Build {
                 HashMap subBuild = new HashMap();
                 subBuild.putAll(combination);
                 hudson.model.Build run = build.getRun(combination);
-                subBuild.putAll(getSubBuildInfo(run));
+                subBuild.putAll(getSubBuildInfo((DbBackedBuild) run));
                 return subBuild;
             }
         });
@@ -148,12 +148,12 @@ public class ProcessedBuild extends Build {
         return buildInfo;
     }
 
-    private Map getSubBuildInfo(Run run){
+    private Map getSubBuildInfo(DbBackedBuild run){
         HashMap<String, Object> subBuild = new HashMap<String, Object>();
         subBuild.put("result", getResult(run));
         if (run != null) {
             subBuild.put("url", run.getUrl());
-            subBuild.put("estimatedDuration",run.getEstimatedDuration());
+            subBuild.put("estimatedDuration",run.getEstimatedDurationForDefaultBranch());
             subBuild.put("duration",getBuildDuration(run));
         } else {
             subBuild.put("url", build.getUrl());

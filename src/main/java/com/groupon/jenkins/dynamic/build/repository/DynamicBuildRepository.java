@@ -388,11 +388,11 @@ public class DynamicBuildRepository extends MongoRepository {
         BasicDBObject groupStage = new BasicDBObject(of("$group", of("_id", "$projectId","duration",of("$avg", "$duration"))));
         BasicDBObject filterStage = new BasicDBObject(
                 of("$match", of("$and" ,asList(
-                                of("actions.causes.branch.branch", build.getCurrentBranch().toString()),
+                                of("actions.causes.branch.branch", build.getParent().getDefaultBranch()),
                                 of("projectId", build.getParent().getId()),
                                 of("state", "COMPLETED"),
                                 of("result", Result.SUCCESS.toString())
-                              )
+                        )
                 )));
         BasicDBObject sortStage =  new BasicDBObject(of("$sort",of( "timestamp", -1 )));
         BasicDBObject limitStage =  new BasicDBObject(of("$limit",5));

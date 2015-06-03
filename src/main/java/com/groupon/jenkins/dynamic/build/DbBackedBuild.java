@@ -30,7 +30,6 @@ import com.groupon.jenkins.dynamic.build.execution.WorkspaceFileExporter;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.git.GitBranch;
 import com.groupon.jenkins.github.DeployKeyPair;
-import com.groupon.jenkins.util.JsonResponse;
 import com.mongodb.DBObject;
 import hudson.EnvVars;
 import hudson.Launcher;
@@ -375,8 +374,7 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
         }
     }
 
-    @Override
-    public long getEstimatedDuration() {
+    public long getEstimatedDurationForDefaultBranch() {
         return isBuilding()? getDynamicBuildRepository().getEstimatedDuration(this):-1;
     }
 }

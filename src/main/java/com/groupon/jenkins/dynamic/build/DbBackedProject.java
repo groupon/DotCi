@@ -241,4 +241,8 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
         this.id = id;
     }
 
+    public String getDefaultBranch() {
+        //Default to master for now; TODO: make this configurable
+        return "master";
+    }
 }
