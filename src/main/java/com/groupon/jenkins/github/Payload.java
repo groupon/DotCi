@@ -63,7 +63,7 @@ public class Payload {
         if (isPullRequest()) {
             return getPullRequest().getJSONObject("head").getString("sha");
         }
-        return payloadJson.getString("after");
+        return payloadJson.getJSONObject("head_commit").getString("id");
     }
 
     private JSONObject getPullRequest() {
