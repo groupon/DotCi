@@ -73,7 +73,6 @@ public class BuildConfiguration {
         shellCommands.add(checkoutCommands);
         shellCommands.add(String.format("trap \"docker-compose -p %s kill; docker-compose -p %s rm --force; exit\" PIPE QUIT INT HUP EXIT TERM",projectName,projectName));
         shellCommands.add(String.format("docker-compose -p %s pull",projectName));
-        shellCommands.add(String.format("docker-compose -p %s build",projectName));
         if (config.get("run") != null) {
             Map runConfig = (Map) config.get("run");
             Object dockerComposeCommand = runConfig.get(dockerComposeContainerName);
