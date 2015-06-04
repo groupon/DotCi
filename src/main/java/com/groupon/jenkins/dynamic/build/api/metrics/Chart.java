@@ -8,5 +8,7 @@ public abstract class Chart {
   @Exported(inline = true)
   public abstract ChartType getType();
   @Exported(inline = true)
-  public abstract Object value();
+  public abstract Object getData();
+  @Exported(inline = true)
+  public abstract Object getMetadata();
 }

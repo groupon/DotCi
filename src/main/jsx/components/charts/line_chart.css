@@ -1,5 +1,9 @@
-#build-metrics{
+.lineChart{
   align-items: center;
   justify-content: center;
   text-align: center;
+}
+.chart{
+  width: 600px;
+  height: 400px;
 }

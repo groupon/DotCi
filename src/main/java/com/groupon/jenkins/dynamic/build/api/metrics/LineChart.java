@@ -1,14 +1,19 @@
 package com.groupon.jenkins.dynamic.build.api.metrics;
 
+import com.google.common.collect.ImmutableMap;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import java.util.List;
 public class LineChart extends Chart {
     private List<Value> values;
+    private String xLabel;
+    private String yLabel;
 
-    public LineChart(List<Value> values){
+    public LineChart(List<Value> values, String xLabel, String yLabel){
         this.values = values;
+        this.xLabel = xLabel;
+        this.yLabel = yLabel;
     }
     @Override
     public ChartType getType() {
@@ -16,8 +21,13 @@ public class LineChart extends Chart {
     }
 
     @Override
-    public Object value() {
+    public Object getData() {
         return values;
+    }
+
+    @Override
+    public Object getMetadata() {
+        return ImmutableMap.of("x",xLabel, "y",yLabel);
     }
 
     @ExportedBean(defaultVisibility = 100)

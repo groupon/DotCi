@@ -30,7 +30,7 @@ public class BuildTimeMetric extends JobMetric {
 
     @Override
     public Chart getChart() {
-        return new LineChart(getValues());
+        return new LineChart(getValues(),"Build Number","Build Time(mins)");
     }
 
     @Override

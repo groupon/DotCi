@@ -25,14 +25,14 @@
 import React from 'react';
 import LineChart from './../charts/LineChart.jsx';
 import LoadingHelper from './../mixins/LoadingHelper.jsx';
-require("./build_metrics.less");
+// require("./build_metrics.less");
 export default React.createClass({
   mixins: [LoadingHelper],
   componentWillMount(){
     const actions = this.props.flux.getActions('app');
-    actions.getJobInfoFromServer('metrics[chart[type,value[*]]]');
+    actions.getJobInfoFromServer('metrics[name,chart[type,data[*],metadata]]');
   },
   _render(){
-    return <div>{ this.props.metrics.map(metric => <LineChart chart={metric.chart}/>)}</div>;
+    return <div>{ this.props.metrics.map(metric => <LineChart key={metric.get('name')} name={metric.get('name')} chart={metric.get('chart')}/>)}</div>;
   }
 });
