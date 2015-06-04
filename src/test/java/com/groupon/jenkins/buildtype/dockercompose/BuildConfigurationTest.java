@@ -55,16 +55,11 @@ public class BuildConfigurationTest {
     Assert.assertEquals("docker-compose -p unitgroupondotci8 pull",commands.get(1));
   }
 
-  @Test
-  public  void should_rebuild_dockerfile(){
-    ShellCommands commands = getRunCommands();
-    Assert.assertEquals("docker-compose -p unitgroupondotci8 build",commands.get(2));
-  }
 
   @Test
   public  void should_run_cmd_from_ci_yml(){
     ShellCommands commands = getRunCommands();
-    Assert.assertEquals("docker-compose -p unitgroupondotci8 run -T unit sh -xc 'command'",commands.get(3));
+    Assert.assertEquals("docker-compose -p unitgroupondotci8 run -T unit sh -xc 'command'",commands.get(2));
   }
 
 
