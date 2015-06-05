@@ -76,16 +76,15 @@ export default React.createClass({
   },
   _loadBuildHistory(){
     const actions =this.props.flux.getActions('app');
-    actions.getJobInfoFromServer("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]",this._currentTab(),this._buildCount());
+    actions.getJobInfoFromServer("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]", this._currentTab(),this._buildCount());
   },
   _currentTab(){
-    const selectedTab = Router.HashLocation.getCurrentPath();
-    return selectedTab|| this.defaultTab;
+    return this.refs.branchTabs? this.refs.branchTabs.currentTab():this.defaultTab;
   },
   _render(){
     const countSlider = <RangeSlider ref="buildCount" tooltip="Build count" queryParam="count" onChange={this._onCountChange} min={20}  max={100} step={5}  />
     return(<div className="align-center" >
-      <BranchTabs  onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={this.defaultTab}/>
+      <BranchTabs  ref="branchTabs" onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={this.defaultTab}/>
       <BuildHistoryTable countSlider={countSlider} builds ={this.props.builds}/>
     </div>);
   },

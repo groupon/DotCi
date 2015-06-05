@@ -4,11 +4,16 @@ import contains from 'ramda/src/contains'
 import classNames from 'classnames'; 
 import Dialog from './../lib/Dialog.jsx';
 import ActionButton from './../lib/ActionButton.jsx';
+import Router from 'react-router';
 require('./branch_tabs.css')
 export default React.createClass({
   mixins: [LocationHashHelper], 
   getInitialState(){
     return {currentSelection: this.selectedHash()?this.selectedHash(): this.props.defaultTab};
+  },
+  currentTab(){
+    const selectedTab = Router.HashLocation.getCurrentPath();
+    return selectedTab|| this.props.defaultTab;
   },
   render()  {
     return (<div className="ui text menu">
