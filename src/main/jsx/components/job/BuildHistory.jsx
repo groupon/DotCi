@@ -33,6 +33,7 @@ import LinearBuildsView from './LinearBuildsView.jsx';
 import ToggleButton from './../lib/ToggleButton.jsx';
 import RangeSlider from './../lib/RangeSlider.jsx';
 import BranchTabs from './BranchTabs.jsx';
+import ActionButton from './../lib/ActionButton.jsx';
 require('./build_history.less');
 var BuildHistoryTable = React.createClass({
   getInitialState: function() {
@@ -44,6 +45,7 @@ var BuildHistoryTable = React.createClass({
   render(){
     return(
       <div>
+        <ActionButton tooltip="Build Now" href="build?delay=0sec" icon="fa fa-rocket" primary/>
         <ToggleButton onClick={this._groupBuilds} tooltip="Pipeline View"><i className="fa fa-indent"></i></ToggleButton>
         <FilterBar id="filter-bar" onChange={this._onFilterChange}/> 
         {this.props.countSlider}
@@ -82,7 +84,7 @@ export default React.createClass({
   },
   _render(){
     const countSlider = <RangeSlider ref="buildCount" tooltip="Build count" queryParam="count" onChange={this._onCountChange} min={20}  max={100} step={5}  />
-    return(<div id="build-history">
+    return(<div className="align-center" >
       <BranchTabs  onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={this.defaultTab}/>
       <BuildHistoryTable countSlider={countSlider} builds ={this.props.builds}/>
     </div>);

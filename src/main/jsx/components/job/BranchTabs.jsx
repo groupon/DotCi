@@ -1,9 +1,9 @@
 import React from 'react';
 import LocationHashHelper from './../mixins/LocationHashHelper.jsx'
-import ActionButton from './../lib/ActionButton.jsx';
 import contains from 'ramda/src/contains'
 import classNames from 'classnames'; 
 import Dialog from './../lib/Dialog.jsx';
+import ActionButton from './../lib/ActionButton.jsx';
 require('./branch_tabs.css')
 export default React.createClass({
   mixins: [LocationHashHelper], 
@@ -12,7 +12,6 @@ export default React.createClass({
   },
   render()  {
     return (<div className="ui text menu">
-      <div className="ui item"><ActionButton tooltip="Build Now" href="build?delay=0sec" icon="fa fa-rocket" primary/></div>
       {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab))).toArray()}
       <ActionButton className="ui item" tooltip="Add new tab" onClick={this._addTab} icon="fa fa-plus-circle"/>
       <Dialog ref="addDialog" title="Add new brach tab" onSave={this._onTabSave} >

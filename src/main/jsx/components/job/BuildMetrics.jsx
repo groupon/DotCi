@@ -25,14 +25,18 @@
 import React from 'react';
 import LineChart from './../charts/LineChart.jsx';
 import LoadingHelper from './../mixins/LoadingHelper.jsx';
-// require("./build_metrics.less");
+import BranchTabs from './BranchTabs.jsx';
+
 export default React.createClass({
   mixins: [LoadingHelper],
   componentWillMount(){
     const actions = this.props.flux.getActions('app');
-    actions.getJobInfoFromServer('metrics[name,chart[type,data[*],metadata]]');
+    actions.getJobInfoFromServer('buildHistoryTabs,metrics[name,chart[type,data[*],metadata]]');
   },
   _render(){
-    return <div>{ this.props.metrics.map(metric => <LineChart key={metric.get('name')} name={metric.get('name')} chart={metric.get('chart')}/>)}</div>;
+    return <div className="align-center">
+      <BranchTabs  onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={'All'}/>
+      { this.props.metrics.map(metric => <LineChart key={metric.get('name')} name={metric.get('name')} chart={metric.get('chart')}/>)}
+    </div>;
   }
 });
