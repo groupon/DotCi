@@ -35,4 +35,9 @@ public class BuildTimeMetric extends JobMetric {
     public String getName() {
         return "Build Times";
     }
+
+    @Override
+    public boolean isApplicable() {
+        return true;
+    }
 }
