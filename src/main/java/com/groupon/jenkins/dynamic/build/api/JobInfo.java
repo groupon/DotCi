@@ -87,7 +87,7 @@ public class JobInfo extends  ApiModel{
     }
     @Exported
     public List<JobMetric> getMetrics(){
-      return  JobMetric.getApplicableJobMetrics(dynamicProject);
+      return  JobMetric.getApplicableJobMetrics(dynamicProject,branchTab,Integer.parseInt(buildCount));
     }
     public void setBranchTab(String branchTab) {
         this.branchTab = branchTab;

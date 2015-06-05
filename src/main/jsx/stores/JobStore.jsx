@@ -35,7 +35,11 @@ export default class JobStore extends Store {
     this.register(actionIds.buildHistoryChanged, this.buildHistoryChanged);
     this.register(actionIds.tabAdded, this.tabAdded);
     this.register(actionIds.tabRemoved, this.tabRemoved);
+    this.register(actionIds.clearJobInfo, this.clearJobInfo);
     this.state = {job: Map()};
+  }
+  clearJobInfo(path){
+    this._setState(this._getState().delete(path)) ;
   }
   jobInfoChanged(jobInfo){
     const newData = this._getState().mergeDeep(fromJS(jobInfo));

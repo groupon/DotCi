@@ -5,9 +5,10 @@ import classNames from 'classnames';
 import Dialog from './../lib/Dialog.jsx';
 import ActionButton from './../lib/ActionButton.jsx';
 import Router from 'react-router';
+import LoadingHelper from './../mixins/LoadingHelper.jsx';
 require('./branch_tabs.css')
 export default React.createClass({
-  mixins: [LocationHashHelper], 
+  mixins: [LocationHashHelper,LoadingHelper], 
   getInitialState(){
     return {currentSelection: this.selectedHash()?this.selectedHash(): this.props.defaultTab};
   },
@@ -15,7 +16,7 @@ export default React.createClass({
     const selectedTab = Router.HashLocation.getCurrentPath();
     return selectedTab|| this.props.defaultTab;
   },
-  render()  {
+  _render()  {
     return (<div className="ui text menu">
       {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab))).toArray()}
       <ActionButton className="ui item" tooltip="Add new tab" onClick={this._addTab} icon="fa fa-plus-circle"/>

@@ -50,6 +50,9 @@ import {addBranchTab as addBranchTabOnServer, removeBranchTab as removeBranchTab
     jobInfoChanged(newJobInfo){
       return newJobInfo;
     }
+    clearJobInfo(path){
+      return path;
+    }
     async cancelBuild(url){
       cancelBuildApi(url);
     }

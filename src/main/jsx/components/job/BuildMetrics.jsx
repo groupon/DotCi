@@ -24,19 +24,30 @@
 
 import React from 'react';
 import LineChart from './../charts/LineChart.jsx';
-import LoadingHelper from './../mixins/LoadingHelper.jsx';
 import BranchTabs from './BranchTabs.jsx';
+import RangeSlider from './../lib/RangeSlider.jsx';
 
 export default React.createClass({
-  mixins: [LoadingHelper],
-  componentWillMount(){
-    const actions = this.props.flux.getActions('app');
-    actions.getJobInfoFromServer('buildHistoryTabs,metrics[name,chart[type,data[*],metadata]]');
+  componentDidMount(){
+    this._loadBuildMetrics(this.refs.branchTabs.currentTab(),this.refs.buildCount.value());
   },
-  _render(){
+  _loadBuildMetrics(branchTab,buildCount){
+    const actions = this.props.flux.getActions('app');
+    actions.clearJobInfo('metrics');
+    actions.getJobInfoFromServer('buildHistoryTabs,metrics[name,chart[type,data[*],metadata]]',branchTab,buildCount);
+  },
+  render(){
+    const charts = this.props.metrics?this.props.metrics.map(metric => <LineChart key={metric.get('name')} name={metric.get('name')} chart={metric.get('chart')}/>) : <div/>;
     return <div className="align-center">
-      <BranchTabs  onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={'All'}/>
-      { this.props.metrics.map(metric => <LineChart key={metric.get('name')} name={metric.get('name')} chart={metric.get('chart')}/>)}
+      <BranchTabs  ref="branchTabs" onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={'All'}/>
+      <RangeSlider ref="buildCount" tooltip="Build count" queryParam="count" onChange={this._onCountChange} min={20}  max={100} step={5}  />
+      {charts}
     </div>;
+  },
+  _onTabChange(tab){
+    this._loadBuildMetrics(this.refs.branchTabs.currentTab(),this.refs.buildCount.value());
+  },
+  _onCountChange(count){
+    this._loadBuildMetrics(this.refs.branchTabs.currentTab(),this.refs.buildCount.value());
   }
 });

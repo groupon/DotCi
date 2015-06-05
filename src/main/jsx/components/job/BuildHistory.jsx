@@ -36,13 +36,14 @@ import BranchTabs from './BranchTabs.jsx';
 import ActionButton from './../lib/ActionButton.jsx';
 require('./build_history.less');
 var BuildHistoryTable = React.createClass({
+  mixins: [LoadingHelper],
   getInitialState: function() {
     return {filter: '',grouped: false};
   },
   _filteredBuilds(){
     return this.props.builds.filter(this._applyFilter);
   },
-  render(){
+  _render(){
     return(
       <div>
         <ActionButton tooltip="Build Now" href="build?delay=0sec" icon="fa fa-rocket" primary/>
@@ -68,7 +69,7 @@ var BuildHistoryTable = React.createClass({
 });
 
 export default React.createClass({
-  mixins:[LoadingHelper,AutoRefreshHelper],
+  mixins:[AutoRefreshHelper],
   defaultTab: 'All',
   componentDidMount(){
     this._loadBuildHistory();
@@ -79,9 +80,9 @@ export default React.createClass({
     actions.getJobInfoFromServer("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]", this._currentTab(),this._buildCount());
   },
   _currentTab(){
-    return this.refs.branchTabs? this.refs.branchTabs.currentTab():this.defaultTab;
+    return this.refs.branchTabs.currentTab();
   },
-  _render(){
+  render(){
     const countSlider = <RangeSlider ref="buildCount" tooltip="Build count" queryParam="count" onChange={this._onCountChange} min={20}  max={100} step={5}  />
     return(<div className="align-center" >
       <BranchTabs  ref="branchTabs" onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={this.defaultTab}/>
@@ -97,6 +98,7 @@ export default React.createClass({
     actions.buildHistorySelected(this._currentTab(),count);
   },
   _buildCount(){
+    //TODO: this needs to be fixed, this doesn't work is always 20
     return this.refs.buildCount?this.refs.buildCount.value():20;
   }
 });
