@@ -2,12 +2,23 @@ import React from 'react';
 import Router from 'react-router';
 import qs from 'qs';
 import Url from './../../vendor/url.js'
+require('./range_slider.css');
 export default React.createClass({
   getInitialState(){
     return {value: this._getQueryValue() || this.props.min}
   },
   render(){
-    return <span className="ui label hint--top" data-hint={this.props.tooltip}> {this.state.value} <input ref="input" onChange={this._onChange} onMouseUp={this._onInput} defaultValue={this.state.value} min={this.props.min} step={this.props.step} max={this.props.max} className="detail" type="range"/> </span>;
+    return <span className="range-slider-container hint--top" data-hint={this.props.tooltip}>
+      <span>{this.state.value}</span>
+      <input ref="input" 
+        onChange={this._onChange} 
+        onMouseUp={this._onInput} 
+        defaultValue={this.state.value} 
+        min={this.props.min} 
+        step={this.props.step} 
+        max={this.props.max} 
+        className=" slider detail" 
+        type="range"/></span>;
   },
   _onInput(e){
     const u = new Url();
