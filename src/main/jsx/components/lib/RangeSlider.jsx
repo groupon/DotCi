@@ -9,7 +9,6 @@ export default React.createClass({
   },
   render(){
     return <span className="range-slider-container hint--top" data-hint={this.props.tooltip}>
-      <span>{this.state.value}</span>
       <input ref="input" 
         onChange={this._onChange} 
         onMouseUp={this._onInput} 
@@ -17,8 +16,9 @@ export default React.createClass({
         min={this.props.min} 
         step={this.props.step} 
         max={this.props.max} 
-        className=" slider detail" 
-        type="range"/></span>;
+        type="range"/>
+      <span className="label">{this.state.value}</span>
+    </span>;
   },
   _onInput(e){
     const u = new Url();
