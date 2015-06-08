@@ -4,6 +4,7 @@
   justify-content: center;
   align-content: space-between;
   align-items: center;
+  display: inherit !important;
 }
 .range-slider-container input[type=range]{
   margin-right: .2em;

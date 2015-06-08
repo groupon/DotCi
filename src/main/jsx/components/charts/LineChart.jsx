@@ -37,7 +37,7 @@ export default React.createClass({
   },
   _render(){
     return (<div className="lineChart">
-      <div ref="legend"></div>
+      <div className="align-center" ref="legend"></div>
       <canvas className="chart" ref='chart' onClick={this._onClick}/></div>);
   },
   _legend(){

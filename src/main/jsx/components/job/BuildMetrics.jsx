@@ -26,7 +26,7 @@ import React from 'react';
 import LineChart from './../charts/LineChart.jsx';
 import BranchTabs from './BranchTabs.jsx';
 import RangeSlider from './../lib/RangeSlider.jsx';
-
+require('./build_metrics.css');
 export default React.createClass({
   componentDidMount(){
     this._loadBuildMetrics(this.refs.branchTabs.currentTab(),this.refs.buildCount.value());
@@ -38,10 +38,14 @@ export default React.createClass({
   },
   render(){
     const charts = this.props.metrics?this.props.metrics.map(metric => <LineChart key={metric.get('name')} name={metric.get('name')} chart={metric.get('chart')}/>) : <div/>;
-    return <div className="align-center">
-      <BranchTabs  ref="branchTabs" onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={'All'}/>
-      <RangeSlider ref="buildCount" tooltip="Build count" queryParam="count" onChange={this._onCountChange} min={20}  max={100} step={5}  />
-      {charts}
+    return <div className="build-metrics">
+      <span className="action-bar">
+        <BranchTabs  ref="branchTabs" onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={'All'}/>
+        <RangeSlider ref="buildCount" tooltip="Build count" queryParam="count" onChange={this._onCountChange} min={20}  max={100} step={5}  />
+      </span>
+      <div className="charts">
+        {charts}
+      </div>
     </div>;
   },
   _onTabChange(tab){
