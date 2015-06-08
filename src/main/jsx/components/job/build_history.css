@@ -21,9 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 #filter-bar{
-  margin-top: 10px;
   width: 50%;
-  margin-left: auto;
-  margin-right: auto;
+}
+
+.buildHistory-bar{
+  display:flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: space-between;
+  align-items: center;
+}
+
+.buildHistory-bar > *{
+  margin-left: 1em;
 }
