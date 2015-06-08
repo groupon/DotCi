@@ -3,8 +3,10 @@ package com.groupon.jenkins.dynamic.build.api.metrics;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.extensions.DotCiExtension;
+import com.mongodb.DB;
 import hudson.ExtensionPoint;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.export.Exported;
@@ -22,6 +24,10 @@ public abstract class JobMetric implements ExtensionPoint {
 
     @Exported(inline = true)
     public abstract Chart getChart();
+
+    protected DB getDB() {
+        return SetupConfig.get().getDynamicBuildRepository().getDatastore().getDB();
+    }
 
     @Exported(inline = true)
     public abstract String getName();
