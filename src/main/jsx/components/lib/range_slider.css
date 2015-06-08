@@ -1,0 +1,17 @@
+.range-slider-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: space-between;
+  align-items: center;
+  display: inherit !important;
+}
+.range-slider-container input[type=range]{
+  margin-right: .2em;
+}
+.range-slider-container .label{
+  background-color: #e0e0e0;
+  color: rgba(0, 0, 0, 0.6);
+  padding: .8em;
+  border-radius: 50%;
+}

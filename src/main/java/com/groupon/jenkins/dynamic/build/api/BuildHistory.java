@@ -58,10 +58,7 @@ public class BuildHistory extends ApiModel {
     }
 
     public Iterable<Build> getBuilds(String branch,int count) {
-        if("All".equalsIgnoreCase(branch)){
-           branch =null;
-        }
-        Iterable<DynamicBuild> builds = isMyBuilds(branch) ? getDynamicBuildRepository().<DynamicBuild>getCurrentUserBuilds(dynamicProject, count) : getDynamicBuildRepository().<DynamicBuild>getLast(dynamicProject, count, branch);
+        Iterable<DynamicBuild> builds = getDynamicBuildRepository().getBuilds(dynamicProject,branch,count,null);
         return Iterables.concat(getQueuedBuilds(), toUiBuilds(filterSkipped(builds)));
     }
 
@@ -88,9 +85,6 @@ public class BuildHistory extends ApiModel {
         return SetupConfig.get().getDynamicBuildRepository();
     }
 
-    private boolean isMyBuilds(String branch) {
-        return "Mine".equalsIgnoreCase(branch);
-    }
 
     private Iterable<DynamicBuild> filterSkipped(Iterable<DynamicBuild> builds) {
         return Iterables.filter(builds, new Predicate<DynamicBuild>() {

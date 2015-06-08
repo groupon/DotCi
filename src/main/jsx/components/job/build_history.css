@@ -22,34 +22,19 @@
  * THE SOFTWARE.
  */
 
-.link-no-decoration{
-  text-decoration: none;
-  &:visited{
-    text-decoration: none;
-  }
-  &:hover{
-    text-decoration: none;
-  }
-  &:active{
-    text-decoration: none;
-  }
-  &:focus{
-    text-decoration: none;
-  }
-}
-
 #filter-bar{
-  margin-top: 10px;
   width: 50%;
-  margin-left: auto;
-  margin-right: auto;
-}
-#build-history{
-  text-align: center;
-}
-.tab-close{
-  margin-left: 9px;
-  .link-no-decoration;
-  color: #212121;
 }
 
+.buildHistory-bar{
+  display:flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: space-between;
+  align-items: center;
+}
+
+.buildHistory-bar > *{
+  margin-left: 1em;
+}

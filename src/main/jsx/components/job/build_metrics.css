@@ -1,0 +1,19 @@
+.build-metrics .charts{
+  display:flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: space-between;
+  align-items: center;
+}
+.build-metrics .action-bar{
+  display:flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: space-between;
+  > *{
+  margin-left: 1em;
+  } 
+}
+

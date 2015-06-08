@@ -1,7 +1,9 @@
 import React from 'react';
 import Chart from 'chart.js';
+import  LoadingHelper from './../mixins/LoadingHelper.jsx';
 require('./line_chart.css');
 export default React.createClass({
+  mixins:[LoadingHelper],
   componentDidUpdate(){
     this._renderChart();
   },
@@ -29,12 +31,13 @@ export default React.createClass({
     };
     this.chart = new Chart(chartCtx).Line(chartData, { scaleShowGridLines : false,legendTemplate: this._legend()});
     this.refs.legend.getDOMNode().innerHTML = this.chart.generateLegend();
+    this.chart.update();
   },
   _onClick(e){
   },
-  render(){
+  _render(){
     return (<div className="lineChart">
-      <div ref="legend"></div>
+      <div className="align-center" ref="legend"></div>
       <canvas className="chart" ref='chart' onClick={this._onClick}/></div>);
   },
   _legend(){

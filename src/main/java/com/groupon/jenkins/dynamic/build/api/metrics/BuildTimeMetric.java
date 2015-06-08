@@ -2,8 +2,10 @@ package com.groupon.jenkins.dynamic.build.api.metrics;
 
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DbBackedBuild;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import hudson.Extension;
+import hudson.model.Result;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,9 +19,8 @@ public class BuildTimeMetric extends JobMetric {
         List<LineChart.Value> buildTimes = new ArrayList<LineChart.Value>();
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, -1);
-        List<DbBackedBuild> builds = SetupConfig.get().getDynamicBuildRepository().getSuccessfulBuilds(getProject(), "master", cal, Calendar.getInstance());;
-
-        for(DbBackedBuild build : builds){
+        Iterable<DynamicBuild> builds = SetupConfig.get().getDynamicBuildRepository().getBuilds(getProject(), getBranch(), getBuildCount(), Result.SUCCESS);
+        for(DynamicBuild build : builds){
             LineChart.Value buildTime = new LineChart.Value(build.getNumber(), TimeUnit.MILLISECONDS.toMinutes(build.getDuration()));
             buildTimes.add(buildTime);
         }
@@ -34,5 +35,10 @@ public class BuildTimeMetric extends JobMetric {
     @Override
     public String getName() {
         return "Build Times";
+    }
+
+    @Override
+    public boolean isApplicable() {
+        return true;
     }
 }

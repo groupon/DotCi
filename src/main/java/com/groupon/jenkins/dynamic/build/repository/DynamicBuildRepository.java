@@ -23,7 +23,6 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.repository;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.*;
@@ -39,12 +38,10 @@ import hudson.model.Result;
 import hudson.model.Run;
 import hudson.util.RunList;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import jenkins.model.Jenkins;
-import org.bson.types.BasicBSONList;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
@@ -56,7 +53,6 @@ import static com.groupon.jenkins.dynamic.build.repository.MongoQueryProjectionB
 import javax.inject.Inject;
 
 public class DynamicBuildRepository extends MongoRepository {
-    private static final Logger LOGGER = Logger.getLogger(DynamicBuildRepository.class.getName());
 
     @Inject
     public DynamicBuildRepository(Datastore datastore) {
@@ -130,7 +126,7 @@ public class DynamicBuildRepository extends MongoRepository {
 
 
     public <T extends DbBackedBuild> Iterable<T> latestBuilds(DbBackedProject project, int count) {
-        return getLast(project, count, null);
+        return getLast(project, count, null, null);
     }
 
     public boolean hasBuild(DbBackedProject project, Integer number) {
@@ -202,11 +198,14 @@ public class DynamicBuildRepository extends MongoRepository {
         return (Iterable<T>) builds;
     }
 
-    public <T extends DbBackedBuild> Iterable<T> getLast(DbBackedProject project, int i, String branch) {
+    public <T extends DbBackedBuild> Iterable<T> getLast(DbBackedProject project, int i, String branch, Result result) {
         Query<DbBackedBuild> query = getQuery(project).limit(i).order("-number");
 
         if (branch != null) {
             query = filterBranch(branch, query);
+        }
+        if(result!=null) {
+           query = query.filter("result",result.toString());
         }
 
         List<DbBackedBuild> builds = query.asList();
@@ -224,7 +223,7 @@ public class DynamicBuildRepository extends MongoRepository {
         return query;
     }
 
-    public <T extends DbBackedBuild> Iterable<T> getCurrentUserBuilds(DbBackedProject project, int i) {
+    public <T extends DbBackedBuild> Iterable<T> getCurrentUserBuilds(DbBackedProject project, int i,Result result) {
         Query<DbBackedBuild> query = getQuery(project)
             .limit(i)
             .order("-number");
@@ -234,6 +233,9 @@ public class DynamicBuildRepository extends MongoRepository {
             query.criteria("actions.causes.pusher").equal(Jenkins.getAuthentication().getName())
         );
 
+        if(result!=null) {
+            query = query.filter("result",result.toString());
+        }
         List<DbBackedBuild> builds = query.asList();
 
         for(DbBackedBuild build : builds) {
@@ -337,17 +339,6 @@ public class DynamicBuildRepository extends MongoRepository {
     }
 
 
-    public List<DbBackedBuild> getSuccessfulBuilds(DynamicProject project, String branch, Calendar startDate, Calendar endDate){
-        Query<DbBackedBuild> query = getQuery(project);
-        if(branch !=null) filterBranch(branch,query);
-        query.filter("result","SUCCESS");
-        List<DbBackedBuild> builds = query.filter("startTime <", endDate.getTimeInMillis()).filter("startTime >", startDate.getTimeInMillis()).asList();
-        for(DbBackedBuild build : builds) {
-            associateProject(project, build);
-        }
-        return builds;
-
-    }
     public  List getLastBuildsPerProjectForUser(String user){
         BasicDBObject groupQuery = new BasicDBObject(of("$group", of("_id", "$projectId", "build", of("$first", "$$ROOT"))));
         BasicDBObject filterQuery = new BasicDBObject(
@@ -400,5 +391,15 @@ public class DynamicBuildRepository extends MongoRepository {
         if(Iterables.size(avgDurations.results()) != 1) return -1;
         Double avgDuration = (Double) Iterables.getOnlyElement(avgDurations.results()).get("duration");
         return avgDuration.longValue();
+    }
+
+    public Iterable<DynamicBuild> getBuilds(DynamicProject dynamicProject, String branch, int count, Result result) {
+        if("All".equalsIgnoreCase(branch)){
+            branch =null;
+        }
+        return isMyBuilds(branch)? this.<DynamicBuild>getCurrentUserBuilds(dynamicProject, count,result) : this.<DynamicBuild>getLast(dynamicProject, count, branch,result);
+    }
+    private boolean isMyBuilds(String branch) {
+        return "Mine".equalsIgnoreCase(branch);
     }
 }

@@ -1,0 +1,20 @@
+@mixin link-no-decoration{
+  text-decoration: none;
+  &:visited{
+    text-decoration: none;
+  }
+  &:hover{
+    text-decoration: none;
+  }
+  &:active{
+    text-decoration: none;
+  }
+  &:focus{
+    text-decoration: none;
+  }
+}
+.tab-close{
+  margin-left: 9px;
+  @mixin link-no-decoration;
+  color: #212121;
+}

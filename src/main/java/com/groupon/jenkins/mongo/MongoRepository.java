@@ -23,6 +23,8 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.mongo;
 
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.DynamicProject;
 import org.mongodb.morphia.Datastore;
 
 import javax.inject.Inject;
@@ -38,4 +40,5 @@ public abstract class MongoRepository {
     public Datastore getDatastore() {
         return datastore;
     }
+
 }

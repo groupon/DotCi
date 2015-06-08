@@ -52,7 +52,7 @@ class BranchHistoryWidgetModel<T extends DbBackedBuild> {
     }
 
     public Iterable<T> getBaseList() {
-        return filterSkipped(isMyBuilds() ? dynamicBuildRepository.<T> getCurrentUserBuilds(((DbBackedProject) owner), BranchHistoryWidget.BUILD_COUNT) : dynamicBuildRepository.<T> getLast((DbBackedProject) owner, BranchHistoryWidget.BUILD_COUNT, branch));
+        return filterSkipped(isMyBuilds() ? dynamicBuildRepository.<T> getCurrentUserBuilds(((DbBackedProject) owner), BranchHistoryWidget.BUILD_COUNT,null) : dynamicBuildRepository.<T> getLast((DbBackedProject) owner, BranchHistoryWidget.BUILD_COUNT, branch, null));
     }
 
     public OffsetBuild<T> getNextBuildToFetch(Iterable<T> builds, HistoryWidget.Adapter<? super T> adapter) {
