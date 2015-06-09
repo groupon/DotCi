@@ -1,9 +1,8 @@
 package com.groupon.jenkins.dynamic.build.api.metrics;
 
 import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.dynamic.build.api.metrics.charts.LineChart;
 import hudson.Extension;
 import hudson.model.Result;
 

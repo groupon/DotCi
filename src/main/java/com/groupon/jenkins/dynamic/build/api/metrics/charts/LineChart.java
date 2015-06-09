@@ -1,6 +1,7 @@
-package com.groupon.jenkins.dynamic.build.api.metrics;
+package com.groupon.jenkins.dynamic.build.api.metrics.charts;
 
 import com.google.common.collect.ImmutableMap;
+import com.groupon.jenkins.dynamic.build.api.metrics.charts.ChartType;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
