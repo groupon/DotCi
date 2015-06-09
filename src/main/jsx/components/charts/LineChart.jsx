@@ -34,6 +34,15 @@ export default React.createClass({
       </div>);
   },
   _legend(){
-    return "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+    return `<ul class=\"<%=name.toLowerCase()%>-legend\">
+    <% for (var i=0; i<datasets.length; i++){%>
+    <li>
+    <span style=\"color:<%=datasets[i].strokeColor%>\">
+    <%if(datasets[i].label){%>
+    <%=datasets[i].label%>
+    <%}%>
+    </li></span>
+    <%}%>
+    </ul>`
   }
 })

@@ -37,15 +37,13 @@ export default React.createClass({
     actions.getJobInfoFromServer('buildHistoryTabs,metrics[title,chart[*,dataSets[*]]]',branchTab,buildCount);
   },
   render(){
-    const charts = this.props.metrics?this.props.metrics.map(metric => <LineChart key={metric.get('title')} title={metric.get('title')} chart={metric.get('chart')}/>) : <div/>;
+    const charts = this.props.metrics?this.props.metrics.map(metric => <span key={metric.get('title')} className="build-chart"><LineChart  title={metric.get('title')} chart={metric.get('chart')}/><hr/></span>) : <div/>;
     return <div className="build-metrics">
       <span className="action-bar">
         <BranchTabs  ref="branchTabs" onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={'All'}/>
         <RangeSlider ref="buildCount" tooltip="Build count" queryParam="count" onChange={this._onCountChange} min={20}  max={100} step={5}  />
       </span>
-      <div className="charts">
-        {charts}
-      </div>
+      <div className="charts">{charts}</div>
     </div>;
   },
   _onTabChange(tab){

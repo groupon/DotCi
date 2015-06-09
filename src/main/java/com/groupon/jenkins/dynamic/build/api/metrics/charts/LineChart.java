@@ -114,9 +114,11 @@ public class LineChart extends Chart {
             this.data = data;
         }
         public DataSet(String label,List<Long> data){
-            this(label, "rgba(220,220,220,0.2)","rgba(220,220,220,1)","rgba(220,220,220,1)","#fff","#fff","rgba(220,220,220,1)", data);
+            this(label, data,ChartColor.DARK_GREY);
         }
-
+        public DataSet(String label,List<Long> data,ChartColor color){
+           this(label,color.fillColor,color.strokeColor, color.pointColor, color.pointStrokeColor, color.pointHighlightFill, color.pointHighlightStroke, data);
+        }
 
     }
 }
