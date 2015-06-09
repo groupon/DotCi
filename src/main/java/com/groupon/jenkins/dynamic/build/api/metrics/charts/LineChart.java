@@ -1,18 +1,42 @@
 package com.groupon.jenkins.dynamic.build.api.metrics.charts;
 
 import com.google.common.collect.ImmutableMap;
-import com.groupon.jenkins.dynamic.build.api.metrics.charts.ChartType;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import java.util.List;
+@ExportedBean(defaultVisibility = 100)
 public class LineChart extends Chart {
-    private List<Value> values;
+    private List<String> labels;
+
+    @Exported(inline = true)
+    public List<DataSet> getDataSets() {
+        return dataSets;
+    }
+
+    @Exported(inline = true)
+    public List<String> getLabels() {
+        return labels;
+    }
+
+    private List<DataSet> dataSets;
+
+    @Exported(inline = true)
+    public String getxLabel() {
+        return xLabel;
+    }
+
+    @Exported(inline = true)
+    public String getyLabel() {
+        return yLabel;
+    }
+
     private String xLabel;
     private String yLabel;
 
-    public LineChart(List<Value> values, String xLabel, String yLabel){
-        this.values = values;
+    public LineChart(List<String> labels, List<DataSet> dataSets,String xLabel, String yLabel){
+        this.labels = labels;
+        this.dataSets = dataSets;
         this.xLabel = xLabel;
         this.yLabel = yLabel;
     }
@@ -21,34 +45,78 @@ public class LineChart extends Chart {
         return ChartType.LINE;
     }
 
-    @Override
-    public Object getData() {
-        return values;
-    }
 
-    @Override
-    public Object getMetadata() {
-        return ImmutableMap.of("x",xLabel, "y",yLabel);
-    }
 
-    @ExportedBean(defaultVisibility = 100)
-    public static class Value {
 
-        public Value(int x, long y) {
-            this.x = x;
-            this.y = y;
-        }
 
-        private int x;
-        private long y;
+    @ExportedBean
+    public static class DataSet{
+        private String label;
 
         @Exported(inline = true)
-        public int getX() {
-            return this.x;
+        public String getLabel() {
+            return label;
         }
+
         @Exported(inline = true)
-        public long getY() {
-            return this.y;
+        public String getFillColor() {
+            return fillColor;
         }
+
+        @Exported(inline = true)
+        public String getStrokeColor() {
+            return strokeColor;
+        }
+
+        @Exported(inline = true)
+        public String getPointColor() {
+            return pointColor;
+        }
+
+        @Exported(inline = true)
+        public String getPointStrokeColor() {
+            return pointStrokeColor;
+        }
+
+        @Exported(visibility = 1)
+        public String getPointHighlightFill() {
+            return pointHighlightFill;
+        }
+
+        @Exported(inline = true)
+        public String getPointHighlightStroke() {
+            return pointHighlightStroke;
+        }
+
+        @Exported(inline = true)
+        public List<Long> getData() {
+            return data;
+        }
+
+        private String fillColor;
+        private String strokeColor;
+        private  String pointColor;
+        private  String pointStrokeColor;
+
+
+        private  String pointHighlightFill;
+        private  String pointHighlightStroke;
+        private List<Long> data;
+
+        public DataSet(String label, String fillColor, String strokeColor, String pointColor, String pointStrokeColor, String pointHighlightFill, String pointHighlightStroke, List<Long> data) {
+            this.label = label;
+            this.fillColor = fillColor;
+            this.strokeColor = strokeColor;
+            this.pointColor = pointColor;
+            this.pointStrokeColor = pointStrokeColor;
+            this.pointHighlightFill = pointHighlightFill;
+            this.pointHighlightStroke = pointHighlightStroke;
+            this.data = data;
+        }
+        public DataSet(String label,List<Long> data){
+            this(label, "rgba(220,220,220,0.2)","rgba(220,220,220,1)","rgba(220,220,220,1)","#fff","#fff","rgba(220,220,220,1)", data);
+        }
+
+
     }
 }

@@ -2,3 +2,15 @@
   width: 600px;
   height: 400px;
 }
+.chart-container{
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  .yaxis-label{
+    transform: rotate(-90deg);
+  }
+  .axis-label{
+    margin: 0px;
+  }
+}
+

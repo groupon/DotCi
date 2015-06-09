@@ -34,10 +34,10 @@ export default React.createClass({
   _loadBuildMetrics(branchTab,buildCount){
     const actions = this.props.flux.getActions('app');
     actions.clearJobInfo('metrics');
-    actions.getJobInfoFromServer('buildHistoryTabs,metrics[name,chart[type,data[*],metadata]]',branchTab,buildCount);
+    actions.getJobInfoFromServer('buildHistoryTabs,metrics[title,chart[*,dataSets[*]]]',branchTab,buildCount);
   },
   render(){
-    const charts = this.props.metrics?this.props.metrics.map(metric => <LineChart key={metric.get('name')} name={metric.get('name')} chart={metric.get('chart')}/>) : <div/>;
+    const charts = this.props.metrics?this.props.metrics.map(metric => <LineChart key={metric.get('title')} title={metric.get('title')} chart={metric.get('chart')}/>) : <div/>;
     return <div className="build-metrics">
       <span className="action-bar">
         <BranchTabs  ref="branchTabs" onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={'All'}/>

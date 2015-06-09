@@ -8,6 +8,7 @@ import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DbBackedProject;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.dynamic.build.api.metrics.charts.Chart;
 import com.groupon.jenkins.util.GReflectionUtils;
 import com.mongodb.DB;
 import hudson.ExtensionPoint;
@@ -35,7 +36,7 @@ public abstract class JobMetric implements ExtensionPoint {
     }
 
     @Exported(inline = true)
-    public abstract String getName();
+    public abstract String getTitle();
 
     public abstract boolean isApplicable();
 
@@ -91,13 +92,13 @@ public abstract class JobMetric implements ExtensionPoint {
         }
         return builds;
     }
-    protected Query<DynamicBuild> getQuery(DbBackedProject project) {
+    protected Query<DynamicBuild> getQuery() {
         return SetupConfig.get().getDynamicBuildRepository().getDatastore().createQuery(DynamicBuild.class).disableValidation().field("projectId").equal(project.getId());
     }
     private Query<DynamicBuild> applyQueryValues(Query<DynamicBuild> query) {
         query = filterBranch(query);
         query = query.limit(getBuildCount());
-        return query.order("-number");
+        return query.order("number");
     }
     private Query<DynamicBuild> filterBranch(Query<DynamicBuild> query) {
         String branch = getBranch();

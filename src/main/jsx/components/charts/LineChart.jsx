@@ -11,37 +11,29 @@ export default React.createClass({
     this.componentDidUpdate();
   },
   _renderChart(){
+    const {dataSets,labels} = this.props.chart.toObject();
     const chartCtx = this.refs.chart.getDOMNode().getContext('2d');
-    const labels = this.props.chart.get('data').map(t => t.get('x')).toArray();
-    const data= this.props.chart.get('data').map(t =>t.get('y')).toArray();
-    var chartData = {
-      labels ,
-      datasets: [
-        {
-          label: this.props.name,
-          fillColor: 'rgba(220,220,220,0.2)',
-          strokeColor: 'rgba(220,220,220,1)',
-          pointColor: 'rgba(0,0,0,1)',
-          pointStrokeColor: '#fff',
-          pointHighlightFill: '#fff',
-          pointHighlightStroke: 'rgba(220,220,220,1)',
-          data
-        }
-      ]
-    };
-    this.chart = new Chart(chartCtx).Line(chartData, { scaleShowGridLines : false,legendTemplate: this._legend()});
+    var chartData = { labels : labels.toJS(), datasets: dataSets.toJS() };
+    this.chart = new Chart(chartCtx).Line(chartData, {scaleShowGridLines : false,legendTemplate: this._legend()});
     this.refs.legend.getDOMNode().innerHTML = this.chart.generateLegend();
     this.chart.update();
   },
   _onClick(e){
   },
   _render(){
-    return (<div className="lineChart">
-      <div className="align-center" ref="legend"></div>
-      <canvas className="chart" ref='chart' onClick={this._onClick}/></div>);
+    let {xLabel,yLabel} = this.props.chart.toObject();
+    return (
+      <div className="chart-container">
+        <div  ref="legend"></div>
+        <h5 className="axis-label yaxis-label">{yLabel}</h5>
+        <span>
+          <h4 className="align-center">{this.props.title}</h4>
+          <canvas className="chart" ref='chart' onClick={this._onClick}/>
+          <h5 className ="axis-label align-center">{xLabel}</h5>
+        </span>
+      </div>);
   },
   _legend(){
-    let {x,y} = this.props.chart.get('metadata').toObject();
-    return `<div><h5>${this.props.name}</h5><div>X - ${x}</div><div> Y - ${y}</div></div>`
+    return "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
   }
 })
