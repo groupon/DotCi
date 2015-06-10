@@ -32,11 +32,14 @@ var RecentProject = React.createClass({
   render(){
     return (
       <a className={"recent-project-"+this.props.lastBuildResult} href={this.props.url}> 
-        <div className={"project-name-"+this.props.lastBuildResult}>{this.props.projectName}</div>
+        <div className={"project-name-"+this.props.lastBuildResult}>
+          {this.props.projectName}
+          <span className="build-number">#{this.props.number}</span>
+        </div>
         <div className="commit-message"><span className="icon octicon octicon-git-commit"/>{this.props.commit.message}</div>
         <div className="finished">
           <i className="icon fa fa-calendar"></i> 
-          <span className="detail">Finished: {this.props.startTime}</span>
+          <span className="detail">{this.props.startTime}</span>
         </div>
       </a>
     );
@@ -60,15 +63,14 @@ var RecentProjectsWidget =React.createClass({
     });
     return (
       <div>
-        <h5 className="heading">
+        <div className="align-center">
           <i className="fa fa-user"> Recent Builds</i>
-        </h5>
+        </div>
+        <hr/>
         <div id='project-list' >
           {recentProjects}
         </div>
       </div>
-
-
     );
   }
 });
