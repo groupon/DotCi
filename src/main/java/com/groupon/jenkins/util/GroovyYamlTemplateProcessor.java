@@ -52,7 +52,7 @@ public class GroovyYamlTemplateProcessor {
         return (Map) new Yaml().load(yaml);
     }
 
-    private static class MissingPropForwardingMap extends ForwardingMap<String, String> {
+    private static class MissingPropForwardingMap extends ForwardingMap<String, Object> {
 
         private final Map delegate;
 
@@ -66,8 +66,8 @@ public class GroovyYamlTemplateProcessor {
         }
 
         @Override
-        public String get(Object key) {
-            String value = super.get(key);
+        public Object get(Object key) {
+            Object value = super.get(key);
             if(value == null){
               return ((String)key).startsWith("DOTCI")? null : "$" + key;
             }
@@ -75,7 +75,7 @@ public class GroovyYamlTemplateProcessor {
         }
 
         @Override
-        protected Map<String, String> delegate() {
+        protected Map delegate() {
             return delegate;
         }
 
