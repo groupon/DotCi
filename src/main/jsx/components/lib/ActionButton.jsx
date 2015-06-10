@@ -8,7 +8,9 @@ export default  React.createClass({
   },
   _onClick(e){
     this.disable();
-    this.props.onClick(e);
+    if(this.props.onClick){
+      this.props.onClick(e);
+    }
   },
   disable() {
     this.refs.button.getDOMNode().classList.add('disabled');
