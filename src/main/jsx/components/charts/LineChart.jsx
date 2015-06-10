@@ -46,8 +46,11 @@ export default React.createClass({
   _legend(){
     const {dataSets} = this.props.chart.toObject();
     return  <div className="legend">
-      {dataSets.map(dataSet=> <div key={dataSet.get('label')} style={{color: dataSet.get('strokeColor') }} >
-        <input type="checkbox" name={dataSet.get('label')}  onChange={this._dataSetChanged} checked={this._isSelected(dataSet.get('label'))}/>{dataSet.get('label')}
+      {dataSets.map(dataSet=> <div key={dataSet.get('label')} >
+        <div className="ui checkbox">
+          <input  id={dataSet.get('label')} type="checkbox" name={dataSet.get('label')}  onChange={this._dataSetChanged} checked={this._isSelected(dataSet.get('label'))}/>
+          <label htmlFor={dataSet.get('label')} style={{color: dataSet.get('strokeColor') }} >{dataSet.get('label')}</label>
+        </div>
       </div>)}
     </div>
   },
