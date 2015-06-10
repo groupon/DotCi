@@ -347,7 +347,7 @@ public class DynamicBuildRepository extends MongoRepository {
                         )
 
                 ));
-        BasicDBObject sortQuery = new BasicDBObject(of("$sort", of("timestamp", -1)));
+        BasicDBObject sortQuery = new BasicDBObject(of("$sort", of("timestamp", 1)));
         Map buildFields = projection("projectId", "result", "number", "startTime").noId().field("commit", "$actions.causes.commitInfo").get();
         //Project == Projection not BuildProject
         BasicDBObject projectQuery = new BasicDBObject(of("$project", buildFields));
