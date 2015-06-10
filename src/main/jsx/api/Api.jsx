@@ -41,9 +41,6 @@ export function build(buildNumber){
 export function job(tree, branchTab,count){
   return _get(_jobApiUrl()+"/info/",{tree,branchTab,count});
 }
-export async function deleteCurrentProject(){
-  const rsp = await qwest.post(window.location.pathname.replace('newUi','')+"/doDeleteAjax");
-}
 
 export function removeBranchTab(tabRegex){
   qwest.post( `${_jobUrl()}/removeBranchTab?tabRegex=`+tabRegex);

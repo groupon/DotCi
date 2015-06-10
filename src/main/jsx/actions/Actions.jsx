@@ -56,9 +56,6 @@ import {addBranchTab as addBranchTabOnServer, removeBranchTab as removeBranchTab
     async cancelBuild(url){
       cancelBuildApi(url);
     }
-    deleteProject(){
-      deleteCurrentProject().then(()=>console.log('project deleted'));
-    }
 
     async getRecentProjectsFromServer(){
       let  projects = await recentProjects();

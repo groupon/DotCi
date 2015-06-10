@@ -31,7 +31,7 @@ export default React.createClass({
         <i className="icon fa fa-cog"/>  Settings
         <div className="fa-stack menu">
           <a  href="configure" className="ui labeled item"><i className="icon fa fa-wrench "/> Configure</a>
-          <a  href="#" onClick={this._deleteJob} className="ui labeled item"><i className="icon fa fa-trash-o "/>Delete</a>
+          <a  href={`${window.jobUrl}delete`}  className="ui labeled item"><i className="icon fa fa-trash-o "/>Delete</a>
         </div>
       </div>
     ); },
@@ -40,10 +40,6 @@ export default React.createClass({
     },
     _hasConfigurePermission(){
       return this._getPermissions()? this._getPermissions().configure :false;
-    },
-    _deleteJob(){
-      let actions = this.props.flux.getActions('app');
-      actions.deleteProject();
     },
     _getPermissions(){
       return this._get('permissions').toObject();

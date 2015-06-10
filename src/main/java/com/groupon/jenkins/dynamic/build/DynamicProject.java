@@ -322,11 +322,6 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         return super.getLastBuild();
     }
 
-    public void doDoDeleteAjax(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        rsp.setHeader("Location", getParent().getAbsoluteUrl());
-        delete();
-    }
-
     public void doAddBranchTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
         String tabRegex = req.getParameter("tabRegex");
         if(StringUtils.isBlank(tabRegex)) throw new RuntimeException("Branch Regex cannot be exmpty");
