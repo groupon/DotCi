@@ -314,5 +314,10 @@ THE SOFTWARE.
             <artifactId>guava</artifactId>
             <version>15.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.sonyericsson.hudson.plugins.rebuild</groupId>
+            <artifactId>rebuild</artifactId>
+            <version>1.24</version>
+        </dependency>
     </dependencies>
 </project>
