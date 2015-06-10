@@ -123,7 +123,7 @@ public class DynamicProjectRepository extends MongoRepository {
             public boolean apply(DynamicProject input) {
                 GitUrl gitUrl = new GitUrl(url);
                 String[] orgRepo = gitUrl.getFullRepoName().split("/");
-                return input.getParent().getName().equals(orgRepo[0]) && input.getName().equals(orgRepo[1]);
+                return input.getParent().getName().equalsIgnoreCase(orgRepo[0]) && input.getName().equals(orgRepo[1]);
             }
         });
     }
