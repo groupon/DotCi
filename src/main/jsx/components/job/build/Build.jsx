@@ -90,10 +90,10 @@ export default  React.createClass({
     }
   },
   _restartButton(){
-    return <ActionButton href={`${window.jobUrl}/${this.props.build.get('number')}/rebuild`} tooltip="Restart Build" icon="fa fa-refresh" />;
+    return <ActionButton key="restart-build" href={`${window.jobUrl}/${this.props.build.get('number')}/rebuild`} tooltip="Restart Build" icon="fa fa-refresh" />;
   },
   _cancelButton(){
-    return <ActionButton onClick={this._cancelBuild} tooltip="Cancel Build" icon="fa fa-times-circle-o"/>;
+    return <ActionButton key="cancel-build" onClick={this._cancelBuild} tooltip="Cancel Build" icon="fa fa-times-circle-o"/>;
   },
   _cancelBuild(e){
     e.preventDefault();
