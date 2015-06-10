@@ -68,7 +68,7 @@ export default  React.createClass({
     return [this._cancelButton(), this._watchButton()];
   },
   _watchButton(){
-    return this._supportsNotifications()?<ActionButton ref="watchButton" onClick={this._watchBuild} tooltip="Notify when done( web notification)" icon="fa fa-eye"/>: <span/>;
+    return this._supportsNotifications()?<ActionButton key="watch-build" ref="watchButton" onClick={this._watchBuild} tooltip="Notify when done( web notification)" icon="fa fa-eye"/>: <span/>;
   },
   _supportsNotifications(){
     return simpleStorage.canUse() && ("Notification" in window);
