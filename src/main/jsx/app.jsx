@@ -28,6 +28,7 @@ import RecentProjects from "./components/recent_projects/RecentProjects.jsx";
 import Job from "./components/job/Job.jsx";
 import Flux from "./Flux.jsx";
 import Router from 'react-router';
+import EmptyProject from './EmptyProject.jsx';
 require('./app.css');
 var RouteHandler = Router.RouteHandler;
 var Route = Router.Route;
@@ -42,7 +43,7 @@ const App = React.createClass( {
     const flux = this.props.flux;  
     return    <div className="app" >   
       <RecentProjects flux={flux} />   
-      <RouteHandler   {...this.props}/>    
+      {window.emptyProject? <EmptyProject/>:<RouteHandler   {...this.props}/>}
     </div>;
   }
 });
@@ -70,9 +71,13 @@ window.onload = function(){
     routes: routes,
     location: Router.HistoryLocation
   })
-  router.run(async  (Handler, state) => {
-    const routeHandlerInfo = { state, flux };
-    await performRouteHandlerStaticMethod(state.routes, 'routerWillRun', routeHandlerInfo);
-    React.render(<Handler flux ={flux}/>, document.getElementById('app'));
-  });
+  if(!window.emptyProject){
+    router.run(async  (Handler, state) => {
+      const routeHandlerInfo = { state, flux };
+      await performRouteHandlerStaticMethod(state.routes, 'routerWillRun', routeHandlerInfo);
+      React.render(<Handler flux ={flux}/>, document.getElementById('app'));
+    });
+  }else{
+    React.render(<App flux ={flux}/>, document.getElementById('app'));
+  }
 };
