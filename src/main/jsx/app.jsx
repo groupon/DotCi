@@ -28,6 +28,7 @@ import RecentProjects from "./components/recent_projects/RecentProjects.jsx";
 import Job from "./components/job/Job.jsx";
 import Flux from "./Flux.jsx";
 import Router from 'react-router';
+import EmptyProject from './EmptyProject.jsx';
 require('./app.css');
 var RouteHandler = Router.RouteHandler;
 var Route = Router.Route;
@@ -42,7 +43,7 @@ const App = React.createClass( {
     const flux = this.props.flux;  
     return    <div className="app" >   
       <RecentProjects flux={flux} />   
-      {window.emptyProject? <div/>:<RouteHandler   {...this.props}/>}
+      {window.emptyProject? <EmptyProject/>:<RouteHandler   {...this.props}/>}
     </div>;
   }
 });
