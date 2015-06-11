@@ -26,25 +26,25 @@ import Flummox from 'flummox';
 import AppActions from './actions/Actions.jsx';
 import RecentProjectsStore from './stores/RecentProjectsStore.jsx';
 import JobStore from './stores/JobStore.jsx';
- export default class Flux extends Flummox {
-    constructor() {
-        super();
-        this.createActions('app', AppActions);
-        this.createStore('recentProjects', RecentProjectsStore, this);
-        this.createStore('job', JobStore, this);
-    }
-    getRecentProjectsFromServer(){
+export default class Flux extends Flummox {
+  constructor() {
+    super();
+    this.createActions('app', AppActions);
+    this.createStore('recentProjects', RecentProjectsStore, this);
+    this.createStore('job', JobStore, this);
+  }
+  getRecentProjectsFromServer(){
     const actions = this.getActions('app');
     actions.getRecentProjectsFromServer();
-    }
+  }
 
-    removeBranchTab(tab){
+  removeBranchTab(tab){
     const actions = this.getActions('app');
     actions.removeBranchTab(tab);
-    }
-    addBranchTab(tabRegex){
+  }
+  addBranchTab(tabRegex){
     const actions = this.getActions('app');
     actions.addBranchTab(tabRegex);
-    }
+  }
 
 }
