@@ -1,4 +1,4 @@
-@import './../../build-colors.css';
+@import './../../colors.css';
 .build-progress-bar{
   background-color: var(--in_progress) !important;
 }
