@@ -26,22 +26,22 @@ import React from "react";
 import FluxComponent from 'flummox/component';
 import Avatar from '../lib/Avatar.jsx';
 import AutoRefreshHelper from './../mixins/AutoRefreshHelper.jsx'
-require("./recent_projects.less");
+require("./recent-projects.css");
 
 var RecentProject = React.createClass({
   render(){
     return (
-      <a className={"recent-project-"+this.props.lastBuildResult} href={this.props.url}> 
-        <div className={"project-name-"+this.props.lastBuildResult}>
+      <div className={"recent-project " + this.props.lastBuildResult}> 
+        <div className="project-name">
           {this.props.projectName}
-          <span className="build-number">#{this.props.number}</span>
+          <a href={this.props.url}>#{this.props.number}</a>
         </div>
-        <div className="commit-message"><span className="icon octicon octicon-git-commit"/>{this.props.commit.message}</div>
+        <div><span className="icon-text octicon octicon-git-commit"/>{this.props.commit.message}</div>
         <div className="finished">
-          <i className="icon fa fa-calendar"></i> 
+          <i className="icon-text fa fa-calendar"></i> 
           <span className="detail">{this.props.startTime}</span>
         </div>
-      </a>
+      </div>
     );
   }
 });
@@ -62,7 +62,7 @@ var RecentProjectsWidget =React.createClass({
       );
     });
     return (
-      <div>
+      <div id="recent-projects">
         <div className="align-center">
           <i className="fa fa-user"> Recent Builds</i>
         </div>

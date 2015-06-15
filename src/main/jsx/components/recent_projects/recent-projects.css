@@ -1,0 +1,50 @@
+@import './../../colors.css'; 
+#recent-projects{
+  > #project-list{
+    display: flex;
+    flex-flow: column wrap;
+
+    > .recent-project{
+      display: flex;
+      flex-flow: column wrap;
+      margin-bottom: 10px;
+      margin-left: 10px;
+      margin-right: 5px;
+      border-left-style: solid;
+      border-left-width: 5px;
+      border-radius: 3px;
+      > .project-name{
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+
+    > .recent-project.FAILURE{
+      border-left-color: var(--failure);
+      > .project-name *{
+        color: var(--failure);
+      }
+    }
+    > .recent-project.SUCCESS{
+      border-left-color: var(--success);
+      > .project-name *{
+        color: var(--success);
+      }
+    }
+
+    > .recent-project.IN_PROGRESS{
+      border-left-color: var(--in_progress);
+      > .project-name *{
+        color: var(--in_progress);
+      }
+    }
+
+    > .recent-project.ABORTED{
+      border-left-color: var(--aborted);
+      > .project-name *{
+        color: var(--aborted);
+      }
+    }
+
+  }
+}

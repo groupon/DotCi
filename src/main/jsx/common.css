@@ -22,3 +22,7 @@ a:focus{
 a:hover{
   text-decoration: underline;
 }
+
+.icon-text{
+  margin-right: 5px;
+}
