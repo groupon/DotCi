@@ -63,10 +63,9 @@ var RecentProjectsWidget =React.createClass({
     });
     return (
       <div id="recent-projects">
-        <div className="align-center">
-          <i className="fa fa-user"> Recent Builds</i>
+        <div className="header align-center">
+          <i className="icon-text fa fa-user"></i> Recent Builds
         </div>
-        <hr/>
         <div id='project-list' >
           {recentProjects}
         </div>

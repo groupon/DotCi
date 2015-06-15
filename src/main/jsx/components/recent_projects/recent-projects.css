@@ -1,5 +1,9 @@
 @import './../../colors.css'; 
 #recent-projects{
+  > .header{
+    border-bottom: 4px solid #f2f2f2;   
+    margin-bottom: 10px;
+  }
   > #project-list{
     display: flex;
     flex-flow: column wrap;
