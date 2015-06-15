@@ -2,7 +2,7 @@ import React from "react";
 import Router from 'react-router';
 import Immutable from 'immutable';
 import BuildProgressBar from './../BuildProgressBar.jsx';
-require('./sub_builds_menu.less');
+require('./sub-builds-menu.css');
 export default  React.createClass({
   render(){
     return this._isMultiConfig()? 

@@ -1,4 +1,4 @@
-@import './../../../build-colors.less';
+@import './../../../colors.css';
 
 .subbuild-SUCCESS{
   margin-right: 4px;
