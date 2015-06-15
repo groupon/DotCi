@@ -49,12 +49,11 @@ html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; }
    flex-direction: row;    
 }    
 .app > :nth-child(2){    
-  flex: 1 1 auto; /*grow when space available, shrink otherwise*/    
+  flex: 1 1 auto;
   margin-right: 10px;    
   margin-left: 10px;   
 }    
 .app > :nth-child(1){    
-   min-width: 15%;   
-   max-width: 15%;   
    border-right: 2px solid #f2f2f2;   
+   flex: 0 1 15%;
 }
