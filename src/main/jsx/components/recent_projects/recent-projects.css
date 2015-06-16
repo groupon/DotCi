@@ -7,6 +7,10 @@
   > #project-list{
     display: flex;
     flex-flow: column wrap;
+    *{
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
     > .recent-project{
       display: flex;
@@ -20,10 +24,6 @@
       > .project-name{
         display: flex;
         justify-content: space-between;
-        *{
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
       }
     }
 
