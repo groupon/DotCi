@@ -41,12 +41,16 @@
 @import "./css/dimmer.css";
 @import "./common.css";
 body{
-background: white !important;
+  background: white !important;
 }
 html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; }
+*{
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .app{    
-   display: flex;    
-   flex-direction: row;    
+  display: flex;    
+  flex-direction: row;    
 }    
 .app > :nth-child(2){    
   flex: 1 1 auto;
@@ -54,6 +58,6 @@ html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; }
   margin-left: 10px;   
 }    
 .app > :nth-child(1){    
-   border-right: 2px solid #f2f2f2;   
-   flex: 0 1 15%;
+  border-right: 2px solid #f2f2f2;   
+  flex: 0 1 15%;
 }

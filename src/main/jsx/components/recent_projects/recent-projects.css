@@ -12,8 +12,8 @@
       display: flex;
       flex-flow: column wrap;
       margin-bottom: 10px;
-      margin-left: 10px;
       margin-right: 5px;
+      padding-left: 5px;
       border-left-style: solid;
       border-left-width: 5px;
       border-radius: 3px;

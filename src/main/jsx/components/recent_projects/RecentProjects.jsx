@@ -26,6 +26,7 @@ import React from "react";
 import FluxComponent from 'flummox/component';
 import Avatar from '../lib/Avatar.jsx';
 import AutoRefreshHelper from './../mixins/AutoRefreshHelper.jsx'
+import Responsive from './../mixins/Responsive.jsx';
 require("./recent-projects.css");
 
 var RecentProject = React.createClass({
@@ -33,7 +34,7 @@ var RecentProject = React.createClass({
     return (
       <div className={"recent-project " + this.props.lastBuildResult}> 
         <div className="project-name">
-          {this.props.projectName}
+          {this._projectName()}
           <a href={this.props.url}>#{this.props.number}</a>
         </div>
         <div><span className="icon-text octicon octicon-git-commit"/>{this.props.commit.message}</div>
@@ -43,11 +44,19 @@ var RecentProject = React.createClass({
         </div>
       </div>
     );
+  },
+  _projectName(){
+    return this.props.small? this.props.projectName.split('/')[1]: this.props.projectName;
   }
 });
 
 var RecentProjectsWidget =React.createClass({
-  mixins: [AutoRefreshHelper],
+  mixins: [AutoRefreshHelper,Responsive(
+    {
+      "only screen and (max-width: 1450px)": "renderSmall",
+      "all and (min-width: 1450px)": "renderDefault",
+    }
+  )],
   componentWillMount(){
     this._loadRecentProjects()
     this.setRefreshTimer(this._loadRecentProjects);
@@ -55,10 +64,16 @@ var RecentProjectsWidget =React.createClass({
   _loadRecentProjects(){
     this.props.flux.getRecentProjectsFromServer();
   },
-  render(){
+  renderSmall(){
+    return this._render(true);
+  },
+  renderDefault(){
+    return this._render(false);
+  },
+  _render(small){
     var recentProjects = this.props.recentProjects.map(function (project) {
       return (
-        <RecentProject key={project.url} {...project}/>
+        <RecentProject small={small} key={project.url} {...project}/>
       );
     });
     return (
