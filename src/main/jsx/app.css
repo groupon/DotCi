@@ -44,10 +44,6 @@ body{
   background: white !important;
 }
 html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; }
-*{
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 .app{    
   display: flex;    
   flex-direction: row;    
