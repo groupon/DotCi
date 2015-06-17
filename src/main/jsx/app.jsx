@@ -29,24 +29,35 @@ import Job from "./components/job/Job.jsx";
 import Flux from "./Flux.jsx";
 import Router from 'react-router';
 import EmptyProject from './EmptyProject.jsx';
+import AppMobile from 'react-proxy!./AppMobile.jsx';
+import Responsive, {Breakpoint}   from './components/mixins/Responsive.jsx';
 require('./app.css');
 var RouteHandler = Router.RouteHandler;
 var Route = Router.Route;
 const App = React.createClass( {
+  mixins: [Responsive(
+    {
+      [Breakpoint.mobile]: "renderSmall",
+      [Breakpoint.mobile_inverse] : "renderDefault"
+    }
+  )],
   statics:{
     routerWillRun({flux}){
       const actions =flux.getActions('app');
       return actions.getJobInfoFromServer("fullName,githubUrl,permissions");
     }
   },
-  render(){
-    const flux = this.props.flux;  
-    return    <div className="app" >   
-      <RecentProjects flux={flux} />   
+  renderSmall(){
+    return <AppMobile {...this.props}/>
+  },
+  renderDefault(){
+    return    <div className="app" >
+      <RecentProjects flux={this.props.flux} />
       {window.emptyProject? <EmptyProject/>:<RouteHandler   {...this.props}/>}
     </div>;
   }
 });
+
 
 async function performRouteHandlerStaticMethod(routes, methodName, ...args) {
   return Promise.all(routes

@@ -45,3 +45,7 @@ export default (breakPoints) => {
   }
 };
 
+export const Breakpoint = {
+  mobile: "all and (min-device-width : 320px) and (max-device-width : 480px)",
+  mobile_inverse: "all and (min-device-width: 481px)"
+};
