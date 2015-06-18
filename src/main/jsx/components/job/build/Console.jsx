@@ -37,7 +37,7 @@ export default React.createClass({
     return <div id="console-header">
       <div className="ui right menu inverted basic icon buttons">
         <a className="ui button" href={window.rootURL+"/"+this.props.url+"/consoleText"}><i className="fa fa-eye"></i>Full Log</a>
-        <div className="ui toggle button" onClick={this._scrollToBottom}>
+        <div className="ui button" onClick={this._scrollToBottom}>
           <i className="fa fa-arrow-down"></i>
         </div>
       </div> 
