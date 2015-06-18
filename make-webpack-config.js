@@ -23,47 +23,59 @@
  */
 var webpack = require('webpack');
 var postcss_nested = require('postcss-nested');
+var postcss_custom_properties= require('postcss-custom-properties');
+var autoprefixer = require('autoprefixer-core');
+var cssimport = require('postcss-import');
 module.exports = function(config){
-return {
+  return {
     entry: config.entry,
     output: config.output,
     module: {
         loaders: [
-            {
-                  test: /\.(json)$/,
-                  loader: 'json-loader'
-            },
-            {
-                  test: /\.(svg)$/,
-                  loader: 'url-loader'
-            },
-            {
-                test: /\.less$/,
-                loader: 'style-loader!css-loader!less-loader'
-            },
-            {
-                test: /\.css$/,
-                loader: 'style-loader!css-loader!postcss-loader!cssnext-loader' 
-            },
-            {
-                test: /\.jsx?$/,
-                exclude: /node_modules/,
-                loaders: config.debug? ['react-hot', 'babel-loader']: ['babel-loader']
-            },
+        {
+          test: /\.(json)$/,
+          loader: 'json-loader'
+        },
+        {
+          test: /\.(svg)$/,
+          loader: 'url-loader'
+        },
+        {
+          test: /\.less$/,
+          loader: 'style-loader!css-loader!less-loader'
+        },
+        {
+          test: /\.css$/,
+          loader: 'style-loader!css-loader!postcss-loader' 
+        },
+        {
+          test: /\.jsx?$/,
+          exclude: /node_modules/,
+          loaders: config.debug? ['react-hot', 'babel-loader']: ['babel-loader']
+        },
             { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&minetype=application/font-woff" },
             { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader" }
         ]
     },
-    postcss: {
-      defaults: [postcss_nested]
+    postcss: function () {
+      return [
+        cssimport({
+          onImport: function (files) {
+            files.forEach(this.addDependency);
+          }.bind(this)
+        }),
+       postcss_custom_properties,
+        postcss_nested,
+        autoprefixer
+      ];
     },
     devtool: config.debug ? '#inline-source-map' : false,
     plugins: config.debug ? [] : [
-            new webpack.EnvironmentPlugin('NODE_ENV'),
-            new webpack.optimize.DedupePlugin(),
-            // new webpack.optimize.UglifyJsPlugin(),
-            new webpack.optimize.AggressiveMergingPlugin()
-        ]
+      new webpack.EnvironmentPlugin('NODE_ENV'),
+      new webpack.optimize.DedupePlugin(),
+      new webpack.optimize.UglifyJsPlugin(),
+      new webpack.optimize.AggressiveMergingPlugin()
+    ]
 
-};
+  };
 };
