@@ -32,6 +32,22 @@ import BuildProgressBar from './BuildProgressBar.jsx';
 require('./build_row.css');
 export default React.createClass({
   render(){
+    return this.props.small? this._renderSmall(): this._renderDefault();
+  },
+  _renderSmall(){
+    let {result,number, cancelUrl,commit,durationString,displayTime,cause, estimatedDuration,duration} = this.props.build.toObject();
+    let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
+    return <li className="table-view-cell media">
+      <div className="navigate-right" >
+        <span classNam3="media-object pull-left"> <Avatar avatarUrl={avatarUrl} /> </span>
+        <Router.Link  to={'job-widgets'} params={{widget: number}}>{branch} - #{number}</Router.Link>
+        <div className="media-body">
+          <p>{message}</p>
+        </div>
+      </div>
+    </li>
+  },
+  _renderDefault(){
     let {result,number, cancelUrl,commit,durationString,displayTime,cause, estimatedDuration,duration} = this.props.build.toObject();
     let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
     return (

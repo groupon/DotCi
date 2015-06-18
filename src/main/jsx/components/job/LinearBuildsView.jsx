@@ -4,12 +4,18 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 require('./linear_builds_view.css')
 export default React.createClass({
   render(){
-    const builds = this.props.builds.map((build) => <BuildRow key={build.get('number')} build={build}/>);
-    return(<span className="builds">
-      <ReactCSSTransitionGroup transitionName="build-transition">
+    return(<span className="builds">{this._builds()}</span>);
+  },
+  _builds(){
+    const builds = this.props.builds.map((build) => <BuildRow small={this.props.small} key={build.get('number')} build={build}/>);
+    if(this.props.small){
+      return <ReactCSSTransitionGroup component="ul" className="table-view" transitionName="build-transition">
         {builds.toArray()}
       </ReactCSSTransitionGroup>
-    </span>);
+    }
+    return <ReactCSSTransitionGroup transitionName="build-transition">
+      {builds.toArray()}
+    </ReactCSSTransitionGroup>
   }
 });
 

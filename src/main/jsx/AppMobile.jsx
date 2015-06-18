@@ -1,5 +1,4 @@
 import React from "react";
-import './app-mobile.css'
 import FluxComponent from 'flummox/component';
 import RecentProjects from "./components/recent_projects/RecentProjects.jsx";
 import {RouteHandler} from 'react-router';

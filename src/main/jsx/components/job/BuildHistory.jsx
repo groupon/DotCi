@@ -34,6 +34,7 @@ import ToggleButton from './../lib/ToggleButton.jsx';
 import RangeSlider from './../lib/RangeSlider.jsx';
 import BranchTabs from './BranchTabs.jsx';
 import ActionButton from './../lib/ActionButton.jsx';
+import Responsive, {Breakpoint}   from './../mixins/Responsive.jsx';
 require('./build_history.css');
 var BuildHistoryTable = React.createClass({
   mixins: [LoadingHelper],
@@ -44,6 +45,12 @@ var BuildHistoryTable = React.createClass({
     return this.props.builds.filter(this._applyFilter);
   },
   _render(){
+    return this.props.small? this._renderSmall(): this._renderDefault();
+  },
+  _renderSmall(){
+    return <LinearBuildsView small builds={this._filteredBuilds()} />
+  },
+  _renderDefault(){
     return(
       <div>
         <span className="buildHistory-bar" >
@@ -71,7 +78,12 @@ var BuildHistoryTable = React.createClass({
 });
 
 export default React.createClass({
-  mixins:[AutoRefreshHelper],
+  mixins:[AutoRefreshHelper,Responsive(
+    {
+      [Breakpoint.mobile]: "renderSmall",
+      [Breakpoint.mobile_inverse] : "renderDefault"
+    }
+  )],
   defaultTab: 'All',
   componentDidMount(){
     this._loadBuildHistory();
@@ -82,9 +94,12 @@ export default React.createClass({
     actions.getJobInfoFromServer("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]", this._currentTab(),this._buildCount());
   },
   _currentTab(){
-    return this.refs.branchTabs.currentTab();
+    return this.refs.branchTabs? this.refs.branchTabs.currentTab(): this.defaultTab;
   },
-  render(){
+  renderSmall(){
+    return <BuildHistoryTable builds ={this.props.builds} small/>
+  },
+  renderDefault(){
     const countSlider = <RangeSlider ref="buildCount" tooltip="Build count" queryParam="count" onChange={this._onCountChange} min={20}  max={100} step={5}  />
     return(<div className="align-center" >
       <BranchTabs  ref="branchTabs" onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={this.defaultTab}/>
