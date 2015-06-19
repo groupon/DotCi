@@ -83,6 +83,9 @@ public class CommitStatusUpdateListener extends RunListener<DynamicBuild> {
             state = GHCommitState.FAILURE;
             msg = "Failed";
         }
+	    if (build.isSkipped()) {
+		    msg += " - Skipped";
+	    }
         try {
             repository.createCommitStatus(sha1, state, build.getFullUrl(), msg,"DotCi");
         } catch (IOException e) {

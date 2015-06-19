@@ -64,7 +64,7 @@ module.exports = function(config){
             files.forEach(this.addDependency);
           }.bind(this)
         }),
-       postcss_custom_properties,
+        postcss_custom_properties,
         postcss_nested,
         autoprefixer
       ];
@@ -73,8 +73,16 @@ module.exports = function(config){
     plugins: config.debug ? [] : [
       new webpack.EnvironmentPlugin('NODE_ENV'),
       new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.UglifyJsPlugin(),
-      new webpack.optimize.AggressiveMergingPlugin()
+      new webpack.optimize.UglifyJsPlugin(
+        {
+          compressor: {
+            screw_ie8: true,
+            warnings: false
+          }
+        }
+      ),
+      new webpack.optimize.AggressiveMergingPlugin(),
+      new webpack.optimize.OccurenceOrderPlugin()
     ]
 
   };

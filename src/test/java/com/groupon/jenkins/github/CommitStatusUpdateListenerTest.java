@@ -70,6 +70,16 @@ public class CommitStatusUpdateListenerTest {
 
     }
 
+	@Test
+	public void should_set_skipped_message_on_skipped_build() throws IOException {
+		DynamicBuild build = newBuild().success().skipped().get();
+
+		commitStatusUpdateListener.onCompleted(build, BuildListenerFactory.newBuildListener().get());
+		verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.SUCCESS, build.getFullUrl(), "Success - Skipped", "DotCi");
+
+
+	}
+
     @Test
     public void should_set_failure_status_on_commit_if_build_fails() throws IOException {
         DynamicBuild build = newBuild().fail().get();
