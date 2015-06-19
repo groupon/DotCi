@@ -27,7 +27,7 @@
   <j:new var="h" className="hudson.Functions" />
   ${h.initPageVariables(context)}
 
-  <div class="ui menu app-header" style="font-size: 16px; background-color: #eff0ec; color: #A6ADAD; border-top: 3px solid ${it.color};">
+  <div id="header" class="ui menu app-header" style="font-size: 16px; background-color: #eff0ec; color: #A6ADAD; border-top: 3px solid ${it.color};">
       <img class="ui item" height="70" width="60" alt="title" src="${resURL}/plugin/DotCi/logo.png"/>
       <st:include page="/com/groupon/jenkins/NewUi/header/breadcrumb.jelly" />
     <div class="ui item right">
@@ -42,5 +42,9 @@
     </div>
   </div>
 
+<header id="header-small"  style="display:none" class="bar bar-nav">
+  <a class="icon icon-plus pull-right" href="${rootURL}/mygithubprojects"></a>
+  <h1 class="title">${it.name}</h1>
+</header>
 
 </j:jelly>

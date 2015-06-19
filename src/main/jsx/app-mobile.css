@@ -1,0 +1,6 @@
+#header{
+  display: none;
+}
+#header-small{
+  display: block !important;
+}
