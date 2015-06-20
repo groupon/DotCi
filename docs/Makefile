@@ -10,4 +10,6 @@ publish:
 	git commit -am "Update docs";\
 	git push -f;\
 	git checkout master
+serve: 
+	gitbook serve	
 

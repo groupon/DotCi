@@ -3,6 +3,7 @@
 * [User Guide](usage/README.md)
     * [Create new DotCI Job](usage/CreateNewJob.md)
     * [Configure Build](usage/ConfigureBuild.md)
+    * [UI](usage/UI.md)
     * [.ci.yml](usage/DotCiYaml.md)
         * [Docker Compose](usage/DockerBuild.md)
         * [Install Packages](usage/InstallPackages.md)
