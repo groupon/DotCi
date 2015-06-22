@@ -31,6 +31,7 @@
         </j:invokeStatic>
         ${h.initPageVariables(context)}
         <title>${it.displayName}${not empty it.parent.fullDisplayName?' ['+it.parent.fullDisplayName+']':''}</title>
+        <script src="${resURL}/plugin/DotCi/js/webcomponentsjs-0.7.0/webcomponents-lite.min.js"></script>
         <link rel="icon" href="${resURL}/plugin/DotCi/favicons/default.ico" type="image/vnd.microsoft.icon" />
 
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet"/>
@@ -42,15 +43,16 @@
         </script>
         <j:if test='${developmentMode}'>
             <script src="http://localhost:3000/assets/dotci.js"/>
+         <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports.html"/>
         </j:if>
         <j:if test='${!developmentMode}'>
             <script src="${resURL}/plugin/DotCi/js/dotci.js"/>
+         <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports-vulcanized.html"/>
         </j:if>
         <script>
             rootURL = '${rootURL}';
             jobUrl = rootURL+'/' + '${it.jobUrl}' +"/";
             DEVELOPMENT_MODE = '${developmentMode}'
         </script>
-
     </head>
 </j:jelly>

@@ -1,0 +1,27 @@
+{
+  "name": "DotCi",
+  "version": "0.0.0",
+  "homepage": "https://github.com/groupon/DotCi",
+  "authors": [
+    "Surya Gaddpati <surya.gaddipati@gmail.com>"
+  ],
+  "description": "DotCi",
+  "keywords": [
+    "jenkins",
+    "dotci"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "paper-fab": "PolymerElements/paper-fab#^1.0.0"
+  },
+  "resolutions": {
+    "polymer": "^1.0.0"
+  }
+}

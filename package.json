@@ -46,6 +46,7 @@
     "semantic-ui-progress": "^1.12.3",
     "style-loader": "^0.8.3",
     "url-loader": "latest",
+    "vulcanize": "^1.9.3",
     "webpack": "1.9.5"
   },
   "devDependencies": {
@@ -64,6 +65,8 @@
     "package": "npm install && $(npm bin)/webpack --release=true  --colors --progress  src/main/jsx/app.jsx",
     "lint": "eslint src/main/jsx/**/*",
     "watch": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.config.dev.js --colors --progress --hot --inline  --port  3000",
-    "test": "karma start"
+    "test": "karma start",
+    "vulcanize": "npm install && $(npm bin)/vulcanize  src/main/webapp/webcomponent-imports.html > src/main/webapp/webcomponent-imports-vulcanized.html"
+
   }
 }
