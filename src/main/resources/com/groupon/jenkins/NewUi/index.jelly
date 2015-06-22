@@ -34,6 +34,10 @@
               <paper-header-panel class="main" main="true" mode="waterfall">
                 <paper-toolbar>
                   <paper-icon-button icon="menu" paper-drawer-toggle="true"></paper-icon-button>
+                  <span class="flex">
+                  <st:include page="/com/groupon/jenkins/NewUi/header/header.jelly" />
+                  </span>
+                  <st:include page="/com/groupon/jenkins/NewUi/header/login.jelly" />
                 </paper-toolbar>
                 <div id="content"></div>
               </paper-header-panel>

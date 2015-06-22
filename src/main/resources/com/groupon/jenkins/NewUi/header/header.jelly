@@ -27,20 +27,16 @@
   <j:new var="h" className="hudson.Functions" />
   ${h.initPageVariables(context)}
 
-  <div class="ui menu app-header" style="font-size: 16px; background-color: #eff0ec; color: #A6ADAD; border-top: 3px solid ${it.color};">
-      <img class="ui item" height="70" width="60" alt="title" src="${resURL}/plugin/DotCi/logo.png"/>
-      <st:include page="/com/groupon/jenkins/NewUi/header/breadcrumb.jelly" />
-    <div class="ui item right">
-        <div class="ui simple dropdown item" style="padding-right: 20px">
-        <i class="dropdown icon"></i>
-        <i class="icon fa fa-plus"/>
-            <div class="menu ">
-                <a  href="${rootURL}/mygithubprojects" class="ui labeled item"><i class="icon fa fa-certificate"/> New DotCi Job</a>
-            </div>
-        </div>
-      <st:include page="/com/groupon/jenkins/NewUi/header/login.jelly" />
-    </div>
-  </div>
+     <header>
+         <span><img  alt="logo"  height="40" width="40" src="${resURL}/plugin/DotCi/logo.png"/></span>
+         <span>
+                         <a class="section" href="${it.parent.parent.rootUrl}">Jenkins</a>
+                         <span class="divider"> / </span>
+                         <a class="section" href="${it.parent.absoluteUrl}">${it.parent.name}</a>
+                         <span class="divider"> / </span>
+                         <span class="active section">${it.name}</span>
+                         </span>
+                     </header>
 
 
 </j:jelly>
