@@ -26,7 +26,6 @@
 @import 'semantic-ui-progress/progress.min.css';
 @import 'semantic-ui-checkbox/checkbox.min.css';
 @import "./css/reset.css";
-@import "./css/site.css";
 @import "./css/button.css";
 @import "./css/menu.css";
 @import "./css/label.css";
@@ -35,7 +34,6 @@
 @import "./css/image.css";
 @import "./css/dropdown.css";
 @import "./css/input.css";
-@import "./css/breadcrumb.css";
 @import "./css/header.css";
 @import "./css/loader.css";
 @import "./css/dimmer.css";
