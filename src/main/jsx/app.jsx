@@ -41,10 +41,7 @@ const App = React.createClass( {
   },
   render(){
     const flux = this.props.flux;  
-    return    <div className="app" >   
-      <RecentProjects flux={flux} />   
-      {window.emptyProject? <EmptyProject/>:<RouteHandler   {...this.props}/>}
-    </div>;
+    return window.emptyProject? <EmptyProject/>:<RouteHandler   {...this.props}/>;
   }
 });
 
@@ -75,9 +72,10 @@ window.onload = function(){
     router.run(async  (Handler, state) => {
       const routeHandlerInfo = { state, flux };
       await performRouteHandlerStaticMethod(state.routes, 'routerWillRun', routeHandlerInfo);
-      React.render(<Handler flux ={flux}/>, document.getElementById('app'));
+      React.render(<Handler flux ={flux}/>, document.getElementById('content'));
+      React.render(<RecentProjects flux ={flux}/>, document.getElementById('nav'));
     });
   }else{
-    React.render(<App flux ={flux}/>, document.getElementById('app'));
+    React.render(<App flux ={flux}/>, document.getElementById('content'));
   }
 };
