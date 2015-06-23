@@ -28,6 +28,8 @@
     <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
         <st:include page="/com/groupon/jenkins/NewUi/head.jelly" />
         <body>
+
+
         <paper-drawer-panel id="drawerPanel" responsive-width="1280px" drawer-width="400px">
               <div id="nav" drawer="true" >
               </div>
@@ -38,10 +40,15 @@
                   <st:include page="/com/groupon/jenkins/NewUi/header/header.jelly" />
                   </span>
                   <st:include page="/com/groupon/jenkins/NewUi/header/login.jelly" />
+                  <paper-icon-button id="settingsButton" role="button" icon="menu" onclick="document.getElementById('settingsMenu').toggle();"></paper-icon-button>
                 </paper-toolbar>
                 <div id="content"></div>
               </paper-header-panel>
             </paper-drawer-panel>
+
+                  <st:include page="/com/groupon/jenkins/NewUi/settingsMenu.jelly" />
+
+
         </body>
     </j:jelly>
 </html>

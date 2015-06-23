@@ -34,9 +34,11 @@
     "paper-menu": "polymerelements/paper-menu#^1.0.0",
     "paper-styles": "polymerelements/paper-styles#^1.0.0",
     "paper-toggle-button": "polymerelements/paper-toggle-button#^1.0.0",
-    "paper-toolbar": "polymerelements/paper-toolbar#^1.0.0"
+    "paper-toolbar": "polymerelements/paper-toolbar#^1.0.0",
+    "paper-dialog": "polymerelements/paper-dialog#^1.0.0"
   },
   "resolutions": {
-    "polymer": "^1.0.0"
+    "polymer": "^1.0.0",
+    "web-animations-js": "^2.0.0"
   }
 }
