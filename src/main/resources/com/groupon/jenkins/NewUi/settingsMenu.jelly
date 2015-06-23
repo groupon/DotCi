@@ -34,7 +34,5 @@
                            <div class="fa fa-trash-o" item-icon=""></div> <a href="${rootURL}/${it.jobUrl}/delete">Delete</a>
                          </paper-icon-item>
                        </div>
-                               <paper-button >Cancel</paper-button>
-                               <paper-button dialog-confirm="">Accept</paper-button>
                    </paper-dialog>
 </j:jelly>
