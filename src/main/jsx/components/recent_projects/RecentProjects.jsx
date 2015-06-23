@@ -27,22 +27,27 @@ import FluxComponent from 'flummox/component';
 import Avatar from '../lib/Avatar.jsx';
 import AutoRefreshHelper from './../mixins/AutoRefreshHelper.jsx'
 import Responsive from './../mixins/Responsive.jsx';
+import CustomAttributes from './../mixins/CustomAttributes.jsx'
 require("./recent-projects.css");
 
 var RecentProject = React.createClass({
+  mixins: [CustomAttributes],
   render(){
     return (
-      <div className={"recent-project " + this.props.lastBuildResult}> 
-        <div className="project-name">
-          {this._projectName()}
-          <a href={this.props.url}>#{this.props.number}</a>
-        </div>
-        <div><span className="icon-text octicon octicon-git-commit"/>{this.props.commit.message}</div>
-        <div className="finished">
-          <i className="icon-text fa fa-calendar"></i> 
-          <span className="detail">{this.props.startTime}</span>
-        </div>
-      </div>
+      <paper-item className={"recent-project " + this.props.lastBuildResult}> 
+        <paper-item-body ref="ca-1" attrs={{"three-line": ""}}>
+          <a href={this.props.url} className="project-name">
+            {this._projectName()}- #{this.props.number}
+          </a>
+          <div ref="ca-2" attrs={{secondary: ""}}>
+            <span className="icon-text octicon octicon-git-commit"/>{this.props.commit.message}
+          </div>
+          <div className="finished">
+            <i className="icon-text fa fa-calendar"></i> 
+            <span className="detail">{this.props.startTime}</span>
+          </div>
+        </paper-item-body>
+      </paper-item>
     );
   },
   _projectName(){
@@ -51,7 +56,7 @@ var RecentProject = React.createClass({
 });
 
 var RecentProjectsWidget =React.createClass({
-  mixins: [AutoRefreshHelper,Responsive(
+  mixins: [CustomAttributes, AutoRefreshHelper,Responsive(
     {
       "only screen and (max-width: 1450px)": "renderSmall",
       "all and (min-width: 1450px)": "renderDefault",
@@ -78,12 +83,16 @@ var RecentProjectsWidget =React.createClass({
     });
     return (
       <div id="recent-projects">
-        <div className="header align-center">
-          <i className="icon-text fa fa-user"></i> Recent Builds
-        </div>
-        <div id='project-list' >
+        <paper-toolbar ref="ca-1" id="drawerToolbar" attrs={{ role:"toolbar"}} className="x-scope">
+          <div id="topBar" className="center horizontal layout toolbar-tools style-scope paper-toolbar">
+            <span className="paper-font-title">
+              <i className="icon-text fa fa-user"></i> Recent Builds
+            </span>
+          </div>
+        </paper-toolbar>
+        <paper-menu id="project-list" className="list">
           {recentProjects}
-        </div>
+        </paper-menu>
       </div>
     );
   }

@@ -28,8 +28,8 @@
     <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
         <st:include page="/com/groupon/jenkins/NewUi/head.jelly" />
         <body>
-        <paper-drawer-panel id="drawerPanel" responsive-width="1280px">
-              <div id="nav" drawer="true">
+        <paper-drawer-panel id="drawerPanel" responsive-width="1280px" drawer-width="400px">
+              <div id="nav" drawer="true" >
               </div>
               <paper-header-panel class="main" main="true" mode="waterfall">
                 <paper-toolbar>

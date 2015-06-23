@@ -1,55 +1,40 @@
 @import './../../colors.css'; 
 #recent-projects{
-  > .header{
-    border-bottom: 4px solid #f2f2f2;   
-    margin-bottom: 10px;
-  }
   > #project-list{
-    display: flex;
-    flex-flow: column wrap;
-    *{
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    > .recent-project{
-      display: flex;
-      flex-flow: column wrap;
+    .recent-project{
       margin-bottom: 10px;
-      margin-right: 5px;
-      padding-left: 5px;
       border-left-style: solid;
       border-left-width: 5px;
       border-radius: 3px;
-      > .project-name{
-        display: flex;
-        justify-content: space-between;
+      .project-name{
+        min-height: 0px;
+        padding: 0px;
       }
     }
 
-    > .recent-project.FAILURE{
+    .recent-project.FAILURE{
       border-left-color: var(--failure);
-      > .project-name *{
+      .project-name{
         color: var(--failure);
       }
     }
-    > .recent-project.SUCCESS{
+    .recent-project.SUCCESS{
       border-left-color: var(--success);
-      > .project-name *{
+      .project-name {
         color: var(--success);
       }
     }
 
-    > .recent-project.IN_PROGRESS{
+    .recent-project.IN_PROGRESS{
       border-left-color: var(--in_progress);
-      > .project-name *{
+      .project-name {
         color: var(--in_progress);
       }
     }
 
-    > .recent-project.ABORTED{
+    .recent-project.ABORTED{
       border-left-color: var(--aborted);
-      > .project-name *{
+      .project-name {
         color: var(--aborted);
       }
     }
