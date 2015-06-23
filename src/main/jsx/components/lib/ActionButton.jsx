@@ -13,6 +13,7 @@ export default  React.createClass({
     }
   },
   disable() {
-    this.refs.button.getDOMNode().classList.add('disabled');
+    if(!this.props.dontDisable)
+      this.refs.button.getDOMNode().classList.add('disabled');
   }
 });
