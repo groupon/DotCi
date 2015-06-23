@@ -23,6 +23,7 @@
   -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+ <paper-dialog id="loginMenu">
     <j:if test="${app.useSecurity}">
         <j:choose>
             <j:when test="${!h.isAnonymous()}">
@@ -35,16 +36,21 @@
                         <j:set var="userName" value="${user.fullName}"/>
                     </j:otherwise>
                 </j:choose>
-
-                    <a href="${rootURL}/user/${user.id}"><i class="fa fa-user"></i> &amp;nbsp;${userName}</a>
+                 <div class="list short">
+                 <paper-icon-item>
+                    <i class="fa fa-user"></i> <a href="${rootURL}/user/${user.id}">${userName}</a>
+                 </paper-icon-item>
                     <j:if test="${app.securityRealm.canLogOut()}">
-                        <span>&amp;nbsp;|&amp;nbsp;</span>
-                        <a href="${rootURL}/logout">${%logout}</a>
+                     <paper-icon-item>
+                       <i class="fa fa-sign-out"></i> <a href="${rootURL}/logout">${%logout}</a>
+                        </paper-icon-item>
                     </j:if>
+                    </div>
             </j:when>
             <j:otherwise>
                 <st:include it="${app.securityRealm}" page="loginLink.jelly" />
             </j:otherwise>
         </j:choose>
     </j:if>
+    </paper-dialog>
 </j:jelly>

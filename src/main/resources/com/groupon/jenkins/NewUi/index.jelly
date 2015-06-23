@@ -34,19 +34,11 @@
               <div id="nav" drawer="true" >
               </div>
               <paper-header-panel class="main" main="true" mode="waterfall">
-                <paper-toolbar>
-                  <paper-icon-button icon="menu" paper-drawer-toggle="true"></paper-icon-button>
-                  <span class="flex">
                   <st:include page="/com/groupon/jenkins/NewUi/header/header.jelly" />
-                  </span>
-                  <st:include page="/com/groupon/jenkins/NewUi/header/login.jelly" />
-                  <paper-icon-button id="settingsButton" role="button" icon="menu" onclick="document.getElementById('settingsMenu').toggle();"></paper-icon-button>
-                </paper-toolbar>
                 <div id="content"></div>
               </paper-header-panel>
             </paper-drawer-panel>
 
-                  <st:include page="/com/groupon/jenkins/NewUi/settingsMenu.jelly" />
 
 
         </body>

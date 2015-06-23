@@ -23,20 +23,12 @@
   -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-
-  <j:new var="h" className="hudson.Functions" />
-  ${h.initPageVariables(context)}
-
-     <header>
-         <span><img  alt="logo"  height="40" width="40" src="${resURL}/plugin/DotCi/logo.png"/></span>
-         <span>
-                         <a class="section" href="${it.parent.parent.rootUrl}">Jenkins</a>
-                         <span class="divider"> / </span>
-                         <a class="section" href="${it.parent.absoluteUrl}">${it.parent.name}</a>
-                         <span class="divider"> / </span>
-                         <span class="active section">${it.name}</span>
-                         </span>
-                     </header>
-
-
+    <paper-toolbar >
+       <paper-icon-button icon="menu" paper-drawer-toggle="true"></paper-icon-button>
+       <span class="title">${it.name}</span>
+        <paper-icon-button id="settingsButton" role="button" icon="face" onclick="document.getElementById('loginMenu').toggle();"></paper-icon-button>
+        <paper-icon-button id="settingsButton" role="button" icon="settings" onclick="document.getElementById('settingsMenu').toggle();"></paper-icon-button>
+    </paper-toolbar>
+    <st:include page="/com/groupon/jenkins/NewUi/header/settingsMenu.jelly" />
+    <st:include page="/com/groupon/jenkins/NewUi/header/loginMenu.jelly" />
 </j:jelly>
