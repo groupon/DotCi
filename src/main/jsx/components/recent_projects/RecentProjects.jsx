@@ -83,13 +83,6 @@ var RecentProjectsWidget =React.createClass({
     });
     return (
       <div id="recent-projects">
-        <paper-toolbar ref="ca-1" id="drawerToolbar" attrs={{ role:"toolbar"}} className="x-scope">
-          <div id="topBar" className="center horizontal layout toolbar-tools style-scope paper-toolbar">
-            <span className="paper-font-title">
-              <i className="icon-text fa fa-user"></i> Recent Builds
-            </span>
-          </div>
-        </paper-toolbar>
         <paper-menu id="project-list" className="list">
           {recentProjects}
         </paper-menu>

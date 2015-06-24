@@ -26,7 +26,6 @@ import FluxComponent from 'flummox/component';
 import BuildHistory from './BuildHistory.jsx';
 //Lazy load BuildMetrics; not used frequently
 import BuildMetrics from 'react-proxy!./BuildMetrics.jsx';
-import Widgets from '../lib/Widgets.jsx';
 import Router from 'react-router';
 import Build from './build/Build.jsx';
 var RouteHandler = Router.RouteHandler;
@@ -39,12 +38,17 @@ var JobWidgets = React.createClass({
   render(){
     let widget = this.context.router.getCurrentParams().widget;
     let widgetParam = this.context.router.getCurrentParams().param;
-    let activeWidget = widget || "dotCIbuildHistory";
-    return  <Widgets activeWidget={activeWidget} job={this.props.job} flux={this.props.flux}>
-      <BuildHistory icon="fa fa-history" url="dotCIbuildHistory" name="Build History" tabs={this._get('buildHistoryTabs')} builds={this._get('builds')} flux={this.props.flux}/>
-      <BuildMetrics icon="fa fa-bar-chart" url="dotCIbuildMetrics" name="Build Metrics" metrics={this._get('metrics')} tabs={this._get('buildHistoryTabs')} flux={this.props.flux}/>
-      <Build subBuild={widgetParam||'dotCImain'} icon="fa fa-file" url={this._isNumeric(activeWidget)? activeWidget: ''} name={"Build - " + widget} build={this._get('build')} flux={this.props.flux} tabVisibleWhenActive/>
-    </Widgets>;
+    return this._widget(widget,widgetParam);
+  },
+  _widget(_widget,widgetParam){
+    let widget = _widget || "dotCIbuildHistory";
+    if(widget === 'dotCIbuildHistory'){
+      return  <BuildHistory   tabs={this._get('buildHistoryTabs')} builds={this._get('builds')} flux={this.props.flux}/>
+    }
+    if(widget === 'dotCIbuildMetrics'){
+      return <BuildMetrics metrics={this._get('metrics')} tabs={this._get('buildHistoryTabs')} flux={this.props.flux}/>
+    }
+    return <Build  url={widget} subBuild={widgetParam||'dotCImain'} build={this._get('build')} flux={this.props.flux} />
   },
   _isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);

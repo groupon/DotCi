@@ -24,10 +24,10 @@
 
 __webpack_public_path__= window.resURL+'js/';
 import React from "react";
-import RecentProjects from "./components/recent_projects/RecentProjects.jsx";
 import Job from "./components/job/Job.jsx";
 import Flux from "./Flux.jsx";
 import Router from 'react-router';
+import Drawer from './Drawer.jsx';
 import EmptyProject from './EmptyProject.jsx';
 require('./app.css');
 var RouteHandler = Router.RouteHandler;
@@ -73,7 +73,7 @@ window.onload = function(){
       const routeHandlerInfo = { state, flux };
       await performRouteHandlerStaticMethod(state.routes, 'routerWillRun', routeHandlerInfo);
       React.render(<Handler flux ={flux}/>, document.getElementById('content'));
-      React.render(<RecentProjects flux ={flux}/>, document.getElementById('nav'));
+      React.render(<Drawer flux ={flux}/>, document.getElementById('nav'));
     });
   }else{
     React.render(<App flux ={flux}/>, document.getElementById('content'));
