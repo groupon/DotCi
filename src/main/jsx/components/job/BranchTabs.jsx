@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import ActionButton from './../lib/ActionButton.jsx';
 import Router from 'react-router';
 import CustomAttributes from './../mixins/CustomAttributes.jsx';
+import Dialog from './../lib/Dialog.jsx';
 require('./branch_tabs.css')
 export default React.createClass({
   mixins: [LocationHashHelper,CustomAttributes], 
@@ -31,27 +32,20 @@ export default React.createClass({
            );
   },
   _addTabDialog(){
-    return <paper-dialog  ref="ca-addDialog"  attrs={{heading:"Add new brach tab"}} onClick={this._onTabSave} >
+    return <Dialog  ref="addTabDialog" heading="Add new brach tab" onSave={this._onTabSave} >
       <paper-input ref="ca-branchInput" attrs={{label:"Branch Expression"}}></paper-input>
-      <div className="buttons">
-        <paper-button ref="ca-1" attrs={{"dialog-dismiss": true}}>Cancel</paper-button>
-        <paper-button id="addTabButton" ref="ca-2" attrs={{ "dialog-confirm": true}}>Accept</paper-button>
-      </div>
-    </paper-dialog>;
+    </Dialog>;
   },
   _isTabRemovable(tab){
     return !contains(tab)(['master','All','Mine']);
   },
   _addTab(){
-    const addDialog = this.refs['ca-addDialog'];
-    addDialog.getDOMNode().toggle();
+    this.refs.addTabDialog.show();
   },
   _onTabSave(e){
-    if(e.target.parentElement && e.target.parentElement.id === "addTabButton"){
-      const tabExpr = this.refs['ca-branchInput'].getDOMNode().value
-      if(tabExpr){
-        this.props.flux.addBranchTab(tabExpr);
-      }
+    const tabExpr = this.refs['ca-branchInput'].getDOMNode().value
+    if(tabExpr){
+      this.props.flux.addBranchTab(tabExpr);
     }
   },
   _notifyTabSelection: function (tab) {
