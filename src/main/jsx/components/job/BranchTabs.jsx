@@ -24,19 +24,20 @@ export default React.createClass({
     return (<div>
       <paper-tabs ref="ca-branchTabs" attrs={{selected}}>
         {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab))).toArray()}
-        <paper-tab>
-          <ActionButton tooltip="Add new tab" onClick={this._addTab} icon="fa fa-plus-circle" dontDisable/>
-        </paper-tab>
+        <span className="hint--left" data-hint="Add new Tab" ><paper-icon-button onClick={this._addTab} ref="ca-addTab" attrs={{icon:"add"}}></paper-icon-button> </span>
       </paper-tabs>
-      <paper-dialog  ref="ca-addDialog"  attrs={{heading:"Add new brach tab"}} onClick={this._onTabSave} >
-        <paper-input ref="ca-branchInput" attrs={{label:"Branch Expression"}}></paper-input>
-        <div className="buttons">
-          <paper-button ref="ca-1" attrs={{"dialog-dismiss": true}}>Cancel</paper-button>
-          <paper-button id="addTabButton" ref="ca-2" attrs={{ "dialog-confirm": true}}>Accept</paper-button>
-        </div>
-      </paper-dialog>
+      {this._addTabDialog()}
     </div>
            );
+  },
+  _addTabDialog(){
+    return <paper-dialog  ref="ca-addDialog"  attrs={{heading:"Add new brach tab"}} onClick={this._onTabSave} >
+      <paper-input ref="ca-branchInput" attrs={{label:"Branch Expression"}}></paper-input>
+      <div className="buttons">
+        <paper-button ref="ca-1" attrs={{"dialog-dismiss": true}}>Cancel</paper-button>
+        <paper-button id="addTabButton" ref="ca-2" attrs={{ "dialog-confirm": true}}>Accept</paper-button>
+      </div>
+    </paper-dialog>;
   },
   _isTabRemovable(tab){
     return !contains(tab)(['master','All','Mine']);
