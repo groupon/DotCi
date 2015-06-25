@@ -41,11 +41,13 @@ import {addBranchTab as addBranchTabOnServer, removeBranchTab as removeBranchTab
       const logText = await buildLog(buildNumber,subBuild);
       this.jobInfoChanged({build: { log:logText.split("\n") }});
     }
-    async refreshBuild(buildNumber,subBuild){
-      const buildInfo = await build(buildNumber);
-      const logText = await buildLog(buildNumber,subBuild);
-      buildInfo['log'] = logText.split("\n");
-      this.jobInfoChanged({build:buildInfo});
+    refreshBuild(buildNumber,subBuild){
+      build(buildNumber).then( build => {
+        buildLog(buildNumber,subBuild).then(logText => {
+          build['log'] = logText.split("\n");
+          this.jobInfoChanged({build});
+        })
+      });
     }
     jobInfoChanged(newJobInfo){
       return newJobInfo;
@@ -61,8 +63,8 @@ import {addBranchTab as addBranchTabOnServer, removeBranchTab as removeBranchTab
       let  projects = await recentProjects();
       this.recentProjectsChanged(projects.recentProjects);
     }
-    async getJobInfoFromServer(tree,branchTab,buildCount){
-      this.jobInfoChanged( await job(tree,branchTab,buildCount));
+    getJobInfoFromServer(tree,branchTab,buildCount){
+      job(tree,branchTab,buildCount).then(jobInfo => this.jobInfoChanged(jobInfo));
     }
 
     recentProjectsChanged(recentProjects) {
