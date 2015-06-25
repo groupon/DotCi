@@ -4,7 +4,6 @@ import contains from 'ramda/src/contains'
 import classNames from 'classnames'; 
 import ActionButton from './../lib/ActionButton.jsx';
 import Router from 'react-router';
-import LoadingHelper from './../mixins/LoadingHelper.jsx';
 import CustomAttributes from './../mixins/CustomAttributes.jsx';
 require('./branch_tabs.css')
 export default React.createClass({

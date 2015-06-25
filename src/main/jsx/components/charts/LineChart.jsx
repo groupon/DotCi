@@ -1,10 +1,8 @@
 import React from 'react';
 import Chart from 'chart.js';
-import  LoadingHelper from './../mixins/LoadingHelper.jsx';
 import {Set} from 'immutable';
 require('./line_chart.css');
 export default React.createClass({
-  mixins:[LoadingHelper],
   getInitialState(){
     return {unchecked: Set()};
   },
@@ -28,7 +26,7 @@ export default React.createClass({
   _removeUnchecked(dataSets){
     return dataSets.filter(dataSet => !this.state.unchecked.has(dataSet.get('label')));
   },
-  _render(){
+  render(){
     let {xLabel,yLabel} = this.props.chart.toObject();
     return (
       <div className="chart-container">

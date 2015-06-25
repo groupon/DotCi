@@ -32,8 +32,6 @@
 @import "./css/segment.css";
 @import "./css/image.css";
 @import "./css/input.css";
-@import "./css/loader.css";
-@import "./css/dimmer.css";
 @import "./common.css";
 body{
   background: white !important;
