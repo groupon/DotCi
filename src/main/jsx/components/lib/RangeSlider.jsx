@@ -3,7 +3,8 @@ import Router from 'react-router';
 import qs from 'qs';
 import Url from './../../vendor/url.js'
 import CustomAttributes from './../mixins/CustomAttributes.jsx';
-require('./range_slider.css');
+import Dialog from './Dialog.jsx';
+// require('./range_slider.css');
 export default React.createClass({
   mixins: [CustomAttributes],
   statics: {
@@ -14,26 +15,33 @@ export default React.createClass({
   getInitialState(){
     return {value: this._getQueryValue() || this.props.min}
   },
-  componentDidMount(){
-    this.refs['ca-slider'].getDOMNode().addEventListener('value-change', function(e) {
-      this._onInput(e);
-    }.bind(this))
-  },
   render(){
     return <span className="range-slider-container hint--top" data-hint={this.props.tooltip}>
-      <paper-slider  ref="ca-slider" 
-        attrs={{value:this.state.value, 
-          editable: true, 
-        expand: true,
-        pin: true,
-        min:this.props.min,
-        max: this.props.max }}>
-      </paper-slider>
+      <paper-button onClick={this._onEdit} ref="ca-edit" attrs={{toggles:true}} >
+        <iron-icon  icon="image:edit"></iron-icon>{this.state.value}
+      </paper-button>
+
+      <Dialog ref="buildCountDialog" heading="Build Count" onSave={this._valueChange}> 
+        {this._sliderDialog()}
+      </Dialog>
     </span>;
   },
-  _onInput(e){
+  _onEdit(e){
+    this.refs.buildCountDialog.show();
+  },
+  _sliderDialog(){
+    return <paper-slider  ref="ca-slider" 
+      attrs={{value:this.state.value, 
+        editable: true, 
+      expand: true,
+      pin: true,
+      min:this.props.min,
+      max: this.props.max }}>
+    </paper-slider>
+  },
+  _valueChange(e){
     const u = new Url();
-    const newValue =e.target.value;
+    const newValue =this.refs['ca-slider'].getDOMNode().value;
     u.query["buildCount"]= newValue;
     window.history.pushState('','',u.toString())
     this.replaceState({value: newValue});
