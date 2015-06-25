@@ -36,14 +36,13 @@ import BranchTabs from './BranchTabs.jsx';
 import ActionButton from './../lib/ActionButton.jsx';
 require('./build_history.css');
 var BuildHistoryTable = React.createClass({
-  mixins: [LoadingHelper],
   getInitialState: function() {
     return {filter: '',grouped: false};
   },
   _filteredBuilds(){
     return this.props.builds.filter(this._applyFilter);
   },
-  _render(){
+  render(){
     return(
       <div>
         <span className="buildHistory-bar" >
@@ -71,8 +70,7 @@ var BuildHistoryTable = React.createClass({
 });
 
 export default React.createClass({
-  mixins:[AutoRefreshHelper],
-  defaultTab: 'All',
+  mixins:[AutoRefreshHelper,LoadingHelper],
   componentDidMount(){
     this._loadBuildHistory();
     this.setRefreshTimer(this._loadBuildHistory);
@@ -82,10 +80,13 @@ export default React.createClass({
     actions.getJobInfoFromServer("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]", this._currentTab(),this._buildCount());
   },
   _currentTab(){
-    return this.refs.branchTabs.currentTab();
+    return BranchTabs.currentTab();
   },
-  render(){
-    const countSlider = <RangeSlider ref="buildCount" tooltip="Build count" queryParam="count" onChange={this._onCountChange} min={20}  max={100} step={5}  />
+  _buildCount(){
+    return RangeSlider.currentValue();
+  },
+  _render(){
+    const countSlider = <RangeSlider ref="buildCount" tooltip="Build count"  onChange={this._onCountChange} min={20}  max={100} step={5}  />
     return(<div className="align-center" >
       <BranchTabs  ref="branchTabs" onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={this.defaultTab}/>
       <BuildHistoryTable countSlider={countSlider} builds ={this.props.builds}/>
@@ -98,9 +99,5 @@ export default React.createClass({
   _onCountChange(count){
     let actions = this.props.flux.getActions('app');
     actions.buildHistorySelected(this._currentTab(),count);
-  },
-  _buildCount(){
-    //TODO: this needs to be fixed, this doesn't work is always 20
-    return this.refs.buildCount?this.refs.buildCount.value():20;
   }
 });

@@ -8,15 +8,19 @@ import LoadingHelper from './../mixins/LoadingHelper.jsx';
 import CustomAttributes from './../mixins/CustomAttributes.jsx';
 require('./branch_tabs.css')
 export default React.createClass({
-  mixins: [LocationHashHelper,LoadingHelper,CustomAttributes], 
+  mixins: [LocationHashHelper,CustomAttributes], 
+  statics: {
+    currentTab(){
+      const selectedTab = Router.HashLocation.getCurrentPath();
+      return selectedTab|| 'All';
+    }
+  },
   getInitialState(){
-    return {currentSelection: this.selectedHash()?this.selectedHash(): this.props.defaultTab};
-  },
-  currentTab(){
     const selectedTab = Router.HashLocation.getCurrentPath();
-    return selectedTab|| this.props.defaultTab;
+    return {currentSelection: selectedTab|| 'All'};
   },
-  _render()  {
+
+  render()  {
     const selected = this.props.tabs.findIndex(tab => tab == this.state.currentSelection); 
     return (<div>
       <paper-tabs ref="ca-branchTabs" attrs={{selected}}>

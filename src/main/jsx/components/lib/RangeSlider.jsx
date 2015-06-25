@@ -4,6 +4,11 @@ import qs from 'qs';
 import Url from './../../vendor/url.js'
 require('./range_slider.css');
 export default React.createClass({
+  statics: {
+    currentValue(){
+      return new Url().query["buildCount"] || 20;
+    }
+  },
   getInitialState(){
     return {value: this._getQueryValue() || this.props.min}
   },
@@ -23,7 +28,7 @@ export default React.createClass({
   _onInput(e){
     const u = new Url();
     const newValue =e.target.value;
-    u.query[this.props.queryParam]= newValue;
+    u.query["buildCount"]= newValue;
     window.history.pushState('','',u.toString())
     this.props.onChange(newValue);
   },
@@ -31,7 +36,7 @@ export default React.createClass({
     this.replaceState({value: e.target.value});
   },
   _getQueryValue(){
-    return new Url().query[this.props.queryParam];
+    return new Url().query["buildCount"];
   },
   value() {
     return this.refs.input.getDOMNode().value;
