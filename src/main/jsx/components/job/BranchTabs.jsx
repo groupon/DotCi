@@ -15,14 +15,16 @@ export default React.createClass({
   currentTab(){
     const selectedTab = Router.HashLocation.getCurrentPath();
     return selectedTab|| this.props.defaultTab;
-    // <input type="text" ref="newBranchTab" placeholder=""/>
   },
   _render()  {
+    const selected = this.props.tabs.findIndex(tab => tab == this.state.currentSelection); 
     return (<div>
-      <div className="ui text menu">
+      <paper-tabs ref="ca-branchTabs" attrs={{selected}}>
         {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab))).toArray()}
-        <ActionButton className="ui item" tooltip="Add new tab" onClick={this._addTab} icon="fa fa-plus-circle" dontDisable/>
-      </div>
+        <paper-tab>
+          <ActionButton tooltip="Add new tab" onClick={this._addTab} icon="fa fa-plus-circle" dontDisable/>
+        </paper-tab>
+      </paper-tabs>
       <paper-dialog  ref="ca-addDialog"  attrs={{heading:"Add new brach tab"}} onClick={this._onTabSave} >
         <paper-input ref="ca-branchInput" attrs={{label:"Branch Expression"}}></paper-input>
         <div className="buttons">
@@ -63,17 +65,13 @@ export default React.createClass({
     var tab = event.currentTarget.getAttribute('data-tab');
     this.props.flux.removeBranchTab(tab);
   },
+  _onTabSelect(e){
+    this.setHash(e.currentTarget.getAttribute('data-tab'));
+  },
   _getHistoryTab(tab,i,closable) {
-    var classes = classNames({
-      'ui':true,
-      'item':true ,
-      'green':true ,
-      'active': this.state.currentSelection== tab
-    });
-    return (<a className={classes} key={i} href={'#'+tab}>
-      <i className="icon octicon octicon-git-branch "></i>
+    return <paper-tab data-tab={tab}  key={i} onClick={this._onTabSelect}>
       {tab}
       {closable?<div data-tab={tab} className="tab-close fa fa-times-circle-o" onClick={this._onTabRemove}></div>: ''}
-    </a>);
+    </paper-tab>;
   }
 });

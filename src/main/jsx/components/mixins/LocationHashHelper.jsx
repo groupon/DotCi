@@ -19,5 +19,8 @@ export default {
   },
   componentWillUnmount(){
     this.removeHashListener(this._onLocationHashChange);
+  },
+  setHash(hash){
+    Router.HashLocation.push(hash);
   }
 }
