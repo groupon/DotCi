@@ -24,7 +24,7 @@ export default React.createClass({
     return (<div>
       <paper-tabs ref="ca-branchTabs" attrs={{selected}}>
         {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab))).toArray()}
-        <span className="hint--left" data-hint="Add new Tab" ><paper-icon-button onClick={this._addTab} ref="ca-addTab" attrs={{icon:"add"}}></paper-icon-button> </span>
+        <span className="hint--left" data-hint="Add new Tab" ><paper-icon-button onClick={this._addTab} ref="ca-addTab" attrs={{icon:"add-circle"}}></paper-icon-button> </span>
       </paper-tabs>
       {this._addTabDialog()}
     </div>
