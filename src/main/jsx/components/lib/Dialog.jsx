@@ -1,5 +1,6 @@
 import React from 'react';
 import CustomAttributes from './../mixins/CustomAttributes.jsx';
+import Loading from  './../mixins/Loading.jsx';
 export default React.createClass({
   mixins: [CustomAttributes],
   getInitialState(){
@@ -9,10 +10,13 @@ export default React.createClass({
     return <paper-dialog  ref="ca-dialog" onClick={this._onClick} >
       <h2>{this.props.heading}</h2>
       <paper-dialog-scrollable>
-        {this.state.showing?this.props.children:''}
+        {this.state.showing?this.props.children:this._loading()}
       </paper-dialog-scrollable>
       {this.props.noButtons? "": this._buttons()}
     </paper-dialog>;
+  },
+  _loading(){
+    <Loading/>;
   },
   _buttons(){
     return <div className="buttons">
