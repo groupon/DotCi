@@ -2,11 +2,14 @@ import React from 'react';
 import CustomAttributes from './../mixins/CustomAttributes.jsx';
 export default React.createClass({
   mixins: [CustomAttributes],
+  getInitialState(){
+    return {showing: false};
+  },
   render(){
     return <paper-dialog  ref="ca-dialog" onClick={this._onClick} >
       <h2>{this.props.heading}</h2>
       <paper-dialog-scrollable>
-        {this.props.children}
+        {this.state.showing?this.props.children:''}
       </paper-dialog-scrollable>
       {this.props.noButtons? "": this._buttons()}
     </paper-dialog>;
@@ -18,6 +21,7 @@ export default React.createClass({
     </div>
   },
   show(){
+    this.setState({showing: true});
     const dialog = this.refs['ca-dialog'];
     dialog.getDOMNode().toggle();
   },
