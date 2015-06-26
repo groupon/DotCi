@@ -37,6 +37,7 @@
     "paper-icon-button": "polymerelements/paper-icon-button#^1.0.0",
     "paper-button": "polymerelements/paper-button#^1.0.0",
     "paper-dialog": "polymerelements/paper-dialog#^1.0.0",
+    "paper-dialog": "polymerelements/paper-dialog-scrollable#^1.0.0",
     "paper-input": "polymerelements/paper-input#^1.0.0",
     "paper-tabs": "polymerelements/paper-tabs#^1.0.0",
     "paper-slider": "polymerelements/paper-slider#master"

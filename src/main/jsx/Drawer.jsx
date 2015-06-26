@@ -1,6 +1,7 @@
 import React from "react";
 import RecentProjects from "./components/recent_projects/RecentProjects.jsx";
 import  CustomAttributes from './components/mixins/CustomAttributes.jsx';
+import Dialog from './components/lib/Dialog.jsx';
 
 export default React.createClass( {
   mixins: [CustomAttributes],
@@ -9,15 +10,18 @@ export default React.createClass( {
   },
   render(){
     return <div>
-      <paper-tabs ref="ca-1" attrs={{selected: this.state.selectedTab}}>
-        <paper-tab data-tabidx="0" onClick={this._onTabClick}><i className="icon-text fa fa-user"></i> Recent Builds</paper-tab>
-        <paper-tab data-tabidx="1" onClick={this._onTabClick}> Current</paper-tab>
-      </paper-tabs>
-      <div>
-        {this.state.selectedTab === "0"? <RecentProjects flux={this.props.flux}/> : this._currentMenu()}
-      </div>
-
+      <paper-toolbar id="drawerToolbar">
+        <div className="  title">Current</div>
+        <paper-icon-button onClick={this._onJobChange} icon="hardware:keyboard-arrow-down"></paper-icon-button>
+      </paper-toolbar>
+      {this._currentMenu()}
+      <Dialog ref="recentProjectsDialog" heading="Recent Builds" noButtons>
+        <RecentProjects flux = {this.props.flux} />
+      </Dialog>
     </div>
+  },
+  _onJobChange(e){
+    this.refs.recentProjectsDialog.show();
   },
   _currentMenu(){
     return <div className="list short">

@@ -28,6 +28,7 @@ import Avatar from '../lib/Avatar.jsx';
 import AutoRefreshHelper from './../mixins/AutoRefreshHelper.jsx'
 import Responsive from './../mixins/Responsive.jsx';
 import CustomAttributes from './../mixins/CustomAttributes.jsx'
+import Loading from './../mixins/Loading.jsx';
 require("./recent-projects.css");
 
 var RecentProject = React.createClass({
@@ -76,6 +77,7 @@ var RecentProjectsWidget =React.createClass({
     return this._render(false);
   },
   _render(small){
+    if(!this.props.recentProjects) return <Loading/>;
     var recentProjects = this.props.recentProjects.map(function (project) {
       return (
         <RecentProject small={small} key={project.url} {...project}/>
