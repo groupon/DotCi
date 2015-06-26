@@ -39,7 +39,7 @@
     "paper-dialog": "polymerelements/paper-dialog#^1.0.0",
     "paper-input": "polymerelements/paper-input#^1.0.0",
     "paper-tabs": "polymerelements/paper-tabs#^1.0.0",
-    "paper-slider": "polymerelements/paper-slider#^1.0.0"
+    "paper-slider": "polymerelements/paper-slider#master"
   },
   "resolutions": {
     "polymer": "^1.0.0",
