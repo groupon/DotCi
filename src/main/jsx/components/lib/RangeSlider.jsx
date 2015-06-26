@@ -4,7 +4,6 @@ import qs from 'qs';
 import Url from './../../vendor/url.js'
 import CustomAttributes from './../mixins/CustomAttributes.jsx';
 import Dialog from './Dialog.jsx';
-// require('./range_slider.css');
 export default React.createClass({
   mixins: [CustomAttributes],
   statics: {
