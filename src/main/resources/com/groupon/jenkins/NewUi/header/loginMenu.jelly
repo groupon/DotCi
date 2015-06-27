@@ -23,6 +23,8 @@
   -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+ <j:new var="h" className="hudson.Functions" />
+        ${h.initPageVariables(context)}
  <paper-dialog id="loginMenu">
     <j:if test="${app.useSecurity}">
         <j:choose>
