@@ -7,13 +7,15 @@ export default React.createClass({
     return {showing: false};
   },
   render(){
-    return <paper-dialog  ref="ca-dialog" onClick={this._onClick} >
-      <h2>{this.props.heading}</h2>
-      <paper-dialog-scrollable>
-        {(this.state.showing || !this.props.lazy)?this.props.children:this._loading()}
-      </paper-dialog-scrollable>
-      {this.props.noButtons? "": this._buttons()}
-    </paper-dialog>;
+    return <paper-dialog  ref="ca-dialog" onClick={this._onClick} 
+      attrs={{"entry-animation":"scale-up-animation",
+        "exit-animation":"fade-out-animation"}}>
+        <h2>{this.props.heading}</h2>
+        <paper-dialog-scrollable>
+          {(this.state.showing || !this.props.lazy)?this.props.children:this._loading()}
+        </paper-dialog-scrollable>
+        {this.props.noButtons? "": this._buttons()}
+      </paper-dialog>;
   },
   _loading(){
     <Loading/>;
