@@ -10,7 +10,7 @@ export default React.createClass({
     return <paper-dialog  ref="ca-dialog" onClick={this._onClick} >
       <h2>{this.props.heading}</h2>
       <paper-dialog-scrollable>
-        {this.state.showing?this.props.children:this._loading()}
+        {(this.state.showing || !this.props.lazy)?this.props.children:this._loading()}
       </paper-dialog-scrollable>
       {this.props.noButtons? "": this._buttons()}
     </paper-dialog>;
@@ -25,7 +25,9 @@ export default React.createClass({
     </div>
   },
   show(){
-    this.setState({showing: true});
+    if(this.props.lazy){
+      this.setState({showing: true});
+    }
     const dialog = this.refs['ca-dialog'];
     dialog.getDOMNode().toggle();
   },

@@ -15,7 +15,7 @@ export default React.createClass( {
         <paper-icon-button onClick={this._onJobChange} icon="hardware:keyboard-arrow-down"></paper-icon-button>
       </paper-toolbar>
       {this._currentMenu()}
-      <Dialog ref="recentProjectsDialog" heading="Recent Builds" noButtons>
+      <Dialog ref="recentProjectsDialog" heading="Recent Builds" noButtons lazy>
         <RecentProjects flux = {this.props.flux} />
       </Dialog>
     </div>
