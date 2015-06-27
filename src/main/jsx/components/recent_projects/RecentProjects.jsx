@@ -80,7 +80,9 @@ var RecentProjectsWidget =React.createClass({
     if(!this.props.recentProjects) return <Loading/>;
     var recentProjects = this.props.recentProjects.map(function (project) {
       return (
-        <RecentProject small={small} key={project.url} {...project}/>
+        <paper-material key={project.url} >
+          <RecentProject small={small} {...project}/>
+        </paper-material>
       );
     });
     return (

@@ -41,7 +41,8 @@
     "paper-input": "polymerelements/paper-input#^1.0.0",
     "paper-tabs": "polymerelements/paper-tabs#^1.0.0",
     "paper-slider": "polymerelements/paper-slider#master",
-    "neon-animation": "polymerelements/neon-animation#^1.0.0"
+    "neon-animation": "polymerelements/neon-animation#^1.0.0",
+    "paper-material": "polymerelements/paper-material#^1.0.0"
   },
   "resolutions": {
     "polymer": "^1.0.0",
