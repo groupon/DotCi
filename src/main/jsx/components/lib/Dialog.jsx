@@ -27,8 +27,14 @@ export default React.createClass({
     </div>
   },
   show(){
+    this._toggle(true);
+  },
+  hide(){
+    this._toggle(false);
+  },
+  _toggle(showing){
     if(this.props.lazy){
-      this.setState({showing: true});
+      this.setState({showing});
     }
     const dialog = this.refs['ca-dialog'];
     dialog.getDOMNode().toggle();

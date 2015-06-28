@@ -35,38 +35,36 @@ export default React.createClass({
     let {result,number, cancelUrl,commit,durationString,displayTime,cause, estimatedDuration,duration} = this.props.build.toObject();
     let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
     return (
-      <paper-material>
-        <div className="build-row">
-          <BuildProgressBar build={this.props.build}/>
-          <div className ={"build-info build-info-"+result}>
-            {this._statusRow(result,cause)}
-            <span>
-              <div className="build-row--title"><small>{branch}</small> 
-                <Router.Link  to={'job-widgets'} params={{widget: number}}>{message}</Router.Link>
-              </div> 
-              <div className="build-row--committer">
-                <Avatar avatarUrl={avatarUrl} />
-                <span>{committerName}</span>
-              </div>
-              <div className="build-row--cause">{cause.get('shortDescription')}</div>
-            </span>
-            <span>  
-              <div>#<Router.Link  className="build-row--number" to={'job-widgets'} params={{widget: number}}>{number}{result.toLowerCase()}</Router.Link></div>
-              <div><i className="fa fa-github"></i><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>
-            </span>
-            <span>
-              <div>
-                <i className="fa fa-clock-o"></i>
-                <span className="detail">{durationString}</span>
-              </div>
-              <div>
-                <i className="fa fa-calendar"></i>
-                <span className="detail">{displayTime}</span>
-              </div>
-            </span>
-          </div>
+      <div className="build-row">
+        <BuildProgressBar build={this.props.build}/>
+        <div className ={"build-info build-info-"+result}>
+          {this._statusRow(result,cause)}
+          <span>
+            <div className="build-row--title"><small>{branch}</small> 
+              <Router.Link  to={'job-widgets'} params={{widget: number}}>{message}</Router.Link>
+            </div> 
+            <div className="build-row--committer">
+              <Avatar avatarUrl={avatarUrl} />
+              <span>{committerName}</span>
+            </div>
+            <div className="build-row--cause">{cause.get('shortDescription')}</div>
+          </span>
+          <span>  
+            <div>#<Router.Link  className="build-row--number" to={'job-widgets'} params={{widget: number}}>{number}{result.toLowerCase()}</Router.Link></div>
+            <div><i className="fa fa-github"></i><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>
+          </span>
+          <span>
+            <div>
+              <i className="fa fa-clock-o"></i>
+              <span className="detail">{durationString}</span>
+            </div>
+            <div>
+              <i className="fa fa-calendar"></i>
+              <span className="detail">{displayTime}</span>
+            </div>
+          </span>
         </div>
-      </paper-material>
+      </div>
     );
   },
   _statusRow(result, cause){
