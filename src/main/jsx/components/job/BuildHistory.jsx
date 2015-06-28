@@ -49,6 +49,7 @@ var BuildHistoryTable = React.createClass({
           <ActionButton tooltip="Build Now" href="build?delay=0sec" icon="fa fa-rocket" primary/>
           <ToggleButton onClick={this._groupBuilds} tooltip="Pipeline View"><i className="fa fa-indent"></i></ToggleButton>
           <FilterBar id="filter-bar" onChange={this._onFilterChange}/> 
+          {this.props.branchSelector}
           {this.props.countSlider}
         </span>
         {this.state.grouped? <GroupedBuildsView builds={this._filteredBuilds()} /> : <LinearBuildsView builds={this._filteredBuilds()} />}
@@ -86,10 +87,10 @@ export default React.createClass({
     return RangeSlider.currentValue();
   },
   _render(){
-    const countSlider = <RangeSlider ref="buildCount" tooltip="Build count"  onChange={this._onCountChange} min={20}  max={100} step={5}  />
+    const countSlider = <RangeSlider ref="buildCount" tooltip="Build count"  onChange={this._onCountChange} min={20}  max={100} step={5}  />;
+    const branchSelector = <BranchTabs  ref="branchTabs" onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={this.defaultTab}/>;
     return(<div className="align-center" >
-      <BranchTabs  ref="branchTabs" onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={this.defaultTab}/>
-      <BuildHistoryTable countSlider={countSlider} builds ={this.props.builds}/>
+      <BuildHistoryTable branchSelector={branchSelector} countSlider={countSlider} builds ={this.props.builds}/>
     </div>);
   },
   _onTabChange(tab){
