@@ -21,15 +21,28 @@ export default React.createClass({
   },
 
   render()  {
-    const selected = this.props.tabs.findIndex(tab => tab == this.state.currentSelection); 
-    return (<div>
-      <paper-tabs ref="ca-branchTabs" attrs={{selected}}>
-        {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab))).toArray()}
-        <span className="hint--left" data-hint="Add new Tab" ><paper-icon-button onClick={this._addTab} ref="ca-addTab" attrs={{icon:"add-circle"}}></paper-icon-button> </span>
-      </paper-tabs>
+    return <span>
+      <paper-button id="currentBranchButton" onClick={this._onBranchChange} >
+        {this.state.currentSelection}<iron-icon  icon="hardware:keyboard-arrow-down"></iron-icon>
+      </paper-button>
+      <Dialog ref="branchListDialog" noButtons >
+        <div>
+          {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab))).toArray()}
+          <paper-item>
+            <paper-button onClick={this._addTab} ref="ca-addTab" >
+              New <iron-icon  icon="add-circle"></iron-icon>
+            </paper-button> 
+          </paper-item>
+        </div>
+      </Dialog>
       {this._addTabDialog()}
-    </div>
-           );
+    </span>;
+
+  },
+  _onBranchChange(e){
+    if(e.currentTarget && e.currentTarget.id==="currentBranchButton"){
+      this.refs.branchListDialog.show();
+    }
   },
   _addTabDialog(){
     return <Dialog  ref="addTabDialog" heading="Add new brach tab" onSave={this._onTabSave} >
@@ -40,6 +53,7 @@ export default React.createClass({
     return !contains(tab)(['master','All','Mine']);
   },
   _addTab(){
+    this.refs.branchListDialog.hide();
     this.refs.addTabDialog.show();
   },
   _onTabSave(e){
@@ -64,12 +78,15 @@ export default React.createClass({
     this.props.flux.removeBranchTab(tab);
   },
   _onTabSelect(e){
+    this.refs.branchListDialog.hide();
     this.setHash(e.currentTarget.getAttribute('data-tab'));
   },
   _getHistoryTab(tab,i,closable) {
-    return <paper-tab data-tab={tab}  key={i} onClick={this._onTabSelect}>
-      {tab}
+    return <paper-item   key={i} >
+      <paper-button data-tab={tab} onClick={this._onTabSelect}>
+        {tab}
+      </paper-button>
       {closable?<div data-tab={tab} className="tab-close fa fa-times-circle-o" onClick={this._onTabRemove}></div>: ''}
-    </paper-tab>;
+    </paper-item>;
   }
 });
