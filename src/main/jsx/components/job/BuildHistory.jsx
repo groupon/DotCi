@@ -46,7 +46,6 @@ var BuildHistoryTable = React.createClass({
     return(
       <div>
         <span className="buildHistory-bar" >
-          <ActionButton tooltip="Build Now" href="build?delay=0sec" icon="fa fa-rocket" primary/>
           <ToggleButton onClick={this._groupBuilds} tooltip="Pipeline View"><i className="fa fa-indent"></i></ToggleButton>
           <FilterBar id="filter-bar" onChange={this._onFilterChange}/> 
           {this.props.branchSelector}
