@@ -17,7 +17,7 @@ export default React.createClass({
   render(){
     return <span className="range-slider-container hint--top" data-hint={this.props.tooltip}>
       <paper-button onClick={this._onEdit} ref="ca-edit" attrs={{toggles:true}} >
-        <iron-icon  icon="image:edit"></iron-icon>{this.state.value}
+        {this.state.value}<iron-icon  icon="hardware:keyboard-arrow-down"></iron-icon>
       </paper-button>
 
       <Dialog ref="buildCountDialog" heading="Build Count" onSave={this._valueChange}> 
