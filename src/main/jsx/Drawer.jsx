@@ -2,7 +2,8 @@ import React from "react";
 import {Link} from 'react-router';
 import RecentProjects from "./components/recent_projects/RecentProjects.jsx";
 import  CustomAttributes from './components/mixins/CustomAttributes.jsx';
-import Dialog from './components/lib/Dialog.jsx';
+import BuildActions  from './components/job/build/BuildActions.jsx'
+import Dialog from './components/lib/Dialog.jsx'; 
 import { TransitionHook } from 'react-router';
 
 export default React.createClass( {
@@ -61,11 +62,15 @@ export default React.createClass( {
         case 'dotCIbuildMetrics':
           return '';
         default: 
-          return '';
+          return this._buildMenu();
     }
 
   },
   _onTabClick(e){
     this.setState({selectedTab: e.currentTarget.getAttribute('data-tabidx')});
+  },
+  _buildMenu(){
+    const currentBuild = this.props.job.get('build');
+    return currentBuild? <BuildActions flux={this.props.flux} {...currentBuild.toObject()} /> : '';
   }
 });
