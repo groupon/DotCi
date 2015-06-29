@@ -46,10 +46,10 @@ var BuildHistoryTable = React.createClass({
     return(
       <div>
         <span className="buildHistory-bar" >
-          <ToggleButton onClick={this._groupBuilds} tooltip="Pipeline View"><i className="fa fa-indent"></i></ToggleButton>
           <FilterBar id="filter-bar" onChange={this._onFilterChange}/> 
           {this.props.branchSelector}
           {this.props.countSlider}
+          <ToggleButton onClick={this._groupBuilds} tooltip="Pipeline View"></ToggleButton>
         </span>
         {this.state.grouped? <GroupedBuildsView builds={this._filteredBuilds()} /> : <LinearBuildsView builds={this._filteredBuilds()} />}
       </div>

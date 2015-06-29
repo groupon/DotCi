@@ -1,16 +1,9 @@
 import React from 'react';
 export default React.createClass({
-  getInitialState(){
-    return {active: false}
-  },
   render(){
-    return <div data-hint={this.props.tooltip} className={"ui circular toggle button hint--top " +( this.state.active? "active":"") } onClick={this._onClick}>
+    return <div data-hint={this.props.tooltip} className="hint--bottom ">
+      <paper-toggle-button onClick={this._onChange}/>
       {this.props.children}
     </div>
-  },
-  _onClick(e){
-    e.preventDefault();
-    this.props.onClick(!this.state.active);
-    this.setState({active: !this.state.active});
   }
 });
