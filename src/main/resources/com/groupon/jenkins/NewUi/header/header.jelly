@@ -27,8 +27,6 @@
        <paper-icon-button icon="menu" paper-drawer-toggle="true"></paper-icon-button>
        <span class="title">${it.name}</span>
         <paper-icon-button id="settingsButton" role="button" icon="face" onclick="document.getElementById('loginMenu').toggle();"></paper-icon-button>
-        <paper-icon-button id="settingsButton" role="button" icon="settings" onclick="document.getElementById('settingsMenu').toggle();"></paper-icon-button>
     </paper-toolbar>
-    <st:include page="/com/groupon/jenkins/NewUi/header/settingsMenu.jelly" />
     <st:include page="/com/groupon/jenkins/NewUi/header/loginMenu.jelly" />
 </j:jelly>

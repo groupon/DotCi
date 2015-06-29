@@ -5,6 +5,7 @@ import  CustomAttributes from './components/mixins/CustomAttributes.jsx';
 import BuildActions  from './components/job/build/BuildActions.jsx'
 import Dialog from './components/lib/Dialog.jsx'; 
 import { TransitionHook } from 'react-router';
+import JobActions from './components/job/JobActions.jsx';
 
 export default React.createClass( {
   mixins: [CustomAttributes, TransitionHook],
@@ -56,13 +57,11 @@ export default React.createClass( {
     var route = this.props.routerState.params['widget'] || 'dotCIbuildHistory';
     switch(route){
       case 'dotCIbuildHistory':
-        return(<paper-icon-item>
-          <iron-icon icon="send" /><a href="build?delay=0sec">Build Now</a>
-        </paper-icon-item>);
-        case 'dotCIbuildMetrics':
-          return '';
-        default: 
-          return this._buildMenu();
+        return <JobActions/>;
+      case 'dotCIbuildMetrics':
+        return '';
+      default: 
+        return this._buildMenu();
     }
 
   },

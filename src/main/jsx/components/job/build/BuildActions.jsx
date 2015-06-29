@@ -16,6 +16,7 @@ export default React.createClass( {
     }else{
       this._add(buildActions,"autorenew", <a href={this.props.number+"/rebuild"}>Restart</a>);
     }
+    this._add(buildActions,"delete", <a href={this.props.number+"/confirmDelete"}>Delete</a>);
     this._add(buildActions,"label",
               <a href={this.props.number+"/detail"}>More...</a>);
               return <span> {buildActions} </span>
@@ -26,16 +27,16 @@ export default React.createClass( {
   _watchBuild(e){
     e.preventDefault();
     Notification.requestPermission((result)=>{
-      if(result == 'granted'){
+      if(result === 'granted'){
         const url = this.props.cancelUrl;
         simpleStorage.set(url, true, {TTL: 7200000}) // 2 hrs
       }
     });
   },
   _webNotifyCompletion(){
-    const url = this.props.build && this.props.build.get('cancelUrl')
+    const url = this.props.cancelUrl;
     if(simpleStorage.get(url)){
-      new Notification(`Build #${this._get('number')} finished with ${this._get('result')}`, {body:`${this._get('commit').get('message')}`, icon: "<i class='fa fa-bed'></i>"});
+      new Notification(`Build #${this.props.number} finished with ${this.props.result}`, {body:`${this.props.commit.get('message')}`, icon: "<i class='fa fa-bed'></i>"});
       simpleStorage.deleteKey(url);
     }
   },
