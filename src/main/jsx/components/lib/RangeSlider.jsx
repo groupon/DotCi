@@ -15,11 +15,10 @@ export default React.createClass({
     return {value: this._getQueryValue() || this.props.min}
   },
   render(){
-    return <span className="range-slider-container hint--top" data-hint={this.props.tooltip}>
+    return <span className="range-slider-container hint--bottom" data-hint={this.props.tooltip}>
       <paper-button onClick={this._onEdit} ref="ca-edit" attrs={{toggles:true}} >
         {this.state.value}<iron-icon  icon="hardware:keyboard-arrow-down"></iron-icon>
       </paper-button>
-
       <Dialog ref="buildCountDialog" heading="Build Count" onSave={this._valueChange}> 
         {this._sliderDialog()}
       </Dialog>
