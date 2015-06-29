@@ -2,20 +2,21 @@
 
 .subbuild-SUCCESS{
   margin-right: 4px;
-  color: @success;
+  color: var(--success);
 }
 .subbuild-FAILURE{
   margin-right: 2px;
-  color: @failure;
+  color: var(--failure);
 }
 .subbuild-IN_PROGRESS{
   margin-right: 2px;
-  color: @in-progress;
+  color: var(--in_progress);
 }
 .subbuild-ABORTED{
   margin-right: 2px;
-  color: @aborted;
+  color: var(--aborted);
 }
+
 .subbuild-duration{
   font-size: 0.6em;
   border-radius: 50%;
