@@ -35,13 +35,13 @@ export default React.createClass({
   },
   _consoleHeader(){
     return <div id="console-header">
-      <div className="ui right menu inverted basic icon buttons">
-        <a className="ui button" href={window.rootURL+"/"+this.props.url+"/consoleText"}><i className="fa fa-eye"></i>Full Log</a>
-        <div className="ui button" onClick={this._scrollToBottom}>
-          <i className="fa fa-arrow-down"></i>
-        </div>
-      </div> 
+      <paper-icon-button className="hint--left" data-hint="Full Log" style={{color: "white"}} onClick={this._fullLog} icon="reorder"></paper-icon-button>
+      <paper-icon-button className="hint--left" data-hint="Scroll To Bottom" style={{color: "white"}} onClick={this._scrollToBottom} icon="file-download"></paper-icon-button>
     </div>
+  },
+  _fullLog(e){
+    e.preventDefault();
+    window.location = window.rootURL+"/"+this.props.url+"/consoleText";
   },
   _scrollToBottom(e){
     e.preventDefault();
