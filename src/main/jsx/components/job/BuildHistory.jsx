@@ -33,7 +33,6 @@ import LinearBuildsView from './LinearBuildsView.jsx';
 import ToggleButton from './../lib/ToggleButton.jsx';
 import RangeSlider from './../lib/RangeSlider.jsx';
 import BranchTabs from './BranchTabs.jsx';
-import ActionButton from './../lib/ActionButton.jsx';
 require('./build_history.css');
 var BuildHistoryTable = React.createClass({
   getInitialState: function() {

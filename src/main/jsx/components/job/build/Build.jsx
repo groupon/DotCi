@@ -1,7 +1,6 @@
 import React from "react";
 import Console from './Console.jsx';
 import BuildRow from '../BuildRow.jsx'
-import ActionButton from './../../lib/ActionButton.jsx';
 import FaviconHelper from './../../mixins/FaviconHelper.jsx';
 import LoadingHelper from './../../mixins/LoadingHelper.jsx';
 import AutoRefreshHelper from './../../mixins/AutoRefreshHelper.jsx';

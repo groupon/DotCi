@@ -2,7 +2,6 @@ import React from 'react';
 import LocationHashHelper from './../mixins/LocationHashHelper.jsx'
 import contains from 'ramda/src/contains'
 import classNames from 'classnames'; 
-import ActionButton from './../lib/ActionButton.jsx';
 import Router from 'react-router';
 import CustomAttributes from './../mixins/CustomAttributes.jsx';
 import Dialog from './../lib/Dialog.jsx';
@@ -19,7 +18,6 @@ export default React.createClass({
     const selectedTab = Router.HashLocation.getCurrentPath();
     return {currentSelection: selectedTab|| 'All'};
   },
-
   render()  {
     return <span>
       <paper-button id="currentBranchButton" onClick={this._onBranchChange} >
