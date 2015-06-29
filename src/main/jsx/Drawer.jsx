@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from 'react-router';
 import RecentProjects from "./components/recent_projects/RecentProjects.jsx";
 import  CustomAttributes from './components/mixins/CustomAttributes.jsx';
 import Dialog from './components/lib/Dialog.jsx';
@@ -6,6 +7,14 @@ import { TransitionHook } from 'react-router';
 
 export default React.createClass( {
   mixins: [CustomAttributes, TransitionHook],
+  childContextTypes: {
+    router: React.PropTypes.func
+  },
+  getChildContext () {
+    return {
+      router: this.props.router
+    }
+  },
   getInitialState(){
     return {selectedTab: "1"}
   },
@@ -30,10 +39,14 @@ export default React.createClass( {
   _currentMenu(){
     return <div className="list short">
       <paper-icon-item>
-        <div className="fa fa-wrench" ></div> <a href="dotCIbuildHistory">Build History</a>
+        <Link   to="job-widgets" params={{widget: 'dotCIbuildHistory'}}> 
+          <iron-icon  icon="list"/>Build History
+        </Link>
       </paper-icon-item>
       <paper-icon-item>
-        <div className="fa fa-trash-o" ></div> <a href="dotCIbuildMetrics">Build Metrics</a>
+        <Link   to="job-widgets" params={{widget: 'dotCIbuildMetrics'}}> 
+          <iron-icon  icon="trending-up"/> Build Metrics
+        </Link>
       </paper-icon-item>
       {this._contextMenu()}
     </div> 
@@ -43,7 +56,7 @@ export default React.createClass( {
     switch(route){
       case 'dotCIbuildHistory':
         return(<paper-icon-item>
-          <div className="fa fa-rocket" ></div> <a href="build?delay=0sec">Build Now</a>
+          <iron-icon icon="send" /><a href="build?delay=0sec">Build Now</a>
         </paper-icon-item>);
         case 'dotCIbuildMetrics':
           return '';
