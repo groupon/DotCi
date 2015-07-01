@@ -29,9 +29,39 @@ import Router from 'react-router';
 import BuildIcon from './BuildIcon.jsx';
 import BuildCauseIcon from './BuildCauseIcon.jsx';
 import BuildProgressBar from './BuildProgressBar.jsx';
+import Responsive from './../mixins/Responsive.jsx';
+import CustomAttributes from './../mixins/CustomAttributes.jsx';
 require('./build_row.css');
+require('./build_row_small.css');
 export default React.createClass({
-  render(){
+  mixins: [CustomAttributes,Responsive(
+    {
+      "only screen and (max-width: 680px)": "renderSmall",
+      "all and (min-width: 680px)": "renderDefault",
+    }
+  )],
+  renderSmall(){
+    let {result,number,displayTime,commit} = this.props.build.toObject();
+    let {message,committerName,branch, avatarUrl} = commit.toObject();
+    return (   <paper-material >
+      <Router.Link   to={'job-widgets'} params={{widget: number}}>
+        <paper-item className={"build-row-small "+result}> 
+          <BuildProgressBar build={this.props.build}/>
+          <paper-item-body ref="ca-1" attrs={{"three-line": ""}}>
+            <div>{number}-{message}</div>
+            <div ref="ca-2" attrs={{secondary: ""}}>
+              <Avatar avatarUrl={avatarUrl} />
+              <span>{committerName}({branch})</span>
+            </div>
+            <div ref="ca-3" attrs={{secondary: ""}}>
+              {displayTime} 
+            </div>
+          </paper-item-body>
+        </paper-item>
+      </Router.Link>
+    </paper-material>);
+  },
+  renderDefault(){
     let {result,number, cancelUrl,commit,durationString,displayTime,cause, estimatedDuration,duration} = this.props.build.toObject();
     let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
     return (

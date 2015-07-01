@@ -43,7 +43,7 @@ var RecentProject = React.createClass({
           <div ref="ca-2" attrs={{secondary: ""}}>
             <span className="icon-text octicon octicon-git-commit"/>{this.props.commit.message}
           </div>
-          <div className="finished">
+          <div ref="ca-3" attrs={{secondary: ""}} className="finished">
             <i className="icon-text fa fa-calendar"></i> 
             <span className="detail">{this.props.startTime}</span>
           </div>
