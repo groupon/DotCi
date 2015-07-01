@@ -22,6 +22,7 @@
   "dependencies": {
     "polymer": "polymer/polymer#^1.0.0",
     "iron-icon": "polymerelements/iron-icon#^1.0.0",
+    "iron-media-query": "polymerelements/iron-media-query#^1.0.2",
     "iron-icons": "polymerelements/iron-icons#^1.0.0",
     "paper-drawer-panel": "polymerelements/paper-drawer-panel#^1.0.0",
     "paper-header-panel": "polymerelements/paper-header-panel#^1.0.0",
