@@ -18,7 +18,7 @@ export default React.createClass( {
     }
   },
   getInitialState(){
-    return {selectedTab: "1"}
+    return {view: "current"}
   },
   routerWillLeave (nextState, router) {
     debugger
@@ -26,17 +26,22 @@ export default React.createClass( {
   render(){
     return <div>
       <paper-toolbar id="drawerToolbar">
-        <div className="  title">Current</div>
-        <paper-icon-button onClick={this._onJobChange} icon="hardware:keyboard-arrow-down"></paper-icon-button>
+        <paper-icon-button  src={`${resURL}/logo.png`} disabled />
+        <div className="title">{this._isCurrent()?"Current": "Recent"}</div>
+        <paper-icon-button onClick={this._onJobChange} icon={this._isCurrent()?"hardware:keyboard-arrow-down": "hardware:keyboard-arrow-up"}></paper-icon-button>
       </paper-toolbar>
-      {this._currentMenu()}
-      <Dialog ref="recentProjectsDialog" heading="Recent Builds" noButtons lazy>
-        <RecentProjects flux = {this.props.flux} />
-      </Dialog>
+      {this._isCurrent()? this._currentMenu(): <RecentProjects flux ={this.props.flux}/>}
     </div>
   },
   _onJobChange(e){
-    this.refs.recentProjectsDialog.show();
+    if(this._isCurrent()){
+      this.replaceState({view: 'recentProjects'})
+    }else{
+      this.replaceState({view: 'current'})
+    }
+  },
+  _isCurrent(){
+    return this.state.view === 'current';
   },
   _currentMenu(){
     return <div className="list short">
@@ -64,9 +69,6 @@ export default React.createClass( {
         return this._buildMenu();
     }
 
-  },
-  _onTabClick(e){
-    this.setState({selectedTab: e.currentTarget.getAttribute('data-tabidx')});
   },
   _buildMenu(){
     const currentBuild = this.props.job.get('build');

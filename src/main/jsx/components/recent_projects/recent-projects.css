@@ -6,6 +6,11 @@
       border-left-style: solid;
       border-left-width: 5px;
       border-radius: 3px;
+      .project-title{
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
       .project-name{
         min-height: 0px;
         padding: 0px;

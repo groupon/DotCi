@@ -38,7 +38,7 @@ var RecentProject = React.createClass({
       <paper-item className={"recent-project " + this.props.lastBuildResult}> 
         <paper-item-body ref="ca-1" attrs={{"three-line": ""}}>
           <a href={this.props.url} className="project-name">
-            {this._projectName()}- #{this.props.number}
+            <span className="project-title">{this._projectName()}</span>-{this.props.number}
           </a>
           <div ref="ca-2" attrs={{secondary: ""}}>
             <span className="icon-text octicon octicon-git-commit"/>{this.props.commit.message}
@@ -79,11 +79,7 @@ var RecentProjectsWidget =React.createClass({
   _render(small){
     if(!this.props.recentProjects) return <Loading/>;
     var recentProjects = this.props.recentProjects.map(function (project) {
-      return (
-        <paper-material key={project.url} >
-          <RecentProject small={small} {...project}/>
-        </paper-material>
-      );
+      return ( <RecentProject key={project.url} small={true} {...project}/>);
     });
     return (
       <div id="recent-projects">
