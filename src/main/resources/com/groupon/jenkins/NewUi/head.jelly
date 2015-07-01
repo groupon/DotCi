@@ -30,9 +30,9 @@
         </j:invokeStatic>
         ${h.initPageVariables(context)}
         <title>${it.displayName}${not empty it.parent.fullDisplayName?' ['+it.parent.fullDisplayName+']':''}</title>
-         <meta charset="utf-8"/>
-          <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-          <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes"/>
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes"/>
 
         <script src="${resURL}/plugin/DotCi/js/webcomponentsjs-0.7.0/webcomponents-lite.min.js"></script>
         <link rel="icon" href="${resURL}/plugin/DotCi/favicons/default.ico" type="image/vnd.microsoft.icon" />
@@ -46,11 +46,11 @@
         </script>
         <j:if test='${developmentMode}'>
             <script src="http://localhost:3000/assets/dotci.js"/>
-         <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports.html"/>
+            <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports.html"/>
         </j:if>
         <j:if test='${!developmentMode}'>
             <script src="${resURL}/plugin/DotCi/js/dotci.js"/>
-         <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports-vulcanized.html"/>
+            <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports-vulcanized.html"/>
         </j:if>
         <script>
             rootURL = '${rootURL}';

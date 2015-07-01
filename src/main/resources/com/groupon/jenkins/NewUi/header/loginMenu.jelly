@@ -23,36 +23,36 @@
   -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
- <j:new var="h" className="hudson.Functions" />
-        ${h.initPageVariables(context)}
- <paper-dialog id="loginMenu">
-    <j:if test="${app.useSecurity}">
-        <j:choose>
-            <j:when test="${!h.isAnonymous()}">
-                <j:invokeStatic var="user" className="hudson.model.User" method="current" />
-                <j:choose>
-                    <j:when test="${user.fullName == null || user.fullName.trim().isEmpty()}">
-                        <j:set var="userName" value="${user.id}"/>
-                    </j:when>
-                    <j:otherwise>
-                        <j:set var="userName" value="${user.fullName}"/>
-                    </j:otherwise>
-                </j:choose>
-                 <div class="list short">
-                 <paper-icon-item>
-                    <i class="fa fa-user"></i> <a href="${rootURL}/user/${user.id}">${userName}</a>
-                 </paper-icon-item>
-                    <j:if test="${app.securityRealm.canLogOut()}">
-                     <paper-icon-item>
-                       <i class="fa fa-sign-out"></i> <a href="${rootURL}/logout">${%logout}</a>
+    <j:new var="h" className="hudson.Functions" />
+    ${h.initPageVariables(context)}
+    <paper-dialog id="loginMenu">
+        <j:if test="${app.useSecurity}">
+            <j:choose>
+                <j:when test="${!h.isAnonymous()}">
+                    <j:invokeStatic var="user" className="hudson.model.User" method="current" />
+                    <j:choose>
+                        <j:when test="${user.fullName == null || user.fullName.trim().isEmpty()}">
+                            <j:set var="userName" value="${user.id}"/>
+                        </j:when>
+                        <j:otherwise>
+                            <j:set var="userName" value="${user.fullName}"/>
+                        </j:otherwise>
+                    </j:choose>
+                    <div class="list short">
+                        <paper-icon-item>
+                            <i class="fa fa-user"></i> <a href="${rootURL}/user/${user.id}">${userName}</a>
                         </paper-icon-item>
-                    </j:if>
+                        <j:if test="${app.securityRealm.canLogOut()}">
+                            <paper-icon-item>
+                                <i class="fa fa-sign-out"></i> <a href="${rootURL}/logout">${%logout}</a>
+                            </paper-icon-item>
+                        </j:if>
                     </div>
-            </j:when>
-            <j:otherwise>
-                <st:include it="${app.securityRealm}" page="loginLink.jelly" />
-            </j:otherwise>
-        </j:choose>
-    </j:if>
+                </j:when>
+                <j:otherwise>
+                    <st:include it="${app.securityRealm}" page="loginLink.jelly" />
+                </j:otherwise>
+            </j:choose>
+        </j:if>
     </paper-dialog>
 </j:jelly>

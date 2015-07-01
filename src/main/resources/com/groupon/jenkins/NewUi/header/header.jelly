@@ -24,11 +24,8 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
     <paper-toolbar >
-       <paper-icon-button icon="menu" paper-drawer-toggle="true"></paper-icon-button>
-
-
-    <st:include page="/com/groupon/jenkins/NewUi/header/project.jelly" />
-
+        <paper-icon-button icon="menu" paper-drawer-toggle="true"></paper-icon-button>
+        <st:include page="/com/groupon/jenkins/NewUi/header/project.jelly" />
         <paper-icon-button id="settingsButton" role="button" icon="face" onclick="document.getElementById('loginMenu').toggle();"></paper-icon-button>
     </paper-toolbar>
     <st:include page="/com/groupon/jenkins/NewUi/header/loginMenu.jelly" />
