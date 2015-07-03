@@ -1,6 +1,5 @@
 import React from 'react';
 import BuildRow from './BuildRow.jsx';
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 require('./linear_builds_view.css')
 export default React.createClass({
   render(){
