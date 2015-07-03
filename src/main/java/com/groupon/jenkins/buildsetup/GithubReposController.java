@@ -116,6 +116,13 @@ public class GithubReposController implements RootAction,StaplerProxy {
         String currentOrg = (String) Stapler.getCurrentRequest().getSession().getAttribute("setupOrg" + getCurrentGithubLogin());
         return StringUtils.isEmpty(currentOrg) ? Iterables.get(getOrgs(), 0) : currentOrg;
     }
+    public int getSelectedOrgIndex() throws IOException {
+        Iterable<String> orgs = getOrgs();
+        for(int i=0 ; i < Iterables.size(orgs); i++){
+           if(Iterables.get(orgs,i).equals(getCurrentOrg())) return i;
+        }
+        return 0;
+    }
     public Iterable<GithubRepoAction> getRepoActions(){
         return GithubRepoAction.getGithubRepoActions();
     }

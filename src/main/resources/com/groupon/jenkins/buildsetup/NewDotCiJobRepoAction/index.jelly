@@ -24,14 +24,19 @@ THE SOFTWARE.
 
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:test="/lib/test">
+    <j:new var="h" className="hudson.Functions" /><!-- instead of JSP functions -->
+    ${h.initPageVariables(context)}
     <j:if test="${!p.projectPresent}">
-        <form action="${it.name}/createProject"  name="addproject">
+        <form action="${it.name}/createProject"  id="addProject${p.name}" name="addproject">
             <input type="hidden" name="fullName" value="${p.fullName}" />
-            <input type="submit" value="New Job"/>
+            <paper-button  raised="true"  onclick="document.getElementById('addProject${p.name}').submit();">
+                <iron-icon icon="add" />
+                Add Project
+            </paper-button>
         </form>
     </j:if>
 
     <j:if test="${p.projectPresent}">
-        <a href="${p.jenkinsProjectUrl}">${p.name}</a>
+        <paper-icon-button  src='${resURL}/plugin/DotCi/logo.png'  onclick="window.location='${p.jenkinsProjectUrl}'"/>
     </j:if>
- </j:jelly>
+</j:jelly>
