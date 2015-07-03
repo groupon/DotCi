@@ -28,8 +28,9 @@
     <paper-toolbar >
         <paper-icon-button icon="menu" paper-drawer-toggle="true"></paper-icon-button>
         <st:include page="/com/groupon/jenkins/NewUi/header/project.jelly" />
-        <paper-icon-button  icon="add" onclick="window.location='${rootURL}/mygithubprojects'"></paper-icon-button>
-        <paper-icon-button id="settingsButton" role="button" icon="face" onclick="document.getElementById('loginMenu').toggle();"></paper-icon-button>
+        <paper-icon-button  class="hint--bottom" data-hint="Documentation" icon="book" onclick="window.location='http://groupon.github.io/DotCi/'"></paper-icon-button>
+        <paper-icon-button  class="hint--bottom" data-hint="New Project" icon="add" onclick="window.location='${rootURL}/mygithubprojects'"></paper-icon-button>
+        <paper-icon-button  class="hint--bottom" data-hint="Settings"  id="settingsButton" role="button" icon="face" onclick="document.getElementById('loginMenu').toggle();"></paper-icon-button>
     </paper-toolbar>
     <st:include page="/com/groupon/jenkins/NewUi/header/loginMenu.jelly" />
 </j:jelly>
