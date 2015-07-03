@@ -6,9 +6,7 @@ export default React.createClass({
   render(){
     const builds = this.props.builds.map((build) => <BuildRow key={build.get('number')} build={build}/>);
     return(<span className="builds">
-      <ReactCSSTransitionGroup transitionName="build-transition">
-        {builds.toArray()}
-      </ReactCSSTransitionGroup>
+      {builds.toArray()}
     </span>);
   }
 });

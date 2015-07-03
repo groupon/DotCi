@@ -2,19 +2,3 @@
   margin-top: 10px;
 }
 
-.build-transition-enter {
-  opacity: 0.01;
-  transition: opacity .5s ease-in;
-}
-
-.build-transition-enter.build-transition-enter-active {
-  opacity: 1;
-}
-.build-transition-leave {
-  opacity: 1;
-  transition: opacity .5s ease-in;
-}
-
-.build-transition-leave.build-transition-leave-active {
-  opacity: 0.01;
-}
