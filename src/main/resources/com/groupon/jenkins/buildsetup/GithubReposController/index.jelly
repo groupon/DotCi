@@ -27,6 +27,8 @@
 <html lang="en">
   <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
     <head>
+      <st:setHeader name="Expires" value="0" />
+      <st:contentType value="text/html;charset=UTF-8" />
       <j:new var="h" className="hudson.Functions" />
       ${h.initPageVariables(context)}
       <title>New DotCi Project</title>
