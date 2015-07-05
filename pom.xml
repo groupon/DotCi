@@ -317,7 +317,7 @@ THE SOFTWARE.
         <dependency>
             <groupId>com.sonyericsson.hudson.plugins.rebuild</groupId>
             <artifactId>rebuild</artifactId>
-            <version>1.24</version>
+            <version>1.25</version>
         </dependency>
     </dependencies>
 </project>

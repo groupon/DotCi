@@ -149,7 +149,7 @@ public class DynamicProjectRepository extends MongoRepository {
             project.addProperty(new GithubRepoProperty(githubRepository.getUrl()));
             project.addProperty(new BuildTypeProperty(SetupConfig.get().getDefaultBuildType()));
             project.addProperty(new DynamicProjectBranchTabsProperty("master"));
-            project.addProperty(new RebuildSettings(true));
+            project.addProperty(new RebuildSettings(true,false));
             project.addProperty(new JobUiProperty(true));
             project.save();
             folder.addItem(project);
