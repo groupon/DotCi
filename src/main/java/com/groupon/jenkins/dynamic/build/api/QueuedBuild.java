@@ -87,7 +87,7 @@ public class QueuedBuild extends Build {
 
     @Override
     public String getCancelUrl() {
-        return "/queue/cancelItem?id="+item.id;
+        return "/queue/cancelItem?id="+item.getId();
     }
 
     @Override

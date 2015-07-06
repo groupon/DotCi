@@ -66,10 +66,7 @@ import org.bson.types.ObjectId;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
-import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.Id;
-import org.mongodb.morphia.annotations.PostLoad;
-import org.mongodb.morphia.annotations.PrePersist;
+import org.mongodb.morphia.annotations.*;
 import org.springframework.util.ReflectionUtils;
 
 import javax.servlet.ServletException;
@@ -99,18 +96,26 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
 
     @PrePersist
     private void saveTimestamp(final DBObject dbObj) {
-        dbObj.put("timestamp", getTime());
+        dbObj.put("scheduledDate", getTime());
     }
 
     @PostLoad
     private void restoreTimestamp(final DBObject dbObj) {
-        Object timestamp = dbObj.get("timestamp");
-        Date time = timestamp instanceof Date ? (Date)timestamp: new Date( (Long)timestamp);
-        if(time != null) {
-            setField(time.getTime(), "timestamp");
-        }
+        Date scheduledDate = (Date) dbObj.get("scheduledDate");
+         this.timestamp = scheduledDate.getTime();
     }
 
+    @PrePersist
+    private void saveNumber(final DBObject dbObj) {
+        dbObj.put("number", getNumber());
+    }
+
+    @PostLoad
+    private void restoreNumber(final DBObject dbObj) {
+        if(this.number == 0 && dbObj.get("number")!=null ){
+            this.number = (Integer)dbObj.get("number");
+        }
+    }
     @PrePersist
     void saveProjectId() {
         projectId =  project.getId();

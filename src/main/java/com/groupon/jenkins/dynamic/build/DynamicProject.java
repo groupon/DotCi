@@ -348,4 +348,18 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         return String.format("rgb(%s,%s,%s)", r,g,b);
     }
 
+    @Override
+    public int getNextBuildNumber() {
+        int number = dynamicProjectRepository.getNextBuildNumber(this);
+        return number;
+    }
+
+    @Override
+    public synchronized int assignBuildNumber() throws IOException {
+        return dynamicProjectRepository.assignNextBuildNumber(this);
+    }
+
+    @Override
+    protected synchronized void saveNextBuildNumber() throws IOException {
+    }
 }

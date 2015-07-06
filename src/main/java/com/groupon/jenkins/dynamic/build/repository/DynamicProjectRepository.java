@@ -178,4 +178,26 @@ public class DynamicProjectRepository extends MongoRepository {
                 .get();
     }
 
+
+    public int assignNextBuildNumber(DynamicProject project){
+        Datastore datastore = getDatastore();
+        BuildNumberCounter seq = datastore.findAndModify(
+                datastore.find(BuildNumberCounter.class, "key = ", project.getFullName()), // query
+                datastore.createUpdateOperations(BuildNumberCounter.class).inc("counter") // update
+        );
+        if(seq == null) {
+            seq = new BuildNumberCounter(project.getFullName(), 1);
+            datastore.save(seq);
+        }
+
+        return seq.getCounter();
+    }
+    public int getNextBuildNumber(DynamicProject project){
+        BuildNumberCounter seq = getDatastore().createQuery(BuildNumberCounter.class).field("key").equal(project.getFullName()).get();
+        if(seq == null) {
+            return 1;
+        }
+
+        return seq.getCounter();
+    }
 }
