@@ -27,6 +27,7 @@ package com.groupon.jenkins.github.services;
 import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.SetupConfig;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Before;
@@ -71,7 +72,7 @@ public class GithubRepositoryServiceTest {
     @Test
     public void should_save_access_tokens_to_database() throws IOException {
         when(setupConfig.getGithubCallbackUrl()).thenReturn("http://jenkins/githook/");
-        when(githubRepository.getUrl()).thenReturn("http://github.com/kittah/crunchies");
+        when(githubRepository.getHtmlUrl()).thenReturn(new URL("http://github.com/kittah/crunchies"));
 
         githubRepositoryService.addHook("access_token", "user");
 

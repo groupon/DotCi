@@ -145,8 +145,8 @@ public class DynamicProjectRepository extends MongoRepository {
             if (StringUtils.isNotEmpty(SetupConfig.get().getLabel())) {
                 project.setAssignedLabel(Jenkins.getInstance().getLabel(SetupConfig.get().getLabel()));
             }
-            project.addProperty(new ParametersDefinitionProperty(new GithubBranchParameterDefinition("BRANCH", "master",githubRepository.getUrl())));
-            project.addProperty(new GithubRepoProperty(githubRepository.getUrl()));
+            project.addProperty(new ParametersDefinitionProperty(new GithubBranchParameterDefinition("BRANCH", "master",githubRepository.getHtmlUrl().toString())));
+            project.addProperty(new GithubRepoProperty(githubRepository.getHtmlUrl().toExternalForm()));
             project.addProperty(new BuildTypeProperty(SetupConfig.get().getDefaultBuildType()));
             project.addProperty(new DynamicProjectBranchTabsProperty("master"));
             project.addProperty(new RebuildSettings(true,false));

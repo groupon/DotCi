@@ -87,7 +87,7 @@ public class GithubRepositoryService {
         }
         Map<String, String> params = ImmutableMap.of("url", githubCallbackUrl);
         List<GHEvent> events = Arrays.asList(GHEvent.PUSH, GHEvent.PULL_REQUEST);
-        githubAccessTokenRepository.put(getRepository().getUrl(),accessToken,user);
+        githubAccessTokenRepository.put(getRepository().getHtmlUrl().toExternalForm(),accessToken,user);
         removeExistingHook(githubCallbackUrl);
         getRepository().createHook("web", params, events, true);
     }
@@ -177,7 +177,7 @@ public class GithubRepositoryService {
             removeDeployKeyIfPreviouslyAdded();
             DeployKeyPair keyPair = new KeyPairGenerator().generateKeyPair();
             getRepository().addDeployKey("DotCi",keyPair.publicKey);
-            githubDeployKeyRepository.put(getRepository().getUrl(), keyPair);
+            githubDeployKeyRepository.put(getRepository().getHtmlUrl().toExternalForm(), keyPair);
         }
     }
 

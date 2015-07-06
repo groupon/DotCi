@@ -61,7 +61,7 @@ public class ProjectConfigInfo {
     }
 
     public boolean isHookConfigured() throws IOException {
-        return githubAccessTokenRepository.isConfigured(repository.getUrl());
+        return githubAccessTokenRepository.isConfigured(repository.getHtmlUrl().toExternalForm());
     }
 
     public boolean isProjectPresent() throws IOException {
@@ -77,7 +77,7 @@ public class ProjectConfigInfo {
     }
 
     public String getHookAssignedTo() {
-        return githubAccessTokenRepository.getAssociatedLogin(repository.getUrl());
+        return githubAccessTokenRepository.getAssociatedLogin(repository.getHtmlUrl().toExternalForm());
     }
 
     private String getJenkinsRootUrl() {

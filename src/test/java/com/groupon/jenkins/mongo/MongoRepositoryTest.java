@@ -29,6 +29,7 @@ import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import hudson.model.JobProperty;
 import java.io.Serializable;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -136,7 +137,7 @@ public class MongoRepositoryTest {
 
         PowerMockito.whenNew(GHRepository.class).withNoArguments().thenReturn(ghRepository);
         PowerMockito.when(ghRepository.getHooks()).thenReturn(new ArrayList<GHHook>());
-        PowerMockito.when(ghRepository.getUrl()).thenReturn("git@github.com:groupon/DotCi.git");
+        PowerMockito.when(ghRepository.getHtmlUrl()).thenReturn(new URL("git@github.com:groupon/DotCi.git"));
 
         GHHook hook = new GHHook();
         PowerMockito.when(ghRepository.createHook("web", new HashMap<String, String>() {{

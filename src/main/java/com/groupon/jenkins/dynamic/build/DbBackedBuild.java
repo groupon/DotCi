@@ -104,7 +104,8 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
 
     @PostLoad
     private void restoreTimestamp(final DBObject dbObj) {
-        Date time = (Date) dbObj.get("timestamp");
+        Object timestamp = dbObj.get("timestamp");
+        Date time = timestamp instanceof Date ? (Date)timestamp: new Date( (Long)timestamp);
         if(time != null) {
             setField(time.getTime(), "timestamp");
         }

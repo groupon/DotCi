@@ -31,23 +31,23 @@ import com.groupon.jenkins.github.services.GithubRepositoryService;
 import com.groupon.jenkins.testhelpers.DynamicBuildFactory;
 import hudson.EnvVars;
 import hudson.scm.ChangeLogSet;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import org.junit.Test;
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitUser;
 import org.mockito.ArgumentCaptor;
 
-import static org.junit.Assert.*;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static com.groupon.jenkins.testhelpers.DynamicBuildFactory.newBuild;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class DynamicBuildModelTest {
 
@@ -77,8 +77,12 @@ public class DynamicBuildModelTest {
             public GHRepository getOwner() {
                 return new GHRepository(){
                     @Override
-                    public String getUrl() {
-                        return "http://example.com";
+                    public java.net.URL getHtmlUrl() {
+                        try {
+                            return new URL( "http://example.com");
+                        } catch (MalformedURLException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 };
             }
@@ -93,6 +97,7 @@ public class DynamicBuildModelTest {
                 };
             }
         };
+
     }
 
 
