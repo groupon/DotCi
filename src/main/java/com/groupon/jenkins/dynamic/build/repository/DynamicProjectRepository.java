@@ -115,6 +115,10 @@ public class DynamicProjectRepository extends MongoRepository {
         }
         dynamicBuildRepository.delete(project);
         getDatastore().delete(project);
+        BuildNumberCounter seq = getDatastore().createQuery(BuildNumberCounter.class).disableValidation().field("key").equal(project.getFullName()).get();
+        if(seq !=null){
+            getDatastore().delete(seq);
+        }
     }
 
     public Iterable<DynamicProject> getJobsFor(final String url) {
