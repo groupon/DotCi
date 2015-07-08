@@ -93,7 +93,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         } catch (IOException e) {
             throw  new RuntimeException(e);
         }
-        execute(new DynamicRunExecution());
+        executeBuild(new DynamicRunExecution());
     }
 
     public boolean isNewJenkins() {

@@ -30,46 +30,51 @@ import com.groupon.jenkins.dynamic.build.execution.WorkspaceFileExporter;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.git.GitBranch;
 import com.groupon.jenkins.github.DeployKeyPair;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.mongodb.gridfs.GridFS;
+import com.mongodb.gridfs.GridFSDBFile;
+import com.mongodb.gridfs.GridFSFile;
+import com.mongodb.gridfs.GridFSInputFile;
+import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.console.PlainTextConsoleOutputStream;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.Build;
-import hudson.model.BuildListener;
-import hudson.model.Computer;
-import hudson.model.Executor;
+import hudson.console.*;
+import hudson.model.*;
+import hudson.model.Queue;
 import hudson.model.Queue.Executable;
-import hudson.model.Run;
-import hudson.model.TaskListener;
-import hudson.model.User;
+import hudson.model.listeners.RunListener;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.ChangeLogSet.Entry;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+
+import java.io.*;
 import java.lang.reflect.Field;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import hudson.security.ACL;
+import hudson.tasks.BuildWrapper;
 import hudson.util.FlushProofOutputStream;
 import jenkins.model.Jenkins;
+import org.acegisecurity.Authentication;
 import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 import org.mongodb.morphia.annotations.*;
+import org.mongodb.morphia.query.Query;
 import org.springframework.util.ReflectionUtils;
 
+import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
+
+import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.FINER;
+import static java.util.logging.Level.INFO;
 
 @Entity("run")
 public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> extends Build<P, B> {
@@ -383,4 +388,204 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
     public long getEstimatedDurationForDefaultBranch() {
         return isBuilding()? getDynamicBuildRepository().getEstimatedDuration(this):-1;
     }
+
+    @Nonnull
+    @Override
+    public File getLogFile() {
+        throw new UnsupportedOperationException("Logs are not stored on FS in DotCi");
+    }
+    public List<String> getLog(int maxLines) throws IOException {
+        int lineCount = 0;
+        List<String> logLines = new LinkedList<String>();
+        if (maxLines == 0) {
+            return logLines;
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(getLogInputStream(),getCharset()));
+        try {
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                logLines.add(line);
+                ++lineCount;
+                // If we have too many lines, remove the oldest line.  This way we
+                // never have to hold the full contents of a huge log file in memory.
+                // Adding to and removing from the ends of a linked list are cheap
+                // operations.
+                if (lineCount > maxLines)
+                    logLines.remove(0);
+            }
+        } finally {
+            reader.close();
+        }
+
+        // If the log has been truncated, include that information.
+        // Use set (replaces the first element) rather than add so that
+        // the list doesn't grow beyond the specified maximum number of lines.
+        if (lineCount > maxLines)
+            logLines.set(0, "[...truncated " + (lineCount - (maxLines - 1)) + " lines...]");
+
+        return ConsoleNote.removeNotes(logLines);
+    }
+
+
+    protected void executeBuild(@Nonnull RunExecution job) {
+        if(result!=null)
+            return;     // already built.
+
+        StreamBuildListener listener=null;
+
+        onStartBuilding();
+        try {
+            // to set the state to COMPLETE in the end, even if the thread dies abnormally.
+            // otherwise the queue state becomes inconsistent
+
+            long start = System.currentTimeMillis();
+
+            try {
+                try {
+                    Computer computer = Computer.currentComputer();
+                    Charset charset = null;
+                    if (computer != null) {
+                        charset = computer.getDefaultCharset();
+                        this.charset = charset.name();
+                    }
+
+                    // don't do buffering so that what's written to the listener
+                    // gets reflected to the file immediately, which can then be
+                    // served to the browser immediately
+                    OutputStream logger = getLogOutputStream();
+                    DbBackedBuild build = job.getBuild();
+
+                    // Global log filters
+                    for (ConsoleLogFilter filter : ConsoleLogFilter.all()) {
+                        logger = filter.decorateLogger((AbstractBuild) build, logger);
+                    }
+
+                    // Project specific log filters
+                    if (project instanceof BuildableItemWithBuildWrappers && build instanceof AbstractBuild) {
+                        BuildableItemWithBuildWrappers biwbw = (BuildableItemWithBuildWrappers) project;
+                        for (BuildWrapper bw : biwbw.getBuildWrappersList()) {
+                            logger = bw.decorateLogger((AbstractBuild) build, logger);
+                        }
+                    }
+
+                    listener = new StreamBuildListener(logger,charset);
+
+                    listener.started(getCauses());
+
+                    Authentication auth = Jenkins.getAuthentication();
+                    if (!auth.equals(ACL.SYSTEM)) {
+                        String name = auth.getName();
+                        if (!auth.equals(Jenkins.ANONYMOUS)) {
+                            name = ModelHyperlinkNote.encodeTo(User.get(name));
+                        }
+                        listener.getLogger().println(Messages.Run_running_as_(name));
+                    }
+
+                    RunListener.fireStarted(this, listener);
+
+                    updateSymlinks(listener);
+
+                    setResult(job.run(listener));
+
+                    LOGGER.log(INFO, "{0} main build action completed: {1}", new Object[] {this, result});
+                    CheckPoint.MAIN_COMPLETED.report();
+                } catch (ThreadDeath t) {
+                    throw t;
+                } catch( AbortException e ) {// orderly abortion.
+                    result = Result.FAILURE;
+                    listener.error(e.getMessage());
+                    LOGGER.log(FINE, "Build "+this+" aborted",e);
+                } catch( RunnerAbortedException e ) {// orderly abortion.
+                    result = Result.FAILURE;
+                    LOGGER.log(FINE, "Build "+this+" aborted",e);
+                } catch( InterruptedException e) {
+                    // aborted
+                    result = Executor.currentExecutor().abortResult();
+                    listener.getLogger().println(Messages.Run_BuildAborted());
+                    Executor.currentExecutor().recordCauseOfInterruption(DbBackedBuild.this,listener);
+                    LOGGER.log(Level.INFO, this + " aborted", e);
+                } catch( Throwable e ) {
+                    handleFatalBuildProblem(listener,e);
+                    result = Result.FAILURE;
+                }
+
+                // even if the main build fails fatally, try to run post build processing
+                job.post(listener);
+
+            } catch (ThreadDeath t) {
+                throw t;
+            } catch( Throwable e ) {
+                handleFatalBuildProblem(listener,e);
+                result = Result.FAILURE;
+            } finally {
+                long end = System.currentTimeMillis();
+                duration = Math.max(end - start, 0);  // @see HUDSON-5844
+
+                // advance the state.
+                // the significance of doing this is that Jenkins
+                // will now see this build as completed.
+                // things like triggering other builds requires this as pre-condition.
+                // see issue #980.
+                LOGGER.log(FINER, "moving into POST_PRODUCTION on {0}", this);
+                Object state = getState("POST_PRODUCTION");
+                setField(state, "state");
+
+                if (listener != null) {
+                    RunListener.fireCompleted(this,listener);
+                    try {
+                        job.cleanUp(listener);
+                    } catch (Exception e) {
+                        handleFatalBuildProblem(listener,e);
+                        // too late to update the result now
+                    }
+                    listener.finished(result);
+                    listener.closeQuietly();
+                }
+
+                try {
+                    save();
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, "Failed to save build record",e);
+                }
+            }
+
+            try {
+                getParent().logRotate();
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Failed to rotate log",e);
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.SEVERE, "Failed to rotate log",e);
+            }
+        } finally {
+            onEndBuilding();
+        }
+    }
+
+    private OutputStream getLogOutputStream() {
+
+        BuildLog buildLog = getDynamicBuildRepository().getDatastore().createQuery(BuildLog.class).disableValidation().field("buildId").equal(id).get();
+        if(buildLog == null){
+            buildLog = new BuildLog(id);
+            getDynamicBuildRepository().getDatastore().save(buildLog);
+            buildLog = getDynamicBuildRepository().getDatastore().createQuery(BuildLog.class).disableValidation().field("buildId").equal(id).get();
+        }
+        return  new BuildLogOutputStream(buildLog,getDynamicBuildRepository().getDatastore());
+    }
+    public AnnotatedLargeText getLogText() {
+        return new AnnotatedLargeText(getLogFile(),getCharset(),!isLogUpdated(),this);
+    }
+
+    @Override
+    public InputStream getLogInputStream() throws IOException {
+        BasicDBObject query = new BasicDBObject();
+        query.append("buildId",id);
+        DBObject buildLog = getDynamicBuildRepository().getDatastore().getDB().getCollection("build_log").findOne(query);
+       byte[] log = (byte[]) buildLog.get("log");
+        return new  ByteArrayInputStream(log);
+    }
+    public void handleFatalBuildProblem(StreamBuildListener listener, Throwable e){
+        e.printStackTrace();
+        listener.getLogger().print(e);
+
+    }
+
 }
