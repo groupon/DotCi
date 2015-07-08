@@ -137,7 +137,7 @@ public class MongoRepositoryTest {
 
         PowerMockito.whenNew(GHRepository.class).withNoArguments().thenReturn(ghRepository);
         PowerMockito.when(ghRepository.getHooks()).thenReturn(new ArrayList<GHHook>());
-        PowerMockito.when(ghRepository.getHtmlUrl()).thenReturn(new URL("git@github.com:groupon/DotCi.git"));
+        PowerMockito.when(ghRepository.getHtmlUrl()).thenReturn(new URL("https://github.com/groupon/DotCi"));
 
         GHHook hook = new GHHook();
         PowerMockito.when(ghRepository.createHook("web", new HashMap<String, String>() {{

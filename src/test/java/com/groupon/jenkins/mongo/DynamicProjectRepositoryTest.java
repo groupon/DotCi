@@ -27,14 +27,15 @@ import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DynamicSubProject;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
+import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
+import jenkins.model.Jenkins;
 import org.assertj.core.util.Lists;
 import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.junit.rules.RuleChain;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -42,6 +43,7 @@ import org.jvnet.hudson.test.recipes.LocalData;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHUser;
 
+import java.net.URL;
 import java.util.List;
 
 public class DynamicProjectRepositoryTest {
@@ -96,7 +98,9 @@ public class DynamicProjectRepositoryTest {
     @LocalData
     public void should_delete_a_project() {
         assertEquals(1L, repo.getDatastore().createQuery(DynamicProject.class).countAll());
-        DynamicProject project = repo.getProjectById(new ObjectId("5451e5ee30047b534b7bd50b"));
+        DynamicProject project = spy( repo.getProjectById(new ObjectId("5451e5ee30047b534b7bd50b")));
+        OrganizationContainer parent = new OrganizationContainer(Jenkins.getInstance(), "groupon");
+        doReturn(parent).when(project).getParent();
         repo.delete(project);
         assertEquals(0L, repo.getDatastore().createQuery(DynamicProject.class).countAll());
     }
@@ -116,6 +120,7 @@ public class DynamicProjectRepositoryTest {
     @LocalData
     public void should_create_a_new_project() throws Exception {
         GHRepository ghRepository = mock(GHRepository.class);
+        when(ghRepository.getHtmlUrl()).thenReturn(new URL("http://github.com/meow"));
         GHUser ghUser = mock(GHUser.class);
         when(ghUser.getLogin()).thenReturn("test_user");
         when(ghRepository.getOwner()).thenReturn(ghUser);

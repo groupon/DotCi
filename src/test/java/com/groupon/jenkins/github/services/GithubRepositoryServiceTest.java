@@ -27,6 +27,7 @@ package com.groupon.jenkins.github.services;
 import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.SetupConfig;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -50,8 +51,9 @@ public class GithubRepositoryServiceTest {
     private GithubDeployKeyRepository githubDeployKeyRepository;
 
     @Before
-    public void setup() {
+    public void setup() throws MalformedURLException {
         githubRepository = mock(GHRepository.class);
+        when(githubRepository.getHtmlUrl()).thenReturn(new URL("http://github.com/meow"));
         setupConfig = mock(SetupConfig.class);
         githubAccessTokenRepository = mock(GithubAccessTokenRepository.class);
         githubDeployKeyRepository = mock(GithubDeployKeyRepository.class);

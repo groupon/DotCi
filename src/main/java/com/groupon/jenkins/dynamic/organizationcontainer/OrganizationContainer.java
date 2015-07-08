@@ -82,7 +82,7 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
     private transient ViewGroupMixIn viewGroupMixIn;
     private transient OrganizationGravatarIcon icon;
 
-    protected OrganizationContainer(ItemGroup parent, String name) {
+    public OrganizationContainer(ItemGroup parent, String name) {
         super(parent, name);
         init(name);
         if(id == null) {
