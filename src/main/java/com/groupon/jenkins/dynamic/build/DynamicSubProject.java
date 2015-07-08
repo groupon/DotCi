@@ -98,23 +98,6 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
         throw new UnsupportedOperationException("The setting can be only changed at MatrixProject");
     }
 
-    @Override
-    public int getNextBuildNumber() {
-        AbstractBuild<?, ?> lb = getParent().getLastBuildAnyBranch();
-        int n = lb.getNumber() + 1;
-        return n;
-    }
-
-    @Override
-    public int assignBuildNumber() throws IOException {
-        int nb = getNextBuildNumber();
-        DynamicSubBuild r = getLastBuild();
-        if (r != null && r.getNumber() >= nb) {
-            // make sure we don't schedule the same build twice
-            throw new IllegalStateException("Build #" + nb + " is already completed");
-        }
-        return nb;
-    }
 
     @Override
     public String getDisplayName() {
@@ -174,9 +157,7 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
 
         }
 
-        DynamicSubBuild newBuild = new DynamicSubBuild(this, parentBuild.getTimestamp(), parentBuild.getCause());
-
-        newBuild.number = parentBuild.getNumber();
+        DynamicSubBuild newBuild = new DynamicSubBuild(this,parentBuild.getCause(),parentBuild.getNumber());
         newBuild.save();
         return newBuild;
     }
@@ -294,5 +275,19 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
 
     public CurrentBuildState getCurrentStateByNumber(int number) {
         return dynamicBuildRepository.getCurrentStateByNumber(this, number);
+    }
+
+    @Override
+    public int getNextBuildNumber() {
+    return 0;
+    }
+
+    @Override
+    public synchronized int assignBuildNumber() throws IOException {
+        return 0;
+    }
+
+    @Override
+    protected synchronized void saveNextBuildNumber() throws IOException {
     }
 }

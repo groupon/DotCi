@@ -50,20 +50,13 @@ public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSub
 
     private final BuildCause cause;
 
-    public DynamicSubBuild(DynamicSubProject project, Calendar calendar, Cause cause) throws IOException {
+    public DynamicSubBuild(DynamicSubProject project, Cause cause, int number) throws IOException {
         super(project);
         this.cause = (BuildCause) cause;
+        this.number = number;
+        getRootDir().mkdirs();
     }
 
-    public DynamicSubBuild(DynamicSubProject job, Calendar timestamp) {
-        super(job, timestamp);
-        this.cause = null;
-    }
-
-    public DynamicSubBuild(DynamicSubProject job, File buildDir) throws IOException {
-        super(job, buildDir);
-        this.cause = null;
-    }
 
     @Override
     public DynamicSubProject getParent() {
