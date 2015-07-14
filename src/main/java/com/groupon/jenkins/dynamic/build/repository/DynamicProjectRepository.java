@@ -55,7 +55,7 @@ public class DynamicProjectRepository extends MongoRepository {
 
     @Inject
     public DynamicProjectRepository(Datastore datastore, DynamicBuildRepository buildRepository) {
-        this(datastore, new OrganizationContainerRepository(), buildRepository);
+        this(datastore, new OrganizationContainerRepository(datastore), buildRepository);
     }
 
     protected DynamicProjectRepository(Datastore datastore, OrganizationContainerRepository organizationRepository, DynamicBuildRepository dynamicBuildRepository) {

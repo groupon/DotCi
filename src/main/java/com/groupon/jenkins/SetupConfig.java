@@ -30,6 +30,7 @@ import com.groupon.jenkins.buildtype.dockercompose.DockerComposeBuild;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainerRepository;
 import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
 import com.groupon.jenkins.github.services.GithubDeployKeyRepository;
 import hudson.Extension;
@@ -208,6 +209,9 @@ public class SetupConfig extends GlobalConfiguration {
 
     public DynamicBuildRepository getDynamicBuildRepository() {
         return getInjector().getInstance(DynamicBuildRepository.class);
+    }
+    public OrganizationContainerRepository getOrganizationContainerRepository() {
+        return getInjector().getInstance(OrganizationContainerRepository.class);
     }
 
     public DynamicProjectRepository getDynamicProjectRepository() {

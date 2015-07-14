@@ -26,9 +26,18 @@ package com.groupon.jenkins.dynamic.organizationcontainer;
 import java.io.IOException;
 import java.util.List;
 
+import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
+import com.groupon.jenkins.mongo.MongoRepository;
 import jenkins.model.Jenkins;
+import org.mongodb.morphia.Datastore;
 
-public class OrganizationContainerRepository {
+import javax.inject.Inject;
+
+public class OrganizationContainerRepository extends MongoRepository{
+    @Inject
+    public OrganizationContainerRepository (Datastore datastore) {
+        super(datastore);
+    }
     public OrganizationContainer getOrCreateContainer(String viewName) throws IOException {
         OrganizationContainer existingcontainer = getOrganizationContainer(viewName);
         return existingcontainer == null ? Jenkins.getInstance().createProject(OrganizationContainer.class, viewName) : existingcontainer;
@@ -44,4 +53,12 @@ public class OrganizationContainerRepository {
         return null;
     }
 
+    public void save(OrganizationContainer organizationContainer) {
+       getDatastore().save(organizationContainer);
+    }
+
+    public List<OrganizationContainer> getOrganizations() {
+        return getDatastore().find(OrganizationContainer.class).asList();
+
+    }
 }

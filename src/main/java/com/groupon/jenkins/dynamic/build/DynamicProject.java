@@ -71,9 +71,8 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
     @PostLoad
     void loadParent() {
-        try {
-            // If it didn't load on main Jenkins start, try loading it again.
-            OrganizationContainer container = new OrganizationContainerRepository().getOrganizationContainer(containerName);
+        try { // If it didn't load on main Jenkins start, try loading it again.
+            OrganizationContainer container = new OrganizationContainerRepository(null).getOrganizationContainer(containerName);
             if(container != null) {
                 onLoad(container, getName());
             }

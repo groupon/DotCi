@@ -26,6 +26,7 @@ package com.groupon.jenkins.dynamic.organizationcontainer;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.IdentifableItemGroup;
+import com.mongodb.DBObject;
 import hudson.Extension;
 import hudson.model.AbstractItem;
 import hudson.model.Action;
@@ -56,6 +57,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import jenkins.model.AbstractTopLevelItem;
 import jenkins.model.Jenkins;
 import org.acegisecurity.Authentication;
 import org.acegisecurity.context.SecurityContextHolder;
@@ -66,31 +69,48 @@ import org.kohsuke.stapler.StaplerOverridable;
 import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.PostLoad;
+import org.mongodb.morphia.annotations.PrePersist;
 
 import javax.servlet.ServletException;
 
-public class OrganizationContainer extends AbstractItem implements IdentifableItemGroup<DynamicProject>, ViewGroup, TopLevelItem, StaplerOverridable, StaplerFallback, StaplerProxy {
+@Entity("organization")
+public class OrganizationContainer extends AbstractTopLevelItem implements IdentifableItemGroup<DynamicProject>, ViewGroup, TopLevelItem, StaplerOverridable, StaplerFallback, StaplerProxy {
+    @Id
     private ObjectId id;
     private transient Map<String, DynamicProject> items = new CopyOnWriteMap.Tree<String, DynamicProject>(CaseInsensitiveComparator.INSTANCE);
     private transient ItemGroupMixIn mixin;
 
-    private CopyOnWriteArrayList<View> views;
-    private ViewsTabBar viewsTabBar;
+    private transient CopyOnWriteArrayList<View> views = new CopyOnWriteArrayList<View>();
+    private transient ViewsTabBar viewsTabBar = new DefaultViewsTabBar();
 
-    private String primaryView;
+    private transient String primaryView ="All";
 
     private transient ViewGroupMixIn viewGroupMixIn;
     private transient OrganizationGravatarIcon icon;
 
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    private String name;
+
+
     public OrganizationContainer(ItemGroup parent, String name) {
         super(parent, name);
-        init(name);
+        this.name = name;
+       init();
         if(id == null) {
             id = new ObjectId();
         }
     }
 
-    private void init(String name) {
+
+    @PostLoad
+     void init() {
         if (icon == null) {
             icon = new OrganizationGravatarIcon(name);
         }
@@ -126,7 +146,7 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
             }
         };
         items = new CopyOnWriteMap.Tree<String, DynamicProject>(CaseInsensitiveComparator.INSTANCE);
-        items = getJobsForThisContainer();
+//        items = getJobsForThisContainer();
     }
 
     private Tree<String, DynamicProject> getJobsForThisContainer() {
@@ -151,7 +171,7 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
     @Override
     public void onLoad(ItemGroup<? extends Item> parent, String name) throws IOException {
         super.onLoad(parent, name);
-        init(name);
+        init();
     }
 
     public DynamicProject doCreateItem(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
@@ -367,4 +387,11 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
         return getName();
     }
 
+    @Override
+    public synchronized void save() throws IOException {
+        getOrganizationContainerRepository().save(this);
+    }
+    private OrganizationContainerRepository getOrganizationContainerRepository() {
+        return SetupConfig.get().getOrganizationContainerRepository();
+    }
 }
