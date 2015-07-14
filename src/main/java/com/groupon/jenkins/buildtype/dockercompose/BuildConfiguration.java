@@ -69,18 +69,19 @@ public class BuildConfiguration {
     public ShellCommands getCommands(Combination combination) {
         String dockerComposeContainerName = combination.get("script");
         String projectName = dockerComposeContainerName + this.dockerComposeProjectName;
+        String fileName = getDockerComposeFileName();
         ShellCommands shellCommands = new ShellCommands();
         shellCommands.add(checkoutCommands);
-        shellCommands.add(String.format("trap \"docker-compose -p %s kill; docker-compose -p %s rm --force; exit\" PIPE QUIT INT HUP EXIT TERM",projectName,projectName));
-        shellCommands.add(String.format("docker-compose -p %s pull",projectName));
+        shellCommands.add(String.format("trap \"docker-compose -f %s -p %s kill; docker-compose -f %s -p %s rm --force; exit\" PIPE QUIT INT HUP EXIT TERM",fileName,projectName,fileName,projectName));
+        shellCommands.add(String.format("docker-compose -f %s -p %s pull",fileName,projectName));
         if (config.get("run") != null) {
             Map runConfig = (Map) config.get("run");
             Object dockerComposeCommand = runConfig.get(dockerComposeContainerName);
             if (dockerComposeCommand != null ) {
-                shellCommands.add(String.format("docker-compose -p %s run -T %s sh -xc '%s'", projectName, dockerComposeContainerName,SHELL_ESCAPE.escape((String) dockerComposeCommand)));
+                shellCommands.add(String.format("docker-compose -f %s -p %s run -T %s sh -xc '%s'", fileName, projectName, dockerComposeContainerName,SHELL_ESCAPE.escape((String) dockerComposeCommand)));
             }
             else {
-                shellCommands.add(String.format("docker-compose -p %s run -T %s",projectName,dockerComposeContainerName));
+                shellCommands.add(String.format("docker-compose -f %s -p %s run -T %s",fileName,projectName,dockerComposeContainerName));
             }
         }
         extractWorkingDirIntoWorkSpace(dockerComposeContainerName, projectName, shellCommands);
@@ -132,5 +133,9 @@ public class BuildConfiguration {
     public List<PostBuildNotifier> getNotifiers() {
         List notifiers = config.get("notifications") !=null? (List) config.get("notifications") :Collections.emptyList();
         return new DotCiExtensionsHelper().createNotifiers(notifiers) ;
+    }
+
+    public String getDockerComposeFileName() {
+        return config.get("docker-compose-file") !=null ? (String) config.get("docker-compose-file") : "docker-compose.yml";
     }
 }

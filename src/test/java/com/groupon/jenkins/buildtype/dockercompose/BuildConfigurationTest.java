@@ -47,19 +47,19 @@ public class BuildConfigurationTest {
   @Test
   public  void should_cleanup_after_test_run(){
     ShellCommands commands = getRunCommands();
-    Assert.assertEquals("trap \"docker-compose -p unitgroupondotci8 kill; docker-compose -p unitgroupondotci8 rm --force; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(0));
+    Assert.assertEquals("trap \"docker-compose -f docker-compose.yml -p unitgroupondotci8 kill; docker-compose -f docker-compose.yml -p unitgroupondotci8 rm --force; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(0));
   }
   @Test
   public  void should_pull_latest_image_from_registry(){
     ShellCommands commands = getRunCommands();
-    Assert.assertEquals("docker-compose -p unitgroupondotci8 pull",commands.get(1));
+    Assert.assertEquals("docker-compose -f docker-compose.yml -p unitgroupondotci8 pull",commands.get(1));
   }
 
 
   @Test
   public  void should_run_cmd_from_ci_yml(){
     ShellCommands commands = getRunCommands();
-    Assert.assertEquals("docker-compose -p unitgroupondotci8 run -T unit sh -xc 'command'",commands.get(2));
+    Assert.assertEquals("docker-compose -f docker-compose.yml -p unitgroupondotci8 run -T unit sh -xc 'command'",commands.get(2));
   }
 
 
