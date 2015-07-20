@@ -12,6 +12,7 @@
     "babel-core": "latest",
     "babel-eslint": "^3.0.1",
     "babel-loader": "latest",
+    "bower": "latest",
     "chai": "latest",
     "chart.js": "^1.0.2",
     "classnames": "^1.2.0",
