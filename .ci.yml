@@ -1,0 +1,20 @@
+environment:
+  language: java
+  language_versions: 1.7.0_80
+  packages:
+    - apache_maven-3.2.3
+    - node-v0.10.40
+
+build:
+  before:
+    - npm config set registry https://registry.npmjs.org
+    - npm cache clear
+    - npm install
+  run:
+    - mvn install
+    <% if (GIT_URL =~ /groupon\/DotCi/ && DOTCI_TAG =~ /v?[0-9]+\.[0-9]+\.[0-9]+.*/ ) { %>
+    - mvn -DskipTests=true release:perform
+    <% } %>
+
+plugins:
+  - artifacts: 'target/DotCi.*'
