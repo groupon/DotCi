@@ -1,0 +1,119 @@
+Elm.Graphics = Elm.Graphics || {};
+Elm.Graphics.Input = Elm.Graphics.Input || {};
+Elm.Graphics.Input.Field = Elm.Graphics.Input.Field || {};
+Elm.Graphics.Input.Field.make = function (_elm) {
+   "use strict";
+   _elm.Graphics = _elm.Graphics || {};
+   _elm.Graphics.Input = _elm.Graphics.Input || {};
+   _elm.Graphics.Input.Field = _elm.Graphics.Input.Field || {};
+   if (_elm.Graphics.Input.Field.values)
+   return _elm.Graphics.Input.Field.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Graphics.Input.Field",
+   $Color = Elm.Color.make(_elm),
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $Native$Graphics$Input = Elm.Native.Graphics.Input.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Text = Elm.Text.make(_elm);
+   var email = $Native$Graphics$Input.email;
+   var password = $Native$Graphics$Input.password;
+   var field = $Native$Graphics$Input.field;
+   var Backward = {ctor: "Backward"};
+   var Forward = {ctor: "Forward"};
+   var Selection = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,direction: c
+             ,end: b
+             ,start: a};
+   });
+   var Content = F2(function (a,
+   b) {
+      return {_: {}
+             ,selection: b
+             ,string: a};
+   });
+   var noContent = A2(Content,
+   "",
+   A3(Selection,0,0,Forward));
+   var Style = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,highlight: c
+             ,outline: b
+             ,padding: a
+             ,style: d};
+   });
+   var Highlight = F2(function (a,
+   b) {
+      return {_: {}
+             ,color: a
+             ,width: b};
+   });
+   var noHighlight = A2(Highlight,
+   $Color.blue,
+   0);
+   var Outline = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,color: a
+             ,radius: c
+             ,width: b};
+   });
+   var Dimensions = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,bottom: d
+             ,left: a
+             ,right: b
+             ,top: c};
+   });
+   var uniformly = function (n) {
+      return A4(Dimensions,
+      n,
+      n,
+      n,
+      n);
+   };
+   var noOutline = A3(Outline,
+   $Color.grey,
+   uniformly(0),
+   0);
+   var defaultStyle = {_: {}
+                      ,highlight: A2(Highlight,
+                      $Color.blue,
+                      1)
+                      ,outline: A3(Outline,
+                      $Color.grey,
+                      uniformly(1),
+                      2)
+                      ,padding: uniformly(4)
+                      ,style: $Text.defaultStyle};
+   _elm.Graphics.Input.Field.values = {_op: _op
+                                      ,field: field
+                                      ,password: password
+                                      ,email: email
+                                      ,noContent: noContent
+                                      ,defaultStyle: defaultStyle
+                                      ,noOutline: noOutline
+                                      ,noHighlight: noHighlight
+                                      ,uniformly: uniformly
+                                      ,Content: Content
+                                      ,Selection: Selection
+                                      ,Style: Style
+                                      ,Outline: Outline
+                                      ,Highlight: Highlight
+                                      ,Dimensions: Dimensions
+                                      ,Forward: Forward
+                                      ,Backward: Backward};
+   return _elm.Graphics.Input.Field.values;
+};

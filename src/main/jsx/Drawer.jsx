@@ -6,6 +6,7 @@ import BuildActions  from './components/job/build/BuildActions.jsx'
 import Dialog from './components/lib/Dialog.jsx'; 
 import { TransitionHook } from 'react-router';
 import JobActions from './components/job/JobActions.jsx';
+import Hello from './Hello.jsx';
 
 export default React.createClass( {
   mixins: [CustomAttributes, TransitionHook],
@@ -20,10 +21,10 @@ export default React.createClass( {
   getInitialState(){
     return {view: "current"}
   },
-  routerWillLeave (nextState, router) {
-    debugger
-  },
   render(){
+    return <Hello/>;
+  },
+  render1(){
     return <div>
       <paper-toolbar id="drawerToolbar">
         <paper-icon-button  src={`${resURL}/logo.png`} disabled />

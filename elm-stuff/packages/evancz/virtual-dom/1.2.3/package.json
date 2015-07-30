@@ -1,0 +1,11 @@
+{
+    "name": "",
+    "version": "",
+    "description": "",
+    "dependencies": {
+        "data-set": "^3.0.0",
+        "dom-delegator": "^9.0.0",
+        "vtree": "0.0.21",
+        "vdom": "0.0.21"
+    }
+}

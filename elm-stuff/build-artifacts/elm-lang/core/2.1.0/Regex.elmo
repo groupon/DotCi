@@ -1,0 +1,49 @@
+Elm.Regex = Elm.Regex || {};
+Elm.Regex.make = function (_elm) {
+   "use strict";
+   _elm.Regex = _elm.Regex || {};
+   if (_elm.Regex.values)
+   return _elm.Regex.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Regex",
+   $Maybe = Elm.Maybe.make(_elm),
+   $Native$Regex = Elm.Native.Regex.make(_elm);
+   var split = $Native$Regex.split;
+   var replace = $Native$Regex.replace;
+   var find = $Native$Regex.find;
+   var AtMost = function (a) {
+      return {ctor: "AtMost"
+             ,_0: a};
+   };
+   var All = {ctor: "All"};
+   var Match = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,index: c
+             ,match: a
+             ,number: d
+             ,submatches: b};
+   });
+   var contains = $Native$Regex.contains;
+   var caseInsensitive = $Native$Regex.caseInsensitive;
+   var regex = $Native$Regex.regex;
+   var escape = $Native$Regex.escape;
+   var Regex = {ctor: "Regex"};
+   _elm.Regex.values = {_op: _op
+                       ,regex: regex
+                       ,escape: escape
+                       ,caseInsensitive: caseInsensitive
+                       ,contains: contains
+                       ,find: find
+                       ,replace: replace
+                       ,split: split
+                       ,Match: Match
+                       ,All: All
+                       ,AtMost: AtMost};
+   return _elm.Regex.values;
+};

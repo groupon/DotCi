@@ -1,0 +1,17 @@
+{
+    "version": "1.2.3",
+    "summary": "Core virtual DOM implementation, basis for HTML and SVG libraries",
+    "repository": "https://github.com/evancz/virtual-dom.git",
+    "license": "BSD3",
+    "source-directories": [
+        "src"
+    ],
+    "exposed-modules": [
+        "VirtualDom"
+    ],
+    "native-modules": true,
+    "dependencies": {
+        "elm-lang/core": "2.0.0 <= v < 3.0.0"
+    },
+    "elm-version": "0.15.0 <= v < 0.16.0"
+}

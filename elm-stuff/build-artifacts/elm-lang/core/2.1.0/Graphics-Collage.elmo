@@ -1,0 +1,354 @@
+Elm.Graphics = Elm.Graphics || {};
+Elm.Graphics.Collage = Elm.Graphics.Collage || {};
+Elm.Graphics.Collage.make = function (_elm) {
+   "use strict";
+   _elm.Graphics = _elm.Graphics || {};
+   _elm.Graphics.Collage = _elm.Graphics.Collage || {};
+   if (_elm.Graphics.Collage.values)
+   return _elm.Graphics.Collage.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Graphics.Collage",
+   $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Native$Graphics$Collage = Elm.Native.Graphics.Collage.make(_elm),
+   $Text = Elm.Text.make(_elm),
+   $Transform2D = Elm.Transform2D.make(_elm);
+   var ngon = F2(function (n,r) {
+      return function () {
+         var m = $Basics.toFloat(n);
+         var t = 2 * $Basics.pi / m;
+         var f = function (i) {
+            return {ctor: "_Tuple2"
+                   ,_0: r * $Basics.cos(t * i)
+                   ,_1: r * $Basics.sin(t * i)};
+         };
+         return A2($List.map,
+         f,
+         _L.range(0,m - 1));
+      }();
+   });
+   var oval = F2(function (w,h) {
+      return function () {
+         var hh = h / 2;
+         var hw = w / 2;
+         var n = 50;
+         var t = 2 * $Basics.pi / n;
+         var f = function (i) {
+            return {ctor: "_Tuple2"
+                   ,_0: hw * $Basics.cos(t * i)
+                   ,_1: hh * $Basics.sin(t * i)};
+         };
+         return A2($List.map,
+         f,
+         _L.range(0,n - 1));
+      }();
+   });
+   var circle = function (r) {
+      return A2(oval,2 * r,2 * r);
+   };
+   var rect = F2(function (w,h) {
+      return function () {
+         var hh = h / 2;
+         var hw = w / 2;
+         return _L.fromArray([{ctor: "_Tuple2"
+                              ,_0: 0 - hw
+                              ,_1: 0 - hh}
+                             ,{ctor: "_Tuple2"
+                              ,_0: 0 - hw
+                              ,_1: hh}
+                             ,{ctor: "_Tuple2",_0: hw,_1: hh}
+                             ,{ctor: "_Tuple2"
+                              ,_0: hw
+                              ,_1: 0 - hh}]);
+      }();
+   });
+   var square = function (n) {
+      return A2(rect,n,n);
+   };
+   var polygon = function (points) {
+      return points;
+   };
+   var segment = F2(function (p1,
+   p2) {
+      return _L.fromArray([p1,p2]);
+   });
+   var path = function (ps) {
+      return ps;
+   };
+   var collage = $Native$Graphics$Collage.collage;
+   var alpha = F2(function (a,f) {
+      return _U.replace([["alpha"
+                         ,a]],
+      f);
+   });
+   var rotate = F2(function (t,f) {
+      return _U.replace([["theta"
+                         ,f.theta + t]],
+      f);
+   });
+   var scale = F2(function (s,f) {
+      return _U.replace([["scale"
+                         ,f.scale * s]],
+      f);
+   });
+   var moveY = F2(function (y,f) {
+      return _U.replace([["y"
+                         ,f.y + y]],
+      f);
+   });
+   var moveX = F2(function (x,f) {
+      return _U.replace([["x"
+                         ,f.x + x]],
+      f);
+   });
+   var move = F2(function (_v0,f) {
+      return function () {
+         switch (_v0.ctor)
+         {case "_Tuple2":
+            return _U.replace([["x"
+                               ,f.x + _v0._0]
+                              ,["y",f.y + _v0._1]],
+              f);}
+         _U.badCase($moduleName,
+         "on line 226, column 7 to 35");
+      }();
+   });
+   var form = function (f) {
+      return {_: {}
+             ,alpha: 1
+             ,form: f
+             ,scale: 1
+             ,theta: 0
+             ,x: 0
+             ,y: 0};
+   };
+   var Fill = function (a) {
+      return {ctor: "Fill",_0: a};
+   };
+   var Line = function (a) {
+      return {ctor: "Line",_0: a};
+   };
+   var FGroup = F2(function (a,b) {
+      return {ctor: "FGroup"
+             ,_0: a
+             ,_1: b};
+   });
+   var group = function (fs) {
+      return form(A2(FGroup,
+      $Transform2D.identity,
+      fs));
+   };
+   var groupTransform = F2(function (matrix,
+   fs) {
+      return form(A2(FGroup,
+      matrix,
+      fs));
+   });
+   var FElement = function (a) {
+      return {ctor: "FElement"
+             ,_0: a};
+   };
+   var toForm = function (e) {
+      return form(FElement(e));
+   };
+   var FImage = F4(function (a,
+   b,
+   c,
+   d) {
+      return {ctor: "FImage"
+             ,_0: a
+             ,_1: b
+             ,_2: c
+             ,_3: d};
+   });
+   var sprite = F4(function (w,
+   h,
+   pos,
+   src) {
+      return form(A4(FImage,
+      w,
+      h,
+      pos,
+      src));
+   });
+   var FText = function (a) {
+      return {ctor: "FText",_0: a};
+   };
+   var text = function (t) {
+      return form(FText(t));
+   };
+   var FOutlinedText = F2(function (a,
+   b) {
+      return {ctor: "FOutlinedText"
+             ,_0: a
+             ,_1: b};
+   });
+   var outlinedText = F2(function (ls,
+   t) {
+      return form(A2(FOutlinedText,
+      ls,
+      t));
+   });
+   var FShape = F2(function (a,b) {
+      return {ctor: "FShape"
+             ,_0: a
+             ,_1: b};
+   });
+   var fill = F2(function (style,
+   shape) {
+      return form(A2(FShape,
+      Fill(style),
+      shape));
+   });
+   var outlined = F2(function (style,
+   shape) {
+      return form(A2(FShape,
+      Line(style),
+      shape));
+   });
+   var FPath = F2(function (a,b) {
+      return {ctor: "FPath"
+             ,_0: a
+             ,_1: b};
+   });
+   var traced = F2(function (style,
+   path) {
+      return form(A2(FPath,
+      style,
+      path));
+   });
+   var LineStyle = F6(function (a,
+   b,
+   c,
+   d,
+   e,
+   f) {
+      return {_: {}
+             ,cap: c
+             ,color: a
+             ,dashOffset: f
+             ,dashing: e
+             ,join: d
+             ,width: b};
+   });
+   var Clipped = {ctor: "Clipped"};
+   var Sharp = function (a) {
+      return {ctor: "Sharp",_0: a};
+   };
+   var Smooth = {ctor: "Smooth"};
+   var Padded = {ctor: "Padded"};
+   var Round = {ctor: "Round"};
+   var Flat = {ctor: "Flat"};
+   var defaultLine = {_: {}
+                     ,cap: Flat
+                     ,color: $Color.black
+                     ,dashOffset: 0
+                     ,dashing: _L.fromArray([])
+                     ,join: Sharp(10)
+                     ,width: 1};
+   var solid = function (clr) {
+      return _U.replace([["color"
+                         ,clr]],
+      defaultLine);
+   };
+   var dashed = function (clr) {
+      return _U.replace([["color"
+                         ,clr]
+                        ,["dashing"
+                         ,_L.fromArray([8,4])]],
+      defaultLine);
+   };
+   var dotted = function (clr) {
+      return _U.replace([["color"
+                         ,clr]
+                        ,["dashing"
+                         ,_L.fromArray([3,3])]],
+      defaultLine);
+   };
+   var Grad = function (a) {
+      return {ctor: "Grad",_0: a};
+   };
+   var gradient = F2(function (grad,
+   shape) {
+      return A2(fill,
+      Grad(grad),
+      shape);
+   });
+   var Texture = function (a) {
+      return {ctor: "Texture"
+             ,_0: a};
+   };
+   var textured = F2(function (src,
+   shape) {
+      return A2(fill,
+      Texture(src),
+      shape);
+   });
+   var Solid = function (a) {
+      return {ctor: "Solid",_0: a};
+   };
+   var filled = F2(function (color,
+   shape) {
+      return A2(fill,
+      Solid(color),
+      shape);
+   });
+   var Form = F6(function (a,
+   b,
+   c,
+   d,
+   e,
+   f) {
+      return {_: {}
+             ,alpha: e
+             ,form: f
+             ,scale: b
+             ,theta: a
+             ,x: c
+             ,y: d};
+   });
+   _elm.Graphics.Collage.values = {_op: _op
+                                  ,collage: collage
+                                  ,toForm: toForm
+                                  ,filled: filled
+                                  ,textured: textured
+                                  ,gradient: gradient
+                                  ,outlined: outlined
+                                  ,traced: traced
+                                  ,text: text
+                                  ,outlinedText: outlinedText
+                                  ,move: move
+                                  ,moveX: moveX
+                                  ,moveY: moveY
+                                  ,scale: scale
+                                  ,rotate: rotate
+                                  ,alpha: alpha
+                                  ,group: group
+                                  ,groupTransform: groupTransform
+                                  ,rect: rect
+                                  ,oval: oval
+                                  ,square: square
+                                  ,circle: circle
+                                  ,ngon: ngon
+                                  ,polygon: polygon
+                                  ,segment: segment
+                                  ,path: path
+                                  ,solid: solid
+                                  ,dashed: dashed
+                                  ,dotted: dotted
+                                  ,defaultLine: defaultLine
+                                  ,Form: Form
+                                  ,LineStyle: LineStyle
+                                  ,Flat: Flat
+                                  ,Round: Round
+                                  ,Padded: Padded
+                                  ,Smooth: Smooth
+                                  ,Sharp: Sharp
+                                  ,Clipped: Clipped};
+   return _elm.Graphics.Collage.values;
+};

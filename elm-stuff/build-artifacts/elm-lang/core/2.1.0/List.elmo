@@ -1,0 +1,355 @@
+Elm.List = Elm.List || {};
+Elm.List.make = function (_elm) {
+   "use strict";
+   _elm.List = _elm.List || {};
+   if (_elm.List.values)
+   return _elm.List.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "List",
+   $Basics = Elm.Basics.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Native$List = Elm.Native.List.make(_elm);
+   var sortWith = $Native$List.sortWith;
+   var sortBy = $Native$List.sortBy;
+   var sort = function (xs) {
+      return A2(sortBy,
+      $Basics.identity,
+      xs);
+   };
+   var repeat = $Native$List.repeat;
+   var drop = $Native$List.drop;
+   var take = $Native$List.take;
+   var map5 = $Native$List.map5;
+   var map4 = $Native$List.map4;
+   var map3 = $Native$List.map3;
+   var map2 = $Native$List.map2;
+   var any = $Native$List.any;
+   var all = F2(function (pred,
+   xs) {
+      return $Basics.not(A2(any,
+      function ($) {
+         return $Basics.not(pred($));
+      },
+      xs));
+   });
+   var foldr = $Native$List.foldr;
+   var foldl = $Native$List.foldl;
+   var length = function (xs) {
+      return A3(foldl,
+      F2(function (_v0,i) {
+         return function () {
+            return i + 1;
+         }();
+      }),
+      0,
+      xs);
+   };
+   var sum = function (numbers) {
+      return A3(foldl,
+      F2(function (x,y) {
+         return x + y;
+      }),
+      0,
+      numbers);
+   };
+   var product = function (numbers) {
+      return A3(foldl,
+      F2(function (x,y) {
+         return x * y;
+      }),
+      1,
+      numbers);
+   };
+   var maximum = function (list) {
+      return function () {
+         switch (list.ctor)
+         {case "::":
+            return $Maybe.Just(A3(foldl,
+              $Basics.max,
+              list._0,
+              list._1));}
+         return $Maybe.Nothing;
+      }();
+   };
+   var minimum = function (list) {
+      return function () {
+         switch (list.ctor)
+         {case "::":
+            return $Maybe.Just(A3(foldl,
+              $Basics.min,
+              list._0,
+              list._1));}
+         return $Maybe.Nothing;
+      }();
+   };
+   var indexedMap = F2(function (f,
+   xs) {
+      return A3(map2,
+      f,
+      _L.range(0,length(xs) - 1),
+      xs);
+   });
+   var member = F2(function (x,
+   xs) {
+      return A2(any,
+      function (a) {
+         return _U.eq(a,x);
+      },
+      xs);
+   });
+   var isEmpty = function (xs) {
+      return function () {
+         switch (xs.ctor)
+         {case "[]": return true;}
+         return false;
+      }();
+   };
+   var tail = function (list) {
+      return function () {
+         switch (list.ctor)
+         {case "::":
+            return $Maybe.Just(list._1);
+            case "[]":
+            return $Maybe.Nothing;}
+         _U.badCase($moduleName,
+         "between lines 87 and 95");
+      }();
+   };
+   var head = function (list) {
+      return function () {
+         switch (list.ctor)
+         {case "::":
+            return $Maybe.Just(list._0);
+            case "[]":
+            return $Maybe.Nothing;}
+         _U.badCase($moduleName,
+         "between lines 75 and 84");
+      }();
+   };
+   _op["::"] = $Native$List.cons;
+   var map = F2(function (f,xs) {
+      return A3(foldr,
+      F2(function (x,acc) {
+         return A2(_op["::"],
+         f(x),
+         acc);
+      }),
+      _L.fromArray([]),
+      xs);
+   });
+   var filter = F2(function (pred,
+   xs) {
+      return function () {
+         var conditionalCons = F2(function (x,
+         xs$) {
+            return pred(x) ? A2(_op["::"],
+            x,
+            xs$) : xs$;
+         });
+         return A3(foldr,
+         conditionalCons,
+         _L.fromArray([]),
+         xs);
+      }();
+   });
+   var maybeCons = F3(function (f,
+   mx,
+   xs) {
+      return function () {
+         var _v15 = f(mx);
+         switch (_v15.ctor)
+         {case "Just":
+            return A2(_op["::"],_v15._0,xs);
+            case "Nothing": return xs;}
+         _U.badCase($moduleName,
+         "between lines 179 and 186");
+      }();
+   });
+   var filterMap = F2(function (f,
+   xs) {
+      return A3(foldr,
+      maybeCons(f),
+      _L.fromArray([]),
+      xs);
+   });
+   var reverse = function (list) {
+      return A3(foldl,
+      F2(function (x,y) {
+         return A2(_op["::"],x,y);
+      }),
+      _L.fromArray([]),
+      list);
+   };
+   var scanl = F3(function (f,
+   b,
+   xs) {
+      return function () {
+         var scan1 = F2(function (x,
+         accAcc) {
+            return function () {
+               switch (accAcc.ctor)
+               {case "::": return A2(_op["::"],
+                    A2(f,x,accAcc._0),
+                    accAcc);
+                  case "[]":
+                  return _L.fromArray([]);}
+               _U.badCase($moduleName,
+               "between lines 148 and 151");
+            }();
+         });
+         return reverse(A3(foldl,
+         scan1,
+         _L.fromArray([b]),
+         xs));
+      }();
+   });
+   var append = F2(function (xs,
+   ys) {
+      return function () {
+         switch (ys.ctor)
+         {case "[]": return xs;}
+         return A3(foldr,
+         F2(function (x,y) {
+            return A2(_op["::"],x,y);
+         }),
+         ys,
+         xs);
+      }();
+   });
+   var concat = function (lists) {
+      return A3(foldr,
+      append,
+      _L.fromArray([]),
+      lists);
+   };
+   var concatMap = F2(function (f,
+   list) {
+      return concat(A2(map,
+      f,
+      list));
+   });
+   var partition = F2(function (pred,
+   list) {
+      return function () {
+         var step = F2(function (x,
+         _v21) {
+            return function () {
+               switch (_v21.ctor)
+               {case "_Tuple2":
+                  return pred(x) ? {ctor: "_Tuple2"
+                                   ,_0: A2(_op["::"],x,_v21._0)
+                                   ,_1: _v21._1} : {ctor: "_Tuple2"
+                                                   ,_0: _v21._0
+                                                   ,_1: A2(_op["::"],
+                                                   x,
+                                                   _v21._1)};}
+               _U.badCase($moduleName,
+               "between lines 301 and 303");
+            }();
+         });
+         return A3(foldr,
+         step,
+         {ctor: "_Tuple2"
+         ,_0: _L.fromArray([])
+         ,_1: _L.fromArray([])},
+         list);
+      }();
+   });
+   var unzip = function (pairs) {
+      return function () {
+         var step = F2(function (_v25,
+         _v26) {
+            return function () {
+               switch (_v26.ctor)
+               {case "_Tuple2":
+                  return function () {
+                       switch (_v25.ctor)
+                       {case "_Tuple2":
+                          return {ctor: "_Tuple2"
+                                 ,_0: A2(_op["::"],
+                                 _v25._0,
+                                 _v26._0)
+                                 ,_1: A2(_op["::"],
+                                 _v25._1,
+                                 _v26._1)};}
+                       _U.badCase($moduleName,
+                       "on line 339, column 12 to 28");
+                    }();}
+               _U.badCase($moduleName,
+               "on line 339, column 12 to 28");
+            }();
+         });
+         return A3(foldr,
+         step,
+         {ctor: "_Tuple2"
+         ,_0: _L.fromArray([])
+         ,_1: _L.fromArray([])},
+         pairs);
+      }();
+   };
+   var intersperse = F2(function (sep,
+   xs) {
+      return function () {
+         switch (xs.ctor)
+         {case "::": return function () {
+                 var step = F2(function (x,
+                 rest) {
+                    return A2(_op["::"],
+                    sep,
+                    A2(_op["::"],x,rest));
+                 });
+                 var spersed = A3(foldr,
+                 step,
+                 _L.fromArray([]),
+                 xs._1);
+                 return A2(_op["::"],
+                 xs._0,
+                 spersed);
+              }();
+            case "[]":
+            return _L.fromArray([]);}
+         _U.badCase($moduleName,
+         "between lines 350 and 361");
+      }();
+   });
+   _elm.List.values = {_op: _op
+                      ,isEmpty: isEmpty
+                      ,length: length
+                      ,reverse: reverse
+                      ,member: member
+                      ,head: head
+                      ,tail: tail
+                      ,filter: filter
+                      ,take: take
+                      ,drop: drop
+                      ,repeat: repeat
+                      ,append: append
+                      ,concat: concat
+                      ,intersperse: intersperse
+                      ,partition: partition
+                      ,unzip: unzip
+                      ,map: map
+                      ,map2: map2
+                      ,map3: map3
+                      ,map4: map4
+                      ,map5: map5
+                      ,filterMap: filterMap
+                      ,concatMap: concatMap
+                      ,indexedMap: indexedMap
+                      ,foldr: foldr
+                      ,foldl: foldl
+                      ,sum: sum
+                      ,product: product
+                      ,maximum: maximum
+                      ,minimum: minimum
+                      ,all: all
+                      ,any: any
+                      ,scanl: scanl
+                      ,sort: sort
+                      ,sortBy: sortBy
+                      ,sortWith: sortWith};
+   return _elm.List.values;
+};

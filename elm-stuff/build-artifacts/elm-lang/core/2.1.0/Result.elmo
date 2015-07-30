@@ -1,0 +1,244 @@
+Elm.Result = Elm.Result || {};
+Elm.Result.make = function (_elm) {
+   "use strict";
+   _elm.Result = _elm.Result || {};
+   if (_elm.Result.values)
+   return _elm.Result.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Result",
+   $Maybe = Elm.Maybe.make(_elm);
+   var toMaybe = function (result) {
+      return function () {
+         switch (result.ctor)
+         {case "Err":
+            return $Maybe.Nothing;
+            case "Ok":
+            return $Maybe.Just(result._0);}
+         _U.badCase($moduleName,
+         "between lines 164 and 177");
+      }();
+   };
+   var Err = function (a) {
+      return {ctor: "Err",_0: a};
+   };
+   var andThen = F2(function (result,
+   callback) {
+      return function () {
+         switch (result.ctor)
+         {case "Err":
+            return Err(result._0);
+            case "Ok":
+            return callback(result._0);}
+         _U.badCase($moduleName,
+         "between lines 126 and 145");
+      }();
+   });
+   var Ok = function (a) {
+      return {ctor: "Ok",_0: a};
+   };
+   var map = F2(function (func,
+   ra) {
+      return function () {
+         switch (ra.ctor)
+         {case "Err": return Err(ra._0);
+            case "Ok":
+            return Ok(func(ra._0));}
+         _U.badCase($moduleName,
+         "between lines 41 and 52");
+      }();
+   });
+   var map2 = F3(function (func,
+   ra,
+   rb) {
+      return function () {
+         var _v9 = {ctor: "_Tuple2"
+                   ,_0: ra
+                   ,_1: rb};
+         switch (_v9.ctor)
+         {case "_Tuple2":
+            switch (_v9._0.ctor)
+              {case "Err":
+                 return Err(_v9._0._0);
+                 case "Ok": switch (_v9._1.ctor)
+                   {case "Ok": return Ok(A2(func,
+                        _v9._0._0,
+                        _v9._1._0));}
+                   break;}
+              switch (_v9._1.ctor)
+              {case "Err":
+                 return Err(_v9._1._0);}
+              break;}
+         _U.badCase($moduleName,
+         "between lines 55 and 58");
+      }();
+   });
+   var map3 = F4(function (func,
+   ra,
+   rb,
+   rc) {
+      return function () {
+         var _v16 = {ctor: "_Tuple3"
+                    ,_0: ra
+                    ,_1: rb
+                    ,_2: rc};
+         switch (_v16.ctor)
+         {case "_Tuple3":
+            switch (_v16._0.ctor)
+              {case "Err":
+                 return Err(_v16._0._0);
+                 case "Ok": switch (_v16._1.ctor)
+                   {case "Ok":
+                      switch (_v16._2.ctor)
+                        {case "Ok": return Ok(A3(func,
+                             _v16._0._0,
+                             _v16._1._0,
+                             _v16._2._0));}
+                        break;}
+                   break;}
+              switch (_v16._1.ctor)
+              {case "Err":
+                 return Err(_v16._1._0);}
+              switch (_v16._2.ctor)
+              {case "Err":
+                 return Err(_v16._2._0);}
+              break;}
+         _U.badCase($moduleName,
+         "between lines 63 and 67");
+      }();
+   });
+   var map4 = F5(function (func,
+   ra,
+   rb,
+   rc,
+   rd) {
+      return function () {
+         var _v26 = {ctor: "_Tuple4"
+                    ,_0: ra
+                    ,_1: rb
+                    ,_2: rc
+                    ,_3: rd};
+         switch (_v26.ctor)
+         {case "_Tuple4":
+            switch (_v26._0.ctor)
+              {case "Err":
+                 return Err(_v26._0._0);
+                 case "Ok": switch (_v26._1.ctor)
+                   {case "Ok":
+                      switch (_v26._2.ctor)
+                        {case "Ok":
+                           switch (_v26._3.ctor)
+                             {case "Ok": return Ok(A4(func,
+                                  _v26._0._0,
+                                  _v26._1._0,
+                                  _v26._2._0,
+                                  _v26._3._0));}
+                             break;}
+                        break;}
+                   break;}
+              switch (_v26._1.ctor)
+              {case "Err":
+                 return Err(_v26._1._0);}
+              switch (_v26._2.ctor)
+              {case "Err":
+                 return Err(_v26._2._0);}
+              switch (_v26._3.ctor)
+              {case "Err":
+                 return Err(_v26._3._0);}
+              break;}
+         _U.badCase($moduleName,
+         "between lines 72 and 77");
+      }();
+   });
+   var map5 = F6(function (func,
+   ra,
+   rb,
+   rc,
+   rd,
+   re) {
+      return function () {
+         var _v39 = {ctor: "_Tuple5"
+                    ,_0: ra
+                    ,_1: rb
+                    ,_2: rc
+                    ,_3: rd
+                    ,_4: re};
+         switch (_v39.ctor)
+         {case "_Tuple5":
+            switch (_v39._0.ctor)
+              {case "Err":
+                 return Err(_v39._0._0);
+                 case "Ok": switch (_v39._1.ctor)
+                   {case "Ok":
+                      switch (_v39._2.ctor)
+                        {case "Ok":
+                           switch (_v39._3.ctor)
+                             {case "Ok":
+                                switch (_v39._4.ctor)
+                                  {case "Ok": return Ok(A5(func,
+                                       _v39._0._0,
+                                       _v39._1._0,
+                                       _v39._2._0,
+                                       _v39._3._0,
+                                       _v39._4._0));}
+                                  break;}
+                             break;}
+                        break;}
+                   break;}
+              switch (_v39._1.ctor)
+              {case "Err":
+                 return Err(_v39._1._0);}
+              switch (_v39._2.ctor)
+              {case "Err":
+                 return Err(_v39._2._0);}
+              switch (_v39._3.ctor)
+              {case "Err":
+                 return Err(_v39._3._0);}
+              switch (_v39._4.ctor)
+              {case "Err":
+                 return Err(_v39._4._0);}
+              break;}
+         _U.badCase($moduleName,
+         "between lines 82 and 123");
+      }();
+   });
+   var formatError = F2(function (f,
+   result) {
+      return function () {
+         switch (result.ctor)
+         {case "Err":
+            return Err(f(result._0));
+            case "Ok":
+            return Ok(result._0);}
+         _U.badCase($moduleName,
+         "between lines 148 and 161");
+      }();
+   });
+   var fromMaybe = F2(function (err,
+   maybe) {
+      return function () {
+         switch (maybe.ctor)
+         {case "Just":
+            return Ok(maybe._0);
+            case "Nothing":
+            return Err(err);}
+         _U.badCase($moduleName,
+         "between lines 180 and 182");
+      }();
+   });
+   _elm.Result.values = {_op: _op
+                        ,map: map
+                        ,map2: map2
+                        ,map3: map3
+                        ,map4: map4
+                        ,map5: map5
+                        ,andThen: andThen
+                        ,toMaybe: toMaybe
+                        ,fromMaybe: fromMaybe
+                        ,formatError: formatError
+                        ,Ok: Ok
+                        ,Err: Err};
+   return _elm.Result.values;
+};

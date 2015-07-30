@@ -1,0 +1,29 @@
+Elm.Bitwise = Elm.Bitwise || {};
+Elm.Bitwise.make = function (_elm) {
+   "use strict";
+   _elm.Bitwise = _elm.Bitwise || {};
+   if (_elm.Bitwise.values)
+   return _elm.Bitwise.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Bitwise",
+   $Native$Bitwise = Elm.Native.Bitwise.make(_elm);
+   var shiftRightLogical = $Native$Bitwise.shiftRightLogical;
+   var shiftRight = $Native$Bitwise.shiftRightArithmatic;
+   var shiftLeft = $Native$Bitwise.shiftLeft;
+   var complement = $Native$Bitwise.complement;
+   var xor = $Native$Bitwise.xor;
+   var or = $Native$Bitwise.or;
+   var and = $Native$Bitwise.and;
+   _elm.Bitwise.values = {_op: _op
+                         ,and: and
+                         ,or: or
+                         ,xor: xor
+                         ,complement: complement
+                         ,shiftLeft: shiftLeft
+                         ,shiftRight: shiftRight
+                         ,shiftRightLogical: shiftRightLogical};
+   return _elm.Bitwise.values;
+};

@@ -1,0 +1,222 @@
+Elm.Html = Elm.Html || {};
+Elm.Html.make = function (_elm) {
+   "use strict";
+   _elm.Html = _elm.Html || {};
+   if (_elm.Html.values)
+   return _elm.Html.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Html",
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $VirtualDom = Elm.VirtualDom.make(_elm);
+   var fromElement = $VirtualDom.fromElement;
+   var toElement = $VirtualDom.toElement;
+   var text = $VirtualDom.text;
+   var node = $VirtualDom.node;
+   var body = node("body");
+   var section = node("section");
+   var nav = node("nav");
+   var article = node("article");
+   var aside = node("aside");
+   var h1 = node("h1");
+   var h2 = node("h2");
+   var h3 = node("h3");
+   var h4 = node("h4");
+   var h5 = node("h5");
+   var h6 = node("h6");
+   var header = node("header");
+   var footer = node("footer");
+   var address = node("address");
+   var main$ = node("main");
+   var p = node("p");
+   var hr = node("hr");
+   var pre = node("pre");
+   var blockquote = node("blockquote");
+   var ol = node("ol");
+   var ul = node("ul");
+   var li = node("li");
+   var dl = node("dl");
+   var dt = node("dt");
+   var dd = node("dd");
+   var figure = node("figure");
+   var figcaption = node("figcaption");
+   var div = node("div");
+   var a = node("a");
+   var em = node("em");
+   var strong = node("strong");
+   var small = node("small");
+   var s = node("s");
+   var cite = node("cite");
+   var q = node("q");
+   var dfn = node("dfn");
+   var abbr = node("abbr");
+   var time = node("time");
+   var code = node("code");
+   var $var = node("var");
+   var samp = node("samp");
+   var kbd = node("kbd");
+   var sub = node("sub");
+   var sup = node("sup");
+   var i = node("i");
+   var b = node("b");
+   var u = node("u");
+   var mark = node("mark");
+   var ruby = node("ruby");
+   var rt = node("rt");
+   var rp = node("rp");
+   var bdi = node("bdi");
+   var bdo = node("bdo");
+   var span = node("span");
+   var br = node("br");
+   var wbr = node("wbr");
+   var ins = node("ins");
+   var del = node("del");
+   var img = node("img");
+   var iframe = node("iframe");
+   var embed = node("embed");
+   var object = node("object");
+   var param = node("param");
+   var video = node("video");
+   var audio = node("audio");
+   var source = node("source");
+   var track = node("track");
+   var canvas = node("canvas");
+   var svg = node("svg");
+   var math = node("math");
+   var table = node("table");
+   var caption = node("caption");
+   var colgroup = node("colgroup");
+   var col = node("col");
+   var tbody = node("tbody");
+   var thead = node("thead");
+   var tfoot = node("tfoot");
+   var tr = node("tr");
+   var td = node("td");
+   var th = node("th");
+   var form = node("form");
+   var fieldset = node("fieldset");
+   var legend = node("legend");
+   var label = node("label");
+   var input = node("input");
+   var button = node("button");
+   var select = node("select");
+   var datalist = node("datalist");
+   var optgroup = node("optgroup");
+   var option = node("option");
+   var textarea = node("textarea");
+   var keygen = node("keygen");
+   var output = node("output");
+   var progress = node("progress");
+   var meter = node("meter");
+   var details = node("details");
+   var summary = node("summary");
+   var menuitem = node("menuitem");
+   var menu = node("menu");
+   _elm.Html.values = {_op: _op
+                      ,node: node
+                      ,text: text
+                      ,toElement: toElement
+                      ,fromElement: fromElement
+                      ,body: body
+                      ,section: section
+                      ,nav: nav
+                      ,article: article
+                      ,aside: aside
+                      ,h1: h1
+                      ,h2: h2
+                      ,h3: h3
+                      ,h4: h4
+                      ,h5: h5
+                      ,h6: h6
+                      ,header: header
+                      ,footer: footer
+                      ,address: address
+                      ,main$: main$
+                      ,p: p
+                      ,hr: hr
+                      ,pre: pre
+                      ,blockquote: blockquote
+                      ,ol: ol
+                      ,ul: ul
+                      ,li: li
+                      ,dl: dl
+                      ,dt: dt
+                      ,dd: dd
+                      ,figure: figure
+                      ,figcaption: figcaption
+                      ,div: div
+                      ,a: a
+                      ,em: em
+                      ,strong: strong
+                      ,small: small
+                      ,s: s
+                      ,cite: cite
+                      ,q: q
+                      ,dfn: dfn
+                      ,abbr: abbr
+                      ,time: time
+                      ,code: code
+                      ,$var: $var
+                      ,samp: samp
+                      ,kbd: kbd
+                      ,sub: sub
+                      ,sup: sup
+                      ,i: i
+                      ,b: b
+                      ,u: u
+                      ,mark: mark
+                      ,ruby: ruby
+                      ,rt: rt
+                      ,rp: rp
+                      ,bdi: bdi
+                      ,bdo: bdo
+                      ,span: span
+                      ,br: br
+                      ,wbr: wbr
+                      ,ins: ins
+                      ,del: del
+                      ,img: img
+                      ,iframe: iframe
+                      ,embed: embed
+                      ,object: object
+                      ,param: param
+                      ,video: video
+                      ,audio: audio
+                      ,source: source
+                      ,track: track
+                      ,canvas: canvas
+                      ,svg: svg
+                      ,math: math
+                      ,table: table
+                      ,caption: caption
+                      ,colgroup: colgroup
+                      ,col: col
+                      ,tbody: tbody
+                      ,thead: thead
+                      ,tfoot: tfoot
+                      ,tr: tr
+                      ,td: td
+                      ,th: th
+                      ,form: form
+                      ,fieldset: fieldset
+                      ,legend: legend
+                      ,label: label
+                      ,input: input
+                      ,button: button
+                      ,select: select
+                      ,datalist: datalist
+                      ,optgroup: optgroup
+                      ,option: option
+                      ,textarea: textarea
+                      ,keygen: keygen
+                      ,output: output
+                      ,progress: progress
+                      ,meter: meter
+                      ,details: details
+                      ,summary: summary
+                      ,menuitem: menuitem
+                      ,menu: menu};
+   return _elm.Html.values;
+};

@@ -52,7 +52,11 @@ module.exports = function(config){
           test: /\.jsx?$/,
           exclude: /node_modules/,
           loaders: config.debug? ['react-hot', 'babel-loader']: ['babel-loader']
+        },
+        { test: /\.elm$/, 
+          loader: "elm-webpack" 
         }
+
       ]
     },
     postcss: function () {

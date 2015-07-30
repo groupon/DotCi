@@ -1,0 +1,15 @@
+{
+    "version": "1.0.0",
+    "summary": "A collection of examples for elm-html",
+    "description": "This file is just for downloading dependencies",
+    "repository": "https://github.com/evancz/elm-todomvc.git",
+    "license": "BSD3",
+    "source-directories": [
+        "."
+    ],
+    "exposed-modules": [],
+    "dependencies": {
+        "elm-lang/core": "1.0.0 <= v < 2.0.0",
+        "evancz/elm-html": "1.0.0 <= v < 2.0.0"
+    }
+}

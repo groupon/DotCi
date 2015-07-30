@@ -1,0 +1,451 @@
+Elm.Color = Elm.Color || {};
+Elm.Color.make = function (_elm) {
+   "use strict";
+   _elm.Color = _elm.Color || {};
+   if (_elm.Color.values)
+   return _elm.Color.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Color",
+   $Basics = Elm.Basics.make(_elm);
+   var Radial = F5(function (a,
+   b,
+   c,
+   d,
+   e) {
+      return {ctor: "Radial"
+             ,_0: a
+             ,_1: b
+             ,_2: c
+             ,_3: d
+             ,_4: e};
+   });
+   var radial = Radial;
+   var Linear = F3(function (a,
+   b,
+   c) {
+      return {ctor: "Linear"
+             ,_0: a
+             ,_1: b
+             ,_2: c};
+   });
+   var linear = Linear;
+   var fmod = F2(function (f,n) {
+      return function () {
+         var integer = $Basics.floor(f);
+         return $Basics.toFloat(A2($Basics._op["%"],
+         integer,
+         n)) + f - $Basics.toFloat(integer);
+      }();
+   });
+   var rgbToHsl = F3(function (red,
+   green,
+   blue) {
+      return function () {
+         var b = $Basics.toFloat(blue) / 255;
+         var g = $Basics.toFloat(green) / 255;
+         var r = $Basics.toFloat(red) / 255;
+         var cMax = A2($Basics.max,
+         A2($Basics.max,r,g),
+         b);
+         var cMin = A2($Basics.min,
+         A2($Basics.min,r,g),
+         b);
+         var c = cMax - cMin;
+         var lightness = (cMax + cMin) / 2;
+         var saturation = _U.eq(lightness,
+         0) ? 0 : c / (1 - $Basics.abs(2 * lightness - 1));
+         var hue = $Basics.degrees(60) * (_U.eq(cMax,
+         r) ? A2(fmod,
+         (g - b) / c,
+         6) : _U.eq(cMax,
+         g) ? (b - r) / c + 2 : _U.eq(cMax,
+         b) ? (r - g) / c + 4 : _U.badIf($moduleName,
+         "between lines 150 and 152"));
+         return {ctor: "_Tuple3"
+                ,_0: hue
+                ,_1: saturation
+                ,_2: lightness};
+      }();
+   });
+   var hslToRgb = F3(function (hue,
+   saturation,
+   lightness) {
+      return function () {
+         var hue$ = hue / $Basics.degrees(60);
+         var chroma = (1 - $Basics.abs(2 * lightness - 1)) * saturation;
+         var x = chroma * (1 - $Basics.abs(A2(fmod,
+         hue$,
+         2) - 1));
+         var $ = _U.cmp(hue$,
+         0) < 0 ? {ctor: "_Tuple3"
+                  ,_0: 0
+                  ,_1: 0
+                  ,_2: 0} : _U.cmp(hue$,
+         1) < 0 ? {ctor: "_Tuple3"
+                  ,_0: chroma
+                  ,_1: x
+                  ,_2: 0} : _U.cmp(hue$,
+         2) < 0 ? {ctor: "_Tuple3"
+                  ,_0: x
+                  ,_1: chroma
+                  ,_2: 0} : _U.cmp(hue$,
+         3) < 0 ? {ctor: "_Tuple3"
+                  ,_0: 0
+                  ,_1: chroma
+                  ,_2: x} : _U.cmp(hue$,
+         4) < 0 ? {ctor: "_Tuple3"
+                  ,_0: 0
+                  ,_1: x
+                  ,_2: chroma} : _U.cmp(hue$,
+         5) < 0 ? {ctor: "_Tuple3"
+                  ,_0: x
+                  ,_1: 0
+                  ,_2: chroma} : _U.cmp(hue$,
+         6) < 0 ? {ctor: "_Tuple3"
+                  ,_0: chroma
+                  ,_1: 0
+                  ,_2: x} : {ctor: "_Tuple3"
+                            ,_0: 0
+                            ,_1: 0
+                            ,_2: 0},
+         r = $._0,
+         g = $._1,
+         b = $._2;
+         var m = lightness - chroma / 2;
+         return {ctor: "_Tuple3"
+                ,_0: r + m
+                ,_1: g + m
+                ,_2: b + m};
+      }();
+   });
+   var toRgb = function (color) {
+      return function () {
+         switch (color.ctor)
+         {case "HSLA":
+            return function () {
+                 var $ = A3(hslToRgb,
+                 color._0,
+                 color._1,
+                 color._2),
+                 r = $._0,
+                 g = $._1,
+                 b = $._2;
+                 return {_: {}
+                        ,alpha: color._3
+                        ,blue: $Basics.round(255 * b)
+                        ,green: $Basics.round(255 * g)
+                        ,red: $Basics.round(255 * r)};
+              }();
+            case "RGBA": return {_: {}
+                                ,alpha: color._3
+                                ,blue: color._2
+                                ,green: color._1
+                                ,red: color._0};}
+         _U.badCase($moduleName,
+         "between lines 124 and 132");
+      }();
+   };
+   var toHsl = function (color) {
+      return function () {
+         switch (color.ctor)
+         {case "HSLA": return {_: {}
+                              ,alpha: color._3
+                              ,hue: color._0
+                              ,lightness: color._2
+                              ,saturation: color._1};
+            case "RGBA":
+            return function () {
+                 var $ = A3(rgbToHsl,
+                 color._0,
+                 color._1,
+                 color._2),
+                 h = $._0,
+                 s = $._1,
+                 l = $._2;
+                 return {_: {}
+                        ,alpha: color._3
+                        ,hue: h
+                        ,lightness: l
+                        ,saturation: s};
+              }();}
+         _U.badCase($moduleName,
+         "between lines 114 and 121");
+      }();
+   };
+   var HSLA = F4(function (a,
+   b,
+   c,
+   d) {
+      return {ctor: "HSLA"
+             ,_0: a
+             ,_1: b
+             ,_2: c
+             ,_3: d};
+   });
+   var hsla = F4(function (hue,
+   saturation,
+   lightness,
+   alpha) {
+      return A4(HSLA,
+      hue - $Basics.turns($Basics.toFloat($Basics.floor(hue / (2 * $Basics.pi)))),
+      saturation,
+      lightness,
+      alpha);
+   });
+   var hsl = F3(function (hue,
+   saturation,
+   lightness) {
+      return A4(hsla,
+      hue,
+      saturation,
+      lightness,
+      1);
+   });
+   var complement = function (color) {
+      return function () {
+         switch (color.ctor)
+         {case "HSLA": return A4(hsla,
+              color._0 + $Basics.degrees(180),
+              color._1,
+              color._2,
+              color._3);
+            case "RGBA":
+            return function () {
+                 var $ = A3(rgbToHsl,
+                 color._0,
+                 color._1,
+                 color._2),
+                 h = $._0,
+                 s = $._1,
+                 l = $._2;
+                 return A4(hsla,
+                 h + $Basics.degrees(180),
+                 s,
+                 l,
+                 color._3);
+              }();}
+         _U.badCase($moduleName,
+         "between lines 105 and 111");
+      }();
+   };
+   var grayscale = function (p) {
+      return A4(HSLA,0,0,1 - p,1);
+   };
+   var greyscale = function (p) {
+      return A4(HSLA,0,0,1 - p,1);
+   };
+   var RGBA = F4(function (a,
+   b,
+   c,
+   d) {
+      return {ctor: "RGBA"
+             ,_0: a
+             ,_1: b
+             ,_2: c
+             ,_3: d};
+   });
+   var rgba = RGBA;
+   var rgb = F3(function (r,g,b) {
+      return A4(RGBA,r,g,b,1);
+   });
+   var lightRed = A4(RGBA,
+   239,
+   41,
+   41,
+   1);
+   var red = A4(RGBA,204,0,0,1);
+   var darkRed = A4(RGBA,
+   164,
+   0,
+   0,
+   1);
+   var lightOrange = A4(RGBA,
+   252,
+   175,
+   62,
+   1);
+   var orange = A4(RGBA,
+   245,
+   121,
+   0,
+   1);
+   var darkOrange = A4(RGBA,
+   206,
+   92,
+   0,
+   1);
+   var lightYellow = A4(RGBA,
+   255,
+   233,
+   79,
+   1);
+   var yellow = A4(RGBA,
+   237,
+   212,
+   0,
+   1);
+   var darkYellow = A4(RGBA,
+   196,
+   160,
+   0,
+   1);
+   var lightGreen = A4(RGBA,
+   138,
+   226,
+   52,
+   1);
+   var green = A4(RGBA,
+   115,
+   210,
+   22,
+   1);
+   var darkGreen = A4(RGBA,
+   78,
+   154,
+   6,
+   1);
+   var lightBlue = A4(RGBA,
+   114,
+   159,
+   207,
+   1);
+   var blue = A4(RGBA,
+   52,
+   101,
+   164,
+   1);
+   var darkBlue = A4(RGBA,
+   32,
+   74,
+   135,
+   1);
+   var lightPurple = A4(RGBA,
+   173,
+   127,
+   168,
+   1);
+   var purple = A4(RGBA,
+   117,
+   80,
+   123,
+   1);
+   var darkPurple = A4(RGBA,
+   92,
+   53,
+   102,
+   1);
+   var lightBrown = A4(RGBA,
+   233,
+   185,
+   110,
+   1);
+   var brown = A4(RGBA,
+   193,
+   125,
+   17,
+   1);
+   var darkBrown = A4(RGBA,
+   143,
+   89,
+   2,
+   1);
+   var black = A4(RGBA,0,0,0,1);
+   var white = A4(RGBA,
+   255,
+   255,
+   255,
+   1);
+   var lightGrey = A4(RGBA,
+   238,
+   238,
+   236,
+   1);
+   var grey = A4(RGBA,
+   211,
+   215,
+   207,
+   1);
+   var darkGrey = A4(RGBA,
+   186,
+   189,
+   182,
+   1);
+   var lightGray = A4(RGBA,
+   238,
+   238,
+   236,
+   1);
+   var gray = A4(RGBA,
+   211,
+   215,
+   207,
+   1);
+   var darkGray = A4(RGBA,
+   186,
+   189,
+   182,
+   1);
+   var lightCharcoal = A4(RGBA,
+   136,
+   138,
+   133,
+   1);
+   var charcoal = A4(RGBA,
+   85,
+   87,
+   83,
+   1);
+   var darkCharcoal = A4(RGBA,
+   46,
+   52,
+   54,
+   1);
+   _elm.Color.values = {_op: _op
+                       ,rgb: rgb
+                       ,rgba: rgba
+                       ,hsl: hsl
+                       ,hsla: hsla
+                       ,greyscale: greyscale
+                       ,grayscale: grayscale
+                       ,complement: complement
+                       ,linear: linear
+                       ,radial: radial
+                       ,toRgb: toRgb
+                       ,toHsl: toHsl
+                       ,red: red
+                       ,orange: orange
+                       ,yellow: yellow
+                       ,green: green
+                       ,blue: blue
+                       ,purple: purple
+                       ,brown: brown
+                       ,lightRed: lightRed
+                       ,lightOrange: lightOrange
+                       ,lightYellow: lightYellow
+                       ,lightGreen: lightGreen
+                       ,lightBlue: lightBlue
+                       ,lightPurple: lightPurple
+                       ,lightBrown: lightBrown
+                       ,darkRed: darkRed
+                       ,darkOrange: darkOrange
+                       ,darkYellow: darkYellow
+                       ,darkGreen: darkGreen
+                       ,darkBlue: darkBlue
+                       ,darkPurple: darkPurple
+                       ,darkBrown: darkBrown
+                       ,white: white
+                       ,lightGrey: lightGrey
+                       ,grey: grey
+                       ,darkGrey: darkGrey
+                       ,lightCharcoal: lightCharcoal
+                       ,charcoal: charcoal
+                       ,darkCharcoal: darkCharcoal
+                       ,black: black
+                       ,lightGray: lightGray
+                       ,gray: gray
+                       ,darkGray: darkGray};
+   return _elm.Color.values;
+};

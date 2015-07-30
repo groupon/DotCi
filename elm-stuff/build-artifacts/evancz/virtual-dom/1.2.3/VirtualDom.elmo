@@ -1,0 +1,42 @@
+Elm.VirtualDom = Elm.VirtualDom || {};
+Elm.VirtualDom.make = function (_elm) {
+   "use strict";
+   _elm.VirtualDom = _elm.VirtualDom || {};
+   if (_elm.VirtualDom.values)
+   return _elm.VirtualDom.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "VirtualDom",
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $Native$VirtualDom = Elm.Native.VirtualDom.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var lazy3 = $Native$VirtualDom.lazy3;
+   var lazy2 = $Native$VirtualDom.lazy2;
+   var lazy = $Native$VirtualDom.lazy;
+   var on = $Native$VirtualDom.on;
+   var attribute = $Native$VirtualDom.attribute;
+   var property = $Native$VirtualDom.property;
+   var Property = {ctor: "Property"};
+   var fromElement = $Native$VirtualDom.fromElement;
+   var toElement = $Native$VirtualDom.toElement;
+   var text = $Native$VirtualDom.text;
+   var node = $Native$VirtualDom.node;
+   var Node = {ctor: "Node"};
+   _elm.VirtualDom.values = {_op: _op
+                            ,Node: Node
+                            ,node: node
+                            ,text: text
+                            ,toElement: toElement
+                            ,fromElement: fromElement
+                            ,Property: Property
+                            ,property: property
+                            ,attribute: attribute
+                            ,on: on
+                            ,lazy: lazy
+                            ,lazy2: lazy2
+                            ,lazy3: lazy3};
+   return _elm.VirtualDom.values;
+};

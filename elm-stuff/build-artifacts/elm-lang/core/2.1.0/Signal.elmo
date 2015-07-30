@@ -1,0 +1,144 @@
+Elm.Signal = Elm.Signal || {};
+Elm.Signal.make = function (_elm) {
+   "use strict";
+   _elm.Signal = _elm.Signal || {};
+   if (_elm.Signal.values)
+   return _elm.Signal.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Signal",
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Native$Signal = Elm.Native.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var send = F2(function (_v0,
+   value) {
+      return function () {
+         switch (_v0.ctor)
+         {case "Address":
+            return A2($Task.onError,
+              _v0._0(value),
+              function (_v3) {
+                 return function () {
+                    return $Task.succeed({ctor: "_Tuple0"});
+                 }();
+              });}
+         _U.badCase($moduleName,
+         "between lines 370 and 371");
+      }();
+   });
+   var Message = function (a) {
+      return {ctor: "Message"
+             ,_0: a};
+   };
+   var message = F2(function (_v5,
+   value) {
+      return function () {
+         switch (_v5.ctor)
+         {case "Address":
+            return Message(_v5._0(value));}
+         _U.badCase($moduleName,
+         "on line 352, column 5 to 24");
+      }();
+   });
+   var mailbox = $Native$Signal.mailbox;
+   var Address = function (a) {
+      return {ctor: "Address"
+             ,_0: a};
+   };
+   var forwardTo = F2(function (_v8,
+   f) {
+      return function () {
+         switch (_v8.ctor)
+         {case "Address":
+            return Address(function (x) {
+                 return _v8._0(f(x));
+              });}
+         _U.badCase($moduleName,
+         "on line 339, column 5 to 29");
+      }();
+   });
+   var Mailbox = F2(function (a,
+   b) {
+      return {_: {}
+             ,address: a
+             ,signal: b};
+   });
+   var sampleOn = $Native$Signal.sampleOn;
+   var dropRepeats = $Native$Signal.dropRepeats;
+   var filterMap = $Native$Signal.filterMap;
+   var filter = F3(function (isOk,
+   base,
+   signal) {
+      return A3(filterMap,
+      function (value) {
+         return isOk(value) ? $Maybe.Just(value) : $Maybe.Nothing;
+      },
+      base,
+      signal);
+   });
+   var merge = F2(function (left,
+   right) {
+      return A3($Native$Signal.genericMerge,
+      $Basics.always,
+      left,
+      right);
+   });
+   var mergeMany = function (signalList) {
+      return function () {
+         var _v11 = $List.reverse(signalList);
+         switch (_v11.ctor)
+         {case "::":
+            return A3($List.foldl,
+              merge,
+              _v11._0,
+              _v11._1);
+            case "[]":
+            return $Debug.crash("mergeMany was given an empty list!");}
+         _U.badCase($moduleName,
+         "between lines 177 and 197");
+      }();
+   };
+   var foldp = $Native$Signal.foldp;
+   var map5 = $Native$Signal.map5;
+   var map4 = $Native$Signal.map4;
+   var map3 = $Native$Signal.map3;
+   var map2 = $Native$Signal.map2;
+   _op["~"] = F2(function (funcs,
+   args) {
+      return A3(map2,
+      F2(function (f,v) {
+         return f(v);
+      }),
+      funcs,
+      args);
+   });
+   var map = $Native$Signal.map;
+   _op["<~"] = map;
+   var constant = $Native$Signal.constant;
+   var Signal = {ctor: "Signal"};
+   _elm.Signal.values = {_op: _op
+                        ,merge: merge
+                        ,mergeMany: mergeMany
+                        ,map: map
+                        ,map2: map2
+                        ,map3: map3
+                        ,map4: map4
+                        ,map5: map5
+                        ,constant: constant
+                        ,dropRepeats: dropRepeats
+                        ,filter: filter
+                        ,filterMap: filterMap
+                        ,sampleOn: sampleOn
+                        ,foldp: foldp
+                        ,mailbox: mailbox
+                        ,send: send
+                        ,message: message
+                        ,forwardTo: forwardTo
+                        ,Mailbox: Mailbox};
+   return _elm.Signal.values;
+};

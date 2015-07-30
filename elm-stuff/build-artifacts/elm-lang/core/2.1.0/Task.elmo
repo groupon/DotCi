@@ -1,0 +1,225 @@
+Elm.Task = Elm.Task || {};
+Elm.Task.make = function (_elm) {
+   "use strict";
+   _elm.Task = _elm.Task || {};
+   if (_elm.Task.values)
+   return _elm.Task.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Task",
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Native$Task = Elm.Native.Task.make(_elm),
+   $Result = Elm.Result.make(_elm);
+   var sleep = $Native$Task.sleep;
+   var spawn = $Native$Task.spawn;
+   var ThreadID = function (a) {
+      return {ctor: "ThreadID"
+             ,_0: a};
+   };
+   var onError = $Native$Task.catch_;
+   var andThen = $Native$Task.andThen;
+   var fail = $Native$Task.fail;
+   var mapError = F2(function (f,
+   promise) {
+      return A2(onError,
+      promise,
+      function (err) {
+         return fail(f(err));
+      });
+   });
+   var succeed = $Native$Task.succeed;
+   var map = F2(function (func,
+   promiseA) {
+      return A2(andThen,
+      promiseA,
+      function (a) {
+         return succeed(func(a));
+      });
+   });
+   var map2 = F3(function (func,
+   promiseA,
+   promiseB) {
+      return A2(andThen,
+      promiseA,
+      function (a) {
+         return A2(andThen,
+         promiseB,
+         function (b) {
+            return succeed(A2(func,a,b));
+         });
+      });
+   });
+   var map3 = F4(function (func,
+   promiseA,
+   promiseB,
+   promiseC) {
+      return A2(andThen,
+      promiseA,
+      function (a) {
+         return A2(andThen,
+         promiseB,
+         function (b) {
+            return A2(andThen,
+            promiseC,
+            function (c) {
+               return succeed(A3(func,
+               a,
+               b,
+               c));
+            });
+         });
+      });
+   });
+   var map4 = F5(function (func,
+   promiseA,
+   promiseB,
+   promiseC,
+   promiseD) {
+      return A2(andThen,
+      promiseA,
+      function (a) {
+         return A2(andThen,
+         promiseB,
+         function (b) {
+            return A2(andThen,
+            promiseC,
+            function (c) {
+               return A2(andThen,
+               promiseD,
+               function (d) {
+                  return succeed(A4(func,
+                  a,
+                  b,
+                  c,
+                  d));
+               });
+            });
+         });
+      });
+   });
+   var map5 = F6(function (func,
+   promiseA,
+   promiseB,
+   promiseC,
+   promiseD,
+   promiseE) {
+      return A2(andThen,
+      promiseA,
+      function (a) {
+         return A2(andThen,
+         promiseB,
+         function (b) {
+            return A2(andThen,
+            promiseC,
+            function (c) {
+               return A2(andThen,
+               promiseD,
+               function (d) {
+                  return A2(andThen,
+                  promiseE,
+                  function (e) {
+                     return succeed(A5(func,
+                     a,
+                     b,
+                     c,
+                     d,
+                     e));
+                  });
+               });
+            });
+         });
+      });
+   });
+   var andMap = F2(function (promiseFunc,
+   promiseValue) {
+      return A2(andThen,
+      promiseFunc,
+      function (func) {
+         return A2(andThen,
+         promiseValue,
+         function (value) {
+            return succeed(func(value));
+         });
+      });
+   });
+   var sequence = function (promises) {
+      return function () {
+         switch (promises.ctor)
+         {case "::": return A3(map2,
+              F2(function (x,y) {
+                 return A2($List._op["::"],
+                 x,
+                 y);
+              }),
+              promises._0,
+              sequence(promises._1));
+            case "[]":
+            return succeed(_L.fromArray([]));}
+         _U.badCase($moduleName,
+         "between lines 101 and 106");
+      }();
+   };
+   var toMaybe = function (task) {
+      return A2(onError,
+      A2(map,$Maybe.Just,task),
+      function (_v3) {
+         return function () {
+            return succeed($Maybe.Nothing);
+         }();
+      });
+   };
+   var fromMaybe = F2(function ($default,
+   maybe) {
+      return function () {
+         switch (maybe.ctor)
+         {case "Just":
+            return succeed(maybe._0);
+            case "Nothing":
+            return fail($default);}
+         _U.badCase($moduleName,
+         "between lines 139 and 141");
+      }();
+   });
+   var toResult = function (task) {
+      return A2(onError,
+      A2(map,$Result.Ok,task),
+      function (msg) {
+         return succeed($Result.Err(msg));
+      });
+   };
+   var fromResult = function (result) {
+      return function () {
+         switch (result.ctor)
+         {case "Err":
+            return fail(result._0);
+            case "Ok":
+            return succeed(result._0);}
+         _U.badCase($moduleName,
+         "between lines 151 and 153");
+      }();
+   };
+   var Task = {ctor: "Task"};
+   _elm.Task.values = {_op: _op
+                      ,succeed: succeed
+                      ,fail: fail
+                      ,map: map
+                      ,map2: map2
+                      ,map3: map3
+                      ,map4: map4
+                      ,map5: map5
+                      ,andMap: andMap
+                      ,sequence: sequence
+                      ,andThen: andThen
+                      ,onError: onError
+                      ,mapError: mapError
+                      ,toMaybe: toMaybe
+                      ,fromMaybe: fromMaybe
+                      ,toResult: toResult
+                      ,fromResult: fromResult
+                      ,spawn: spawn
+                      ,sleep: sleep};
+   return _elm.Task.values;
+};

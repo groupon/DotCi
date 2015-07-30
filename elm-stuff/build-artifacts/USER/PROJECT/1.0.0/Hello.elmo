@@ -1,0 +1,100 @@
+Elm.Hello = Elm.Hello || {};
+Elm.Hello.make = function (_elm) {
+   "use strict";
+   _elm.Hello = _elm.Hello || {};
+   if (_elm.Hello.values)
+   return _elm.Hello.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Hello",
+   $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
+   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Mouse = Elm.Mouse.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Window = Elm.Window.make(_elm);
+   var scene = F2(function (_v0,
+   locs) {
+      return function () {
+         switch (_v0.ctor)
+         {case "_Tuple2":
+            return function () {
+                 var drawPentagon = function (_v4) {
+                    return function () {
+                       switch (_v4.ctor)
+                       {case "_Tuple2":
+                          return $Graphics$Collage.rotate($Basics.toFloat(_v4._0))($Graphics$Collage.move({ctor: "_Tuple2"
+                                                                                                          ,_0: $Basics.toFloat(_v4._0) - $Basics.toFloat(_v0._0) / 2
+                                                                                                          ,_1: $Basics.toFloat(_v0._1) / 2 - $Basics.toFloat(_v4._1)})($Graphics$Collage.filled(A4($Color.hsla,
+                            $Basics.toFloat(_v4._0),
+                            1,
+                            0.5,
+                            0.7))(A2($Graphics$Collage.ngon,
+                            5,
+                            20))));}
+                       _U.badCase($moduleName,
+                       "between lines 34 and 37");
+                    }();
+                 };
+                 return $Graphics$Element.layers(_L.fromArray([A3($Graphics$Collage.collage,
+                                                              _v0._0,
+                                                              _v0._1,
+                                                              A2($List.map,
+                                                              drawPentagon,
+                                                              locs))
+                                                              ,$Graphics$Element.show("Click to stamp a pentagon.")]));
+              }();}
+         _U.badCase($moduleName,
+         "between lines 33 and 42");
+      }();
+   });
+   var events = A2($Signal._op["<~"],
+   $Maybe.Just,
+   A2($Signal.sampleOn,
+   $Mouse.clicks,
+   $Mouse.position));
+   var clickLocations = function () {
+      var update = F2(function (event,
+      locations) {
+         return function () {
+            switch (event.ctor)
+            {case "Just":
+               return A2($List._op["::"],
+                 event._0,
+                 locations);
+               case "Nothing":
+               return _L.fromArray([]);}
+            _U.badCase($moduleName,
+            "between lines 23 and 26");
+         }();
+      });
+      return A3($Signal.foldp,
+      update,
+      _L.fromArray([]),
+      events);
+   }();
+   var main = A3($Signal.map2,
+   scene,
+   $Window.dimensions,
+   clickLocations);
+   var count = Elm.Native.Port.make(_elm).outboundSignal("count",
+   function (v) {
+      return v;
+   },
+   A2($Signal.map,
+   $List.length,
+   clickLocations));
+   var reset = _L.fromArray([]);
+   _elm.Hello.values = {_op: _op
+                       ,reset: reset
+                       ,events: events
+                       ,clickLocations: clickLocations
+                       ,scene: scene
+                       ,main: main};
+   return _elm.Hello.values;
+};

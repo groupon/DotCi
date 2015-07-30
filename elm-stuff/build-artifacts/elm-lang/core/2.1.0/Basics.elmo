@@ -1,0 +1,178 @@
+Elm.Basics = Elm.Basics || {};
+Elm.Basics.make = function (_elm) {
+   "use strict";
+   _elm.Basics = _elm.Basics || {};
+   if (_elm.Basics.values)
+   return _elm.Basics.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Basics",
+   $Native$Basics = Elm.Native.Basics.make(_elm),
+   $Native$Show = Elm.Native.Show.make(_elm),
+   $Native$Utils = Elm.Native.Utils.make(_elm);
+   var uncurry = F2(function (f,
+   _v0) {
+      return function () {
+         switch (_v0.ctor)
+         {case "_Tuple2": return A2(f,
+              _v0._0,
+              _v0._1);}
+         _U.badCase($moduleName,
+         "on line 595, column 3 to 8");
+      }();
+   });
+   var curry = F3(function (f,
+   a,
+   b) {
+      return f({ctor: "_Tuple2"
+               ,_0: a
+               ,_1: b});
+   });
+   var flip = F3(function (f,b,a) {
+      return A2(f,a,b);
+   });
+   var snd = function (_v4) {
+      return function () {
+         switch (_v4.ctor)
+         {case "_Tuple2": return _v4._1;}
+         _U.badCase($moduleName,
+         "on line 573, column 3 to 4");
+      }();
+   };
+   var fst = function (_v8) {
+      return function () {
+         switch (_v8.ctor)
+         {case "_Tuple2": return _v8._0;}
+         _U.badCase($moduleName,
+         "on line 567, column 3 to 4");
+      }();
+   };
+   var always = F2(function (a,
+   _v12) {
+      return function () {
+         return a;
+      }();
+   });
+   var identity = function (x) {
+      return x;
+   };
+   _op["<|"] = F2(function (f,x) {
+      return f(x);
+   });
+   _op["|>"] = F2(function (x,f) {
+      return f(x);
+   });
+   _op[">>"] = F3(function (f,
+   g,
+   x) {
+      return g(f(x));
+   });
+   _op["<<"] = F3(function (g,
+   f,
+   x) {
+      return g(f(x));
+   });
+   _op["++"] = $Native$Utils.append;
+   var toString = $Native$Show.toString;
+   var isInfinite = $Native$Basics.isInfinite;
+   var isNaN = $Native$Basics.isNaN;
+   var toFloat = $Native$Basics.toFloat;
+   var ceiling = $Native$Basics.ceiling;
+   var floor = $Native$Basics.floor;
+   var truncate = $Native$Basics.truncate;
+   var round = $Native$Basics.round;
+   var otherwise = true;
+   var not = $Native$Basics.not;
+   var xor = $Native$Basics.xor;
+   _op["||"] = $Native$Basics.or;
+   _op["&&"] = $Native$Basics.and;
+   var max = $Native$Basics.max;
+   var min = $Native$Basics.min;
+   var GT = {ctor: "GT"};
+   var EQ = {ctor: "EQ"};
+   var LT = {ctor: "LT"};
+   var compare = $Native$Basics.compare;
+   _op[">="] = $Native$Basics.ge;
+   _op["<="] = $Native$Basics.le;
+   _op[">"] = $Native$Basics.gt;
+   _op["<"] = $Native$Basics.lt;
+   _op["/="] = $Native$Basics.neq;
+   _op["=="] = $Native$Basics.eq;
+   var e = $Native$Basics.e;
+   var pi = $Native$Basics.pi;
+   var clamp = $Native$Basics.clamp;
+   var logBase = $Native$Basics.logBase;
+   var abs = $Native$Basics.abs;
+   var negate = $Native$Basics.negate;
+   var sqrt = $Native$Basics.sqrt;
+   var atan2 = $Native$Basics.atan2;
+   var atan = $Native$Basics.atan;
+   var asin = $Native$Basics.asin;
+   var acos = $Native$Basics.acos;
+   var tan = $Native$Basics.tan;
+   var sin = $Native$Basics.sin;
+   var cos = $Native$Basics.cos;
+   _op["^"] = $Native$Basics.exp;
+   _op["%"] = $Native$Basics.mod;
+   var rem = $Native$Basics.rem;
+   _op["//"] = $Native$Basics.div;
+   _op["/"] = $Native$Basics.floatDiv;
+   _op["*"] = $Native$Basics.mul;
+   _op["-"] = $Native$Basics.sub;
+   _op["+"] = $Native$Basics.add;
+   var toPolar = $Native$Basics.toPolar;
+   var fromPolar = $Native$Basics.fromPolar;
+   var turns = $Native$Basics.turns;
+   var degrees = $Native$Basics.degrees;
+   var radians = function (t) {
+      return t;
+   };
+   _elm.Basics.values = {_op: _op
+                        ,max: max
+                        ,min: min
+                        ,compare: compare
+                        ,not: not
+                        ,xor: xor
+                        ,otherwise: otherwise
+                        ,rem: rem
+                        ,negate: negate
+                        ,abs: abs
+                        ,sqrt: sqrt
+                        ,clamp: clamp
+                        ,logBase: logBase
+                        ,e: e
+                        ,pi: pi
+                        ,cos: cos
+                        ,sin: sin
+                        ,tan: tan
+                        ,acos: acos
+                        ,asin: asin
+                        ,atan: atan
+                        ,atan2: atan2
+                        ,round: round
+                        ,floor: floor
+                        ,ceiling: ceiling
+                        ,truncate: truncate
+                        ,toFloat: toFloat
+                        ,degrees: degrees
+                        ,radians: radians
+                        ,turns: turns
+                        ,toPolar: toPolar
+                        ,fromPolar: fromPolar
+                        ,isNaN: isNaN
+                        ,isInfinite: isInfinite
+                        ,toString: toString
+                        ,fst: fst
+                        ,snd: snd
+                        ,identity: identity
+                        ,always: always
+                        ,flip: flip
+                        ,curry: curry
+                        ,uncurry: uncurry
+                        ,LT: LT
+                        ,EQ: EQ
+                        ,GT: GT};
+   return _elm.Basics.values;
+};

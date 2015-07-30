@@ -1,0 +1,73 @@
+Elm.Maybe = Elm.Maybe || {};
+Elm.Maybe.make = function (_elm) {
+   "use strict";
+   _elm.Maybe = _elm.Maybe || {};
+   if (_elm.Maybe.values)
+   return _elm.Maybe.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Maybe";
+   var withDefault = F2(function ($default,
+   maybe) {
+      return function () {
+         switch (maybe.ctor)
+         {case "Just": return maybe._0;
+            case "Nothing":
+            return $default;}
+         _U.badCase($moduleName,
+         "between lines 45 and 56");
+      }();
+   });
+   var Nothing = {ctor: "Nothing"};
+   var oneOf = function (maybes) {
+      return function () {
+         switch (maybes.ctor)
+         {case "::": return function () {
+                 switch (maybes._0.ctor)
+                 {case "Just": return maybes._0;
+                    case "Nothing":
+                    return oneOf(maybes._1);}
+                 _U.badCase($moduleName,
+                 "between lines 64 and 73");
+              }();
+            case "[]": return Nothing;}
+         _U.badCase($moduleName,
+         "between lines 59 and 73");
+      }();
+   };
+   var andThen = F2(function (maybeValue,
+   callback) {
+      return function () {
+         switch (maybeValue.ctor)
+         {case "Just":
+            return callback(maybeValue._0);
+            case "Nothing": return Nothing;}
+         _U.badCase($moduleName,
+         "between lines 110 and 112");
+      }();
+   });
+   var Just = function (a) {
+      return {ctor: "Just",_0: a};
+   };
+   var map = F2(function (f,
+   maybe) {
+      return function () {
+         switch (maybe.ctor)
+         {case "Just":
+            return Just(f(maybe._0));
+            case "Nothing": return Nothing;}
+         _U.badCase($moduleName,
+         "between lines 76 and 107");
+      }();
+   });
+   _elm.Maybe.values = {_op: _op
+                       ,andThen: andThen
+                       ,map: map
+                       ,withDefault: withDefault
+                       ,oneOf: oneOf
+                       ,Just: Just
+                       ,Nothing: Nothing};
+   return _elm.Maybe.values;
+};

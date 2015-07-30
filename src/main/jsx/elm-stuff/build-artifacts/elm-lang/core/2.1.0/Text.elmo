@@ -1,0 +1,86 @@
+Elm.Text = Elm.Text || {};
+Elm.Text.make = function (_elm) {
+   "use strict";
+   _elm.Text = _elm.Text || {};
+   if (_elm.Text.values)
+   return _elm.Text.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Text",
+   $Color = Elm.Color.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Native$Text = Elm.Native.Text.make(_elm);
+   var line = $Native$Text.line;
+   var italic = $Native$Text.italic;
+   var bold = $Native$Text.bold;
+   var color = $Native$Text.color;
+   var height = $Native$Text.height;
+   var link = $Native$Text.link;
+   var monospace = $Native$Text.monospace;
+   var typeface = $Native$Text.typeface;
+   var style = $Native$Text.style;
+   var append = $Native$Text.append;
+   var fromString = $Native$Text.fromString;
+   var empty = fromString("");
+   var concat = function (texts) {
+      return A3($List.foldr,
+      append,
+      empty,
+      texts);
+   };
+   var join = F2(function (seperator,
+   texts) {
+      return concat(A2($List.intersperse,
+      seperator,
+      texts));
+   });
+   var defaultStyle = {_: {}
+                      ,bold: false
+                      ,color: $Color.black
+                      ,height: $Maybe.Nothing
+                      ,italic: false
+                      ,line: $Maybe.Nothing
+                      ,typeface: _L.fromArray([])};
+   var Style = F6(function (a,
+   b,
+   c,
+   d,
+   e,
+   f) {
+      return {_: {}
+             ,bold: d
+             ,color: c
+             ,height: b
+             ,italic: e
+             ,line: f
+             ,typeface: a};
+   });
+   var Through = {ctor: "Through"};
+   var Over = {ctor: "Over"};
+   var Under = {ctor: "Under"};
+   var Text = {ctor: "Text"};
+   _elm.Text.values = {_op: _op
+                      ,fromString: fromString
+                      ,empty: empty
+                      ,append: append
+                      ,concat: concat
+                      ,join: join
+                      ,link: link
+                      ,style: style
+                      ,defaultStyle: defaultStyle
+                      ,typeface: typeface
+                      ,monospace: monospace
+                      ,height: height
+                      ,color: color
+                      ,bold: bold
+                      ,italic: italic
+                      ,line: line
+                      ,Style: Style
+                      ,Under: Under
+                      ,Over: Over
+                      ,Through: Through};
+   return _elm.Text.values;
+};

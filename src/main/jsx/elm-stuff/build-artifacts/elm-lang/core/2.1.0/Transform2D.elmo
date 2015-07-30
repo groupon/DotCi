@@ -1,0 +1,65 @@
+Elm.Transform2D = Elm.Transform2D || {};
+Elm.Transform2D.make = function (_elm) {
+   "use strict";
+   _elm.Transform2D = _elm.Transform2D || {};
+   if (_elm.Transform2D.values)
+   return _elm.Transform2D.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Transform2D",
+   $Native$Transform2D = Elm.Native.Transform2D.make(_elm);
+   var multiply = $Native$Transform2D.multiply;
+   var rotation = $Native$Transform2D.rotation;
+   var matrix = $Native$Transform2D.matrix;
+   var translation = F2(function (x,
+   y) {
+      return A6(matrix,
+      1,
+      0,
+      0,
+      1,
+      x,
+      y);
+   });
+   var scale = function (s) {
+      return A6(matrix,
+      s,
+      0,
+      0,
+      s,
+      0,
+      0);
+   };
+   var scaleX = function (x) {
+      return A6(matrix,
+      x,
+      0,
+      0,
+      1,
+      0,
+      0);
+   };
+   var scaleY = function (y) {
+      return A6(matrix,
+      1,
+      0,
+      0,
+      y,
+      0,
+      0);
+   };
+   var identity = $Native$Transform2D.identity;
+   var Transform2D = {ctor: "Transform2D"};
+   _elm.Transform2D.values = {_op: _op
+                             ,identity: identity
+                             ,matrix: matrix
+                             ,multiply: multiply
+                             ,rotation: rotation
+                             ,translation: translation
+                             ,scale: scale
+                             ,scaleX: scaleX
+                             ,scaleY: scaleY};
+   return _elm.Transform2D.values;
+};
