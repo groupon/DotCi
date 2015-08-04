@@ -10,6 +10,9 @@
     * Install docker: https://docs.docker.com/mac/started/
     * Install docker-compose: https://docs.docker.com/compose/install/
     * Run build `docker-compose build`
+* Prepare assets:
+  * Non-docker: `npm run build`
+  * Docker: `docker-compose run --rm plugin npm run build`
 * Run plugin
   * Non-docker: `mvn hpi:run`
   * Docker: `docker-compose up plugin`
