@@ -118,6 +118,7 @@ public class BuildConfiguration {
 
     public ShellCommands getCopyWorkDirIntoWorkspaceCommands(String run, String projectName) {
         ShellCommands copyCommands = new ShellCommands();
+		copyCommands.add("if [[ $(readlink sh) != *\"bash\"* ]]; then echo \"WARNING: Current target of /bin/sh is not bash, this might result in succesful build to be marked as a failure. $(ls -lah /bin/sh) \"; fi");
         copyCommands.add(String.format("if docker inspect %s_%s_1 &>/dev/null ; then containerName=%s_%s_1 ; else containerName=%s_%s_run_1 ; fi ; export containerName",projectName,run,projectName,run,projectName,run));
         copyCommands.add("export workingDir=`docker inspect -f '{{ .Config.WorkingDir }}' $containerName | sed -e 's|^/||g'`");
         copyCommands.add("stripComponents=0 ; if [ ! \"x\" == \"x$workingDir\" ]; then set +e ; (( stripComponents+=1 )) ; set -e ; fi ; export stripComponents");
