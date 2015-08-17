@@ -20,22 +20,18 @@ export default React.createClass({
   },
   render()  {
     return <span>
-      <paper-button id="currentBranchButton" onClick={this._onBranchChange} >
-        {this.state.currentSelection}<iron-icon  icon="hardware:keyboard-arrow-down"></iron-icon>
-      </paper-button>
-      <Dialog ref="branchListDialog" noButtons >
-        <div>
+      <paper-dropdown-menu  ref="branchMenu" label={this.state.currentSelection}>
+        <paper-menu className="dropdown-content">
           {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab))).toArray()}
           <paper-item>
             <paper-button onClick={this._addTab} ref="ca-addTab" >
               New <iron-icon  icon="add-circle"></iron-icon>
             </paper-button> 
           </paper-item>
-        </div>
-      </Dialog>
+        </paper-menu>
+      </paper-dropdown-menu> 
       {this._addTabDialog()}
-    </span>;
-
+    </span>
   },
   _onBranchChange(e){
     if(e.currentTarget && e.currentTarget.id==="currentBranchButton"){
@@ -51,7 +47,7 @@ export default React.createClass({
     return !contains(tab)(['master','All','Mine']);
   },
   _addTab(){
-    this.refs.branchListDialog.hide();
+    this.refs.branchMenu.getDOMNode().close();
     this.refs.addTabDialog.show();
   },
   _onTabSave(e){
@@ -76,7 +72,7 @@ export default React.createClass({
     this.props.flux.removeBranchTab(tab);
   },
   _onTabSelect(e){
-    this.refs.branchListDialog.hide();
+    this.refs.branchMenu.getDOMNode().close();
     this.setHash(e.currentTarget.getAttribute('data-tab'));
   },
   _getHistoryTab(tab,i,closable) {
