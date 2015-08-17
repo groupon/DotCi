@@ -24,7 +24,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
   <div id="nav" drawer="true" >
-    <paper-button>Meow</paper-button>
   </div>
   <paper-header-panel class="main" main="true" mode="waterfall">
     <st:include page="/com/groupon/jenkins/NewUi/header/header.jelly" />

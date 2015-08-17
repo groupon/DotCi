@@ -36,7 +36,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
         <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes"/>
 
-        <script src="${resURL}/plugin/DotCi/js/webcomponentsjs-0.7.0/webcomponents.js"></script>
+        <script src="${resURL}/plugin/DotCi/js/webcomponentsjs-0.7.0/webcomponents-lite.min.js"></script>
         <link rel="icon" href="${resURL}/plugin/DotCi/favicons/default.ico" type="image/vnd.microsoft.icon" />
 
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet"/>

@@ -31,7 +31,6 @@
             <paper-drawer-panel id="drawerPanel" >
                 <st:include page="/com/groupon/jenkins/NewUi/body.jelly" />
             </paper-drawer-panel>
-            <script src="http://localhost:3000/assets/dotci.js"/>
         </body>
     </j:jelly>
 </html>

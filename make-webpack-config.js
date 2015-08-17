@@ -49,10 +49,6 @@ module.exports = function(config){
           loader: 'style-loader!css-loader!postcss-loader' 
         },
         {
-          test: /\.elm?$/,
-          loader: 'elm-webpack'
-        },
-        {
           test: /\.jsx?$/,
           exclude: /node_modules/,
           loaders: config.debug? ['react-hot', 'babel-loader']: ['babel-loader']
