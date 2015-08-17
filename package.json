@@ -17,6 +17,7 @@
     "chart.js": "^1.0.2",
     "classnames": "^1.2.0",
     "css-loader": "^0.14.0",
+    "elm-webpack-loader": "^0.2.0",
     "enquire.js": "^2.1.1",
     "eslint": "^0.18.0",
     "extract-text-webpack-plugin": "^0.3.8",
@@ -67,6 +68,5 @@
     "watch": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.config.dev.js --colors --progress --hot --inline  --port  3000",
     "test": "karma start",
     "vulcanize": "pushd src/main/webapp && bower install && $(npm bin)/vulcanize webcomponent-imports.html > webcomponent-imports-vulcanized.html && popd"
-
   }
 }
