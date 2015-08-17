@@ -101,7 +101,7 @@ public abstract class BuildCause extends Cause {
             this.message = commit.getCommitShortInfo().getMessage();
             this.committerName = commit.getCommitShortInfo().getCommitter().getName();
             this.committerEmail= commit.getCommitShortInfo().getCommitter().getEmail();
-            this.commitUrl = commit.getOwner().getUrl()+"/commit/"+sha;
+            this.commitUrl = commit.getOwner().getHtmlUrl()+"/commit/"+sha;
             this.branch = branch.toString();
             this.avatarUrl = null;
         }
