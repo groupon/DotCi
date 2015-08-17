@@ -66,6 +66,6 @@
     "lint": "eslint src/main/jsx/**/*",
     "watch": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.config.dev.js --colors --progress --hot --inline  --port  3000",
     "test": "karma start",
-    "vulcanize": "curdir=$(pwd) && cd src/main/webapp && bower install --config.interactive=false && $(npm bin)/vulcanize webcomponent-imports.html > webcomponent-imports-vulcanized.html && cd $curdir"
+    "vulcanize": "bower install --config.interactive=false && $(npm bin)/vulcanize src/main/webapp/webcomponent-imports.html > src/main/webapp/webcomponent-imports-vulcanized.html"
   }
 }
