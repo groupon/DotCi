@@ -1,0 +1,575 @@
+<!DOCTYPE HTML>
+<html lang="en" >
+    
+    <head>
+        
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Install Packages | DotCi - Jenkins github integration, .ci.yml.</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 2.1.0">
+        
+        
+        <meta name="HandheldFriendly" content="true"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../../gitbook/images/apple-touch-icon-precomposed-152.png">
+        <link rel="shortcut icon" href="../../../gitbook/images/favicon.ico" type="image/x-icon">
+        
+    <link rel="stylesheet" href="../../../gitbook/style.css">
+    
+    
+
+        
+    
+    
+    <link rel="next" href="../../../usage/ci_yml/Templating.html" />
+    
+    
+    <link rel="prev" href="../../../usage/ci_yml/build_types/DockerCompose.html" />
+    
+
+        
+    </head>
+    <body>
+        
+        
+    <div class="book" data-level="2.3.1.2" data-basepath="../../.." data-revision="Tue Aug 18 2015 11:11:31 GMT-0500 (CDT)">
+    
+
+<div class="book-summary">
+    <div class="book-search">
+        <input type="text" placeholder="Type to search" class="form-control" />
+    </div>
+    <ul class="summary">
+        
+        
+        
+        
+
+        
+
+        
+    
+        <li class="chapter " data-level="0" data-path="index.html">
+            
+                
+                    <a href="../../../index.html">
+                        <i class="fa fa-check"></i>
+                        
+                        Introduction
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1" data-path="installation/index.html">
+            
+                
+                    <a href="../../../installation/index.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.</b>
+                        
+                        Installation
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1" data-path="installation/PreRequisites.html">
+            
+                
+                    <a href="../../../installation/PreRequisites.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.1.</b>
+                        
+                        Pre-Requisites
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="installation/ConfigureMaster.html">
+            
+                
+                    <a href="../../../installation/ConfigureMaster.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.2.</b>
+                        
+                        Configure Master
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="installation/DockerSlave.html">
+            
+                
+                    <a href="../../../installation/DockerSlave.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.3.</b>
+                        
+                        Docker Slave
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="installation/NonDockerSlave.html">
+            
+                
+                    <a href="../../../installation/NonDockerSlave.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.4.</b>
+                        
+                        Non-Docker Slave
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2" data-path="usage/index.html">
+            
+                
+                    <a href="../../../usage/index.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.</b>
+                        
+                        User Guide
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.1" data-path="usage/CreateNewJob.html">
+            
+                
+                    <a href="../../../usage/CreateNewJob.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.1.</b>
+                        
+                        Create new DotCI Job
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="usage/UI.html">
+            
+                
+                    <a href="../../../usage/UI.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.2.</b>
+                        
+                        UI
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="usage/ci_yml/index.html">
+            
+                
+                    <a href="../../../usage/ci_yml/index.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.</b>
+                        
+                        .ci.yml
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.3.1" data-path="usage/ci_yml/build_types/index.html">
+            
+                
+                    <a href="../../../usage/ci_yml/build_types/index.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.1.</b>
+                        
+                        Build Types
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.3.1.1" data-path="usage/ci_yml/build_types/DockerCompose.html">
+            
+                
+                    <a href="../../../usage/ci_yml/build_types/DockerCompose.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.1.1.</b>
+                        
+                        Docker Compose
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.3.1.2" data-path="usage/ci_yml/build_types/InstallPackages.html">
+            
+                
+                    <a href="../../../usage/ci_yml/build_types/InstallPackages.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.1.2.</b>
+                        
+                        Install Packages
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3.2" data-path="usage/ci_yml/Templating.html">
+            
+                
+                    <a href="../../../usage/ci_yml/Templating.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.2.</b>
+                        
+                        Templating
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3.3" data-path="usage/ci_yml/Plugins.html">
+            
+                
+                    <a href="../../../usage/ci_yml/Plugins.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.3.</b>
+                        
+                        Plugins
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3.4" data-path="usage/ci_yml/Notifications.html">
+            
+                
+                    <a href="../../../usage/ci_yml/Notifications.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.4.</b>
+                        
+                        Notifications
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="usage/Shortcuts.html">
+            
+                
+                    <a href="../../../usage/Shortcuts.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.4.</b>
+                        
+                        Build URLs
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3" data-path="DevelopmentSetup.html">
+            
+                
+                    <a href="../../../DevelopmentSetup.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.</b>
+                        
+                        Development Setup
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4" data-path="Extending.html">
+            
+                
+                    <a href="../../../Extending.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.</b>
+                        
+                        Extending DotCi
+                    </a>
+                
+            
+            
+        </li>
+    
+
+
+        
+        <li class="divider"></li>
+        <li>
+            <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+                Published with GitBook
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="book-header">
+    <!-- Actions Left -->
+    <a href="#" class="btn pull-left toggle-summary" aria-label="Table of Contents"><i class="fa fa-align-justify"></i></a>
+    <a href="#" class="btn pull-left toggle-search" aria-label="Search"><i class="fa fa-search"></i></a>
+    
+    <div id="font-settings-wrapper" class="dropdown pull-left">
+        <a href="#" class="btn toggle-dropdown" aria-label="Font Settings"><i class="fa fa-font"></i>
+        </a>
+        <div class="dropdown-menu font-settings">
+    <div class="dropdown-caret">
+        <span class="caret-outer"></span>
+        <span class="caret-inner"></span>
+    </div>
+
+    <div class="buttons">
+        <button type="button" id="reduce-font-size" class="button size-2">A</button>
+        <button type="button" id="enlarge-font-size" class="button size-2">A</button>
+    </div>
+
+    <div class="buttons font-family-list">
+        <button type="button" data-font="0" class="button">Serif</button>
+        <button type="button" data-font="1" class="button">Sans</button>
+    </div>
+
+    <div class="buttons color-theme-list">
+        <button type="button" id="color-theme-preview-0" class="button size-3" data-theme="0">White</button>
+        <button type="button" id="color-theme-preview-1" class="button size-3" data-theme="1">Sepia</button>
+        <button type="button" id="color-theme-preview-2" class="button size-3" data-theme="2">Night</button>
+    </div>
+</div>
+
+    </div>
+
+    <!-- Actions Right -->
+    
+    <div class="dropdown pull-right">
+        <a href="#" class="btn toggle-dropdown" aria-label="Share"><i class="fa fa-share-alt"></i>
+        </a>
+        <div class="dropdown-menu font-settings dropdown-left">
+            <div class="dropdown-caret">
+                <span class="caret-outer"></span>
+                <span class="caret-inner"></span>
+            </div>
+            <div class="buttons">
+                <button type="button" data-sharing="twitter" class="button">
+                    Share on Twitter
+                </button>
+                <button type="button" data-sharing="google-plus" class="button">
+                    Share on Google
+                </button>
+                <button type="button" data-sharing="facebook" class="button">
+                    Share on Facebook
+                </button>
+                <button type="button" data-sharing="weibo" class="button">
+                    Share on Weibo
+                </button>
+                <button type="button" data-sharing="instapaper" class="button">
+                    Share on Instapaper
+                </button>
+            </div>
+        </div>
+    </div>
+    
+
+    
+    <a href="#" target="_blank" class="btn pull-right google-plus-sharing-link sharing-link" data-sharing="google-plus" aria-label="Google"><i class="fa fa-google-plus"></i></a>
+    
+    
+    <a href="#" target="_blank" class="btn pull-right facebook-sharing-link sharing-link" data-sharing="facebook" aria-label="Facebook"><i class="fa fa-facebook"></i></a>
+    
+    
+    <a href="#" target="_blank" class="btn pull-right twitter-sharing-link sharing-link" data-sharing="twitter" aria-label="Twitter"><i class="fa fa-twitter"></i></a>
+    
+    
+    
+
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../../../" >DotCi - Jenkins github integration, .ci.yml.</a>
+    </h1>
+</div>
+
+            <div class="page-wrapper" tabindex="-1">
+                <div class="page-inner">
+                
+                
+                    <section class="normal" id="section-">
+                    
+                        <h1 id="install-packages">Install Packages</h1>
+<p>This build type automatically uses a pre-defined <code>.ci.yml</code> template based on the
+language that is autodetected. A repo provided <code>.ci.yml</code> can be used
+to <em>override</em> settings in various sections. The resultant build will be a
+merge between the pre-defined template and any overriden settings.</p>
+<p>The <code>.ci.yml</code> file is divided into four major sections:</p>
+<ul>
+<li><a href="#environment-section">Environment Section</a></li>
+<li><a href="#build-section">Build Section</a></li>
+<li><a href="../Plugins.html">Plugins Section</a></li>
+<li><a href="../Notifications.html">Notifications Section</a></li>
+</ul>
+<h3 id="-environment-section"><code>environment</code> Section</h3>
+<pre><code class="lang-yaml">environment:
+  # These vars are exported in shell before build starts
+  vars:
+     BUNDLE_WITHOUT: production:development
+
+  # Single value defining the target language
+  # Acceptable values are:
+  #  clojure, coffeescript, go, java, javascript, ruby
+  language: ruby
+
+  # Single version or list of versions to run build within;
+  # multiple values results in a matrix build
+  language_versions:
+    - ree-1.8.7
+    - mri-1.8.7
+
+  # Extra arguments that passed into install_packages call
+  packages:
+    - memcached-1.4.5
+</code></pre>
+<h3 id="-build-section"><code>build</code> Section</h3>
+<pre><code class="lang-yaml">build:
+  # Skips the build if true
+  skip: true
+
+  # Single command or list of commands to run before tests
+  # (run serially on each matrix job)
+  before:
+    - gem install -y rubygems-update
+    - update_rubygems
+
+  # Single command or list of commands to get diagnostics
+  info:
+    - bundle --version
+
+  # Single command to run tests
+  run: rake test
+  # Multiple commands to run tests
+  # (run serially on each matrix job)
+  run:
+    - rake test
+    - rake cucumber
+  # Parallel tests
+  # (run each hash map entry in parallel for a given matrix configuration)
+  run:
+    unit:        bundle exec rake spec:units
+    integration: bundle exec rake spec:integration
+    # Runs each command serially
+    acceptance:
+      - bundle exec rake cucumber
+      - bundle exec rake cucumber:javascript
+
+  # Single command or list of commands to run after tests
+  # (run serially on each matrix job)
+  after: cap deploy staging
+</code></pre>
+<h3 id="-plugins-section"><code>plugins</code> Section</h3>
+<p>See <a href="../Plugins.html">Plugins</a></p>
+<h3 id="-notifications-section"><code>notifications</code> Section</h3>
+<p>See <a href="../Notifications.html">Notifications</a></p>
+<h2 id="examples">Examples</h2>
+<h3 id="parallelization-output">Parallelization Output</h3>
+<p><img src="screenshots/script-parallized.png" alt="dotci setup"></p>
+
+                    
+                    </section>
+                
+                
+                </div>
+            </div>
+        </div>
+
+        
+        <a href="../../../usage/ci_yml/build_types/DockerCompose.html" class="navigation navigation-prev " aria-label="Previous page: Docker Compose"><i class="fa fa-angle-left"></i></a>
+        
+        
+        <a href="../../../usage/ci_yml/Templating.html" class="navigation navigation-next " aria-label="Next page: Templating"><i class="fa fa-angle-right"></i></a>
+        
+    </div>
+</div>
+
+        
+<script src="../../../gitbook/app.js"></script>
+
+<script>
+require(["gitbook"], function(gitbook) {
+    var config = {"fontSettings":{"theme":null,"family":"sans","size":2}};
+    gitbook.start(config);
+});
+</script>
+
+        
+    </body>
+    
+</html>
