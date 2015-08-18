@@ -1,0 +1,7 @@
+notifications:
+  - pusher_email
+  - email:
+    - one
+    - two
+    - three
+
