@@ -81,15 +81,15 @@ export default React.createClass({
           </span>
           <span>  
             <div>#<Router.Link  className="build-row--number" to={'job-widgets'} params={{widget: number}}>{number}{result.toLowerCase()}</Router.Link></div>
-            <div><i className="fa fa-github"></i><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>
+            <div><i className="octicon octicon-mark-github"></i><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>
           </span>
           <span>
             <div>
-              <i className="fa fa-clock-o"></i>
+              <iron-icon icon="alarm" />
               <span className="detail">{durationString}</span>
             </div>
             <div>
-              <i className="fa fa-calendar"></i>
+              <iron-icon icon="view-day" />
               <span className="detail">{displayTime}</span>
             </div>
           </span>

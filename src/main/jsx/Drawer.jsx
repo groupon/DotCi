@@ -28,7 +28,7 @@ export default React.createClass( {
       <paper-toolbar id="drawerToolbar">
         <paper-icon-button  src={`${resURL}/logo.png`} disabled />
         <div className="title">{this._isCurrent()?"Current": "Recent"}</div>
-        <paper-icon-button onClick={this._onJobChange} icon={this._isCurrent()?"hardware:keyboard-arrow-down": "hardware:keyboard-arrow-up"}></paper-icon-button>
+        <paper-icon-button onClick={this._onJobChange} icon={this._isCurrent()?"expand-more": "expand-less"}></paper-icon-button>
       </paper-toolbar>
       {this._isCurrent()? this._currentMenu(): <RecentProjects flux ={this.props.flux}/>}
     </div>

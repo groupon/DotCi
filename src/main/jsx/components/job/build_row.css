@@ -25,9 +25,12 @@
 .full-width{
   width: 100%;
 }
+.build-row iron-icon {
+  width: 1.5vw;
+}
 .build-info{
   background-color: #FAFAF8;
-  font-size: 16px;
+  /* font-size: 16px; */
   color: #A6ADAD;
   > *{
     transition: background-color 1s ease-in;
@@ -69,7 +72,7 @@
   display: flex;
 
   >:nth-child(1){
-    width: 1.5%;
+    width: 2%;
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
     text-align: center;
@@ -122,9 +125,6 @@
   >:nth-child(4){
     text-align: left;
     width: 25%;
-           *{
-             margin-left: 0.5em;
-           }
-         }
-       }
+  }
+}
 

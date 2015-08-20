@@ -80,7 +80,7 @@ export default React.createClass({
       <paper-button data-tab={tab} onClick={this._onTabSelect}>
         {tab}
       </paper-button>
-      {closable?<div data-tab={tab} className="tab-close fa fa-times-circle-o" onClick={this._onTabRemove}></div>: ''}
+      {closable?<div data-tab={tab} className="tab-close" onClick={this._onTabRemove}><iron-icon icon="close"></iron-icon> </div>: ''}
     </paper-item>;
   }
 });

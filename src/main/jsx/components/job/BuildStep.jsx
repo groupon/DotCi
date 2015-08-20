@@ -18,7 +18,7 @@ export default React.createClass({
     this.props.onClick(parseInt(e.target.getAttribute('data-number')));
   },
   _arrow(){
-    return <i className="right-arrow fa fa-arrow-right"/>;
+    return <iron-icon icon="arrow-forward"/>
   },
   _dotCiStep(){
     return  this._isDownstreamBuild() ? this.props.build.get('parameters').filter(param => param.get('name')==='DOTCI_STEP').get(0).get('value'): this.props.build.get('number');

@@ -36,7 +36,7 @@ export default React.createClass( {
   _webNotifyCompletion(){
     const url = this.props.cancelUrl;
     if(simpleStorage.get(url)){
-      new Notification(`Build #${this.props.number} finished with ${this.props.result}`, {body:`${this.props.commit.get('message')}`, icon: "<i class='fa fa-bed'></i>"});
+      new Notification(`Build #${this.props.number} finished with ${this.props.result}`, {body:`${this.props.commit.get('message')}`, icon: "<iron-icon icon='done'></iron-icon>"});
       simpleStorage.deleteKey(url);
     }
   },
