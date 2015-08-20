@@ -8,8 +8,22 @@ import {OrderedMap,List} from 'immutable';
 require('./console.less');
 export default React.createClass({
   mixins: [LocationHashHelper ,LoadingHelper], 
+  getInitialState(){
+    return {logPinned: false}
+  },
   componentDidMount(){
     this._scrollToLine(this.selectedHash());
+    document.getElementById('mainContainer').addEventListener('scroll',this._onLogScroll);
+  },
+  componentWillUnmount() {
+    document.getElementById('mainContainer').removeEventListener('scroll',this._onLogScroll);
+  },
+  componentDidUpdate(){
+    if(this.state.logPinned){
+      this._scrollToBottom();
+    }else{
+      this._scrollToLine(this.selectedHash());
+    }
   },
   _onLocationHashChange(event){
     const [oldId, newId] = this.getHashIds(event);
@@ -24,28 +38,69 @@ export default React.createClass({
     return this.props.log && this.props.log.size > 1;
   },
   _render(){
-    return <span id="buildLog">
+    return <span  id="buildLog">
       {this._consoleHeader()}
-      <pre> {this._renderLog(this.props.log)} {this._spinner()} </pre>
+      <pre> 
+        <span ref="buildLog" >
+          {this._scrollButtons()}
+          {this._renderLog(this.props.log)} {this._spinner()} 
+        </span>
+      </pre>
       <span ref="bottom"/>
     </span>;
   },
   _spinner(){
     return this.props.buildResult === 'IN_PROGRESS'? <img src={loadingsvg} />: <span/>;
   },
+  _scrollButtons(){
+    const color = this.state.logPinned? "green": "#999" ; 
+    return ( <paper-button 
+      ref="pinLog" 
+      className="pinLog" 
+      id="pinLog" 
+      style = {{color}} 
+      onClick={this._onPinLog}>
+      <iron-icon icon="arrow-drop-down-circle"/>
+      <paper-tooltip  htmlFor="pinLog">Scroll to tail</paper-tooltip>
+    </paper-button>);
+  },
   _consoleHeader(){
     return <div id="console-header">
-      <paper-icon-button className="hint--left" data-hint="Full Log" style={{color: "white"}} onClick={this._fullLog} icon="reorder"></paper-icon-button>
-      <paper-icon-button className="hint--left" data-hint="Scroll To Bottom" style={{color: "white"}} onClick={this._scrollToBottom} icon="file-download"></paper-icon-button>
+      <paper-icon-button 
+        className="hint--left" 
+        data-hint="Full Log" 
+        style={{color: "white"}} 
+        onClick={this._fullLog} icon="reorder"></paper-icon-button>
     </div>
   },
   _fullLog(e){
     e.preventDefault();
     window.location = window.rootURL+"/"+this.props.url+"/consoleText";
   },
+  _setInitialTop(){
+    if(!this.intialTop){
+      this.intialTop = this.refs.buildLog.getDOMNode().getBoundingClientRect().top;
+    }
+  },
+
+  _onLogScroll(e){
+    this._setInitialTop();
+    const newPos = this.refs.buildLog.getDOMNode().getBoundingClientRect().top
+    const scroll =  this.intialTop - newPos;
+    // console.log(`Initial : ${this.intialTop}  newPos: ${newPos} scroll: ${Math.abs(scroll)}`);
+    this.refs.pinLog.getDOMNode().style.top= Math.abs(scroll)+"px"
+  },
+  _onPinLog(e){
+    this.setState({logPinned: !this.state.logPinned});
+    this._scrollToBottom(e);
+  },
   _scrollToBottom(e){
-    e.preventDefault();
+    if(e){
+      e.preventDefault();
+    }
+    this._setInitialTop();
     this.refs.bottom.getDOMNode().scrollIntoView();
+    this._onLogScroll();
   },
   _onLineSelect(event){
     if(event.target.tagName == 'A'){
@@ -60,9 +115,6 @@ export default React.createClass({
       if(line)
         line.scrollIntoView();
     }
-  },
-  componentDidUpdate(){
-    this._scrollToLine(this.selectedHash());
   },
   _isLineSelected(lineNumber){
     return `L${lineNumber}`  == this.selectedHash();
