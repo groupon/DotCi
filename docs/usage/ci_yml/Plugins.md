@@ -18,14 +18,12 @@ through the DotCi Plugin Framework. Any Build Type that respects the
 ```yaml
 ---
 plugins:
-  artifacts:
-    - file1.txt
-    - dist/file2.*
+  - artifacts: file1.txt,dist/file2.*
 ```
-This plugin configures Jenkin's default artifact archiver; it is
-essentially an array of the comma separated matchers to archive in the
-old settings. __NOTE: the artifacts must exist, there is no exposure of
-the Advanced options to ignore missing artifacts.__
+This plugin configures Jenkin's default artifact archiver; it is a
+comma-separated list of matchers to archive. __NOTE: the artifacts must
+exist, there is no exposure of the Advanced options to ignore missing
+artifacts.__
 
 See [ant fileset](http://ant.apache.org/manual/Types/fileset.html) for
 matcher specifications.
@@ -37,7 +35,7 @@ _NOTE: Configure your project's Build Environment: "Delete workspace before buil
 ```yaml
 ---
 plugins:
-  checkstyle
+  - checkstyle
 ```
 **FIXME: Describe file at `target/checkstyle-result.xml` or move out
 since not in base install**
@@ -47,7 +45,7 @@ since not in base install**
 ```yaml
 ---
 plugins:
-  cobertura
+  - cobertura
 ```
 **FIXME: Describe file at `target/site/cobertura/coverage.xml` or move
 out since not in base install**
@@ -57,11 +55,11 @@ out since not in base install**
 ```yaml
 ---
 plugins:
-  downstream_job:
-    on_result: <SUCCESS|UNSTABLE|FAILURE|NOT_BUILT|ABORTED> # From hudson.model.Result static types
-    foobar:
-      k1: v1
-      k2: v2
+  - downstream_job:
+      on_result: <SUCCESS|UNSTABLE|FAILURE|NOT_BUILT|ABORTED> # From hudson.model.Result static types
+      foobar:
+        k1: v1
+        k2: v2
 ```
 This triggers the job by the name of `foobar` when the current job's
 result matches the value of `on_result`, which comes from
@@ -74,7 +72,7 @@ job as its parameterized values.
 ```yaml
 ---
 plugins:
-  findbugs
+  - findbugs
 ```
 **FIXME: Describe file at `target/findbugs.xml` or move out since not in
 base install**
@@ -84,7 +82,7 @@ base install**
 ```yaml
 ---
 plugins:
-  output_files:
+  - output_files:
     - foo.txt
     - bar.txt
 ```
@@ -95,7 +93,7 @@ This allows copying specific output files for further plugin process.
 ```yaml
 ---
 plugins:
-  test_output:
-    format: tap | junit
+  - test_output:
+      format: tap | junit
 ```
 **FIXME: Describe or move out since not in base install**
