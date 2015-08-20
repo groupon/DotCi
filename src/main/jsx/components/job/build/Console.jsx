@@ -103,7 +103,7 @@ export default React.createClass({
     this._onLogScroll();
   },
   _onLineSelect(event){
-    if(event.target.tagName == 'A'){
+    if(event.target.tagName === 'SPAN'|| event.target.tagName === 'A'){
       event.stopPropagation();
       const lineId = event.currentTarget.getAttribute('id');
       Router.HashLocation.push(lineId);
@@ -135,7 +135,7 @@ export default React.createClass({
     return <div key={'fold'+(startIdx)} className={"fold "+ (isOpen? "open":"closed")} onClick={this._openFold}>{logLines}</div>
   },
   _logLine(log,idx){
-    return (<p dangerouslySetInnerHTML={{__html: "<a></a>"+new Convert().toHtml(this.escapeHtml(log))}}
+    return (<p dangerouslySetInnerHTML={{__html: "<a></a><span>"+new Convert().toHtml(this.escapeHtml(log)) + "</span>"}}
       key={idx} className={this._isLineSelected(idx)?'highlight':''} id={`L${idx}`} onClick={this._onLineSelect}>
     </p>);
   },
