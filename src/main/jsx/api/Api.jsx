@@ -31,9 +31,7 @@ export function cancelBuild(url){
 }
 export function buildLog(buildNumber,subBuild){
   const consoleUrl = subBuild === 'main'?`${_jobUrl()}/${buildNumber}/logTail`: `${_jobUrl()}/${buildNumber}/script=${subBuild}/logTail`;
-  return qwest.get(consoleUrl,{},{responseType: 'text'}).catch((error,url)=> {
-    console.log(error)
-  });
+  return qwest.get(consoleUrl,{},{responseType: 'text'}).catch(errorHandler);
 }
 export function build(buildNumber){
   return _get(`${_jobApiUrl()}/build/${buildNumber}`,{tree:'*,commit[*],cause[*]'});
@@ -50,7 +48,7 @@ export function addBranchTab(tabRegex){
 }
 
 export function fetchBuildHistory(tab,count) {
-  return _get(`${_jobApiUrl()}/buildHistory/${tab}`,{depth:2, count: count || 20});
+  return _get(`${_jobApiUrl()}/buildHistory/${tab}`,{depth:2, count: count || 20})
 }
 function _jobUrl(){
   return jobUrl;
@@ -59,8 +57,13 @@ function _jobApiUrl() {
   const url =  _jobUrl()+ 'appData';
   return url;
 }
+
 function _get(url, params){
   let fetchUrl = params?`${url}?${stringify(params)}`: url;
-  return qwest.get(fetchUrl,{},{responseType: 'json'});
+  return qwest.get(fetchUrl,{},{responseType: 'json'})
+  .catch(errorHandler);
 }
 
+function errorHandler(){
+  document.getElementById('connectionError').toggle();
+}

@@ -41,6 +41,7 @@
     "paper-slider": "polymerelements/paper-slider#master",
     "neon-animation": "polymerelements/neon-animation#^1.0.0",
     "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#~1.0.1",
-    "paper-tooltip": "PolymerElements/paper-tooltip#~1.0.2"
+    "paper-tooltip": "PolymerElements/paper-tooltip#~1.0.2",
+    "paper-toast": "PolymerElements/paper-toast#~1.0.0"
   }
 }
