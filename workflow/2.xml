@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<org.jenkinsci.plugins.workflow.support.storage.SimpleXStreamFlowNodeStorage_-Tag plugin="workflow-support@1.9">
+  <node class="org.jenkinsci.plugins.workflow.graph.FlowStartNode" plugin="workflow-api@1.9">
+    <parents class="com.google.common.collect.ImmutableList"/>
+    <id>2</id>
+  </node>
+  <actions>
+    <org.jenkinsci.plugins.workflow.actions.ErrorAction plugin="workflow-api@1.9">
+      <error class="java.lang.ClassCastException">
+        <detailMessage>com.groupon.jenkins.buildtype.workflow.WorkflowBuild$1$1 cannot be cast to org.jenkinsci.plugins.workflow.cps.CpsFlowExecution</detailMessage>
+        <stackTrace>
+          <trace>org.jenkinsci.plugins.workflow.cps.DSL.invokeMethod(DSL.java:94)</trace>
+          <trace>org.jenkinsci.plugins.workflow.cps.CpsScript.invokeMethod(CpsScript.java:98)</trace>
+          <trace>groovy.lang.GroovyObject$invokeMethod.call(Unknown Source)</trace>
+          <trace>org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCall(CallSiteArray.java:42)</trace>
+          <trace>org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:108)</trace>
+          <trace>org.kohsuke.groovy.sandbox.impl.Checker$1.call(Checker.java:105)</trace>
+          <trace>org.kohsuke.groovy.sandbox.GroovyInterceptor.onMethodCall(GroovyInterceptor.java:21)</trace>
+          <trace>org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SandboxInterceptor.onMethodCall(SandboxInterceptor.java:75)</trace>
+          <trace>org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SandboxInterceptor.onMethodCall(SandboxInterceptor.java:60)</trace>
+          <trace>org.kohsuke.groovy.sandbox.impl.Checker$1.call(Checker.java:103)</trace>
+          <trace>org.kohsuke.groovy.sandbox.impl.Checker.checkedCall(Checker.java:100)</trace>
+          <trace>com.cloudbees.groovy.cps.sandbox.SandboxInvoker.methodCall(SandboxInvoker.java:15)</trace>
+          <trace>WorkflowScript.run(WorkflowScript:1)</trace>
+          <trace>___cps.transform___(Native Method)</trace>
+          <trace>com.cloudbees.groovy.cps.impl.ContinuationGroup.methodCall(ContinuationGroup.java:69)</trace>
+          <trace>com.cloudbees.groovy.cps.impl.FunctionCallBlock$ContinuationImpl.dispatchOrArg(FunctionCallBlock.java:106)</trace>
+          <trace>com.cloudbees.groovy.cps.impl.FunctionCallBlock$ContinuationImpl.fixArg(FunctionCallBlock.java:79)</trace>
+          <trace>sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)</trace>
+          <trace>sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)</trace>
+          <trace>sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)</trace>
+          <trace>java.lang.reflect.Method.invoke(Method.java:606)</trace>
+          <trace>com.cloudbees.groovy.cps.impl.ContinuationPtr$ContinuationImpl.receive(ContinuationPtr.java:72)</trace>
+          <trace>com.cloudbees.groovy.cps.impl.ConstantBlock.eval(ConstantBlock.java:21)</trace>
+          <trace>com.cloudbees.groovy.cps.Next.step(Next.java:58)</trace>
+          <trace>com.cloudbees.groovy.cps.Continuable.run0(Continuable.java:145)</trace>
+          <trace>org.jenkinsci.plugins.workflow.cps.SandboxContinuable.access$001(SandboxContinuable.java:19)</trace>
+          <trace>org.jenkinsci.plugins.workflow.cps.SandboxContinuable$1.call(SandboxContinuable.java:33)</trace>
+          <trace>org.jenkinsci.plugins.workflow.cps.SandboxContinuable$1.call(SandboxContinuable.java:30)</trace>
+          <trace>org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.GroovySandbox.runInSandbox(GroovySandbox.java:106)</trace>
+          <trace>org.jenkinsci.plugins.workflow.cps.SandboxContinuable.run0(SandboxContinuable.java:30)</trace>
+          <trace>org.jenkinsci.plugins.workflow.cps.CpsThread.runNextChunk(CpsThread.java:164)</trace>
+          <trace>org.jenkinsci.plugins.workflow.cps.CpsThreadGroup.run(CpsThreadGroup.java:271)</trace>
+          <trace>org.jenkinsci.plugins.workflow.cps.CpsThreadGroup.access$000(CpsThreadGroup.java:71)</trace>
+          <trace>org.jenkinsci.plugins.workflow.cps.CpsThreadGroup$2.call(CpsThreadGroup.java:180)</trace>
+          <trace>org.jenkinsci.plugins.workflow.cps.CpsThreadGroup$2.call(CpsThreadGroup.java:178)</trace>
+          <trace>org.jenkinsci.plugins.workflow.cps.CpsVmExecutorService$2.call(CpsVmExecutorService.java:47)</trace>
+          <trace>java.util.concurrent.FutureTask.run(FutureTask.java:262)</trace>
+          <trace>hudson.remoting.SingleLaneExecutorService$1.run(SingleLaneExecutorService.java:112)</trace>
+          <trace>jenkins.util.ContextResettingExecutorService$1.run(ContextResettingExecutorService.java:28)</trace>
+          <trace>java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:471)</trace>
+          <trace>java.util.concurrent.FutureTask.run(FutureTask.java:262)</trace>
+          <trace>java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)</trace>
+          <trace>java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)</trace>
+          <trace>java.lang.Thread.run(Thread.java:745)</trace>
+        </stackTrace>
+        <suppressedExceptions class="java.util.Collections$UnmodifiableRandomAccessList" resolves-to="java.util.Collections$UnmodifiableList">
+          <c class="list"/>
+          <list reference="../c"/>
+        </suppressedExceptions>
+      </error>
+    </org.jenkinsci.plugins.workflow.actions.ErrorAction>
+  </actions>
+</org.jenkinsci.plugins.workflow.support.storage.SimpleXStreamFlowNodeStorage_-Tag>
