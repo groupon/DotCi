@@ -1,14 +1,13 @@
 import React from 'react';
 import BuildRow from './BuildRow.jsx';
 require('./build_step.css');
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 export default React.createClass({
   render(){
     return <div className="pipeline-step">
       {this._isDownstreamBuild()? this._arrow() : <span/>}
-      <ReactCSSTransitionGroup transitionLeave={false}   className="content"  transitionName="flip">
+      <div className="content">
         {this.props.detail?  <BuildRow key="build-row" build={this.props.build} compact/> : this._compact()} 
-      </ReactCSSTransitionGroup>
+      </div>
     </div>
   },
   _compact(){

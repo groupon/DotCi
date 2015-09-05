@@ -29,12 +29,3 @@
   align-items: center;
 }
 
-.build-step-enter {
-  transform: translateX(-100%);
-  transition:transform 1s linear;
-  transform-style: preserve-3d;
-}
-
-.build-step-enter.build-step-enter-active {
-  transform: translateX(0em);
-}

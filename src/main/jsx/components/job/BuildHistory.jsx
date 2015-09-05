@@ -48,6 +48,7 @@ var BuildHistoryTable = React.createClass({
           <FilterBar id="filter-bar" onChange={this._onFilterChange}/> 
           {this.props.branchSelector}
           {this.props.countSlider}
+          <ToggleButton tooltip="Pipeline View" onClick={this._onPipelineViewChange}></ToggleButton>
         </span>
         {this.state.grouped? <GroupedBuildsView builds={this._filteredBuilds()} /> : <LinearBuildsView builds={this._filteredBuilds()} />}
       </div>
@@ -55,6 +56,9 @@ var BuildHistoryTable = React.createClass({
   },
   _groupBuilds(grouped){
     this.setState({grouped})
+  },
+  _onPipelineViewChange(e){
+    this.setState({grouped: !this.state.grouped});
   },
   _applyFilter(build){
     const filter = this.state.filter.trim();
