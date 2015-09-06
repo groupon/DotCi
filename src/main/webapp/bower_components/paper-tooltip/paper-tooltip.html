@@ -1,0 +1,229 @@
+<!--
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+<!--
+
+`<paper-tooltip>` is a label that appears on hover and focus when the user
+hovers over an element with the cursor or with the keyboard. It will be centered
+to an anchor element specified in the `for` attribute, or, if that doesn't exist,
+centered to the parent node containing it.
+
+Example:
+
+    <div style="display:inline-block">
+      <button>Click me!</button>
+      <paper-tooltip>Tooltip text</paper-tooltip>
+    </div>
+
+    <div>
+      <button id="btn">Click me!</button>
+      <paper-tooltip for="btn">Tooltip text</paper-tooltip>
+    </div>
+
+### Styling
+
+The following custom properties and mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--paper-tooltip-background` | The background color of the tooltip | `#616161`
+`--paper-tooltip-opacity` | The opacity of the tooltip | `0.9`
+`--paper-tooltip-text-color` | The text color of the tooltip | `white`
+`--paper-tooltip` | Mixin applied to the tooltip | `{}`
+
+@group Paper Elements
+@element paper-tooltip
+@demo demo/index.html
+-->
+
+<dom-module id="paper-tooltip">
+  <style>
+    :host {
+      display: block;
+      position: absolute;
+      outline: none;
+      z-index: 1002;
+    }
+
+    #tooltip {
+      display: block;
+      outline: none;
+      @apply(--paper-font-common-base);
+      font-size: 10px;
+
+      background-color: var(--paper-tooltip-background, #616161);
+      opacity: var(--paper-tooltip-opacity, 0.9);
+      color: var(--paper-tooltip-text-color, white);
+
+      padding: 8px;
+      border-radius: 2px;
+
+      @apply(--paper-tooltip);
+    }
+
+    /* Thanks IE 10. */
+    .hidden {
+      display: none !important;
+    }
+  </style>
+  <template>
+    <div id="tooltip" class="hidden">
+      <content></content>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'paper-tooltip',
+
+      hostAttributes: {
+        role: 'tooltip',
+        tabindex: -1
+      },
+
+      behaviors: [
+        Polymer.NeonAnimationRunnerBehavior
+      ],
+
+      properties: {
+        /**
+         * The id of the element that the tooltip is anchored to. This element
+         * must be a sibling of the tooltip.
+         */
+        for: {
+          type: String,
+          observer: '_forChanged'
+        },
+
+        /**
+         * The spacing between the top of the tooltip and the element it is
+         * anchored to.
+         */
+        marginTop: {
+          type: Number,
+          value: 14
+        },
+
+        animationConfig: {
+          type: Object,
+          value: function() {
+            return {
+              'entry': [{
+                name: 'fade-in-animation',
+                node: this,
+                timing: {delay: 500}
+              }],
+              'exit': [{
+                name: 'fade-out-animation',
+                node: this
+              }]
+            }
+          }
+        },
+
+        _showing: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      listeners: {
+        'neon-animation-finish': '_onAnimationFinish'
+      },
+
+      /**
+       * Returns the target element that this tooltip is anchored to. It is
+       * either the element given by the `for` attribute, or the immediate parent
+       * of the tooltip.
+       */
+      get target () {
+        var parentNode = Polymer.dom(this).parentNode;
+        // If the parentNode is a document fragment, then we need to use the host.
+        var ownerRoot = Polymer.dom(this).getOwnerRoot();
+
+        var target;
+        if (this.for) {
+          target = Polymer.dom(ownerRoot).querySelector('#' + this.for);
+        } else {
+          target = parentNode.nodeType == Node.DOCUMENT_FRAGMENT_NODE ?
+              ownerRoot.host : parentNode;
+        }
+
+        return target;
+      },
+
+      attached: function() {
+        this._target = this.target;
+
+        this.listen(this._target, 'mouseenter', 'show');
+        this.listen(this._target, 'focus', 'show');
+        this.listen(this._target, 'mouseleave', 'hide');
+        this.listen(this._target, 'blur', 'hide');
+      },
+
+      detached: function() {
+        if (this._target) {
+          this.unlisten(this._target, 'mouseenter', 'show');
+          this.unlisten(this._target, 'focus', 'show');
+          this.unlisten(this._target, 'mouseleave', 'hide');
+          this.unlisten(this._target, 'blur', 'hide');
+        }
+      },
+
+      show: function() {
+        if (this._showing)
+          return;
+
+        this.cancelAnimation();
+
+        this.toggleClass('hidden', false, this.$.tooltip);
+        this._setPosition();
+        this._showing = true;
+
+        this.playAnimation('entry');
+      },
+
+      hide: function() {
+        if (!this._showing)
+          return;
+
+        this._showing = false;
+        this.playAnimation('exit');
+      },
+
+      _forChanged: function() {
+        this._target = this.target;
+      },
+
+      _setPosition: function() {
+        if (!this._target)
+          return;
+
+        var parentRect = this.offsetParent.getBoundingClientRect();
+        var targetRect = this._target.getBoundingClientRect();
+        var thisRect = this.getBoundingClientRect();
+
+        var centerOffset = (targetRect.width - thisRect.width) / 2;
+
+        this.style.left = targetRect.left - parentRect.left + centerOffset + 'px';
+        this.style.top = targetRect.top - parentRect.top + targetRect.height + this.marginTop + 'px';
+      },
+
+      _onAnimationFinish: function() {
+        if (!this._showing) {
+          this.toggleClass('hidden', true, this.$.tooltip);
+        }
+      },
+    })
+  </script>
+</dom-module>

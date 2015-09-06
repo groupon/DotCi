@@ -36,7 +36,7 @@
     <body>
         
         
-    <div class="book" data-level="2.3.3" data-basepath="../.." data-revision="Tue Aug 18 2015 11:11:31 GMT-0500 (CDT)">
+    <div class="book" data-level="2.3.3" data-basepath="../.." data-revision="Sun Sep 06 2015 10:59:09 GMT-0500 (CDT)">
     
 
 <div class="book-summary">
@@ -482,39 +482,37 @@ through the DotCi Plugin Framework. Any Build Type that respects the
 <h3 id="-artifacts"><code>artifacts</code></h3>
 <pre><code class="lang-yaml">---
 plugins:
-  artifacts:
-    - file1.txt
-    - dist/file2.*
+  - artifacts: file1.txt,dist/file2.*
 </code></pre>
-<p>This plugin configures Jenkin&apos;s default artifact archiver; it is
-essentially an array of the comma separated matchers to archive in the
-old settings. <strong>NOTE: the artifacts must exist, there is no exposure of
-the Advanced options to ignore missing artifacts.</strong></p>
+<p>This plugin configures Jenkin&apos;s default artifact archiver; it is a
+comma-separated list of matchers to archive. <strong>NOTE: the artifacts must
+exist, there is no exposure of the Advanced options to ignore missing
+artifacts.</strong></p>
 <p>See <a href="http://ant.apache.org/manual/Types/fileset.html" target="_blank">ant fileset</a> for
 matcher specifications.</p>
 <p><em>NOTE: Configure your project&apos;s Build Environment: &quot;Delete workspace before build starts&quot; to avoid accumulative artifacts.</em></p>
 <h3 id="-checkstyle"><code>checkstyle</code></h3>
 <pre><code class="lang-yaml">---
 plugins:
-  checkstyle
+  - checkstyle
 </code></pre>
 <p><strong>FIXME: Describe file at <code>target/checkstyle-result.xml</code> or move out
 since not in base install</strong></p>
 <h3 id="-cobertura"><code>cobertura</code></h3>
 <pre><code class="lang-yaml">---
 plugins:
-  cobertura
+  - cobertura
 </code></pre>
 <p><strong>FIXME: Describe file at <code>target/site/cobertura/coverage.xml</code> or move
 out since not in base install</strong></p>
 <h3 id="-downstream-job"><code>downstream_job</code></h3>
 <pre><code class="lang-yaml">---
 plugins:
-  downstream_job:
-    on_result: <SUCCESS|UNSTABLE|FAILURE|NOT_BUILT|ABORTED> # From hudson.model.Result static types
-    foobar:
-      k1: v1
-      k2: v2
+  - downstream_job:
+      on_result: <SUCCESS|UNSTABLE|FAILURE|NOT_BUILT|ABORTED> # From hudson.model.Result static types
+      foobar:
+        k1: v1
+        k2: v2
 </SUCCESS|UNSTABLE|FAILURE|NOT_BUILT|ABORTED></code></pre>
 <p>This triggers the job by the name of <code>foobar</code> when the current job&apos;s
 result matches the value of <code>on_result</code>, which comes from
@@ -524,14 +522,14 @@ job as its parameterized values.</p>
 <h3 id="-findbugs"><code>findbugs</code></h3>
 <pre><code class="lang-yaml">---
 plugins:
-  findbugs
+  - findbugs
 </code></pre>
 <p><strong>FIXME: Describe file at <code>target/findbugs.xml</code> or move out since not in
 base install</strong></p>
 <h3 id="-output-files"><code>output_files</code></h3>
 <pre><code class="lang-yaml">---
 plugins:
-  output_files:
+  - output_files:
     - foo.txt
     - bar.txt
 </code></pre>
@@ -539,8 +537,8 @@ plugins:
 <h3 id="-test-output"><code>test_output</code></h3>
 <pre><code class="lang-yaml">---
 plugins:
-  test_output:
-    format: tap | junit
+  - test_output:
+      format: tap | junit
 </code></pre>
 <p><strong>FIXME: Describe or move out since not in base install</strong></p>
 
