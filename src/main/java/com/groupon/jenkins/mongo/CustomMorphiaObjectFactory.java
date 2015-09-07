@@ -31,6 +31,7 @@ import org.mongodb.morphia.mapping.MappingException;
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
 import java.lang.reflect.Constructor;
+import java.util.*;
 
 import org.mongodb.morphia.mapping.DefaultCreator;
 
@@ -56,7 +57,7 @@ public class CustomMorphiaObjectFactory extends DefaultCreator {
                 return constructor.newInstance();
             }
             try {
-                return objenesis.newInstance(clazz);
+                return clazz == List.class? new ArrayList(): objenesis.newInstance(clazz);
             } catch (Exception e) {
                 throw new MappingException("Failed to instantiate " + clazz.getName(), e);
             }
