@@ -60,7 +60,7 @@ import hudson.tasks.BuildWrapper;
 import hudson.util.FlushProofOutputStream;
 import jenkins.model.Jenkins;
 import org.acegisecurity.Authentication;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.*;
 import org.bson.types.ObjectId;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -392,8 +392,25 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
     @Nonnull
     @Override
     public File getLogFile() {
-        throw new UnsupportedOperationException("Logs are not stored on FS in DotCi");
+        File logFile = super.getLogFile();
+        if(needsToWriteLogFileToDisk(logFile)){
+            writeToFileOnDisk(logFile);
+        }
+        return logFile;
     }
+
+    private boolean needsToWriteLogFileToDisk(File logFile) {
+        return !(getState().equals("COMPLETED")&& logFile.exists());
+    }
+
+    private synchronized void writeToFileOnDisk(File logFile) {
+        try {
+            FileUtils.writeByteArrayToFile(logFile, getBuildLog().getLog());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public List<String> getLog(int maxLines) throws IOException {
         int lineCount = 0;
         List<String> logLines = new LinkedList<String>();
@@ -562,7 +579,7 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
 
     private OutputStream getLogOutputStream() {
 
-        BuildLog buildLog = getDynamicBuildRepository().getDatastore().createQuery(BuildLog.class).disableValidation().field("buildId").equal(id).get();
+        BuildLog buildLog = getBuildLog();
         if(buildLog == null){
             buildLog = new BuildLog(id);
             getDynamicBuildRepository().getDatastore().save(buildLog);
@@ -570,6 +587,11 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
         }
         return  new BuildLogOutputStream(buildLog,getDynamicBuildRepository().getDatastore());
     }
+
+    private BuildLog getBuildLog() {
+        return getDynamicBuildRepository().getDatastore().createQuery(BuildLog.class).disableValidation().field("buildId").equal(id).get();
+    }
+
     public AnnotatedLargeText getLogText() {
         return new AnnotatedLargeText(getLogFile(),getCharset(),!isLogUpdated(),this);
     }
