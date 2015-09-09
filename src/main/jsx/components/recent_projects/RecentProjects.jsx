@@ -41,7 +41,7 @@ var RecentProject = React.createClass({
             <span className="project-title">{this._projectName()}</span>-{this.props.number}
           </a>
           <div ref="ca-2" attrs={{secondary: ""}}>
-            <span className="icon-text octicon octicon-git-commit"/>{this.props.commit.message}
+            <iron-icon icon="github:commit"/> {this.props.commit.message}
           </div>
           <div ref="ca-3" attrs={{secondary: ""}} className="finished">
             <iron-icon icon="alarm"/>

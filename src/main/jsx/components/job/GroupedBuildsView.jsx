@@ -20,7 +20,7 @@ const PipeLineBuild =  React.createClass({
           <span>{committerName}</span>
         </span>
         <div> {branch} </div>
-        <div><i className="octicon octicon-mark-github"></i><a className="github-link link-no-decoration" href={commitUrl}>{shortSha}</a></div>
+        <div><iron-icon icon="github:octoface"/><a className="github-link link-no-decoration" href={commitUrl}>{shortSha}</a></div>
       </span>
       <div className="pipeline-steps">
         {this.props.builds.sortBy(b => b.get('number')).map(build =><BuildStep ref={build.get('number')} onClick={this._onBuildStepClick} detail={this._isDetail(build)} key={build.get('number')} build={build}/> )}
