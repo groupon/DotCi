@@ -39,7 +39,6 @@
         <script src="${resURL}/plugin/DotCi/js/webcomponentsjs/webcomponents-lite.min.js"></script>
         <link rel="icon" href="${resURL}/plugin/DotCi/favicons/default.ico" type="image/vnd.microsoft.icon" />
 
-        <link rel="stylesheet" href="${resURL}/plugin/DotCi/octicons/octicons.css"/>
         <script>
             rootURL = '${rootURL}'
             resURL= '${resURL}/plugin/DotCi/'

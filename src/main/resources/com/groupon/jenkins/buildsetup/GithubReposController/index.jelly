@@ -42,7 +42,6 @@
       <script src="${resURL}/plugin/DotCi/js/webcomponentsjs-0.7.0/webcomponents-lite.min.js"></script>
       <link rel="icon" href="${resURL}/plugin/DotCi/favicons/default.ico" type="image/vnd.microsoft.icon" />
 
-      <link rel="stylesheet" href="${resURL}/plugin/DotCi/octicons/octicons.css"/>
       <j:if test='${developmentMode}'>
         <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports.html"/>
       </j:if>
