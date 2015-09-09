@@ -72,7 +72,7 @@ public class BuildConfiguration {
         String fileName = getDockerComposeFileName();
         ShellCommands shellCommands = new ShellCommands();
         shellCommands.add(checkoutCommands);
-        shellCommands.add(String.format("trap \"docker-compose -f %s -p %s kill; docker-compose -f %s -p %s rm --force; exit\" PIPE QUIT INT HUP EXIT TERM",fileName,projectName,fileName,projectName));
+        shellCommands.add(String.format("trap \"docker-compose -f %s -p %s kill; docker-compose -f %s -p %s rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",fileName,projectName,fileName,projectName));
         shellCommands.add(String.format("docker-compose -f %s -p %s pull",fileName,projectName));
         if (config.get("run") != null) {
             Map runConfig = (Map) config.get("run");
