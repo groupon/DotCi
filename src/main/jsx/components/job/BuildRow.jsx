@@ -89,7 +89,7 @@ export default React.createClass({
               <span className="detail">{durationString}</span>
             </div>
             <div>
-              <iron-icon icon="view-day" />
+              <iron-icon icon="dotci:calendar" />
               <span className="detail">{displayTime}</span>
             </div>
           </span>
