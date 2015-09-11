@@ -1,14 +1,13 @@
 import React from "react";
 import {Link} from 'react-router';
 import RecentProjects from "./components/recent_projects/RecentProjects.jsx";
-import  CustomAttributes from './components/mixins/CustomAttributes.jsx';
 import BuildActions  from './components/job/build/BuildActions.jsx'
 import Dialog from './components/lib/Dialog.jsx'; 
 import { TransitionHook } from 'react-router';
 import JobActions from './components/job/JobActions.jsx';
 
 export default React.createClass( {
-  mixins: [CustomAttributes, TransitionHook],
+  mixins: [TransitionHook],
   childContextTypes: {
     router: React.PropTypes.func
   },
