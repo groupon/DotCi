@@ -24,10 +24,10 @@
 import qwest from 'qwest';
 import {stringify} from 'qs';
 export function recentProjects(){
-  return _get(window.rootURL + '/recentProjects/');
+  return _get(rootURL + '/recentProjects/');
 }
 export function cancelBuild(url){
-  return qwest.post(`${window.rootURL}/${url}`)
+  return qwest.post(`${rootURL}/${url}`)
 }
 export function buildLog(buildNumber,subBuild){
   const consoleUrl = subBuild === 'main'?`${_jobUrl()}/${buildNumber}/logTail`: `${_jobUrl()}/${buildNumber}/script=${subBuild}/logTail`;
