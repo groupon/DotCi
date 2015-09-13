@@ -5,7 +5,7 @@ export default React.createClass({
   render(){
     const builds = this.props.builds.map((build) => <BuildRow key={build.get('number')} build={build}/>);
     return(<span className="builds">
-      {builds.toArray()}
+      {builds}
     </span>);
   }
 });
