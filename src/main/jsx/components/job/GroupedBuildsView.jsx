@@ -1,6 +1,5 @@
 import React from 'react';
 import LinearBuildsView from './LinearBuildsView.jsx';
-import {OrderedMap,List} from 'immutable';
 import BuildStep from './BuildStep.jsx';
 import Avatar from '../lib/Avatar.jsx';
 require('./grouped_builds_view.css')
@@ -10,8 +9,8 @@ const PipeLineBuild =  React.createClass({
   },
   render(){
     const build =this.props.builds.get(0);
-    let {commit} = build.toObject();
-    let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
+    let {commit} = build;
+    let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit;
     return <span className="pipeline-build"> 
       <span className="commit">
         <div> {message} </div>

@@ -24,17 +24,13 @@
 
 import React from 'react';
 import BuildRow from './BuildRow.jsx';
-import Router from 'react-router';
 import FilterBar from './../FilterBar.jsx';
-import LoadingHelper from './../mixins/LoadingHelper.jsx';
-import AutoRefreshHelper from './../mixins/AutoRefreshHelper.jsx';
 import GroupedBuildsView from './GroupedBuildsView.jsx';
 import LinearBuildsView from './LinearBuildsView.jsx';
 import ToggleButton from './../lib/ToggleButton.jsx';
 import RangeSlider from './../lib/RangeSlider.jsx';
-import BranchTabs from './BranchTabs.jsx';
 require('./build_history.css');
-var BuildHistoryTable = React.createClass({
+export default React.createClass({
   getInitialState: function() {
     return {filter: '',grouped: false};
   },
@@ -71,35 +67,3 @@ var BuildHistoryTable = React.createClass({
   }
 });
 
-export default React.createClass({
-  mixins:[AutoRefreshHelper,LoadingHelper],
-  componentDidMount(){
-    this._loadBuildHistory();
-    this.setRefreshTimer(this._loadBuildHistory);
-  },
-  _loadBuildHistory(){
-    const actions =this.props.flux.getActions('app');
-    actions.getJobInfoFromServer("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]", this._currentTab(),this._buildCount());
-  },
-  _currentTab(){
-    return BranchTabs.currentTab();
-  },
-  _buildCount(){
-    return RangeSlider.currentValue();
-  },
-  _render(){
-    const countSlider = <RangeSlider ref="buildCount" tooltip="Build count"  onChange={this._onCountChange} min={20}  max={100} step={5}  />;
-    const branchSelector = <BranchTabs  ref="branchTabs" onTabChange={this._onTabChange} flux={this.props.flux} tabs={this.props.tabs} defaultTab={this.defaultTab}/>;
-    return(<div className="align-center" >
-      <BuildHistoryTable branchSelector={branchSelector} countSlider={countSlider} builds ={this.props.builds}/>
-    </div>);
-  },
-  _onTabChange(tab){
-    let actions = this.props.flux.getActions('app');
-    actions.buildHistorySelected(tab, this._buildCount());
-  },
-  _onCountChange(count){
-    let actions = this.props.flux.getActions('app');
-    actions.buildHistorySelected(this._currentTab(),count);
-  }
-});

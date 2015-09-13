@@ -1,0 +1,87 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014, Groupon, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+__webpack_public_path__= window.resURL+'js/';
+import React from "react";
+import Job from "./components/job/Job.jsx";
+import Drawer from './Drawer.jsx';
+import EmptyProject from './EmptyProject.jsx';
+import createBrowserHistory from 'history/lib/createBrowserHistory';
+require('./app.css');
+import { Router, Route, Link } from 'react-router';
+var ReactDOM = require('react-dom');
+const App = React.createClass({
+  statics:{
+    routerWillRun({flux}){
+      const actions =flux.getActions('app');
+      return actions.getJobInfoFromServer("fullName,githubUrl,permissions");
+    }
+  },
+  render(){
+    return <h1> meowlicous </h1>;
+  }
+});
+
+window.onload = function (){
+  const Purr = React.createClass({ render(){
+    return <h1>Purr</h1>;
+  }});
+  ReactDOM.render( <Purr/> , document.getElementById('content'));
+}
+
+window.onload1 = function(){
+  const jobPath = jobUrl.replace(rootURL,'');
+  const rootPath = window.location.pathname.split(jobPath)[0] +jobPath;
+  var routes = (
+    <Route  path={rootPath} component={App} >
+    </Route>
+  );
+  // <Route  handler={Job}>
+  //   {Job.Routes }
+  // </Route>
+  // const router = Router.create({
+  //   routes: routes,
+  //   location: Router.HistoryLocation
+  // })
+  let history = createBrowserHistory();
+  // {() => <Router history={history}>{routes}</Router> }
+  if(!window.emptyProject){
+    ReactDOM.render( <App/> , document.getElementById('content'));
+    // router.run(async  (Handler, state) => {
+    //   const routeHandlerInfo = { state, flux };
+    //   await performRouteHandlerStaticMethod(state.routes, 'routerWillRun', routeHandlerInfo);
+    //   React.render(<Handler flux ={flux}/>, document.getElementById('content'));
+    //   React.render(
+    //     <FluxComponent connectToStores={['job']} flux={flux}>
+    //       <Drawer  router={router} routerState={state} flux ={flux}/>
+    //     </FluxComponent>
+    //     , document.getElementById('nav'));
+    // });
+  }else{
+    React.render(<Provider store={store}>
+      {() => <Router history={history}> <EmptyProject/></Router> }
+    </Provider>
+    , document.getElementById('content'));
+  }
+};
