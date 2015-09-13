@@ -23,9 +23,9 @@ export default React.createClass({
   _render(){
     const {filters,builds} = this.props.buildHistory;
     const countSlider = <RangeSlider ref="buildCount" tooltip="Build count"  onChange={this._onCountChange} min={20}  max={100} step={5}  />;
-    const branchSelector = <BuildFilters  ref="branchTabs" onTabChange={this._onTabChange}  tabs={filters} />;
+    const buildFilters = <BuildFilters  ref="branchTabs" onTabChange={this._onTabChange}  tabs={filters} />;
     return(<div className="align-center" >
-      <BuildHistoryTable branchSelector={branchSelector} countSlider={countSlider} builds ={builds}/>
+      <BuildHistoryTable buildFilters={buildFilters} countSlider={countSlider} builds ={builds}/>
     </div>);
   },
   _onTabChange(tab){

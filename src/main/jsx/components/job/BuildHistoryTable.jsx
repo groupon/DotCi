@@ -42,7 +42,7 @@ export default React.createClass({
       <div>
         <span className="buildHistory-bar" >
           <FilterBar id="filter-bar" onChange={this._onFilterChange}/> 
-          {this.props.branchSelector}
+          {this.props.buildFilters}
           {this.props.countSlider}
           <ToggleButton tooltip="Pipeline View" onClick={this._onPipelineViewChange}></ToggleButton>
         </span>
