@@ -26,6 +26,7 @@ var postcss_nested = require('postcss-nested');
 var postcss_custom_properties= require('postcss-custom-properties');
 var autoprefixer = require('autoprefixer-core');
 var cssimport = require('postcss-import');
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
 module.exports = function(config){
   return {
     entry: config.entry,
@@ -42,16 +43,16 @@ module.exports = function(config){
         },
         {
           test: /\.less$/,
-          loader: 'style-loader!css-loader!less-loader'
+          loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader")
         },
         {
           test: /\.css$/,
-          loader: 'style-loader!css-loader!postcss-loader' 
+          loader: ExtractTextPlugin.extract("style-loader","css-loader!postcss-loader")
         },
         {
           test: /\.jsx?$/,
           exclude: /node_modules/,
-          loaders: config.debug? ['react-hot', 'babel-loader']: ['babel-loader']
+          loaders: config.debug? [ 'babel-loader']: ['babel-loader']
         }
       ]
     },
@@ -68,9 +69,12 @@ module.exports = function(config){
       ];
     },
     devtool: config.debug ? '#inline-source-map' : false,
-    plugins: config.debug ? [] : [
+    plugins: config.debug ? [
+      new ExtractTextPlugin("dotci.css")
+    ] : [
       new webpack.EnvironmentPlugin('NODE_ENV'),
       new webpack.optimize.DedupePlugin(),
+      new ExtractTextPlugin("./../css/dotci.css"),
       new webpack.optimize.UglifyJsPlugin(
         {
           compressor: {

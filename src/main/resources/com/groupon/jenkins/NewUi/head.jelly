@@ -46,10 +46,12 @@
         </script>
         <j:if test='${developmentMode}'>
             <script src="http://localhost:3000/assets/dotci.js"/>
+            <link rel="stylesheet" type="text/css" href="http://localhost:3000/assets/dotci.css"/>
             <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports.html"/>
         </j:if>
         <j:if test='${!developmentMode}'>
             <script src="${resURL}/plugin/DotCi/js/dotci.js"/>
+            <script src="${resURL}/plugin/DotCi/css/dotci.css"/>
             <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports-vulcanized.html"/>
         </j:if>
         <script>
