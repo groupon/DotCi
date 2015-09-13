@@ -1,28 +1,24 @@
 import React from 'react';
-import LocationHashHelper from './../mixins/LocationHashHelper.jsx'
 import contains from 'ramda/src/contains'
 import classNames from 'classnames'; 
-import Router from 'react-router';
 import CustomAttributes from './../mixins/CustomAttributes.jsx';
 import Dialog from './../lib/Dialog.jsx';
 require('./branch_tabs.css')
 export default React.createClass({
-  mixins: [LocationHashHelper,CustomAttributes], 
+  mixins: [CustomAttributes], 
   statics: {
     currentTab(){
-      const selectedTab = Router.HashLocation.getCurrentPath();
-      return selectedTab|| 'All';
+      return  'All';
     }
   },
   getInitialState(){
-    const selectedTab = Router.HashLocation.getCurrentPath();
-    return {currentSelection: selectedTab|| 'All'};
+    return {currentSelection: 'All'};
   },
   render()  {
     return <span>
       <paper-dropdown-menu  ref="branchMenu" label={this.state.currentSelection}>
         <paper-menu className="dropdown-content">
-          {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab))).toArray()}
+          {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab)))}
           <paper-item>
             <paper-button onClick={this._addTab} ref="ca-addTab" >
               New <iron-icon  icon="add-circle"></iron-icon>

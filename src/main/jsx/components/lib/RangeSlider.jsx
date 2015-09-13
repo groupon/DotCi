@@ -1,5 +1,4 @@
 import React from 'react';
-import Router from 'react-router';
 import qs from 'qs';
 import Url from './../../vendor/url.js'
 import CustomAttributes from './../mixins/CustomAttributes.jsx';

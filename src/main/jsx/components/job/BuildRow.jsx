@@ -25,7 +25,6 @@
 
 import React from 'react';
 import Avatar from '../lib/Avatar.jsx';
-import Router from 'react-router';
 import BuildIcon from './BuildIcon.jsx';
 import BuildCauseIcon from './BuildCauseIcon.jsx';
 import BuildProgressBar from './BuildProgressBar.jsx';
