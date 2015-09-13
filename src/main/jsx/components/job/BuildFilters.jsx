@@ -14,20 +14,25 @@ export default React.createClass({
   getInitialState(){
     return {currentSelection: 'All'};
   },
-  render()  {
+  render(){
     return <span>
-      <paper-dropdown-menu  ref="branchMenu" label={this.state.currentSelection}>
-        <paper-menu className="dropdown-content">
-          {this.props.tabs.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab)))}
-          <paper-item>
-            <paper-button onClick={this._addTab} ref="ca-addTab" >
-              New <iron-icon  icon="add-circle"></iron-icon>
-            </paper-button> 
-          </paper-item>
-        </paper-menu>
-      </paper-dropdown-menu> 
+      {this._filtersDropDown()}
       {this._addTabDialog()}
     </span>
+  },
+  _filtersDropDown(){
+    return <paper-dropdown-menu  ref="branchMenu" label={this.state.currentSelection}>
+      <paper-menu className="dropdown-content">
+        {this.props.filters.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab))).push(this._addNewFilterItem())}
+      </paper-menu>
+    </paper-dropdown-menu> 
+  },
+  _addNewFilterItem(){
+    return <paper-item>
+      <paper-button onClick={this._addTab} ref="ca-addTab" >
+        New <iron-icon  icon="add-circle"></iron-icon>
+      </paper-button> 
+    </paper-item>
   },
   _onBranchChange(e){
     if(e.currentTarget && e.currentTarget.id==="currentBranchButton"){
