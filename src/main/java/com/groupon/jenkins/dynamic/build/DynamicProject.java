@@ -348,11 +348,12 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         int b = h % 252;
         return String.format("rgb(%s,%s,%s)", r,g,b);
     }
-    public Object getApp() throws ScriptException, NoSuchMethodException {
+    public Object getApp() throws ScriptException, NoSuchMethodException, IOException {
         ScriptEngine nashorn = new ScriptEngineManager(null).getEngineByName("nashorn");
         Method method = nashorn.getClass().getMethod("invokeFunction",String.class,Object[].class);
         nashorn.eval(new InputStreamReader(getClass().getResourceAsStream("/com/groupon/jenkins/dynamic/build/DynamicProject/server.js")) );
-        Object html = ReflectionUtils.invokeMethod(method, nashorn, new Object[]{"renderServer",new Object[]{  }});
+        Iterable builds = getAppData().getBuildHistory().getBuilds("All", 50);
+        Object html = ReflectionUtils.invokeMethod(method, nashorn, new Object[]{"renderServer",new Object[]{}});
 //        Object html = nashorn.invokeFunction("renderServer", "");
         return  String.valueOf(html);
     }
