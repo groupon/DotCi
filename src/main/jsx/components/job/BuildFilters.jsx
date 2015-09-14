@@ -19,9 +19,10 @@ export default React.createClass({
     </span>
   },
   _filtersDropDown(){
+    const items = 
+      this.props.filters.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab))).push(this._addNewFilterItem());
     return <paper-dropdown-menu  ref="branchMenu" label={this.state.currentSelection}>
       <paper-menu className="dropdown-content">
-        {this.props.filters.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab))).push(this._addNewFilterItem())}
       </paper-menu>
     </paper-dropdown-menu> 
   },

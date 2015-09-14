@@ -1,15 +1,10 @@
 import React from "react";
-import AutoRefreshHelper from './../components/mixins/AutoRefreshHelper.jsx';
 import LoadingHelper from './../components/mixins/LoadingHelper.jsx';
 import RangeSlider from './../components/lib/RangeSlider.jsx';
 import BuildFilters from './../components/job/BuildFilters.jsx';
 import BuildHistoryTable from './../components/job/BuildHistoryTable.jsx';
 export default React.createClass({
-  mixins:[AutoRefreshHelper,LoadingHelper],
-  componentDidMount(){
-    // this._loadBuildHistory();
-    this.setRefreshTimer(this._loadBuildHistory);
-  },
+  mixins:[LoadingHelper],
   _loadBuildHistory(){
     const actions =this.props.flux.getActions('app');
     actions.getJobInfoFromServer("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]", this._currentTab(),this._buildCount());

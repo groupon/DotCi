@@ -3,7 +3,7 @@ import BuildRow from './BuildRow.jsx';
 require('./linear_builds_view.css')
 export default React.createClass({
   render(){
-    const builds = this.props.builds.map((build) => <BuildRow key={build.get('number')} build={build}/>);
+    const builds = this.props.builds.map((build) => <BuildRow key={build.number} build={build}/>);
     return(<span className="builds">
       {builds}
     </span>);
