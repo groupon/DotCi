@@ -10,9 +10,6 @@ window.onload = function (){
     ReactDOM.render(<BuildHistoryPage buildHistory={buildHistory}/>, document.getElementById('content'));
   });
   buildHistory.historyChanged({builds:[],filters:[]});
-
-  job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]", buildHistory.buildFilter,buildHistory.buildCount).then(data => {
-    buildHistory.historyChanged({... data, filters: data.buildHistoryTabs});
-  });
+  buildHistory.queryChange({filter:'All', limit:50 });
 }
 
