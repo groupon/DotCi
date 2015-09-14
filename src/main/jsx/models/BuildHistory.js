@@ -2,6 +2,8 @@ export default class {
   constructor(){
     this.filters= [];
     this.builds= [];
+    this.buildCount =50;
+    this.buildFilter ='All';
   }
   addChangeListener(changeListener){
     this.changeListener = changeListener;
