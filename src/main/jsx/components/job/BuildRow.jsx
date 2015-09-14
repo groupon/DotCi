@@ -28,16 +28,9 @@ import Avatar from '../lib/Avatar.jsx';
 import BuildIcon from './BuildIcon.jsx';
 import BuildCauseIcon from './BuildCauseIcon.jsx';
 import BuildProgressBar from './BuildProgressBar.jsx';
-import Responsive from './../mixins/Responsive.jsx';
 require('./build_row.css');
 require('./build_row_small.css');
 export default React.createClass({
-  mixins: [Responsive(
-    {
-      "only screen and (max-width: 680px)": "renderSmall",
-      "all and (min-width: 680px)": "renderDefault",
-    }
-  )],
   renderSmall(){
     let {result,number,displayTime,commit} = this.props.build.toObject();
     let {message,committerName,branch, avatarUrl} = commit.toObject();
@@ -59,7 +52,7 @@ export default React.createClass({
       </a>
     </paper-material>);
   },
-  renderDefault(){
+  render(){
     let {result,number, cancelUrl,commit,durationString,displayTime,cause, estimatedDuration,duration} = this.props.build;
     let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit;
     return (

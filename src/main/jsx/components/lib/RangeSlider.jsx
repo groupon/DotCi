@@ -1,11 +1,10 @@
 import React from 'react';
-import qs from 'qs';
-import Url from './../../vendor/url.js'
 import Dialog from './Dialog.jsx';
 export default React.createClass({
   statics: {
     currentValue(){
-      return new Url().query["buildCount"] || 20;
+      return 20;
+      // return new Url().query["buildCount"] || 20;
     }
   },
   getInitialState(){
@@ -34,14 +33,11 @@ export default React.createClass({
       max= {this.props.max}/>
   },
   _valueChange(e){
-    const u = new Url();
     const newValue =this.refs['ca-slider'].getDOMNode().value;
-    u.query["buildCount"]= newValue;
-    window.history.pushState('','',u.toString())
     this.replaceState({value: newValue});
     this.props.onChange(newValue);
   },
   _getQueryValue(){
-    return new Url().query["buildCount"];
+    return 20 ;//new Url().query["buildCount"];
   }
 });
