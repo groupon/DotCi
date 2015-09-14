@@ -13,6 +13,7 @@ window.onload = function (){
     filters: [],
     builds: []
   });
+
   job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]", 'All',50).then(data => {
     renderBuildHistory({builds: data.builds, filters: data.buildHistoryTabs });
   });
