@@ -1,11 +1,9 @@
 import React from 'react';
 import contains from 'ramda/src/contains'
 import classNames from 'classnames'; 
-import CustomAttributes from './../mixins/CustomAttributes.jsx';
 import Dialog from './../lib/Dialog.jsx';
 require('./branch_tabs.css')
 export default React.createClass({
-  mixins: [CustomAttributes], 
   statics: {
     currentTab(){
       return  'All';
@@ -41,7 +39,7 @@ export default React.createClass({
   },
   _addTabDialog(){
     return <Dialog  ref="addTabDialog" heading="Add new brach tab" onSave={this._onTabSave} >
-      <paper-input ref="ca-branchInput" attrs={{label:"Branch Expression"}}></paper-input>
+      <paper-input label="Branch Expression"></paper-input>
     </Dialog>;
   },
   _isTabRemovable(tab){

@@ -29,11 +29,10 @@ import BuildIcon from './BuildIcon.jsx';
 import BuildCauseIcon from './BuildCauseIcon.jsx';
 import BuildProgressBar from './BuildProgressBar.jsx';
 import Responsive from './../mixins/Responsive.jsx';
-import CustomAttributes from './../mixins/CustomAttributes.jsx';
 require('./build_row.css');
 require('./build_row_small.css');
 export default React.createClass({
-  mixins: [CustomAttributes,Responsive(
+  mixins: [Responsive(
     {
       "only screen and (max-width: 680px)": "renderSmall",
       "all and (min-width: 680px)": "renderDefault",
@@ -46,13 +45,13 @@ export default React.createClass({
       <Router.Link   to={'job-widgets'} params={{widget: number}}>
         <paper-item className={"build-row-small "+result}> 
           <BuildProgressBar build={this.props.build}/>
-          <paper-item-body ref="ca-1" attrs={{"three-line": ""}}>
+          <paper-item-body three-line>
             <div>{number}-{message}</div>
-            <div ref="ca-2" attrs={{secondary: ""}}>
+            <div secondary>
               <Avatar avatarUrl={avatarUrl} />
               <span>{committerName}({branch})</span>
             </div>
-            <div ref="ca-3" attrs={{secondary: ""}}>
+            <div  secondary>
               {displayTime} 
             </div>
           </paper-item-body>
