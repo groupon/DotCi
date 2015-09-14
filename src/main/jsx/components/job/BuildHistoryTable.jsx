@@ -59,7 +59,7 @@ export default React.createClass({
   _applyFilter(build){
     const filter = this.state.filter.trim();
     const filterRegex = new RegExp(filter, 'gi');
-    let {message,branch,committerName} = build.get('commit').toObject();
+    let {message,branch,committerName} = build.commit;
     return !filter || message.match(filterRegex) || branch.match(filterRegex)|| committerName.match(filterRegex);
   },
   _onFilterChange(filter){

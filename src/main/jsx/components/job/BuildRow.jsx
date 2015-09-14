@@ -42,7 +42,7 @@ export default React.createClass({
     let {result,number,displayTime,commit} = this.props.build.toObject();
     let {message,committerName,branch, avatarUrl} = commit.toObject();
     return (   <paper-material >
-      <Router.Link   to={'job-widgets'} params={{widget: number}}>
+      <a   to={'job-widgets'} params={{widget: number}}>
         <paper-item className={"build-row-small "+result}> 
           <BuildProgressBar build={this.props.build}/>
           <paper-item-body three-line>
@@ -56,12 +56,12 @@ export default React.createClass({
             </div>
           </paper-item-body>
         </paper-item>
-      </Router.Link>
+      </a>
     </paper-material>);
   },
   renderDefault(){
-    let {result,number, cancelUrl,commit,durationString,displayTime,cause, estimatedDuration,duration} = this.props.build.toObject();
-    let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
+    let {result,number, cancelUrl,commit,durationString,displayTime,cause, estimatedDuration,duration} = this.props.build;
+    let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit;
     return (
       <div className="build-row">
         <BuildProgressBar build={this.props.build}/>
@@ -69,16 +69,16 @@ export default React.createClass({
           {this._statusRow(result,cause)}
           <span>
             <div className="build-row--title"><small>{branch}</small> 
-              <Router.Link  to={'job-widgets'} params={{widget: number}}>{message}</Router.Link>
+              <a  to={'job-widgets'} params={{widget: number}}>{message}</a>
             </div> 
             <div className="build-row--committer">
               <Avatar avatarUrl={avatarUrl} />
               <span>{committerName}</span>
             </div>
-            <div className="build-row--cause">{cause.get('shortDescription')}</div>
+            <div className="build-row--cause">{cause['shortDescription']}</div>
           </span>
           <span>  
-            <div>#<Router.Link  className="build-row--number" to={'job-widgets'} params={{widget: number}}>{number}{result.toLowerCase()}</Router.Link></div>
+            <div>#<a  className="build-row--number" to={'job-widgets'} params={{widget: number}}>{number}{result.toLowerCase()}</a></div>
             <div><iron-icon icon="github:octoface"/><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>
           </span>
           <span>
@@ -98,7 +98,7 @@ export default React.createClass({
   _statusRow(result, cause){
     return this.props.compact? <span/>:<span>
       <BuildIcon result={result} />
-      <BuildCauseIcon cause={cause.get('name')} />
+      <BuildCauseIcon cause={cause['name']} />
     </span>
   },
 });

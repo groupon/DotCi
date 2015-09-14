@@ -64,6 +64,7 @@ function _get(url, params){
   .catch(errorHandler);
 }
 
-function errorHandler(){
+function errorHandler(e){
+  console.error(e.stack);
   document.getElementById('connectionError').toggle();
 }
