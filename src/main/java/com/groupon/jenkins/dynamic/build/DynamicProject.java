@@ -40,9 +40,9 @@ import hudson.PermalinkList;
 import hudson.matrix.Combination;
 import hudson.model.*;
 import hudson.model.Queue.Task;
-import hudson.util.CaseInsensitiveComparator;
-import hudson.util.CopyOnWriteMap;
+import hudson.util.*;
 import hudson.widgets.HistoryWidget;
+import jdk.nashorn.api.scripting.*;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -52,9 +52,10 @@ import org.kohsuke.stapler.StaplerResponse;
 import org.mongodb.morphia.annotations.PostLoad;
 import org.mongodb.morphia.annotations.PrePersist;
 
+import javax.script.*;
 import javax.servlet.ServletException;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -346,6 +347,14 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         int g = h % 251;
         int b = h % 252;
         return String.format("rgb(%s,%s,%s)", r,g,b);
+    }
+    public Object getApp() throws ScriptException, NoSuchMethodException {
+        ScriptEngine nashorn = new ScriptEngineManager(null).getEngineByName("nashorn");
+        Method method = nashorn.getClass().getMethod("invokeFunction",String.class,Object[].class);
+        nashorn.eval(new InputStreamReader(getClass().getResourceAsStream("/com/groupon/jenkins/dynamic/build/DynamicProject/server.js")) );
+        Object html = ReflectionUtils.invokeMethod(method, nashorn, new Object[]{"renderServer",new Object[]{  }});
+//        Object html = nashorn.invokeFunction("renderServer", "");
+        return  String.valueOf(html);
     }
 
     @Override

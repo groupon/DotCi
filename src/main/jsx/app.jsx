@@ -49,5 +49,4 @@ function getRootPath(){
   const jobPath = jobUrl.replace(rootURL,'');
   return window.location.pathname.split(jobPath)[0] +jobPath;
 }
-
 window.addEventListener('WebComponentsReady', begin);

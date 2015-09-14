@@ -21,12 +21,14 @@
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   ~ THE SOFTWARE.
   -->
-<?jelly escape-by-default='true'?>
+<?jelly escape-by-default='false'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
   <div id="nav" drawer="true" >
   </div>
   <paper-header-panel class="main" main="true" mode="waterfall">
     <st:include page="/com/groupon/jenkins/NewUi/header/header.jelly" />
-    <div id="content"></div>
+    <div id="content">
+      ${it.app}
+    </div>
   </paper-header-panel>
 </j:jelly>
