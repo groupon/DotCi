@@ -12,7 +12,7 @@ window.onload = function (){
   buildHistory.historyChanged({builds:[],filters:[]});
 
   job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]", 'All',50).then(data => {
-    buildHistory.historyChanged({builds: data.builds, filters: data.buildHistoryTabs});
+    buildHistory.historyChanged({... data, filters: data.buildHistoryTabs});
   });
 }
 
