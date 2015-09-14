@@ -11,7 +11,7 @@ window.onload = function (){
   });
   buildHistory.historyChanged({builds:[],filters:[]});
 
-  job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]", 'All',50).then(data => {
+  job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]", buildHistory.buildFilter,buildHistory.buildCount).then(data => {
     buildHistory.historyChanged({... data, filters: data.buildHistoryTabs});
   });
 }
