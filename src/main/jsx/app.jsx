@@ -3,27 +3,16 @@ import React from "react";
 import ReactDOM from 'react-dom';
 import BuildHistoryPage from './pages/BuildHistoryPage.jsx';
 import {job} from './api/Api.jsx'; 
-class BuildHistoryModel {
-  constructor(){
-    this.filters= [];
-    this.builds= [];
-  }
-  get filterChange(){
-  }
-  buildCountChange(){
-  }
-}
+import BuildHistory from './models/BuildHistory.js'
 window.onload = function (){
-  const buildHistory = new BuildHistoryModel();
-  function renderBuildHistory(buildHistory){
+  const buildHistory = new BuildHistory();
+  buildHistory.addChangeListener(buildHistory => {
     ReactDOM.render(<BuildHistoryPage buildHistory={buildHistory}/>, document.getElementById('content'));
-  }
-
-
-  renderBuildHistory(buildHistory);
+  });
+  buildHistory.historyChanged({builds:[],filters:[]});
 
   job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]", 'All',50).then(data => {
-    renderBuildHistory({builds: data.builds, filters: data.buildHistoryTabs });
+    buildHistory.historyChanged({builds: data.builds, filters: data.buildHistoryTabs});
   });
 }
 
