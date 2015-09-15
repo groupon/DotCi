@@ -39,8 +39,8 @@ the single email or array of emails listed.
 ---
 notifications:
   - hipchat:
-    - room1
-    - room2
+    - room_id_1
+    - room_id_2
 ```
 **FIXME: Describe or move out since not in base install**
 
