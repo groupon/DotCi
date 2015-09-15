@@ -354,7 +354,6 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         nashorn.eval(new InputStreamReader(getClass().getResourceAsStream("/com/groupon/jenkins/dynamic/build/DynamicProject/server.js")) );
         Iterable builds = getAppData().getBuildHistory().getBuilds("All", 50);
         Object html = ReflectionUtils.invokeMethod(method, nashorn, new Object[]{"renderServer",new Object[]{}});
-//        Object html = nashorn.invokeFunction("renderServer", "");
         return  String.valueOf(html);
     }
 
