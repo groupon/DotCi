@@ -6,13 +6,13 @@ import {job} from './api/Api.jsx';
 import BuildHistory from './models/BuildHistory.js'
 window.onload = function (){
   const buildHistory = new BuildHistory();
-  buildHistory.addChangeListener(buildHistory => {
+  buildHistory.addDataChangeListener(buildHistory => {
     ReactDOM.render(<BuildHistoryPage buildHistory={buildHistory}/>, document.getElementById('content'));
   });
   buildHistory.addQueryChangeListener(buildHistory => {
     let query = buildHistory.query;
     job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]",query.filter ,query.limit).then(data => {
-      buildHistory.historyChanged({...data, filters: data.buildHistoryTabs});
+      buildHistory.dataChanged({...data, filters: data.buildHistoryTabs});
     });
   });
 
