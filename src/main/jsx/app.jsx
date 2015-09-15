@@ -9,7 +9,14 @@ window.onload = function (){
   buildHistory.addChangeListener(buildHistory => {
     ReactDOM.render(<BuildHistoryPage buildHistory={buildHistory}/>, document.getElementById('content'));
   });
-  buildHistory.historyChanged({builds:[],filters:[]});
-  buildHistory.queryChange({filter:'All', limit:50 });
+  buildHistory.addQueryChangeListener(buildHistory => {
+    let query = buildHistory.query;
+    job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]",query.filter ,query.limit).then(data => {
+      buildHistory.historyChanged({...data, filters: data.buildHistoryTabs});
+    });
+  });
+
+  buildHistory.queryChanged({filter: 'All', limit: 50});
+
 }
 
