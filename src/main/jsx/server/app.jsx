@@ -1,10 +1,11 @@
 import React from "react";
-import BuildHistory from './../components/job/BuildHistory.jsx';
-import Flux from './../Flux.jsx';
+import ReactDOMServer from "react-dom/server";
+import BuildHistoryPage from './../pages/BuildHistoryPage.jsx';
+import BuildHistory from './../models/BuildHistory.js'
 export default function renderServer(builds){
-  const buildHistory = {
-    filters: [],
-    builds: builds
-  }
-  return React.renderToString(<BuildHistory buildHistory={buildHistory}/>) ;
+  const buildHistory = new BuildHistory();
+  const buildsA = [];
+  builds.forEach((b,i)=> buildsA.push(b));
+  buildHistory.builds = buildsA;
+  return ReactDOMServer.renderToString(<BuildHistoryPage buildHistory={buildHistory}/>) ;
 }
