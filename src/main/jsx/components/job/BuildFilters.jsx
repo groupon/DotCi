@@ -4,14 +4,6 @@ import classNames from 'classnames';
 import Dialog from './../lib/Dialog.jsx';
 require('./branch_tabs.css')
 export default React.createClass({
-  statics: {
-    currentTab(){
-      return  'All';
-    }
-  },
-  getInitialState(){
-    return {currentSelection: 'All'};
-  },
   render(){
     return <span>
       {this._filtersDropDown()}
@@ -20,8 +12,9 @@ export default React.createClass({
   },
   _filtersDropDown(){
     const items = 
-      this.props.filters.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab)));
-    return <paper-dropdown-menu  ref="branchMenu" label={this.state.currentSelection}>
+      this.props.buildHistory.filters.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab)));
+    const currentFilter = this.props.buildHistory.query.filter;
+    return <paper-dropdown-menu  ref="branchMenu" label={currentFilter}>
       <div className="dropdown-content">
         {items}
         {this._addNewFilterItem()}
@@ -74,8 +67,9 @@ export default React.createClass({
     this.props.flux.removeBranchTab(tab);
   },
   _onTabSelect(e){
-    this.refs.branchMenu.getDOMNode().close();
-    this.setHash(e.currentTarget.getAttribute('data-tab'));
+    this.refs.branchMenu.close();
+    const selectedFilter =e.currentTarget.getAttribute('data-tab')
+    this.props.buildHistory.queryChanged({filter: selectedFilter});
   },
   _getHistoryTab(tab,i,closable) {
     return <paper-item   key={i} >
