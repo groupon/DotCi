@@ -24,7 +24,7 @@
 
 module.exports = require('./make-webpack-config.js')(
   { 
-    debug: false ,
+    debug: true ,
     entry:"./src/main/jsx/server/server.jsx",
     output: {
       path: "./src/main/resources/com/groupon/jenkins/dynamic/build/DynamicProject",
