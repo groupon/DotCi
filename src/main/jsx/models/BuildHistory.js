@@ -1,8 +1,3 @@
-/*
- * Model has 
- * 1.data 
- * 2. query that corrsponds to that data
- */
 function createAction(onCallBack){
   const action = function(data){
     onCallBack(data,action.onAction);
