@@ -31,6 +31,9 @@ export default class {
       case 'DATA_CHANGE':
         Object.assign(this,action.data);
       break;
+      case 'REMOVE_FILTER':
+        //optimistic update here
+        break;
     }
     this.actionChangeListener(action,this);
   }
