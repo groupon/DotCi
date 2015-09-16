@@ -14,12 +14,12 @@ window.onload = function (){
     let query = buildHistory.query;
     ReactDOM.render(<BuildHistoryPage buildHistory={buildHistory}/>, document.getElementById('content'));
     job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]",query.filter ,query.limit).then(data => {
-      actions.DataChange.send({...data, filters: data.buildHistoryTabs});
+      actions.DataChange({...data, filters: data.buildHistoryTabs});
     });
   }
   actions.RemoveFilter.onAction = (buildHistory)=>{};
 
-  actions.QueryChange.send({filter: 'All', limit: 50});
+  actions.QueryChange({filter: 'All', limit: 50});
 
 }
 

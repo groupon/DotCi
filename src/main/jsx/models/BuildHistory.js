@@ -3,16 +3,11 @@
  * 1.data 
  * 2. query that corrsponds to that data
  */
-class Action{
-  constructor(onCallBack){
-    this.onCallBack = onCallBack;
+function createAction(onCallBack){
+  const action = function(data){
+    onCallBack(data,action.onAction);
   }
-  onAction(onAction){
-    this.onAction = onAction;
-  }
-  send(data){
-    this.onCallBack(data,this.onAction);
-  }
+  return action;
 }
 export default class {
   constructor(){
@@ -20,22 +15,23 @@ export default class {
     this.builds= [];
     this.query={}
     const self = this;
-    const QueryChange = new Action((newQuery,callBack)=>{
-      Object.assign(self.query,newQuery);
-      callBack(self);
-    });
-    const DataChange = new Action((data,callBack)=>{
-      Object.assign(self,data);
-      callBack(self);
-    });
-    const RemoveFilter = new Action((removedFilter,callBack)=>{
-      //-------- Optimistic Update
-      const idx = self.filters.indexOf(removedFilter);
-      self.filters.splice(idx, 1);
-      self.actions.DataChange.send(self);
-      //---------------
-      callBack(self);
-    });
-    this.actions = {DataChange,QueryChange,RemoveFilter }
+    this.actions =  {
+      QueryChange : createAction((data,onAction) =>{
+        Object.assign(self.query,data);
+        onAction(self);
+      }),
+      DataChange : createAction((data,callBack)=>{
+        Object.assign(self,data);
+        callBack(self);
+      }),
+      RemoveFilter : createAction((removedFilter,callBack)=>{
+        //-------- Optimistic Update
+        const idx = self.filters.indexOf(removedFilter);
+        self.filters.splice(idx, 1);
+        self.actions.DataChange(self);
+        //---------------
+        callBack(self);
+      })
+    }
   }
 }
