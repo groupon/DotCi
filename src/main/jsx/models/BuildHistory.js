@@ -3,38 +3,35 @@
  * 1.data 
  * 2. query that corrsponds to that data
  */
+class Action{
+  constructor(onCallBack){
+    this.onCallBack = onCallBack;
+  }
+  onAction(onAction){
+    this.onAction = onAction;
+  }
+  send(data){
+    return this.onCallBack(data,this.onAction);
+  }
+}
 export default class {
   constructor(){
     this.filters= [];
     this.builds= [];
     this.query={}
-    this.Actions = {
-      QueryChange(newQuery){
-        return {name:'QUERY_CHANGE', data: newQuery}
-      },
-      DataChange(newData){
-        return {name:'DATA_CHANGE', data: newData}
-      },
-      RemoveFilter(filter){
-        return {name:'REMOVE_FILTER', data: filter}
-      }
-    }
-  }
-  setActionChangeListener(actionChangeListener){
-    this.actionChangeListener = actionChangeListener;
-  }
-  sendAction(action){
-    switch(action.name) {
-      case 'QUERY_CHANGE':
-        Object.assign(this.query,action.data);
-      break;
-      case 'DATA_CHANGE':
-        Object.assign(this,action.data);
-      break;
-      case 'REMOVE_FILTER':
-        //optimistic update here
-        break;
-    }
-    this.actionChangeListener(action,this);
+    const self = this;
+    const QueryChange = new Action((newQuery,callBack)=>{
+      Object.assign(self.query,newQuery);
+      return callBack(self);
+    });
+    const DataChange = new Action((data,callBack)=>{
+      Object.assign(self,data);
+      return callBack(self);
+    });
+    const RemoveFilter = new Action((removedFilter,callBack)=>{
+      // Object.assign(self,data);
+      return callBack(self);
+    });
+    this.Actions = {DataChange,QueryChange,RemoveFilter }
   }
 }
