@@ -54,13 +54,14 @@ export default React.createClass({
   _onTabRemove(event){
     event.stopPropagation();
     var tab = event.currentTarget.getAttribute('data-tab');
-    const buildHistory = this.props.builldHistory;
-    buildHistory.sendAction(Actions.RemoveFilter(tab));
+    const buildHistory = this.props.buildHistory;
+    buildHistory.sendAction(buildHistory.Actions.RemoveFilter(tab));
   },
   _onTabSelect(e){
     this.refs.branchMenu.close();
-    const selectedFilter =e.currentTarget.getAttribute('data-tab')
-    this.props.buildHistory.queryChanged({filter: selectedFilter});
+    const filter =e.currentTarget.getAttribute('data-tab')
+    const buildHistory = this.props.buildHistory;
+    buildHistory.sendAction(buildHistory.Actions.QueryChange({filter}));
   },
   _getHistoryTab(tab,i,closable) {
     return <paper-item   key={i} >
