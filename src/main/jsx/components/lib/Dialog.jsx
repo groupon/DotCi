@@ -5,7 +5,7 @@ export default React.createClass({
     return {showing: false};
   },
   render(){
-    return <paper-dialog  ref="ca-dialog" onClick={this._onClick}  entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+    return <paper-dialog  ref="ca-dialog"  entry-animation="scale-up-animation" exit-animation="fade-out-animation">
       <h2>{this.props.heading}</h2>
       <paper-dialog-scrollable>
         {(this.state.showing || !this.props.lazy)?this.props.children:this._loading()}
@@ -18,8 +18,8 @@ export default React.createClass({
   },
   _buttons(){
     return <div className="buttons">
-      <paper-button ref="ca-1" attrs={{"dialog-dismiss": true}}>Cancel</paper-button>
-      <paper-button  ref="ca-2" attrs={{ "dialog-confirm": true}}>Accept</paper-button>
+      <paper-button  dialog-dismiss>Cancel</paper-button>
+      <paper-button  onClick={this._onClick} dialog-confirm>Accept</paper-button>
     </div>
   },
   show(){
@@ -36,8 +36,6 @@ export default React.createClass({
     dialog.toggle();
   },
   _onClick(e){
-    if(e.target.parentElement && e.target.parentElement.getAttribute('dialog-confirm')){
-      this.props.onSave(e);
-    }
+    this.props.onSave(e);
   }
 });

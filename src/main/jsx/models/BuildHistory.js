@@ -26,6 +26,12 @@ export default class {
         self.actions.DataChange(self);
         //---------------
         callBack(self);
+      }),
+      AddFilter: createAction((newFilter,callBack)=>{
+        //-------- Optimistic Update
+        self.filters.push(newFilter);
+        self.actions.DataChange(self);
+        //---------------
       })
     }
   }
