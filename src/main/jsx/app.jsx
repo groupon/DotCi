@@ -3,9 +3,10 @@ import React from "react";
 import ReactDOM from 'react-dom';
 import BuildHistoryPage from './pages/BuildHistoryPage.jsx';
 import {job} from './api/Api.jsx'; 
-import {Actions,default as BuildHistory} from './models/BuildHistory.js'
+import  BuildHistory from './models/BuildHistory.js'
 window.onload = function (){
   const buildHistory = new BuildHistory();
+  const Actions = buildHistory.Actions;
   buildHistory.setActionChangeListener((action,buildHistory) => {
     switch(action.name){
       case 'QUERY_CHANGE':
