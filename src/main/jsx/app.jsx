@@ -6,22 +6,19 @@ import {job} from './api/Api.jsx';
 import  BuildHistory from './models/BuildHistory.js'
 window.onload = function (){
   const buildHistory = new BuildHistory();
-  const Actions = buildHistory.Actions;
-  buildHistory.setActionChangeListener((action,buildHistory) => {
-    switch(action.name){
-      case 'QUERY_CHANGE':
-        let query = buildHistory.query;
-      job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]",query.filter ,query.limit).then(data => {
-        buildHistory.sendAction(Actions.DataChange({...data, filters: data.buildHistoryTabs}));
-      });
-      break;
-      case 'DATA_CHANGE':
-        ReactDOM.render(<BuildHistoryPage buildHistory={buildHistory}/>, document.getElementById('content'));
-      break;
-    }
-  });
+  const actions = buildHistory.Actions;
+  actions.DataChange.onAction = function(buildHistory){
+    ReactDOM.render(<BuildHistoryPage buildHistory={buildHistory}/>, document.getElementById('content'));
+  }
+  actions.QueryChange.onAction = function(buildHistory){
+    let query = buildHistory.query;
+    ReactDOM.render(<BuildHistoryPage buildHistory={buildHistory}/>, document.getElementById('content'));
+    job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]",query.filter ,query.limit).then(data => {
+      actions.DataChange.send({...data, filters: data.buildHistoryTabs});
+    });
+  }
 
-  buildHistory.sendAction(Actions.QueryChange({filter: 'All', limit: 50}));
+  actions.QueryChange.send({filter: 'All', limit: 50});
 
 }
 
