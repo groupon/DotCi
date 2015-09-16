@@ -6,7 +6,7 @@ import {job} from './api/Api.jsx';
 import  BuildHistory from './models/BuildHistory.js'
 window.onload = function (){
   const buildHistory = new BuildHistory();
-  const actions = buildHistory.Actions;
+  const actions = buildHistory.actions;
   actions.DataChange.onAction = function(buildHistory){
     ReactDOM.render(<BuildHistoryPage buildHistory={buildHistory}/>, document.getElementById('content'));
   }
@@ -17,6 +17,7 @@ window.onload = function (){
       actions.DataChange.send({...data, filters: data.buildHistoryTabs});
     });
   }
+  actions.RemoveFilter.onAction = (buildHistory)=>{};
 
   actions.QueryChange.send({filter: 'All', limit: 50});
 

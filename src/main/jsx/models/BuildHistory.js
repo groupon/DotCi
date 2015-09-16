@@ -11,7 +11,7 @@ class Action{
     this.onAction = onAction;
   }
   send(data){
-    return this.onCallBack(data,this.onAction);
+    this.onCallBack(data,this.onAction);
   }
 }
 export default class {
@@ -22,16 +22,20 @@ export default class {
     const self = this;
     const QueryChange = new Action((newQuery,callBack)=>{
       Object.assign(self.query,newQuery);
-      return callBack(self);
+      callBack(self);
     });
     const DataChange = new Action((data,callBack)=>{
       Object.assign(self,data);
-      return callBack(self);
+      callBack(self);
     });
     const RemoveFilter = new Action((removedFilter,callBack)=>{
-      // Object.assign(self,data);
-      return callBack(self);
+      //-------- Optimistic Update
+      const idx = self.filters.indexOf(removedFilter);
+      self.filters.splice(idx, 1);
+      self.actions.DataChange.send(self);
+      //---------------
+      callBack(self);
     });
-    this.Actions = {DataChange,QueryChange,RemoveFilter }
+    this.actions = {DataChange,QueryChange,RemoveFilter }
   }
 }

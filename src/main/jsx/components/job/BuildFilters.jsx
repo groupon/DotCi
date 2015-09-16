@@ -55,7 +55,7 @@ export default React.createClass({
     event.stopPropagation();
     var tab = event.currentTarget.getAttribute('data-tab');
     const buildHistory = this.props.buildHistory;
-    buildHistory.sendAction(buildHistory.Actions.RemoveFilter(tab));
+    buildHistory.actions.RemoveFilter.send(tab);
   },
   _onTabSelect(e){
     this.refs.branchMenu.close();
