@@ -34,21 +34,22 @@ export default React.createClass({
     }
   },
   _addTabDialog(){
-    return <Dialog  ref="addTabDialog" heading="Add new brach tab" onSave={this._onTabSave} >
-      <paper-input label="Branch Expression"></paper-input>
+    return <Dialog  ref="addTabDialog" heading="Add new filter" onSave={this._onTabSave} >
+      <paper-input ref="newFilterExpression" label="Filter Expression"></paper-input>
     </Dialog>;
   },
   _isTabRemovable(tab){
     return !contains(tab)(['master','All','Mine']);
   },
   _addTab(){
-    this.refs.branchMenu.getDOMNode().close();
+    this.refs.branchMenu.close();
     this.refs.addTabDialog.show();
   },
   _onTabSave(e){
-    const tabExpr = this.refs['ca-branchInput'].getDOMNode().value
-    if(tabExpr){
-      this.props.flux.addBranchTab(tabExpr);
+    const newFilter = this.refs.newFilterExpression.value
+    if(newFilter){
+      const buildHistory = this.props.buildHistory;
+      buildHistory.actions.AddFilter(newFilter);
     }
   },
   _onTabRemove(event){
