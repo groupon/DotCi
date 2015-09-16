@@ -55,13 +55,13 @@ export default React.createClass({
     event.stopPropagation();
     var tab = event.currentTarget.getAttribute('data-tab');
     const buildHistory = this.props.buildHistory;
-    buildHistory.actions.RemoveFilter.send(tab);
+    buildHistory.actions.RemoveFilter(tab);
   },
   _onTabSelect(e){
     this.refs.branchMenu.close();
     const filter =e.currentTarget.getAttribute('data-tab')
     const buildHistory = this.props.buildHistory;
-    buildHistory.sendAction(buildHistory.Actions.QueryChange({filter}));
+    buildHistory.actions.QueryChange({filter});
   },
   _getHistoryTab(tab,i,closable) {
     return <paper-item   key={i} >
