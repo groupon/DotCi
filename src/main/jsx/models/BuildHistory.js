@@ -3,19 +3,22 @@
  * 1.data 
  * 2. query that corrsponds to that data
  */
-export const Actions = {
-  QueryChange(newQuery){
-    return {name:'QUERY_CHANGE', data: newQuery}
-  },
-  DataChange(newData){
-    return {name:'DATA_CHANGE', data: newData}
-  }
-}
 export default class {
   constructor(){
     this.filters= [];
     this.builds= [];
     this.query={}
+    this.Actions = {
+      QueryChange(newQuery){
+        return {name:'QUERY_CHANGE', data: newQuery}
+      },
+      DataChange(newData){
+        return {name:'DATA_CHANGE', data: newData}
+      },
+      RemoveFilter(filter){
+        return {name:'REMOVE_FILTER', data: filter}
+      }
+    }
   }
   setActionChangeListener(actionChangeListener){
     this.actionChangeListener = actionChangeListener;

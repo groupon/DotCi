@@ -51,20 +51,11 @@ export default React.createClass({
       this.props.flux.addBranchTab(tabExpr);
     }
   },
-  _notifyTabSelection: function (tab) {
-    this.replaceState({currentSelection: tab});
-    this.props.onTabChange(tab);
-  },
-  _onLocationHashChange(event){
-    const selectedTab = this.selectedHash();
-    this._notifyTabSelection(selectedTab?selectedTab:this.defaultTab);
-  },
   _onTabRemove(event){
     event.stopPropagation();
-    this.replaceState(this.getInitialState());
-    this._notifyTabSelection(this.state.currentSelection);
     var tab = event.currentTarget.getAttribute('data-tab');
-    this.props.flux.removeBranchTab(tab);
+    const buildHistory = this.props.builldHistory;
+    buildHistory.sendAction(Actions.RemoveFilter(tab));
   },
   _onTabSelect(e){
     this.refs.branchMenu.close();
