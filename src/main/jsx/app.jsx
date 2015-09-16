@@ -2,7 +2,7 @@ __webpack_public_path__= window.resURL+'js/';
 import React from "react";
 import ReactDOM from 'react-dom';
 import BuildHistoryPage from './pages/BuildHistoryPage.jsx';
-import {job} from './api/Api.jsx'; 
+import {job,removeFilter,addFilter} from './api/Api.jsx'; 
 import  BuildHistory from './models/BuildHistory.js'
 window.onload = function (){
   const buildHistory = new BuildHistory();
@@ -17,7 +17,8 @@ window.onload = function (){
       actions.DataChange({...data, filters: data.buildHistoryTabs});
     });
   }
-  actions.RemoveFilter.onAction = (buildHistory)=>{};
+  actions.RemoveFilter.onAction = removeFilter;
+  actions.AddFilter.onAction = addFilter;
 
   actions.QueryChange({filter: 'All', limit: 50});
 
