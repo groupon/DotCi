@@ -40,10 +40,10 @@ export function job(tree, branchTab,count){
   return _get(_jobApiUrl()+"/info/",{tree,branchTab,count});
 }
 
-export function removeBranchTab(tabRegex){
+export function removeFilter(tabRegex){
   qwest.post( `${_jobUrl()}/removeBranchTab?tabRegex=`+tabRegex);
 }
-export function addBranchTab(tabRegex){
+export function addFilter(tabRegex){
   qwest.post(`${_jobUrl()}/addBranchTab?tabRegex=`+tabRegex);
 }
 

@@ -25,13 +25,14 @@ export default class {
         self.filters.splice(idx, 1);
         self.actions.DataChange(self);
         //---------------
-        callBack(self);
+        callBack(removedFilter);
       }),
       AddFilter: createAction((newFilter,callBack)=>{
         //-------- Optimistic Update
         self.filters.push(newFilter);
         self.actions.DataChange(self);
         //---------------
+        callBack(newFilter);
       })
     }
   }
