@@ -25,9 +25,13 @@ parent_template: install_packages
 environment:
   language: node
   language_versions: v0.8.25
+  vars:
+    TMPDIR: '\${WORKSPACE}/tmp'
 
 build:
   before:
+    - trap "rm -rf $TMPDIR" EXIT HUP INT QUIT PIPE TERM
+    - mkdir -p $TMPDIR
     - npm cache clear
     - npm install
   run:
