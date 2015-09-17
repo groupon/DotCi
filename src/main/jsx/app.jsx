@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import BuildHistoryPage from './pages/BuildHistoryPage.jsx';
 import {job,removeFilter,addFilter} from './api/Api.jsx'; 
 import  BuildHistory from './models/BuildHistory.js'
+require('./app.css');
 window.onload = function (){
   const buildHistory = new BuildHistory();
   const actions = buildHistory.actions;
