@@ -63,7 +63,8 @@ public class RecentProjects implements RootAction{
     }
 
     public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-        JsonResponse.render(req,rsp,new RecentProjectsRsp(getDynamicBuildRepository().getLastBuildsPerProjectForUser(getCurrentUser())));
+        List recentProjects = getDynamicBuildRepository().getLastBuildsPerProjectForUser(getCurrentUser());
+        JsonResponse.render(req,rsp,new RecentProjectsRsp(recentProjects));
     }
     private DynamicBuildRepository getDynamicBuildRepository() {
         return SetupConfig.get().getDynamicBuildRepository();

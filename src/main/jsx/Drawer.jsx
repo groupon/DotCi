@@ -44,11 +44,10 @@ export default React.createClass( {
     </div> 
   },
   _contextMenu(){
-    var route = this.props.routerState.params['widget'] || 'dotCIbuildHistory';
-    switch(route){
-      case 'dotCIbuildHistory':
+    switch(this.props.menu){
+      case 'job':
         return <JobActions/>;
-      case 'dotCIbuildMetrics':
+      case 'metrics':
         return '';
       default: 
         return this._buildMenu();
@@ -56,7 +55,6 @@ export default React.createClass( {
 
   },
   _buildMenu(){
-    const currentBuild = this.props.job.get('build');
-    return currentBuild? <BuildActions flux={this.props.flux} {...currentBuild.toObject()} /> : '';
+    return currentBuild? <BuildActions  /> : '';
   }
 });
