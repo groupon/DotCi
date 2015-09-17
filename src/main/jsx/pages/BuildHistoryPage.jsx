@@ -10,7 +10,7 @@ export default React.createClass({
     const countSlider = <RangeSlider
       tooltip="Build count"  
       value={query.limit} 
-      onChange={(limit)=> actions.QueryChange({limit})} 
+      onChange={(limit)=> QueryChange({limit})} 
       min={20}  
       max={100} 
       step={5}  />;
