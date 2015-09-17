@@ -5,14 +5,21 @@ import BuildHistoryTable from './../components/job/BuildHistoryTable.jsx';
 export default React.createClass({
   render(){
     const {query,builds,actions} = this.props.buildHistory;
-    const countSlider = <RangeSlider ref="buildCount" 
+    const {AddFilter,RemoveFilter,QueryChange} = actions;
+
+    const countSlider = <RangeSlider
       tooltip="Build count"  
       value={query.limit} 
       onChange={(limit)=> actions.QueryChange({limit})} 
       min={20}  
       max={100} 
       step={5}  />;
-      const buildFilters = <BuildFilters  ref="branchTabs"  buildHistory={this.props.buildHistory} />;
+
+      const buildFilters = <BuildFilters  
+        selectedFilter={query.filter} 
+        filters={this.props.buildHistory.filters}
+        actions= {{AddFilter,RemoveFilter,QueryChange}}
+      />;
       return(<div className="align-center" >
         <BuildHistoryTable buildFilters={buildFilters} countSlider={countSlider} builds ={builds}/>
       </div>);
