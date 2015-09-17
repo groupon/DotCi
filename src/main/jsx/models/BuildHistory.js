@@ -6,8 +6,8 @@ function createAction(onCallBack){
 }
 export default class {
   constructor(){
-    this.filters= [];
     this.builds= [];
+    this.filters= [];
     this.query={}
     const self = this;
     this.actions =  {

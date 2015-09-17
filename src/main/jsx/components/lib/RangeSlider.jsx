@@ -1,14 +1,8 @@
 import React from 'react';
 import Dialog from './Dialog.jsx';
 export default React.createClass({
-  statics: {
-    currentValue(){
-      return 20;
-      // return new Url().query["buildCount"] || 20;
-    }
-  },
   getInitialState(){
-    return {value: this._getQueryValue() || this.props.min}
+    return {value: this.props.value}
   },
   render(){
     return <span className="range-slider-container hint--bottom" data-hint={this.props.tooltip}>
@@ -33,11 +27,11 @@ export default React.createClass({
       max= {this.props.max}/>
   },
   _valueChange(e){
-    const newValue =this.refs['ca-slider'].getDOMNode().value;
+    const newValue =this.refs['ca-slider'].value;
     this.replaceState({value: newValue});
     this.props.onChange(newValue);
   },
   _getQueryValue(){
-    return 20 ;//new Url().query["buildCount"];
+    return 20 ;
   }
 });
