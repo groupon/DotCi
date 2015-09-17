@@ -1,26 +1,12 @@
 import React from "react";
-import {Link} from 'react-router';
 import RecentProjects from "./components/recent_projects/RecentProjects.jsx";
 import BuildActions  from './components/job/build/BuildActions.jsx'
 import Dialog from './components/lib/Dialog.jsx'; 
-import { TransitionHook } from 'react-router';
 import JobActions from './components/job/JobActions.jsx';
 
 export default React.createClass( {
-  mixins: [TransitionHook],
-  childContextTypes: {
-    router: React.PropTypes.func
-  },
-  getChildContext () {
-    return {
-      router: this.props.router
-    }
-  },
   getInitialState(){
     return {view: "current"}
-  },
-  routerWillLeave (nextState, router) {
-    debugger
   },
   render(){
     return <div>

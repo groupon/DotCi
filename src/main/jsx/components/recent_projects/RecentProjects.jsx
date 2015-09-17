@@ -23,27 +23,23 @@
  * THE SOFTWARE.
  */
 import React from "react";
-import FluxComponent from 'flummox/component';
 import Avatar from '../lib/Avatar.jsx';
 import AutoRefreshHelper from './../mixins/AutoRefreshHelper.jsx'
-import Responsive from './../mixins/Responsive.jsx';
-import CustomAttributes from './../mixins/CustomAttributes.jsx'
 import Loading from './../mixins/Loading.jsx';
 require("./recent-projects.css");
 
 var RecentProject = React.createClass({
-  mixins: [CustomAttributes],
   render(){
     return (
       <paper-item className={"recent-project " + this.props.lastBuildResult}> 
-        <paper-item-body ref="ca-1" attrs={{"three-line": ""}}>
+        <paper-item-body three-line>
           <a href={this.props.url} className="project-name">
             <span className="project-title">{this._projectName()}</span>-{this.props.number}
           </a>
-          <div ref="ca-2" attrs={{secondary: ""}}>
+          <div secondary>
             <iron-icon icon="github:commit"/> {this.props.commit.message}
           </div>
-          <div ref="ca-3" attrs={{secondary: ""}} className="finished">
+          <div secondary className="finished">
             <iron-icon icon="alarm"/>
             <span className="detail">{this.props.startTime}</span>
           </div>
@@ -57,12 +53,8 @@ var RecentProject = React.createClass({
 });
 
 var RecentProjectsWidget =React.createClass({
-  mixins: [CustomAttributes, AutoRefreshHelper,Responsive(
-    {
-      "only screen and (max-width: 1450px)": "renderSmall",
-      "all and (min-width: 1450px)": "renderDefault",
-    }
-  )],
+  mixins: [ AutoRefreshHelper
+  ],
   componentWillMount(){
     this._loadRecentProjects()
     this.setRefreshTimer(this._loadRecentProjects);
@@ -73,7 +65,7 @@ var RecentProjectsWidget =React.createClass({
   renderSmall(){
     return this._render(true);
   },
-  renderDefault(){
+  render(){
     return this._render(false);
   },
   _render(small){
