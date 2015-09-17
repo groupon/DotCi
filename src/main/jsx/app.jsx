@@ -1,5 +1,6 @@
 __webpack_public_path__= window.resURL+'js/';
 import React from "react";
+import ReactDOM from "react-dom";
 import page from 'page';
 import  BuildHistory from './models/BuildHistory.js'
 import * as buildHistoryActions from './client/BuildHistoryPageActions.js';
@@ -17,10 +18,10 @@ window.onload = function (){
   const rootPath = window.location.pathname.split(jobPath)[0] +jobPath;
 
   actions.QueryChange({filter: 'All', limit: 50});
-  // ReactDOM.render(<Drawer/>, document.getElementById('nav'));
   page.base(rootPath);
   page('/', function () {
     actions.QueryChange({filter: 'All', limit: 50});
+    ReactDOM.render(<Drawer/>, document.getElementById('nav'));
   });
   page();
 }
