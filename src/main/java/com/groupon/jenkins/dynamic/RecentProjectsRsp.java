@@ -24,10 +24,13 @@
 
 package com.groupon.jenkins.dynamic;
 
+import com.groupon.jenkins.mongo.*;
+import hudson.*;
+import jenkins.model.*;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import java.util.List;
+import java.util.*;
 
 @ExportedBean
     public class RecentProjectsRsp{
@@ -39,6 +42,23 @@ import java.util.List;
 
         @Exported(inline=true)
         public List getRecentProjects() {
-            return recentProjects;
+            return addAddtionalFields(recentProjects);
         }
+
+    private List addAddtionalFields(List<Map> recentProjects) {
+        ArrayList<Map> output = new ArrayList<Map>();
+        for(Map recentProject: recentProjects){
+            HashMap project = new HashMap();
+            project.putAll(recentProject);
+            String[] projectParts = ((String) recentProject.get("projectName")).split("/");
+
+            String url = Jenkins.getActiveInstance().getRootUrl() + "/job/" +projectParts[0]+"/job/"+ projectParts[1]+"/"+ recentProject.get("number");
+
+            project.put("url", url);
+            String startTime = Util.getPastTimeString(System.currentTimeMillis() - (Long)recentProject.get("startTime") ) + " ago";
+            project.put("startTime", startTime);
+            output.add(project);
+        }
+        return output;
     }
+}

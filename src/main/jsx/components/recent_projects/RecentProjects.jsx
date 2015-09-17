@@ -26,6 +26,7 @@ import React from "react";
 import Avatar from '../lib/Avatar.jsx';
 import AutoRefreshHelper from './../mixins/AutoRefreshHelper.jsx'
 import Loading from './../mixins/Loading.jsx';
+import {recentProjects} from './../../api/Api.jsx';
 require("./recent-projects.css");
 
 var RecentProject = React.createClass({
@@ -52,15 +53,20 @@ var RecentProject = React.createClass({
   }
 });
 
-var RecentProjectsWidget =React.createClass({
-  mixins: [ AutoRefreshHelper
-  ],
+export default React.createClass({
+  mixins: [AutoRefreshHelper],
+  getInitialState(){
+    return {};
+  },
   componentWillMount(){
     this._loadRecentProjects()
     this.setRefreshTimer(this._loadRecentProjects);
   },
   _loadRecentProjects(){
-    this.props.flux.getRecentProjectsFromServer();
+    var self =this;
+    recentProjects().then(data =>{ 
+      self.setState({recentProjects: data.recentProjects});
+    });
   },
   renderSmall(){
     return this._render(true);
@@ -69,26 +75,13 @@ var RecentProjectsWidget =React.createClass({
     return this._render(false);
   },
   _render(small){
-    if(!this.props.recentProjects) return <Loading/>;
-    var recentProjects = this.props.recentProjects.map(function (project) {
-      return ( <RecentProject key={project.url} small={true} {...project}/>);
-    });
+    if(!this.state.recentProjects) return <Loading/>;
+    var recentProjects = this.state.recentProjects.map(project => <RecentProject key={project.url} small={true} {...project}/>);
     return (
       <div id="recent-projects">
         <paper-menu id="project-list" className="list">
           {recentProjects}
         </paper-menu>
-      </div>
-    );
-  }
-});
-export default React.createClass({
-  render(){
-    return (
-      <div className={this.props.className}>
-        <FluxComponent connectToStores={['recentProjects']} flux={this.props.flux}>
-          <RecentProjectsWidget/>
-        </FluxComponent>
       </div>
     );
   }

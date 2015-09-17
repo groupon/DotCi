@@ -17,11 +17,10 @@ window.onload = function (){
   const jobPath = jobUrl.replace(rootURL,'');
   const rootPath = window.location.pathname.split(jobPath)[0] +jobPath;
 
-  actions.QueryChange({filter: 'All', limit: 50});
   page.base(rootPath);
   page('/', function () {
     actions.QueryChange({filter: 'All', limit: 50});
-    ReactDOM.render(<Drawer/>, document.getElementById('nav'));
+    ReactDOM.render(<Drawer menu="job"/>, document.getElementById('nav'));
   });
   page();
 }
