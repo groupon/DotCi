@@ -1,7 +1,7 @@
 import React from "react";
 import RangeSlider from './../components/lib/RangeSlider.jsx';
 import BuildFilters from './../components/job/BuildFilters.jsx';
-import LineChart from './../components/charts/LineChart.jsx';
+import LineChart from 'react-proxy!./../components/charts/LineChart.jsx';
 export default React.createClass({
   render(){
     const {metrics,filters,actions,query} = this.props.buildMetrics;
