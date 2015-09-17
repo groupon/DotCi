@@ -18,8 +18,13 @@ window.onload = function (){
   const rootPath = window.location.pathname.split(jobPath)[0] +jobPath;
 
   page.base(rootPath);
-  page('/', function () {
+  page('/','dotCIbuildHistory');
+  page('dotCIbuildHistory', function () {
     actions.QueryChange({filter: 'All', limit: 50});
+    ReactDOM.render(<Drawer menu="job"/>, document.getElementById('nav'));
+  });
+  page('dotCIbuildMetrics', function () {
+    actions.QueryChange({filter: 'All', limit: 0});
     ReactDOM.render(<Drawer menu="job"/>, document.getElementById('nav'));
   });
   page();
