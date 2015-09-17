@@ -31,14 +31,14 @@ export default React.createClass( {
   _currentMenu(){
     return <div className="list short">
       <paper-icon-item>
-        <Link   to="job-widgets" params={{widget: 'dotCIbuildHistory'}}> 
+        <a   to="job-widgets" params={{widget: 'dotCIbuildHistory'}}> 
           <iron-icon  icon="list"/>Build History
-        </Link>
+        </a>
       </paper-icon-item>
       <paper-icon-item>
-        <Link   to="job-widgets" params={{widget: 'dotCIbuildMetrics'}}> 
+        <a   to="job-widgets" params={{widget: 'dotCIbuildMetrics'}}> 
           <iron-icon  icon="trending-up"/> Build Metrics
-        </Link>
+        </a>
       </paper-icon-item>
       {this._contextMenu()}
     </div> 
