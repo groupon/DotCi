@@ -12,8 +12,8 @@ export default React.createClass({
   },
   _filtersDropDown(){
     const items = 
-      this.props.buildHistory.filters.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab)));
-    const currentFilter = this.props.buildHistory.query.filter;
+      this.props.filters.map((tab,i)=>this._getHistoryTab(tab,i,this._isTabRemovable(tab)));
+    const currentFilter = this.props.selectedFilter;
     return <paper-dropdown-menu  ref="branchMenu" label={currentFilter}>
       <div className="dropdown-content">
         {items}
@@ -48,21 +48,18 @@ export default React.createClass({
   _onTabSave(e){
     const newFilter = this.refs.newFilterExpression.value
     if(newFilter){
-      const buildHistory = this.props.buildHistory;
-      buildHistory.actions.AddFilter(newFilter);
+      this.props.actions.AddFilter(newFilter);
     }
   },
   _onTabRemove(event){
     event.stopPropagation();
     var tab = event.currentTarget.getAttribute('data-tab');
-    const buildHistory = this.props.buildHistory;
-    buildHistory.actions.RemoveFilter(tab);
+    this.props.actions.RemoveFilter(tab);
   },
   _onTabSelect(e){
     this.refs.branchMenu.close();
     const filter =e.currentTarget.getAttribute('data-tab')
-    const buildHistory = this.props.buildHistory;
-    buildHistory.actions.QueryChange({filter});
+    this.props.actions.QueryChange({filter});
   },
   _getHistoryTab(tab,i,closable) {
     return <paper-item   key={i} >
