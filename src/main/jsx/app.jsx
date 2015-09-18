@@ -2,12 +2,12 @@ __webpack_public_path__= window.resURL+'js/';
 import React from "react";
 import ReactDOM from "react-dom";
 import page from 'page';
-import  BuildHistory from './models/BuildHistory.js'
+import  Model from './models/Model.js'
 import * as buildHistoryActions from './client/BuildHistoryPageActions.js';
 require('./app.css');
 import Drawer from './Drawer.jsx';
 function getBuildHistoryActions(){
-  const buildHistory = new BuildHistory();
+  const buildHistory = new Model();
   const actions = buildHistory.actions;
   actions.DataChange.onAction = buildHistoryActions.dataChange;
   actions.QueryChange.onAction = buildHistoryActions.queryChange;
