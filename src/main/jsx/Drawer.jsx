@@ -47,8 +47,6 @@ export default React.createClass( {
     switch(this.props.menu){
       case 'job':
         return <JobActions/>;
-      case 'metrics':
-        return '';
       default: 
         return this._buildMenu();
     }

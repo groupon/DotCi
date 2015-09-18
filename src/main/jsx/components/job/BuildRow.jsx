@@ -62,7 +62,7 @@ export default React.createClass({
           {this._statusRow(result,cause)}
           <span>
             <div className="build-row--title"><small>{branch}</small> 
-              <a  to={'job-widgets'} params={{widget: number}}>{message}</a>
+              <a  href={number}>{message}</a>
             </div> 
             <div className="build-row--committer">
               <Avatar avatarUrl={avatarUrl} />
@@ -71,7 +71,7 @@ export default React.createClass({
             <div className="build-row--cause">{cause['shortDescription']}</div>
           </span>
           <span>  
-            <div>#<a  className="build-row--number" to={'job-widgets'} params={{widget: number}}>{number}{result.toLowerCase()}</a></div>
+            <div>#<a  className="build-row--number" href={number}>{number}{result.toLowerCase()}</a></div>
             <div><iron-icon icon="github:octoface"/><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>
           </span>
           <span>

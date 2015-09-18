@@ -25,9 +25,11 @@ window.onload = function (){
     ReactDOM.render(<Drawer menu="job"/>, document.getElementById('nav'));
   });
   page('dotCIbuildMetrics', function () {
-    // actions.QueryChange({filter: 'All', limit: 0});
     buildMetrics.actions.QueryChange({filter: 'All', limit: 50});
     ReactDOM.render(<Drawer menu="job"/>, document.getElementById('nav'));
+  });
+  page(':build',(ctx)=>{
+    const buildNumber = ctx.path;
   });
   page();
 }
