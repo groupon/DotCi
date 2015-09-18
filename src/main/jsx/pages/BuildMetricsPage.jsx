@@ -1,7 +1,7 @@
 import React from "react";
 import RangeSlider from './../components/lib/RangeSlider.jsx';
 import BuildFilters from './../components/job/BuildFilters.jsx';
-import LineChart from 'react-proxy!./../components/charts/LineChart.jsx';
+import LineChart from './../components/charts/LineChart.jsx';
 export default React.createClass({
   render(){
     const {metrics,filters,actions,query} = this.props.buildMetrics;
@@ -22,12 +22,12 @@ export default React.createClass({
       const charts = metrics.map(metric => <span key={metric.title} className="build-chart">
         <LineChart  title={metric.title} chart={metric.chart}/><hr/>
       </span>);
-      return <div className="build-metrics">
+      return <div className="align-center build-metrics">
         <span className="action-bar">
           {buildFilters}
           {countSlider}
         </span>
-        <div className="charts">{charts}</div>
+        <div className="charts align-center">{charts}</div>
       </div>;
   }
 });

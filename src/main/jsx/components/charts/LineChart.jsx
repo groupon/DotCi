@@ -1,10 +1,10 @@
 import React from 'react';
 import Chart from 'chart.js';
-import {Set} from 'immutable';
+import contains from 'ramda/src/contains'
 require('./line_chart.css');
 export default React.createClass({
   getInitialState(){
-    return {unchecked: Set()};
+    return {unchecked: []};
   },
   componentDidUpdate(){
     this._renderChart();
@@ -13,21 +13,21 @@ export default React.createClass({
     this.componentDidUpdate();
   },
   _renderChart(){
-    const {dataSets,labels} = this.props.chart.toObject();
-    const chartCtx = this.refs.chart.getDOMNode().getContext('2d');
+    const {dataSets,labels} = this.props.chart;
+    const chartCtx = this.refs.chart.getContext('2d');
     const filteredDataSet = this._removeUnchecked(dataSets);
     if(filteredDataSet.size == 0){
       var chartData = { labels :[], datasets: [] };
     }else{
-      var chartData = { labels : labels.toJS(), datasets: filteredDataSet.toJS() };
+      var chartData = { labels : labels, datasets: filteredDataSet };
       new Chart(chartCtx).Line(chartData, {scaleShowGridLines : false});
     }
   },
   _removeUnchecked(dataSets){
-    return dataSets.filter(dataSet => !this.state.unchecked.has(dataSet.get('label')));
+    return dataSets.filter(dataSet => !this._isUnChecked(dataSet.label));
   },
   render(){
-    let {xLabel,yLabel} = this.props.chart.toObject();
+    let {xLabel,yLabel} = this.props.chart;
     return (
       <div className="chart-container">
         <div>
@@ -42,22 +42,26 @@ export default React.createClass({
       </div>);
   },
   _legend(){
-    const {dataSets} = this.props.chart.toObject();
+
+    const {dataSets} = this.props.chart;
     return  <div className="legend">
-      {dataSets.map(dataSet=> <div key={dataSet.get('label')} >
+      {dataSets.map(dataSet=> <div key={dataSet.label} >
         <div className="ui checkbox">
-          <input  id={dataSet.get('label')} type="checkbox" name={dataSet.get('label')}  onChange={this._dataSetChanged} checked={this._isSelected(dataSet.get('label'))}/>
-          <label htmlFor={dataSet.get('label')} style={{color: dataSet.get('strokeColor') }} >{dataSet.get('label')}</label>
+          <input  id={dataSet.label} type="checkbox" name={dataSet.label}  onChange={this._dataSetChanged} checked={this._isSelected(dataSet.label)}/>
+          <label htmlFor={dataSet.label} style={{color: dataSet.strokeColor }} >{dataSet.label}</label>
         </div>
       </div>)}
     </div>
   },
   _isSelected(label){
-    return !this.state.unchecked.has(label);
+    return !this._isUnChecked(label);
+  },
+  _isUnChecked(label){
+    return contains(x => x === label) (this.state.unchecked)
   },
   _dataSetChanged(e){
     const targetLabel =e.target.getAttribute('name');
-    const {dataSets} = this.props.chart.toObject();
+    const {dataSets} = this.props.chart;
     if(!e.target.checked) {
       this.replaceState({unchecked: this.state.unchecked.add(targetLabel)});
     }else{
