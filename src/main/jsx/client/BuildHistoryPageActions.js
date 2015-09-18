@@ -9,7 +9,6 @@ export function dataChange(buildHistory){
 export function queryChange(buildHistory){
   const actions = buildHistory.actions;
   let query = buildHistory.query;
-  ReactDOM.render(<BuildHistoryPage buildHistory={buildHistory}/>, document.getElementById('content'));
   job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]",query.filter ,query.limit).then(data => {
     actions.DataChange({...data, filters: data.buildHistoryTabs});
   });
