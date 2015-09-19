@@ -1,13 +1,6 @@
-function createAction(onCallBack){
-  const action = function(data){
-    onCallBack(data,action.onAction);
-  }
-  return action;
-}
+import createAction from './createAction.js';
 export default class {
   constructor(){
-    // this.builds= [];
-    // this.filters= [];
     this.query={}
     const self = this;
     this.actions =  {
