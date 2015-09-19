@@ -1,13 +1,10 @@
 import React from "react";
-import Router from 'react-router';
 import Convert from  'ansi-to-html';
-import LocationHashHelper from './../../mixins/LocationHashHelper.jsx'
 import LoadingHelper from './../../mixins/LoadingHelper.jsx'
 import loadingsvg from './tail-spin.svg';
-import {OrderedMap,List} from 'immutable';
 require('./console.less');
 export default React.createClass({
-  mixins: [LocationHashHelper ,LoadingHelper], 
+  mixins: [LoadingHelper], 
   getInitialState(){
     return {logPinned: false}
   },

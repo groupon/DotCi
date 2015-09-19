@@ -1,15 +1,11 @@
 import React from "react";
-import Router from 'react-router';
-import Immutable from 'immutable';
-import CustomAttributes from './../../mixins/CustomAttributes.jsx';
 import BuildProgressBar from './../BuildProgressBar.jsx';
 require('./sub-builds-menu.css');
 export default  React.createClass({
-  mixins: [CustomAttributes],
   render(){
     if(this._isMultiConfig()){
       const selected = this.props.axisList.findIndex(subBuild => this.props.selectedBuild === subBuild.get('script'))
-      return <paper-tabs ref="ca-subbuilds" attrs={{selected}}>
+      return <paper-tabs selected>
         {this._subBuilds()}
       </paper-tabs> 
     }
@@ -17,7 +13,7 @@ export default  React.createClass({
     return <span/>;
   },
   _isMultiConfig(){
-    return this.props.axisList.count() > 1;
+    return this.props.axisList.length > 1;
   },
   _subBuilds(){
     return this.props.axisList.map(subBuild =>{
