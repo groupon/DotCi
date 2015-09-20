@@ -1,17 +1,52 @@
 import createAction from './createAction.js';
+import last from 'ramda/src/last';
 export default class {
   constructor(){
     this.query={}
     const self = this;
     this.actions =  {
-      QueryChange : createAction((data,onAction) =>{
-        Object.assign(self.query,data);
+      BuildChange : createAction((number,onAction) =>{
+        this.number = number;
         onAction(self);
       }),
-      DataChange : createAction((data,callBack)=>{
-        Object.assign(self,data);
+      LogChange : createAction((logText,onAction) =>{
+        self.log = logText;
+        onAction(self);
+      }),
+      BuildInfoChange : createAction((buildInfo,callBack)=>{
+        Object.assign(self,buildInfo);
         callBack(self);
       })
     }
+  }
+  set log(logText){
+    this._log=logText.split("\n"); 
+  }
+  get log(){
+    if(!this._log) return [];
+    return  this._log.reduce((grouped,line) => {
+      if( line.startsWith('$')){
+        grouped.push([line]);
+      }else{
+        (last()(grouped)).push(line);
+      }
+      return grouped;
+    },[[]])
+  }
+  get log12h(){
+    const groupedLines = logLines.reduce((list,line)=>{
+      if( line.startsWith('$')){
+        return  list.push(List.of(line))
+      }
+      const newLast = last()(list).push(line)
+      return list.set(-1,newLast);
+    } , [[]]);
+    //Add start indexes Turn [[..],[...],..] => [[[...],1] [[....],4], ..]
+    const groupedLinesWithIdx =  groupedLines.reduce((list,group) => {
+      if(last()(list)){
+        return list.push(List.of(group,list.last().get(0).size+ list.last().get(1)))
+      }
+      return list.push([group,1]);
+    }, []);
   }
 };

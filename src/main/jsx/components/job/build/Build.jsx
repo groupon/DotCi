@@ -1,4 +1,5 @@
 import React from "react";
+import find from 'ramda/src/find'
 import Console from './Console.jsx';
 import BuildRow from '../BuildRow.jsx'
 import FaviconHelper from './../../mixins/FaviconHelper.jsx';
@@ -7,19 +8,14 @@ require('./build.less');
 export default  React.createClass({
   mixins: [FaviconHelper],
   componentDidUpdate(){
-    if(this._getBuildResult() === 'IN_PROGRESS' ){
-      this.setRefreshTimer(this._refreshCurrentBuild);
-    }else{
-      this.clearAutoRefresh();
-    }
     this.setFavicon(this._getBuildResult());
   },
-  componentWillReceiveProps(nextProps){
-    if(nextProps.subBuild !== this.props.subBuild){
-      const actions = this.props.flux.getActions('app');
-      actions.loadBuildLog(this.props.url,nextProps.subBuild.replace('dotCI',''));
-    }
-  },
+  // componentWillReceiveProps(nextProps){
+  //   if(nextProps.subBuild !== this.props.subBuild){
+  //     const actions = this.props.flux.getActions('app');
+  //     actions.loadBuildLog(this.props.url,nextProps.subBuild.replace('dotCI',''));
+  //   }
+  // },
   _getBuildResult(){
     return this.props.build && this.props.build.result;
   },
@@ -30,21 +26,17 @@ export default  React.createClass({
     return this._selectedAxis().result;
   },
   _selectedBuildUrl(){
-    return this._selectedAxis().get('url');
+    return this._selectedAxis().url;
   },
   _selectedAxis(){
     const selectedSubBuild = this._subBuild();
-    return this._get('axisList').toArray().find(axis => axis.script === selectedSubBuild)
-  },
-  _refreshCurrentBuild(){
-    const actions = this.props.flux.getActions('app');
-    actions.refreshBuild(this.props.url,this._subBuild());
+    return find(axis => axis.script === selectedSubBuild)(this._get('axisList'))
   },
   render(){
-    // <Console log={this.props.build.get('log')} url={this._selectedBuildUrl()} buildResult={this._buildResult()}/>
     return(<div id="build">
       <BuildRow  build={this.props.build}/>
       <SubBuildsMenu buildNumber={this._get('number')} axisList={this._get('axisList')} selectedBuild={this._subBuild()}/>
+      <Console log={this.props.build.log} url={this._selectedBuildUrl()} buildResult={this._buildResult()}/>
     </div>);
   },
   _get(key){
