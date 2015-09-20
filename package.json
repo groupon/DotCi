@@ -18,6 +18,7 @@
     "classnames": "^1.2.0",
     "css-loader": "^0.14.0",
     "enquire.js": "^2.1.1",
+    "es6-object-assign": "^1.0.1",
     "eslint": "^0.18.0",
     "extract-text-webpack-plugin": "^0.3.8",
     "file-loader": "^0.8.1",
@@ -44,19 +45,20 @@
     "style-loader": "^0.8.3",
     "url-loader": "latest",
     "vulcanize": "^1.9.3",
-    "webpack": "1.9.5"
+    "webpack": "^1.9.5"
   },
   "devDependencies": {
-    "karma": "^0.12.28",
+    "karma": "latest",
     "karma-chrome-launcher": "^0.1.7",
     "karma-cli": "0.0.4",
     "karma-firefox-launcher": "^0.1.3",
     "karma-mocha": "^0.1.10",
     "karma-sourcemap-loader": "^0.3.2",
-    "karma-webpack": "^1.3.1",
+    "karma-webpack": "latest",
     "mocha": "^2.0.1",
     "react-hot-loader": "^1.1.1",
     "redux-devtools": "^2.1.2",
+    "webpack": "^1.12.2",
     "webpack-dev-server": "latest"
   },
   "scripts": {
@@ -64,7 +66,7 @@
     "package": "$(npm bin)/webpack --release=true  --colors --progress  src/main/jsx/app.jsx",
     "lint": "eslint src/main/jsx/**/*",
     "watch": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.config.dev.js --colors --progress --hot --inline  --port  3000",
-    "test": "karma start",
+    "test": "$(npm bin)/karma start",
     "vulcanize": "bower install --config.interactive=false && $(npm bin)/vulcanize src/main/webapp/webcomponent-imports.html > src/main/webapp/webcomponent-imports-vulcanized.html"
   }
 }

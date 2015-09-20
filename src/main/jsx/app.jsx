@@ -33,7 +33,7 @@ window.onload = function (){
   });
   page(':build',(ctx)=>{
     build.number = ctx.path;
-    build.actions.QueryChange();
+    build.actions.BuildChange(ctx.path);
   });
   page();
 }
