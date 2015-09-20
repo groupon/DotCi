@@ -8,8 +8,8 @@ export default React.createClass({
     return {logPinned: false}
   },
   componentDidMount(){
-    this._scrollToLine(this.selectedHash());
-    document.getElementById('mainContainer').addEventListener('scroll',this._onLogScroll);
+    // this._scrollToLine(this.selectedHash());
+    // document.getElementById('mainContainer').addEventListener('scroll',this._onLogScroll);
   },
   componentWillUnmount() {
     document.getElementById('mainContainer').removeEventListener('scroll',this._onLogScroll);
