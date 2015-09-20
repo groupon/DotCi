@@ -8,6 +8,7 @@ import bindBuildHistoryActions from './client/BuildHistoryPageActions.js';
 import bindBuildMetricsActions from './client/BuildMetricsPageActions.js';
 import bindBuildActions from './client/BuildPageActions.js';
 require('./app.css');
+require('./polyfills.js');
 import Drawer from './Drawer.jsx';
 //wiring
 window.onload = function (){
