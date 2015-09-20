@@ -1,11 +1,5 @@
 import createAction from './createAction.js';
 import last from 'ramda/src/last';
-if (!String.prototype.startsWith) {
-  String.prototype.startsWith = function(searchString, position) {
-    position = position || 0;
-    return this.indexOf(searchString, position) === position;
-  };
-}
 export default class {
   constructor(){
     this.query={}
