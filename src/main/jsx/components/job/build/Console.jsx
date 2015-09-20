@@ -1,6 +1,7 @@
 import React from "react";
 import Convert from  'ansi-to-html';
 import loadingsvg from './tail-spin.svg';
+import scrollIntoView from 'scroll-into-view';
 require('./console.less');
 import last from 'ramda/src/last'
 export default React.createClass({
@@ -9,7 +10,7 @@ export default React.createClass({
   },
   componentDidMount(){
     // this._scrollToLine(this.selectedHash());
-    // document.getElementById('mainContainer').addEventListener('scroll',this._onLogScroll);
+    document.getElementById('mainContainer').addEventListener('scroll',this._onLogScroll);
   },
   componentWillUnmount() {
     document.getElementById('mainContainer').removeEventListener('scroll',this._onLogScroll);
@@ -99,7 +100,7 @@ export default React.createClass({
       e.preventDefault();
     }
     this._setInitialTop();
-    this.refs.bottom.scrollIntoView();
+    scrollIntoView( this.refs.bottom);
     this._onLogScroll();
   },
   _onLineSelect(event){
