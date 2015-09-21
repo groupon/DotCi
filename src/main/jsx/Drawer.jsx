@@ -3,7 +3,7 @@ import RecentProjects from "./components/recent_projects/RecentProjects.jsx";
 import BuildActions  from './components/job/build/BuildActions.jsx'
 import Dialog from './components/lib/Dialog.jsx'; 
 import JobActions from './components/job/JobActions.jsx';
-
+import PageLink from './components/lib/PageLink.jsx';
 export default React.createClass( {
   getInitialState(){
     return {view: "current"}
@@ -31,14 +31,14 @@ export default React.createClass( {
   _currentMenu(){
     return <div className="list short">
       <paper-icon-item>
-        <a   href= 'dotCIbuildHistory'> 
+        <PageLink   href= '/dotCIbuildHistory'> 
           <iron-icon  icon="list"/>Build History
-        </a>
+        </PageLink>
       </paper-icon-item>
       <paper-icon-item>
-        <a   href='dotCIbuildMetrics'> 
+        <PageLink   href='/dotCIbuildMetrics'> 
           <iron-icon  icon="trending-up"/> Build Metrics
-        </a>
+        </PageLink>
       </paper-icon-item>
       {this._contextMenu()}
     </div> 
