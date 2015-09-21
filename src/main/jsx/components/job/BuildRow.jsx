@@ -28,6 +28,7 @@ import Avatar from '../lib/Avatar.jsx';
 import BuildIcon from './BuildIcon.jsx';
 import BuildCauseIcon from './BuildCauseIcon.jsx';
 import BuildProgressBar from './BuildProgressBar.jsx';
+import PageLink from './../lib/PageLink.jsx';
 require('./build_row.css');
 require('./build_row_small.css');
 export default React.createClass({
@@ -62,7 +63,7 @@ export default React.createClass({
           {this._statusRow(result,cause)}
           <span>
             <div className="build-row--title"><small>{branch}</small> 
-              <a  href={number}>{message}</a>
+              <PageLink  href={'/'+number}>{message}</PageLink>
             </div> 
             <div className="build-row--committer">
               <Avatar avatarUrl={avatarUrl} />
@@ -71,7 +72,7 @@ export default React.createClass({
             <div className="build-row--cause">{cause['shortDescription']}</div>
           </span>
           <span>  
-            <div>#<a  className="build-row--number" href={number}>{number}{result.toLowerCase()}</a></div>
+            <div>#<PageLink  className="build-row--number" href={'/'+number}>{number}{result.toLowerCase()}</PageLink></div>
             <div><iron-icon icon="github:octoface"/><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>
           </span>
           <span>

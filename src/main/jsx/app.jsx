@@ -22,18 +22,21 @@ window.onload = function (){
 
   const build = new Build();
   bindBuildActions(build);
-
-  page.base(getRootPath());
-  page('/','dotCIbuildHistory');
-  page('dotCIbuildHistory', function () {
+  let rootPath = getRootPath()
+  if(rootPath.endsWith('/')){
+    rootPath = rootPath.substring(0,rootPath.length-1)
+  }
+  page.base(rootPath);
+  page('/','/dotCIbuildHistory');
+  page('/dotCIbuildHistory', function () {
     buildHistory.actions.QueryChange({filter: 'All', limit: 50});
     ReactDOM.render(<Drawer menu="job"/>, document.getElementById('nav'));
   });
-  page('dotCIbuildMetrics', function () {
+  page('/dotCIbuildMetrics', function () {
     buildMetrics.actions.QueryChange({filter: 'All', limit: 50});
     ReactDOM.render(<Drawer menu="job"/>, document.getElementById('nav'));
   });
-  page(':buildNumber',(ctx)=>{
+  page('/:buildNumber',(ctx)=>{
     const {buildNumber} = ctx.params;
     const subBuild = 'main';
     build.number = buildNumber;
@@ -43,7 +46,7 @@ window.onload = function (){
       window.location = ctx.canonicalPath;
     }
   });
-  page(':buildNumber/:subBuild',(ctx)=>{
+  page('/:buildNumber/:subBuild',(ctx)=>{
     const {buildNumber,subBuild} = ctx.params;
     build.number = buildNumber;
     if(isNumeric(buildNumber)){
