@@ -1,24 +1,29 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
-import {build as fetchBuild, buildLog as fetchBuildLog} from './../api/Api.jsx';
+import {build as fetchBuild, buildLog as fetchBuildLog,cancelBuild as cancelBuildApi} from './../api/Api.jsx';
 import Build from './../components/job/build/Build.jsx';
+import Drawer from './../Drawer.jsx';
 
 function dataChange(build){
   ReactDOM.render(<Build build={build} subBuild="main"/>, document.getElementById('content'));
+  ReactDOM.render(<Drawer menu="build" build={build}/>, document.getElementById('nav'));
 }
-function buildChange(build){
+async function buildChange(build){
   const actions = build.actions;
   let query = build.query;
-  fetchBuild(build.number).then(data => {
-    actions.BuildInfoChange(data);
-    fetchBuildLog(build.number,"main").then(text => actions.LogChange(text));
-  });
-
+  const data =await fetchBuild(build.number);
+  actions.BuildInfoChange(data);
+  const logText = await fetchBuildLog(build.number,"main")
+  actions.LogChange(logText);
+}
+async function cancelBuild(build){
+  await  cancelBuildApi(build.cancelUrl);
 }
 
 export default function(build){
   const actions = build.actions;
   actions.BuildInfoChange.onAction = dataChange;
-  actions.BuildChange.onAction = buildChange;
   actions.LogChange.onAction = dataChange;
+  actions.CancelBuild.onAction = cancelBuild;
+  actions.BuildChange.onAction = buildChange;
 }

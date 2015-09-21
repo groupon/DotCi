@@ -8,7 +8,7 @@ export default React.createClass( {
   },
   render(){
     const buildActions = [];
-    if(this.props.cancelable){
+    if(this.props.inProgress){
       this._add(buildActions,"cancel", <a onClick={this._cancelBuild} href="#">Cancel</a>);
       if(this._supportsNotifications()){
         this._add(buildActions,"visibility", <a onClick={this._watchBuild} href="#">Watch</a>);
@@ -42,8 +42,8 @@ export default React.createClass( {
   },
   _cancelBuild(e){
     e.preventDefault();
-    const appActions = this.props.flux.getActions('app');
-    appActions.cancelBuild(this.props.cancelUrl);
+    const appActions = this.props.actions;
+    appActions.CancelBuild(this.props.cancelUrl);
   },
   _add(actions, icon,action){
     actions.push(

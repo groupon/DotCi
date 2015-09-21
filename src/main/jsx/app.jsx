@@ -4,12 +4,12 @@ import ReactDOM from "react-dom";
 import page from 'page';
 import  Job from './models/Job.js';
 import Build from './models/Build.js';
+import Drawer from './Drawer.jsx';
 import bindBuildHistoryActions from './client/BuildHistoryPageActions.js';
 import bindBuildMetricsActions from './client/BuildMetricsPageActions.js';
 import bindBuildActions from './client/BuildPageActions.js';
 require('./app.css');
 require('./polyfills.js');
-import Drawer from './Drawer.jsx';
 //wiring
 window.onload = function (){
 
