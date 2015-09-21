@@ -10,10 +10,10 @@ export default React.createClass({
   },
   componentDidMount(){
     // this._scrollToLine(this.selectedHash());
-    document.getElementById('mainContainer').addEventListener('scroll',this._onLogScroll);
+    // window.addEventListener('scroll',this._onLogScroll);
   },
   componentWillUnmount() {
-    document.getElementById('mainContainer').removeEventListener('scroll',this._onLogScroll);
+    // window.removeEventListener('scroll',this._onLogScroll);
   },
   selectedHash(){
     return 0;
