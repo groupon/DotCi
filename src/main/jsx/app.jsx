@@ -8,6 +8,7 @@ import Drawer from './Drawer.jsx';
 import bindBuildHistoryActions from './client/BuildHistoryPageActions.js';
 import bindBuildMetricsActions from './client/BuildMetricsPageActions.js';
 import bindBuildActions from './client/BuildPageActions.js';
+import {isNumeric} from './util/Number.js';
 require('./app.css');
 require('./polyfills.js');
 //wiring
@@ -34,7 +35,11 @@ window.onload = function (){
   });
   page(':build',(ctx)=>{
     build.number = ctx.path;
-    build.actions.BuildChange(ctx.path);
+    if(isNumeric(ctx.path)){
+      build.actions.BuildChange(ctx.path);
+    }else{
+      window.location = ctx.canonicalPath;
+    }
   });
   page();
 }
