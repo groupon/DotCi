@@ -5,7 +5,7 @@ import Build from './../components/job/build/Build.jsx';
 import Drawer from './../Drawer.jsx';
 
 function dataChange(build){
-  ReactDOM.render(<Build build={build} subBuild="main"/>, document.getElementById('content'));
+  ReactDOM.render(<Build build={build} subBuild={build.subBuild}/>, document.getElementById('content'));
   ReactDOM.render(<Drawer menu="build" build={build}/>, document.getElementById('nav'));
 }
 async function buildChange(build){
@@ -13,7 +13,7 @@ async function buildChange(build){
   let query = build.query;
   const data =await fetchBuild(build.number);
   actions.BuildInfoChange(data);
-  const logText = await fetchBuildLog(build.number,"main")
+  const logText = await fetchBuildLog(build.number,build.subBuild)
   actions.LogChange(logText);
 }
 async function cancelBuild(build){
