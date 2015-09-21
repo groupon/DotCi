@@ -1,6 +1,7 @@
 import React from 'react';
 import Chart from 'chart.js';
 import contains from 'ramda/src/contains'
+import {remove} from './../../util/List.js';
 require('./line_chart.css');
 export default React.createClass({
   getInitialState(){
@@ -63,9 +64,10 @@ export default React.createClass({
     const targetLabel =e.target.getAttribute('name');
     const {dataSets} = this.props.chart;
     if(!e.target.checked) {
-      this.replaceState({unchecked: this.state.unchecked.add(targetLabel)});
+      this.state.unchecked.push(targetLabel)
+      this.replaceState({unchecked: this.state.unchecked});
     }else{
-      this.replaceState({unchecked: this.state.unchecked.delete(targetLabel)});
+      this.replaceState({unchecked: remove(targetLabel)(this.state.unchecked)});
     }
   }
 
