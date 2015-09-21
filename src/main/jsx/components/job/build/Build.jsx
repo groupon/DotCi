@@ -10,17 +10,11 @@ export default  React.createClass({
   componentDidUpdate(){
     this.setFavicon(this._getBuildResult());
   },
-  // componentWillReceiveProps(nextProps){
-  //   if(nextProps.subBuild !== this.props.subBuild){
-  //     const actions = this.props.flux.getActions('app');
-  //     actions.loadBuildLog(this.props.url,nextProps.subBuild.replace('dotCI',''));
-  //   }
-  // },
   _getBuildResult(){
     return this.props.build && this.props.build.result;
   },
   _subBuild(){
-    return this.props.subBuild.replace('dotCI','');
+    return this.props.subBuild;
   },
   _buildResult(){
     return this._selectedAxis().result;
