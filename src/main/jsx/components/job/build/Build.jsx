@@ -36,7 +36,7 @@ export default  React.createClass({
     return(<div id="build">
       <BuildRow  build={this.props.build}/>
       <SubBuildsMenu buildNumber={this._get('number')} axisList={this._get('axisList')} selectedBuild={this._subBuild()}/>
-      <Console log={this.props.build.log} url={this._selectedBuildUrl()} buildResult={this._buildResult()}/>
+      <Console log={this.props.build.log} url={this._selectedBuildUrl()} inProgress={this._get('inProgress')} buildResult={this._buildResult()}/>
     </div>);
   },
   _get(key){

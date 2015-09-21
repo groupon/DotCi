@@ -15,8 +15,15 @@ export default class {
       }),
       BuildInfoChange : createAction((buildInfo,callBack)=>{
         Object.assign(self,buildInfo);
+        self.inProgress = self.result === 'IN_PROGRESS';
         callBack(self);
-      })
+      }),
+      CancelBuild : createAction((url,callBack)=>{
+        self.result = 'ABORTED';
+        self.actions.BuildInfoChange(self);
+        callBack(self);
+      }),
+
     }
   }
   set log(logText){
@@ -32,21 +39,5 @@ export default class {
       }
       return grouped;
     },[[]])
-  }
-  get log12h(){
-    const groupedLines = logLines.reduce((list,line)=>{
-      if( line.startsWith('$')){
-        return  list.push(List.of(line))
-      }
-      const newLast = last()(list).push(line)
-      return list.set(-1,newLast);
-    } , [[]]);
-    //Add start indexes Turn [[..],[...],..] => [[[...],1] [[....],4], ..]
-    const groupedLinesWithIdx =  groupedLines.reduce((list,group) => {
-      if(last()(list)){
-        return list.push(List.of(group,list.last().get(0).size+ list.last().get(1)))
-      }
-      return list.push([group,1]);
-    }, []);
   }
 };

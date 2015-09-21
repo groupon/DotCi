@@ -51,7 +51,7 @@ export default React.createClass({
     </span>;
   },
   _spinner(){
-    return this.props.buildResult === 'IN_PROGRESS'? <img src={loadingsvg} />: <span/>;
+    return this.props.inProgress? <img src={loadingsvg} />: <span/>;
   },
   _scrollButtons(){
     const color = this.state.logPinned? "green": "#999" ; 

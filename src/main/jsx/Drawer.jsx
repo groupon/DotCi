@@ -53,6 +53,6 @@ export default React.createClass( {
 
   },
   _buildMenu(){
-    return currentBuild? <BuildActions  /> : '';
+    return <BuildActions  {...this.props.build}/>;
   }
 });
