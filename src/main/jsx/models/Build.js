@@ -5,8 +5,9 @@ export default class {
     this.query={}
     const self = this;
     this.actions =  {
-      BuildChange : createAction((number,onAction) =>{
-        this.number = number;
+      BuildChange : createAction(({buildNumber,subBuild},onAction) =>{
+        this.number = buildNumber;
+        this.subBuild = subBuild.replace('dotCI','');
         onAction(self);
       }),
       LogChange : createAction((logText,onAction) =>{

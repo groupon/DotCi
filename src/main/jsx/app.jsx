@@ -33,10 +33,21 @@ window.onload = function (){
     buildMetrics.actions.QueryChange({filter: 'All', limit: 50});
     ReactDOM.render(<Drawer menu="job"/>, document.getElementById('nav'));
   });
-  page(':build',(ctx)=>{
-    build.number = ctx.path;
-    if(isNumeric(ctx.path)){
-      build.actions.BuildChange(ctx.path);
+  page(':buildNumber',(ctx)=>{
+    const {buildNumber} = ctx.params;
+    const subBuild = 'main';
+    build.number = buildNumber;
+    if(isNumeric(buildNumber)){
+      build.actions.BuildChange({buildNumber,subBuild});
+    }else{
+      window.location = ctx.canonicalPath;
+    }
+  });
+  page(':buildNumber/:subBuild',(ctx)=>{
+    const {buildNumber,subBuild} = ctx.params;
+    build.number = buildNumber;
+    if(isNumeric(buildNumber)){
+      build.actions.BuildChange(ctx.params);
     }else{
       window.location = ctx.canonicalPath;
     }
