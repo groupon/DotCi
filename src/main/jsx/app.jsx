@@ -36,17 +36,19 @@ window.onload = function (){
   page('/:buildNumber',(ctx)=>{
     const {buildNumber} = ctx.params;
     const subBuild = 'main';
-    buildPage(buildNumber,subBuild);
+    buildPage(buildNumber,subBuild,ctx.hash);
   });
   page('/:buildNumber/:subBuild',(ctx)=>{
     const {buildNumber,subBuild} = ctx.params;
-    buildPage(buildNumber,subBuild);
+    buildPage(buildNumber,subBuild,ctx.hash);
   });
   page();
-  function buildPage(buildNumber,subBuild){
+  function buildPage(buildNumber,subBuild,hash){
     build.number = buildNumber;
-    if(window.location.hash){
-      build.selectedLine = window.location.hash.replace("#",'');
+    if(hash){
+      build.selectedLine = hash.replace("#",'');
+    }else{
+      build.selectedLine = "0";
     }
     if(isNumeric(buildNumber)){
       build.actions.BuildChange({buildNumber,subBuild});
