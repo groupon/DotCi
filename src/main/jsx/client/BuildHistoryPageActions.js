@@ -3,8 +3,10 @@ import React from 'react';
 import BuildHistoryPage from './../pages/BuildHistoryPage.jsx';
 import {job} from './../api/Api.jsx'; 
 import  {removeFilter,addFilter} from './../api/Api.jsx'; 
+import Drawer from './../Drawer.jsx';
 function dataChange(buildHistory){
   ReactDOM.render(<BuildHistoryPage buildHistory={buildHistory}/>, document.getElementById('content'));
+  ReactDOM.render(<Drawer menu="job"/>, document.getElementById('nav'));
 }
 function queryChange(buildHistory){
   const actions = buildHistory.actions;
