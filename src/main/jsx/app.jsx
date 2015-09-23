@@ -36,23 +36,24 @@ window.onload = function (){
   page('/:buildNumber',(ctx)=>{
     const {buildNumber} = ctx.params;
     const subBuild = 'main';
+    buildPage(buildNumber,subBuild);
+  });
+  page('/:buildNumber/:subBuild',(ctx)=>{
+    const {buildNumber,subBuild} = ctx.params;
+    buildPage(buildNumber,subBuild);
+  });
+  page();
+  function buildPage(buildNumber,subBuild){
     build.number = buildNumber;
+    if(window.location.hash){
+      build.selectedLine = window.location.hash.replace("#",'');
+    }
     if(isNumeric(buildNumber)){
       build.actions.BuildChange({buildNumber,subBuild});
     }else{
       window.location = ctx.canonicalPath;
     }
-  });
-  page('/:buildNumber/:subBuild',(ctx)=>{
-    const {buildNumber,subBuild} = ctx.params;
-    build.number = buildNumber;
-    if(isNumeric(buildNumber)){
-      build.actions.BuildChange(ctx.params);
-    }else{
-      window.location = ctx.canonicalPath;
-    }
-  });
-  page();
+  }
 }
 function getRootPath(){
   const jobPath = jobUrl.replace(rootURL,'');

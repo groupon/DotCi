@@ -3,6 +3,7 @@ import last from 'ramda/src/last';
 export default class {
   constructor(){
     this.query={}
+    this.selectedLine=0;
     const self = this;
     this.actions =  {
       BuildChange : createAction(({buildNumber,subBuild},onAction) =>{
@@ -24,6 +25,11 @@ export default class {
         self.actions.BuildInfoChange(self);
         callBack(self);
       }),
+      LineSelect: createAction((selectedLine,callBack)=>{
+        self.selectedLine = selectedLine;
+        self.actions.BuildInfoChange(self);
+        callBack(self);
+      })
 
     }
   }

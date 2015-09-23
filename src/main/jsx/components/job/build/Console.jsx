@@ -9,14 +9,14 @@ export default React.createClass({
     return {logPinned: false}
   },
   componentDidMount(){
-    // this._scrollToLine(this.selectedHash());
+    this._scrollToLine(this.selectedHash());
     // window.addEventListener('scroll',this._onLogScroll);
   },
   componentWillUnmount() {
     // window.removeEventListener('scroll',this._onLogScroll);
   },
   selectedHash(){
-    return 0;
+    return this.props.selectedLine;
   },
   componentDidUpdate(){
     if(this.state.logPinned){
@@ -107,18 +107,18 @@ export default React.createClass({
     if(event.target.tagName === 'SPAN'|| event.target.tagName === 'A'){
       event.stopPropagation();
       const lineId = event.currentTarget.getAttribute('id');
-      Router.HashLocation.push(lineId);
+      this.props.actions.LineSelect(lineId);
     }
   },
   _scrollToLine(lineId){
     if(lineId){
       const line = document.getElementById(lineId);
       if(line)
-        line.scrollIntoView();
+        scrollIntoView(line);
     }
   },
   _isLineSelected(lineNumber){
-    return `L${lineNumber}`  == this.selectedHash();
+    return `L${lineNumber}`  === this.selectedHash();
   },
   _openFold(e){
     e.stopPropagation();
@@ -130,7 +130,7 @@ export default React.createClass({
       return this._logLine(lines[0],startIdx);
     }
     const selectedLine = this.selectedHash()!=''? parseInt(this.selectedHash().replace("L",'')) :0;
-    const lineSelectedInFold = selectedLine > startIdx && selectedLine < startIdx + lines.size;
+    const lineSelectedInFold = selectedLine > startIdx && selectedLine < startIdx + lines.length;
     const isOpen = isLast || lineSelectedInFold; 
     const logLines = lines.reduce((list,line,idx) => {
       list.push( this._logLine(line,idx+startIdx))

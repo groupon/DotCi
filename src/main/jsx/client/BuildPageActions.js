@@ -3,6 +3,7 @@ import React from 'react';
 import {build as fetchBuild, buildLog as fetchBuildLog,cancelBuild as cancelBuildApi} from './../api/Api.jsx';
 import Build from './../components/job/build/Build.jsx';
 import Drawer from './../Drawer.jsx';
+import page from 'page';
 
 function dataChange(build){
   ReactDOM.render(<Build build={build} subBuild={build.subBuild}/>, document.getElementById('content'));
@@ -19,6 +20,9 @@ async function buildChange(build){
 async function cancelBuild(build){
   await  cancelBuildApi(build.cancelUrl);
 }
+function lineSelect(build){
+  window.location.hash =build.selectedLine;
+}
 
 export default function(build){
   const actions = build.actions;
@@ -26,4 +30,5 @@ export default function(build){
   actions.LogChange.onAction = dataChange;
   actions.CancelBuild.onAction = cancelBuild;
   actions.BuildChange.onAction = buildChange;
+  actions.LineSelect.onAction = lineSelect;
 }
