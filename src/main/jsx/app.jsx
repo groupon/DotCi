@@ -4,7 +4,6 @@ import ReactDOM from "react-dom";
 import page from 'page';
 import  Job from './models/Job.js';
 import Build from './models/Build.js';
-import Drawer from './Drawer.jsx';
 import bindBuildHistoryActions from './client/BuildHistoryPageActions.js';
 import bindBuildMetricsActions from './client/BuildMetricsPageActions.js';
 import bindBuildActions from './client/BuildPageActions.js';
@@ -30,11 +29,9 @@ window.onload = function (){
   page('/','/dotCIbuildHistory');
   page('/dotCIbuildHistory', function () {
     buildHistory.actions.QueryChange({filter: 'All', limit: 50});
-    ReactDOM.render(<Drawer menu="job"/>, document.getElementById('nav'));
   });
   page('/dotCIbuildMetrics', function () {
     buildMetrics.actions.QueryChange({filter: 'All', limit: 50});
-    ReactDOM.render(<Drawer menu="job"/>, document.getElementById('nav'));
   });
   page('/:buildNumber',(ctx)=>{
     const {buildNumber} = ctx.params;
