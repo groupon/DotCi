@@ -1,12 +1,21 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
 import {build as fetchBuild, buildLog as fetchBuildLog,cancelBuild as cancelBuildApi} from './../api/Api.jsx';
-import Build from './../components/job/build/Build.jsx';
+import BuildPage from './../pages/BuildPage.jsx';
 import Drawer from './../Drawer.jsx';
 import page from 'page';
+import autoRefreshComponent from './../components/lib/AutoRefreshComponent.js';
 
 function dataChange(build){
-  ReactDOM.render(<Build build={build} subBuild={build.subBuild}/>, document.getElementById('content'));
+  const buildPage =<BuildPage build={build} subBuild={build.subBuild}/>
+  if(build.inProgress){
+    const AutoRefreshBuildPage = autoRefreshComponent(buildPage,()=>{
+      build.actions.BuildChange({buildNumber:build.number,subBuild:build.subBuild});
+    });
+    ReactDOM.render(<AutoRefreshBuildPage/>, document.getElementById('content'));
+  }else{
+    ReactDOM.render(buildPage, document.getElementById('content'));
+  }
   ReactDOM.render(<Drawer menu="build" build={build}/>, document.getElementById('nav'));
 }
 async function buildChange(build){
