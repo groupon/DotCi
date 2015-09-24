@@ -28,10 +28,10 @@ window.onload = function (){
   page.base(rootPath);
   page('/','/dotCIbuildHistory');
   page('/dotCIbuildHistory', function () {
-    buildHistory.actions.QueryChange({filter: 'All', limit: 50});
+    buildHistory.actions.QueryChange(buildHistory.query);
   });
   page('/dotCIbuildMetrics', function () {
-    buildMetrics.actions.QueryChange({filter: 'All', limit: 50});
+    buildMetrics.actions.QueryChange(buildMetrics.query);
   });
   page('/:buildNumber',(ctx)=>{
     const {buildNumber} = ctx.params;

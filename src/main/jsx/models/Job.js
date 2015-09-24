@@ -1,7 +1,10 @@
 import createAction from './createAction.js';
 export default class {
   constructor(){
-    this.query={}
+    this.query={
+      filter: 'All',
+      limit: 50
+    }
     const self = this;
     this.actions =  {
       QueryChange : createAction((data,onAction) =>{
