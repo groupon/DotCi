@@ -36,6 +36,7 @@
     "paper-item": "PolymerElements/paper-item#^1.0.0",
     "paper-material": "polymerelements/paper-material#^1.0.0",
     "paper-menu": "polymerelements/paper-menu#^1.0.0",
+    "paper-progress": "PolymerElements/paper-progress#~1.0.6",
     "paper-slider": "polymerelements/paper-slider#master",
     "paper-styles": "polymerelements/paper-styles#^1.0.0",
     "paper-tabs": "polymerelements/paper-tabs#^1.0.0",

@@ -11,7 +11,7 @@ import {isNumeric} from './util/Number.js';
 require('./app.css');
 require('./polyfills.js');
 //wiring
-window.onload = function (){
+const begin = function (){
 
   const buildHistory = new Job();
   bindBuildHistoryActions(buildHistory);
@@ -61,3 +61,5 @@ function getRootPath(){
   const jobPath = jobUrl.replace(rootURL,'');
   return window.location.pathname.split(jobPath)[0] +jobPath;
 }
+
+window.addEventListener('WebComponentsReady', begin);

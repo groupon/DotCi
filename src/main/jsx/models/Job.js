@@ -5,14 +5,17 @@ export default class {
       filter: 'All',
       limit: 50
     }
+    this.dirty = true;
     const self = this;
     this.actions =  {
       QueryChange : createAction((data,onAction) =>{
         Object.assign(self.query,data);
+        this.dirty = true;
         onAction(self);
       }),
       DataChange : createAction((data,callBack)=>{
         Object.assign(self,data);
+        this.dirty=false;
         callBack(self);
       }),
       RemoveFilter : createAction((removedFilter,callBack)=>{
