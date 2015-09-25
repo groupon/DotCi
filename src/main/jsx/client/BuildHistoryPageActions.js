@@ -11,14 +11,18 @@ function dataChange(buildHistory){
   ReactDOM.render(<AutoRefreshBuildHistory/>, document.getElementById('content'));
   ReactDOM.render(<Drawer menu="job"/>, document.getElementById('nav'));
 }
-function queryChange(buildHistory){
+function queryChange(buildHistory,oldQuery){
   const {actions,query} = buildHistory;
-  buildHistory.dirty = true;
-  actions.DataChange({...buildHistory});
-  job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]",query.filter ,query.limit).then(data => {
-    buildHistory.dirty = false;
-    actions.DataChange({...data, filters: data.buildHistoryTabs});
-  });
+  if(query.textFilter !== oldQuery.textFilter){
+    actions.DataChange({...buildHistory});
+  }else{
+    buildHistory.dirty = true;
+    actions.DataChange({...buildHistory});
+    job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]",query.filter ,query.limit).then(data => {
+      buildHistory.dirty = false;
+      actions.DataChange({...data, filters: data.buildHistoryTabs});
+    });
+  }
 }
 
 export default function(buildHistory){

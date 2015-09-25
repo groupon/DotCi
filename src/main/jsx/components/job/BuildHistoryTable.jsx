@@ -31,33 +31,23 @@ import ToggleButton from './../lib/ToggleButton.jsx';
 import RangeSlider from './../lib/RangeSlider.jsx';
 require('./build_history.css');
 export default React.createClass({
-  _filteredBuilds(){
-    return this.props.builds.filter(this._applyFilter);
-  },
   getDefaultProps(){
-    return {textFilter: '',  grouped: false};
+    return { grouped: false};
   },
   render(){
     return(
       <div>
         <span className="buildHistory-bar" >
-          <FilterBar id="filter-bar" onChange={this._onFilterChange}/> 
           {this.props.buildFilters}
           {this.props.countSlider}
-          <ToggleButton tooltip="Pipeline View" onClick={this._onPipelineViewChange}></ToggleButton>
+          <ToggleButton checked={this.props.grouped} tooltip="Pipeline View" onClick={this._onPipelineViewChange}></ToggleButton>
         </span>
-        {this.props.grouped? <GroupedBuildsView builds={this._filteredBuilds()} /> : <LinearBuildsView builds={this._filteredBuilds()} />}
+        {this.props.grouped? <GroupedBuildsView builds={this.props.builds} /> : <LinearBuildsView builds={this.props.builds} />}
       </div>
     );
   },
-  _applyFilter(build){
-    const filter = this.props.textFilter.trim();
-    const filterRegex = new RegExp(filter, 'gi');
-    let {message,branch,committerName} = build.commit;
-    return !filter || message.match(filterRegex) || branch.match(filterRegex)|| committerName.match(filterRegex);
-  },
-  _onPipelineViewChange(e){
-    this.props.queryChangeAction({grouped: !this.props.grouped});
+  _onPipelineViewChange(grouped){
+    this.props.queryChangeAction({grouped});
   },
   _onFilterChange(textFilter){
     this.props.queryChangeAction({textFilter});

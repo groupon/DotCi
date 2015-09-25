@@ -23,7 +23,6 @@ export default React.createClass({
       />;
       const progressBar = dirty?  <paper-progress  indeterminate ></paper-progress> : <span/>
       const buildHistoryTable = builds?<BuildHistoryTable 
-        textFilter={query.textFilter} 
         grouped={query.grouped} 
         buildFilters={buildFilters} 
         countSlider={countSlider} 

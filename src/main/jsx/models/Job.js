@@ -8,8 +8,9 @@ export default class {
     const self = this;
     this.actions =  {
       QueryChange : createAction((data,onAction) =>{
+        const oldQuery = Object.assign({},...self.query);
         Object.assign(self.query,data);
-        onAction(self);
+        onAction(self,oldQuery);
       }),
       DataChange : createAction((data,callBack)=>{
         Object.assign(self,data);
