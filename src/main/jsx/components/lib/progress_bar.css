@@ -1,5 +1,4 @@
-paper-progress {
+.progressBar > paper-progress{
   display: block;
   width: 100%;
 }
-

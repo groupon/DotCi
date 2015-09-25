@@ -2,7 +2,7 @@ import React from "react";
 import RangeSlider from './../components/lib/RangeSlider.jsx';
 import BuildFilters from './../components/job/BuildFilters.jsx';
 import BuildHistoryTable from './../components/job/BuildHistoryTable.jsx';
-require('./build_history_page.css');
+import ProgressBar from './../components/lib/ProgressBar.jsx';
 export default React.createClass({
   render(){
     const {query,builds,actions,dirty} = this.props.buildHistory;
@@ -21,7 +21,6 @@ export default React.createClass({
         filters={this.props.buildHistory.filters}
         actions= {{AddFilter,RemoveFilter,QueryChange}}
       />;
-      const progressBar = dirty?  <paper-progress  indeterminate ></paper-progress> : <span/>
       const buildHistoryTable = builds?<BuildHistoryTable 
         grouped={query.grouped} 
         buildFilters={buildFilters} 
@@ -30,7 +29,7 @@ export default React.createClass({
         builds ={builds}/> :<span/>;
 
         return(<span>
-          {progressBar}
+          <ProgressBar visible={dirty} />
           {buildHistoryTable}
           <div className="align-center" >
           </div>
