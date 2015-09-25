@@ -4,15 +4,15 @@ import {build as fetchBuild, buildLog as fetchBuildLog,cancelBuild as cancelBuil
 import BuildPage from './../pages/BuildPage.jsx';
 import Drawer from './../Drawer.jsx';
 import page from 'page';
-import autoRefreshComponent from './../components/lib/AutoRefreshComponent.js';
+import AutoRefreshComponent from './../components/lib/AutoRefreshComponent.js';
 
 function dataChange(build){
   const buildPage =<BuildPage build={build} subBuild={build.subBuild}/>
   if(build.inProgress){
-    const AutoRefreshBuildPage = autoRefreshComponent(buildPage,()=>{
+    const refreshFunction = ()=>{
       build.actions.BuildChange({buildNumber:build.number,subBuild:build.subBuild});
-    });
-    ReactDOM.render(<AutoRefreshBuildPage/>, document.getElementById('content'));
+    };
+    ReactDOM.render(<AutoRefreshComponent component={buildPage} refreshFunction={refreshFunction}/>, document.getElementById('content'));
   }else{
     ReactDOM.render(buildPage, document.getElementById('content'));
   }

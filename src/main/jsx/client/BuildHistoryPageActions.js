@@ -4,25 +4,20 @@ import BuildHistoryPage from './../pages/BuildHistoryPage.jsx';
 import {job} from './../api/Api.jsx'; 
 import  {removeFilter,addFilter} from './../api/Api.jsx'; 
 import Drawer from './../Drawer.jsx';
-import autoRefreshComponent from './../components/lib/AutoRefreshComponent.js';
+import AutoRefreshComponent from './../components/lib/AutoRefreshComponent.js';
 function dataChange(buildHistory){
   const buildHistoryPage = <BuildHistoryPage buildHistory={buildHistory}/>
-  const AutoRefreshBuildHistory = autoRefreshComponent(buildHistoryPage, ()=>{buildHistory.actions.QueryChange(buildHistory.query)});
-  ReactDOM.render(<AutoRefreshBuildHistory/>, document.getElementById('content'));
+  const refreshFunction =()=>buildHistory.actions.QueryChange(buildHistory.query);
+  ReactDOM.render(<AutoRefreshComponent component={buildHistoryPage} refreshFunction={refreshFunction}  />, document.getElementById('content'));
   ReactDOM.render(<Drawer menu="job"/>, document.getElementById('nav'));
 }
 function queryChange(buildHistory,oldQuery){
   const {actions,query} = buildHistory;
-  if(query.textFilter !== oldQuery.textFilter){
-    actions.DataChange({...buildHistory});
-  }else{
-    buildHistory.dirty = true;
-    actions.DataChange({...buildHistory});
-    job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]",query.filter ,query.limit).then(data => {
-      buildHistory.dirty = false;
-      actions.DataChange({...data, filters: data.buildHistoryTabs});
-    });
-  }
+  buildHistory.dirty = true;
+  actions.DataChange({...buildHistory});
+  job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]",query.filter ,query.limit).then(data => {
+    actions.DataChange({...data, filters: data.buildHistoryTabs,dirty: false});
+  });
 }
 
 export default function(buildHistory){
