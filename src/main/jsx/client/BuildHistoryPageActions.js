@@ -12,9 +12,11 @@ function dataChange(buildHistory){
   ReactDOM.render(<Drawer menu="job"/>, document.getElementById('nav'));
 }
 function queryChange(buildHistory){
-  const actions = buildHistory.actions;
-  let query = buildHistory.query;
+  const {actions,query} = buildHistory;
+  buildHistory.dirty = true;
+  actions.DataChange({...buildHistory});
   job("buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]",query.filter ,query.limit).then(data => {
+    buildHistory.dirty = false;
     actions.DataChange({...data, filters: data.buildHistoryTabs});
   });
 }

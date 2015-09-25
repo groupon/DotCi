@@ -31,11 +31,11 @@ import ToggleButton from './../lib/ToggleButton.jsx';
 import RangeSlider from './../lib/RangeSlider.jsx';
 require('./build_history.css');
 export default React.createClass({
-  getInitialState: function() {
-    return {filter: '',grouped: false};
-  },
   _filteredBuilds(){
     return this.props.builds.filter(this._applyFilter);
+  },
+  getDefaultProps(){
+    return {textFilter: '',  grouped: false};
   },
   render(){
     return(
@@ -46,24 +46,21 @@ export default React.createClass({
           {this.props.countSlider}
           <ToggleButton tooltip="Pipeline View" onClick={this._onPipelineViewChange}></ToggleButton>
         </span>
-        {this.state.grouped? <GroupedBuildsView builds={this._filteredBuilds()} /> : <LinearBuildsView builds={this._filteredBuilds()} />}
+        {this.props.grouped? <GroupedBuildsView builds={this._filteredBuilds()} /> : <LinearBuildsView builds={this._filteredBuilds()} />}
       </div>
     );
   },
-  _groupBuilds(grouped){
-    this.setState({grouped})
-  },
-  _onPipelineViewChange(e){
-    this.setState({grouped: !this.state.grouped});
-  },
   _applyFilter(build){
-    const filter = this.state.filter.trim();
+    const filter = this.props.textFilter.trim();
     const filterRegex = new RegExp(filter, 'gi');
     let {message,branch,committerName} = build.commit;
     return !filter || message.match(filterRegex) || branch.match(filterRegex)|| committerName.match(filterRegex);
   },
-  _onFilterChange(filter){
-    this.setState({filter});
+  _onPipelineViewChange(e){
+    this.props.queryChangeAction({grouped: !this.props.grouped});
+  },
+  _onFilterChange(textFilter){
+    this.props.queryChangeAction({textFilter});
   }
 });
 
