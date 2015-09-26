@@ -7,8 +7,9 @@ export default class {
     const self = this;
     this.actions =  {
       BuildChange : createAction(({buildNumber,subBuild},onAction) =>{
-        this.number = buildNumber;
-        this.subBuild = subBuild.replace('dotCI','');
+        self.number = buildNumber;
+        self.subBuild = subBuild.replace('dotCI','');
+        self.log = "";
         onAction(self);
       }),
       LogChange : createAction((logText,onAction) =>{
