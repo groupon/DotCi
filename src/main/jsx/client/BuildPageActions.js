@@ -4,7 +4,7 @@ import {build as fetchBuild, buildLog as fetchBuildLog,cancelBuild as cancelBuil
 import BuildPage from './../pages/BuildPage.jsx';
 import Drawer from './../Drawer.jsx';
 import page from 'page';
-import AutoRefreshComponent from './../components/lib/AutoRefreshComponent.js';
+import {Build as AutoRefreshComponent} from './../components/lib/AutoRefreshComponent.js';
 
 function dataChange(build){
   const buildPage =<BuildPage build={build} subBuild={build.subBuild}/>

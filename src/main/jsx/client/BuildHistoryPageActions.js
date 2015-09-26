@@ -4,7 +4,7 @@ import BuildHistoryPage from './../pages/BuildHistoryPage.jsx';
 import {job} from './../api/Api.jsx'; 
 import  {removeFilter,addFilter} from './../api/Api.jsx'; 
 import Drawer from './../Drawer.jsx';
-import AutoRefreshComponent from './../components/lib/AutoRefreshComponent.js';
+import {Job as AutoRefreshComponent} from './../components/lib/AutoRefreshComponent.js';
 function dataChange(buildHistory){
   const buildHistoryPage = <BuildHistoryPage buildHistory={buildHistory}/>
   const refreshFunction =()=>buildHistory.actions.QueryChange(buildHistory.query);
