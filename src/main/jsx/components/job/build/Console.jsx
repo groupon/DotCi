@@ -25,15 +25,6 @@ export default React.createClass({
       this._scrollToLine(this.selectedHash());
     }
   },
-  _onLocationHashChange(event){
-    const [oldId, newId] = this.getHashIds(event);
-    if(oldId){
-      document.getElementById(oldId).classList.remove('highlight');
-    }
-    if(newId){
-      document.getElementById(newId).classList.add('highlight');
-    }
-  },
   _isBuildLoaded(){
     return this.props.log && this.props.log.size > 1;
   },
