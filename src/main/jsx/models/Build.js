@@ -12,6 +12,11 @@ export default class {
         self.log = "";
         onAction(self);
       }),
+      BuildReload: createAction(({buildNumber,subBuild},onAction) =>{
+        self.number = buildNumber;
+        self.subBuild = subBuild.replace('dotCI','');
+        onAction(self);
+      }),
       LogChange : createAction((logText,onAction) =>{
         self.log = logText;
         onAction(self);

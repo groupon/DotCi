@@ -10,7 +10,7 @@ function dataChange(build){
   const buildPage =<BuildPage build={build} subBuild={build.subBuild}/>
   if(build.inProgress){
     const refreshFunction = ()=>{
-      build.actions.BuildChange({buildNumber:build.number,subBuild:build.subBuild});
+      build.actions.BuildReload({buildNumber:build.number,subBuild:build.subBuild});
     };
     ReactDOM.render(<AutoRefreshComponent component={buildPage} refreshFunction={refreshFunction}/>, document.getElementById('content'));
   }else{
@@ -39,5 +39,6 @@ export default function(build){
   actions.LogChange.onAction = dataChange;
   actions.CancelBuild.onAction = cancelBuild;
   actions.BuildChange.onAction = buildChange;
+  actions.BuildReload.onAction = buildChange;
   actions.LineSelect.onAction = lineSelect;
 }
