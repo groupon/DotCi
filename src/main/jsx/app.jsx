@@ -7,7 +7,6 @@ import Build from './models/Build.js';
 import bindBuildHistoryActions from './client/BuildHistoryPageActions.js';
 import bindBuildMetricsActions from './client/BuildMetricsPageActions.js';
 import bindBuildActions from './client/BuildPageActions.js';
-import {isNumeric} from './util/Number.js';
 require('./app.css');
 require('./polyfills.js');
 //wiring
@@ -33,28 +32,17 @@ const begin = function (){
   page('/dotCIbuildMetrics', function () {
     buildMetrics.actions.QueryChange(buildMetrics.query);
   });
-  page('/:buildNumber',(ctx)=>{
-    const {buildNumber} = ctx.params;
-    const subBuild = 'main';
-    buildPage(buildNumber,subBuild,ctx.hash);
-  });
-  page('/:buildNumber/:subBuild',(ctx)=>{
-    const {buildNumber,subBuild} = ctx.params;
-    buildPage(buildNumber,subBuild,ctx.hash);
-  });
+  page(/^\/(\d+)\/?(dotCI([^\/]+)\/?)?$/, buildPage);
   page();
-  function buildPage(buildNumber,subBuild,hash){
-    build.number = buildNumber;
-    if(hash){
-      build.selectedLine = hash.replace("#",'');
+  function buildPage(ctx){
+    const buildNumber = ctx.params[0];
+    const subBuild= ctx.params[2] || "main";
+    if(ctx.hash){
+      build.selectedLine = ctx.hash.replace("#",'');
     }else{
       build.selectedLine = "0";
     }
-    if(isNumeric(buildNumber)){
-      build.actions.BuildChange({buildNumber,subBuild});
-    }else{
-      window.location = ctx.canonicalPath;
-    }
+    build.actions.BuildChange({buildNumber,subBuild});
   }
 }
 function getRootPath(){
