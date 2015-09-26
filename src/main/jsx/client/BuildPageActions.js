@@ -30,7 +30,7 @@ async function cancelBuild(build){
   await  cancelBuildApi(build.cancelUrl);
 }
 function lineSelect(build){
-  window.location.hash =build.selectedLine;
+  window.history.pushState(null, null, '#'+build.selectedLine);
 }
 
 export default function(build){
