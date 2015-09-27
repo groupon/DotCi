@@ -51,13 +51,16 @@
         </j:if>
         <j:if test='${!developmentMode}'>
             <script src="${resURL}/plugin/DotCi/js/dotci.js"/>
-            <script src="${resURL}/plugin/DotCi/css/dotci.css"/>
+            <link rel="stylesheet" type="text/css" href="${resURL}/plugin/DotCi/css/dotci.css"/>
             <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports-vulcanized.html"/>
         </j:if>
         <script>
             rootURL = '${rootURL}';
             jobUrl = rootURL+'/' + '${it.jobUrl}' +"/";
             DEVELOPMENT_MODE = '${developmentMode}'
+        </script>
+        <script>
+            isomorphicData = '${it.isomorphicData}';
         </script>
     </head>
 </j:jelly>

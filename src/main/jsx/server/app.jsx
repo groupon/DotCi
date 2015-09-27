@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOMServer from "react-dom/server";
 import BuildHistoryPage from './../pages/BuildHistoryPage.jsx';
-import BuildHistory from './../models/Model.js'
+import BuildHistory from './../models/Job.js'
 export default function renderServer(builds,filters){
   const buildHistory = new BuildHistory();
 

@@ -25,9 +25,12 @@ const begin = function (){
     rootPath = rootPath.substring(0,rootPath.length-1)
   }
   page.base(rootPath);
-  page('/','/dotCIbuildHistory');
-  page('/dotCIbuildHistory', function () {
-    buildHistory.actions.QueryChange(buildHistory.query);
+  // page('/','/dotCIbuildHistory');
+  page('/', function () {
+    const data =JSON.parse(window.isomorphicData);
+
+    buildHistory.actions.DataChange({filters:data.buildHistoryTabs,builds:data.builds});
+    // buildHistory.actions.QueryChange(buildHistory.query);
   });
   page('/dotCIbuildMetrics', function () {
     buildMetrics.actions.QueryChange(buildMetrics.query);

@@ -28,7 +28,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.branchhistory.BranchHistoryWidget;
-import com.groupon.jenkins.dynamic.build.api.DynamicProjectApi;
+import com.groupon.jenkins.dynamic.build.api.*;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.dynamic.buildtype.BuildTypeProperty;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
@@ -49,6 +49,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.export.*;
 import org.mongodb.morphia.annotations.PostLoad;
 import org.mongodb.morphia.annotations.PrePersist;
 
@@ -356,6 +357,19 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         Iterable<String> filters = getAppData().getInfo().getBuildHistoryTabs();
         Object html = ReflectionUtils.invokeMethod(method, nashorn, new Object[]{"renderServer",new Object[]{builds,filters}});
         return  String.valueOf(html);
+    }
+    static ModelBuilder MODEL_BUILDER = new ModelBuilder();
+    public String getIsomorphicData() throws IOException {
+        JobInfo exposedBean = getAppData().getInfo();
+        exposedBean.setBranchTab("All");
+        exposedBean.setBuildCount("50");
+        String tree = "buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]";
+        TreePruner pruner=new NamedPathPruner(tree);
+        ExportConfig config = new ExportConfig();
+        Model p = MODEL_BUILDER.get(exposedBean.getClass());
+        StringWriter output = new StringWriter();
+        p.writeTo(exposedBean, pruner, Flavor.JSON.createDataWriter(exposedBean, output, config));
+        return  output.toString();
     }
 
     @Override
