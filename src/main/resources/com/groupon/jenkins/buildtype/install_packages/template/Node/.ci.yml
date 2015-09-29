@@ -26,7 +26,7 @@ environment:
   language: node
   language_versions: v0.8.25
   vars:
-    TMPDIR: '\${WORKSPACE}/tmp'
+    TMPDIR: '/tmp/\${JOB_NAME}/\${BUILD_NUMBER}'
 
 build:
   before:
