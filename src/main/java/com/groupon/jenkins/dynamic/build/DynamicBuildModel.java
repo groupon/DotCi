@@ -103,8 +103,13 @@ public class DynamicBuildModel {
     public Map<String, String> getDotCiEnvVars() {
         Map<String, String> vars = new HashMap<String, String>();
         vars.put("SHA", build.getSha());
-        vars.put("GIT_URL", new GitUrl(build.getParent().getGithubRepoUrl()).getUrl());
-        vars.put("DOTCI_IS_PRIVATE_REPO", new Boolean(build.isPrivateRepo()).toString()) ;
+        if (build.isPrivateRepo()) {
+          vars.put("GIT_URL", new GitUrl(build.getParent().getGithubRepoUrl()).getUrl()) ;
+          vars.put("DOTCI_IS_PRIVATE_REPO", "true") ;
+        } else {
+          vars.put("GIT_URL", build.getParent().getGithubRepoUrl()) ;
+          vars.put("DOTCI_IS_PRIVATE_REPO", "false") ;
+        }
         return vars;
     }
 

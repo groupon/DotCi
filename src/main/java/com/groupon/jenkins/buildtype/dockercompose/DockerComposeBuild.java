@@ -88,7 +88,7 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
     public ShellCommands getCheckoutCommands(Map<String, Object> dotCiEnvVars) {
         GitUrl gitRepoUrl = new GitUrl((String) dotCiEnvVars.get("GIT_URL"));
         boolean isPrivateRepo = Boolean.parseBoolean((String) dotCiEnvVars.get("DOTCI_IS_PRIVATE_REPO"));
-        String gitUrl = gitRepoUrl.getGitUrl();
+        String gitUrl = isPrivateRepo ? gitRepoUrl.getGitUrl() : gitRepoUrl.getHttpsUrl();
         ShellCommands shellCommands = new ShellCommands();
         shellCommands.add("chmod -R u+w . ; find . ! -path \"./deploykey_rsa.pub\" ! -path \"./deploykey_rsa\" -delete");
         shellCommands.add("git init");
