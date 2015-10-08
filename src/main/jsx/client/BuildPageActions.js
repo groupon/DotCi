@@ -12,7 +12,7 @@ function dataChange(build){
     const refreshFunction = ()=>{
       build.actions.BuildReload({buildNumber:build.number,subBuild:build.subBuild});
     };
-    ReactDOM.render(<AutoRefreshComponent refreshInterval={10000} component={buildPage} refreshFunction={refreshFunction}/>, document.getElementById('content'));
+    ReactDOM.render(<AutoRefreshComponent refreshInterval={5000} component={buildPage} refreshFunction={refreshFunction}/>, document.getElementById('content'));
   }else{
     ReactDOM.render(buildPage, document.getElementById('content'));
   }
