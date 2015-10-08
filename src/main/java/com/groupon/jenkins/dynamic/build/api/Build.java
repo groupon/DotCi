@@ -63,7 +63,6 @@ public abstract class Build {
 
     @Exported
     public abstract List<ParameterValue> getParameters();
-    @Exported
-    public abstract long getEstimatedDuration();
+
 
 }

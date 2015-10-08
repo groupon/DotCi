@@ -27,7 +27,6 @@ import React from 'react';
 import Avatar from '../lib/Avatar.jsx';
 import BuildIcon from './BuildIcon.jsx';
 import BuildCauseIcon from './BuildCauseIcon.jsx';
-import BuildProgressBar from './BuildProgressBar.jsx';
 import PageLink from './../lib/PageLink.jsx';
 require('./build_row.css');
 require('./build_row_small.css');
@@ -54,11 +53,10 @@ export default React.createClass({
     </paper-material>);
   },
   render(){
-    let {result,number, cancelUrl,commit,durationString,displayTime,cause, estimatedDuration,duration} = this.props.build;
+    let {result,number, cancelUrl,commit,durationString,displayTime,cause, duration} = this.props.build;
     let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit;
     return (
       <div className="build-row">
-        <BuildProgressBar build={this.props.build}/>
         <div className ={"build-info build-info-"+result}>
           {this._statusRow(result,cause)}
           <span>

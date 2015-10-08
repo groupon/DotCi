@@ -1,5 +1,4 @@
 import React from "react";
-import BuildProgressBar from './../BuildProgressBar.jsx';
 import PageLink from './../../lib/PageLink.jsx';
 require('./sub-builds-menu.css');
 export default  React.createClass({
@@ -20,7 +19,6 @@ export default  React.createClass({
     return this.props.axisList.map(subBuild =>{
       const build = subBuild.script;
       return <paper-tab key={build}>
-        <BuildProgressBar build={subBuild} />
         <PageLink   href={'/'+this.props.buildNumber+'/dotCI'+build}>
           <span className= {"subbuild-"+ subBuild.result}>{build}</span>
           <span className="subbuild-duration">{subBuild.duration?Math.floor(subBuild.duration/ 60000) +' mins': '-'}</span> 

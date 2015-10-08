@@ -105,9 +105,4 @@ public class QueuedBuild extends Build {
         return Lists.newArrayList();
     }
 
-    @Override
-    public long getEstimatedDuration() {
-        return -1;
-    }
-
 }

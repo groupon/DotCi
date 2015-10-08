@@ -374,22 +374,5 @@ public class DynamicBuildRepository extends MongoRepository {
 
     }
 
-    public <P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> long getEstimatedDuration(DbBackedBuild<P, B> build) {
-        BasicDBObject groupStage = new BasicDBObject(of("$group", of("_id", "$projectId", "duration", of("$avg", "$duration"))));
-        BasicDBObject filterStage = new BasicDBObject(
-                of("$match", of("$and", asList(
-                                of("actions.causes.branch.branch", build.getParent().getDefaultBranch()),
-                                of("projectId", build.getParent().getId()),
-                                of("state", "COMPLETED"),
-                                of("result", Result.SUCCESS.toString())
-                        )
-                )));
-        BasicDBObject sortStage = new BasicDBObject(of("$sort", of("timestamp", -1)));
-        BasicDBObject limitStage = new BasicDBObject(of("$limit", 5));
-        AggregationOutput avgDurations = getDatastore().getDB().getCollection("run").aggregate(filterStage, sortStage, limitStage, groupStage);
-        if (Iterables.size(avgDurations.results()) != 1) return -1;
-        Double avgDuration = (Double) Iterables.getOnlyElement(avgDurations.results()).get("duration");
-        return avgDuration.longValue();
-    }
 }
 
