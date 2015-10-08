@@ -23,7 +23,6 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.repository;
 
-import com.google.common.collect.Iterables;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.*;
 import com.groupon.jenkins.mongo.BuildInfo;
@@ -39,7 +38,6 @@ import hudson.model.Run;
 import hudson.util.RunList;
 
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import jenkins.model.Jenkins;
 import org.bson.types.ObjectId;
@@ -202,7 +200,7 @@ public class DynamicBuildRepository extends MongoRepository {
         Query<DbBackedBuild> query = getQuery(project).limit(i).order("-number");
 
         if (branch != null) {
-            query = filterBranch(branch, query);
+            query = filterExpression(branch, query);
         }
         if (result != null) {
             query = query.filter("result", result.toString());
@@ -217,9 +215,17 @@ public class DynamicBuildRepository extends MongoRepository {
         return (Iterable<T>) builds;
     }
 
-    private Query<DbBackedBuild> filterBranch(String branch, Query<DbBackedBuild> query) {
-        Pattern branchRegex = Pattern.compile(branch);
-        query = query.filter("actions.causes.branch.branch", branchRegex);
+    private Query<DbBackedBuild> filterExpression(String filterExpression, Query<DbBackedBuild> query) {
+        if(filterExpression.contains("=")){
+            String[] paramExpression = filterExpression.split("=");
+            String paramName = paramExpression[0];
+            String paramValue = paramExpression[1];
+            query = query.filter("actions.parameters.name", paramName);
+            query = query.filter("actions.parameters.value", Pattern.compile(paramValue));
+        }else{
+
+            query = query.filter("actions.causes.branch.branch", Pattern.compile(filterExpression));
+        }
         return query;
     }
 
@@ -257,7 +263,7 @@ public class DynamicBuildRepository extends MongoRepository {
         DbBackedProject project = (DbBackedProject) build.getProject();
 
         Query<DbBackedBuild> query = getQuery(project);
-        if (branch != null) filterBranch(branch, query);
+        if (branch != null) filterExpression(branch, query);
         DbBackedBuild previousBuild = query.
                 limit(1).
                 order("-number").
@@ -310,7 +316,7 @@ public class DynamicBuildRepository extends MongoRepository {
 
     public <T extends DbBackedBuild> T getLastBuild(DbBackedProject project, String branch) {
         Query<DbBackedBuild> query = getQuery(project);
-        filterBranch(branch, query);
+        filterExpression(branch, query);
         DbBackedBuild build = query
                 .order("-number").get();
         associateProject(project, build);
