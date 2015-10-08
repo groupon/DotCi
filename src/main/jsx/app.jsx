@@ -12,29 +12,46 @@ require('./polyfills.js');
 //wiring
 const begin = function (){
 
-  const buildHistory = new Job();
-  bindBuildHistoryActions(buildHistory);
-
-  const buildMetrics = new Job();
-  bindBuildMetricsActions(buildMetrics);
-
-  const build = new Build();
-  bindBuildActions(build);
   let rootPath = getRootPath()
   if(rootPath.endsWith('/')){
     rootPath = rootPath.substring(0,rootPath.length-1)
   }
   page.base(rootPath);
   page('/','/dotCIbuildHistory');
+
+  const buildHistory = new Job();
+  bindBuildHistoryActions(buildHistory);
+
+  page.exit('/dotCIbuildHistory',(ctx,next)=> {
+    buildHistory.exit();
+    next();
+  });
+
   page('/dotCIbuildHistory', function () {
+    buildHistory.enter();
     buildHistory.actions.QueryChange(buildHistory.query);
   });
+
+  const buildMetrics = new Job();
+  bindBuildMetricsActions(buildMetrics);
+  page.exit('/dotCIbuildMetrics',(ctx,next)=> {
+    buildMetrics.exit();
+    next();
+  });
+
   page('/dotCIbuildMetrics', function () {
+    buildMetrics.enter();
     buildMetrics.actions.QueryChange(buildMetrics.query);
   });
-  page(/^\/(\d+)\/?(dotCI([^\/]+)\/?)?$/, buildPage);
-  page();
-  function buildPage(ctx){
+  const build = new Build();
+  bindBuildActions(build);
+
+  page.exit(/^\/(\d+)\/?(dotCI([^\/]+)\/?)?$/, (ctx,next) =>{
+    build.exit();
+    next();
+  });
+  page(/^\/(\d+)\/?(dotCI([^\/]+)\/?)?$/, ctx =>{
+    build.enter();
     const buildNumber = ctx.params[0];
     const subBuild= ctx.params[2] || "main";
     if(ctx.hash){
@@ -43,7 +60,9 @@ const begin = function (){
       build.selectedLine = "0";
     }
     build.actions.BuildChange({buildNumber,subBuild});
-  }
+  });
+
+  page();
 }
 function getRootPath(){
   const jobPath = jobUrl.replace(rootURL,'');

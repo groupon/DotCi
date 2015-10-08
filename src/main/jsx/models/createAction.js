@@ -1,6 +1,8 @@
 export default function (onCallBack){
-  const action = function(data){
-    onCallBack(data,action.onAction);
+  const action = function(...data){
+    if(action.active){
+      onCallBack(...data,action.onAction);
+    }
   }
   return action;
 }
