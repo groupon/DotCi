@@ -30,7 +30,6 @@ export default React.createClass({
   },
   render(){
     return <span  id="buildLog">
-      {this._consoleHeader()}
       <pre> 
         <span ref="buildLog" >
           {this._scrollButtons()}
