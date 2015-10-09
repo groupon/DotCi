@@ -45,7 +45,7 @@
     "semantic-ui-checkbox": "^1.12.3",
     "style-loader": "^0.8.3",
     "url-loader": "latest",
-    "vulcanize": "^1.9.3",
+    "vulcanize": "^1.13.1",
     "webpack": "^1.9.5"
   },
   "devDependencies": {
@@ -68,6 +68,6 @@
     "lint": "eslint src/main/jsx/**/*",
     "watch": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.config.dev.js --colors --progress --hot --inline  --port  3000",
     "test": "$(npm bin)/karma start",
-    "vulcanize": "bower install --config.interactive=false && $(npm bin)/vulcanize src/main/webapp/webcomponent-imports.html > src/main/webapp/webcomponent-imports-vulcanized.html"
+    "vulcanize": "bower install --config.interactive=false && $(npm bin)/vulcanize --inline-css --inline-scripts src/main/webapp/webcomponent-imports.html > src/main/webapp/webcomponent-imports-vulcanized.html"
   }
 }
