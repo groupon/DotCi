@@ -113,9 +113,12 @@ export default React.createClass({
     return `L${lineNumber}`  === this.selectedHash();
   },
   _openFold(e){
-    e.stopPropagation();
-    e.currentTarget.classList.toggle('closed');
-    e.currentTarget.classList.toggle('open');
+    const left = e.target.getClientRects()[0].left;
+    if(e.clientX < left + 50){
+      e.stopPropagation();
+      e.currentTarget.classList.toggle('closed');
+      e.currentTarget.classList.toggle('open');
+    }
   },
   _logFold(lines,startIdx,isLast){
     if(lines.length  === 1){
