@@ -96,6 +96,8 @@ export default React.createClass({
   _onLineSelect(event){
     if(event.target.tagName === 'SPAN'|| event.target.tagName === 'A'){
       event.stopPropagation();
+    }
+    if(event.target.tagName === 'A'){
       const lineId = event.currentTarget.getAttribute('id');
       this.props.actions.LineSelect(lineId);
     }
