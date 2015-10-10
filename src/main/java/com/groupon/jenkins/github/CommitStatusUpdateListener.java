@@ -91,7 +91,7 @@ public class CommitStatusUpdateListener extends RunListener<DynamicBuild> {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        listener.getLogger().println("setting commit status on Github for " + repository.getUrl() + "/commit/" + sha1);
+        listener.getLogger().println("setting commit status on Github for " + repository.getHtmlUrl() + "/commit/" + sha1);
 
     }
 
