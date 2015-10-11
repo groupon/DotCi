@@ -77,12 +77,12 @@ public class Payload {
         return payloadJson.getString("ref").replaceAll("refs/", "").replaceAll("heads/", "");
     }
 
-    public boolean needsBuild(boolean shouldBuildTags) {
+    public boolean needsBuild(boolean shouldBuildTags, boolean buildPrsFromSameRepo) {
         if (payloadJson.has("ref") && payloadJson.getString("ref").startsWith("refs/tags/")) {
             return shouldBuildTags;
         }
         if (isPullRequest()) {
-            return !isPullRequestClosed() && !isPullRequestFromWithinSameRepo();
+            return !isPullRequestClosed() && ( buildPrsFromSameRepo || !isPullRequestFromWithinSameRepo());
         }
         return !payloadJson.getBoolean("deleted");
     }

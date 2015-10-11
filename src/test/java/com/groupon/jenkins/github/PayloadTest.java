@@ -71,32 +71,38 @@ public class PayloadTest {
     @Test
     public void testProjectPushDeleteBranch() throws IOException {
         Payload payload = new Payload(readFile("push_delete.json"));
-        assertFalse(payload.needsBuild(false));
+        assertFalse(payload.needsBuild(false,false));
     }
 
     @Test
     public void testNonDeletePushShouldTriggerAbuild() throws IOException {
         Payload payload = new Payload(readFile("push.json"));
-        assertTrue(payload.needsBuild(false));
+        assertTrue(payload.needsBuild(false,false));
     }
 
     @Test
     public void pullRequestFromTheSameRepoShouldNotTriggerABuild() throws IOException {
         String payloadReq = readFile("pull_request_from_the_same_repo.json");
         Payload payload = new Payload(payloadReq);
-        assertFalse(payload.needsBuild(false));
+        assertFalse(payload.needsBuild(false,false));
+    }
+    @Test
+    public void pullRequestFromTheSameRepoShouldTriggerABuildIfAllowed() throws IOException {
+        String payloadReq = readFile("pull_request_from_the_same_repo.json");
+        Payload payload = new Payload(payloadReq);
+        assertTrue(payload.needsBuild(false, true));
     }
 
     @Test
     public void pullRequestFromForkShouldTriggerABuild() throws IOException {
         Payload payload = new Payload(readFile("pull_request_from_fork.json"));
-        assertTrue(payload.needsBuild(false));
+        assertTrue(payload.needsBuild(false,false));
     }
 
     @Test
     public void closedPullRequestFromForkShouldNotTriggerABuild() throws IOException {
         Payload payload = new Payload(readFile("pull_request_from_fork_closed.json"));
-        assertFalse(payload.needsBuild(false));
+        assertFalse(payload.needsBuild(false,false));
     }
 
     @Test
@@ -152,12 +158,12 @@ public class PayloadTest {
     @Test
     public void should_not_build_tags() throws IOException {
         Payload payload = new Payload(readFile("push_tags.json"));
-        Assert.assertFalse(payload.needsBuild(false));
+        Assert.assertFalse(payload.needsBuild(false,false));
     }
     @Test
     public void should_build_tags_if_specified_in_project_config() throws IOException {
         Payload payload = new Payload(readFile("push_tags.json"));
-        Assert.assertTrue(payload.needsBuild(true));
+        Assert.assertTrue(payload.needsBuild(true,false));
     }
 
     @Test
