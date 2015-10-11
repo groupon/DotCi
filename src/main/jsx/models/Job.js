@@ -1,5 +1,6 @@
 import createAction from './createAction.js';
 import Page from './Page.js';
+// #commete
 export default class extends Page{
   constructor(){
     super();
