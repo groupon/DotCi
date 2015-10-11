@@ -44,25 +44,13 @@ export default React.createClass({
     return this.props.inProgress? <img src={loadingsvg} />: <span/>;
   },
   _scrollButtons(){
-    const color = this.state.logPinned? "green": "#999" ; 
-    return ( <paper-button 
-      ref="pinLog" 
-      class="pinLog" 
-      id="pinLog" 
-      style = {{color}} 
-      onClick={this._onPinLog}>
-      <iron-icon icon="arrow-drop-down-circle"/>
-      <paper-tooltip  htmlFor="pinLog">Scroll to tail</paper-tooltip>
-    </paper-button>);
-  },
-  _consoleHeader(){
-    return <div id="console-header">
-      <paper-icon-button 
-        className="hint--left" 
-        data-hint="Full Log" 
-        style={{color: "white"}} 
-        onClick={this._fullLog} icon="reorder"></paper-icon-button>
-    </div>
+    const color = this.state.logPinned? "green": "white" ; 
+    return ( <div  ref="floatingMenu" className="floatingMenu">
+      <paper-toolbar middleJustify="start">
+        <paper-icon-button  onClick={this._fullLog} icon="reorder" ></paper-icon-button>
+        <paper-icon-button style = {{color}} icon="arrow-drop-down-circle" onClick={this._onPinLog} ></paper-icon-button>
+      </paper-toolbar>
+    </div>);
   },
   _fullLog(e){
     e.preventDefault();
@@ -79,7 +67,7 @@ export default React.createClass({
     const newPos = this.refs.buildLog.getBoundingClientRect().top
     const scroll =  this.intialTop - newPos;
     // console.log(`Initial : ${this.intialTop}  newPos: ${newPos} scroll: ${Math.abs(scroll)}`);
-    this.refs.pinLog.style.top= Math.abs(scroll)+"px"
+    this.refs.floatingMenu.style.top= Math.abs(scroll)+"px"
   },
   _onPinLog(e){
     this.setState({logPinned: !this.state.logPinned});
