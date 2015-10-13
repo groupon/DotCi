@@ -62,11 +62,21 @@ public class BuildConfigurationTest {
     Assert.assertEquals("docker-compose -f docker-compose.yml -p unitgroupondotci8 run -T unit sh -xc 'command'",commands.get(2));
   }
 
+  @Test
+  public void should_run_before_command_if_present(){
+    ShellCommands commands = getRunCommandsWithBefore();
+    Assert.assertEquals("sh -xc 'before cmd'", commands.get(0));
+    Assert.assertEquals("trap \"docker-compose -f docker-compose.yml -p unitgroupondotci8 kill; docker-compose -f docker-compose.yml -p unitgroupondotci8 rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(1));
+  }
 
   private ShellCommands getRunCommands() {
     BuildConfiguration buildConfiguration = new BuildConfiguration("groupon/DotCi", ImmutableMap.of("run", of("unit", "command", "integration", "integration")), "buildId", new ShellCommands(), "abc123", 8);
     return buildConfiguration.getCommands(Combination.fromString("script=unit"));
   }
 
-
+  private ShellCommands getRunCommandsWithBefore() {
+    Map ci_config = ImmutableMap.of("before", "before cmd", "run", of("unit", "command", "integration", "integration"));
+    BuildConfiguration buildConfiguration = new BuildConfiguration("groupon/DotCi", ci_config, "buildId", new ShellCommands(), "abc123", 8);
+    return buildConfiguration.getCommands(Combination.fromString("script=unit"));
+  }
 }
