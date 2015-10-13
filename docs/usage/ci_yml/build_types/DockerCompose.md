@@ -5,6 +5,13 @@ dependencies. The author should assume that only that tool is available.
 
 ## `.ci.yml` Sections
 
+### `before`
+
+```
+before: "./some_script && ./another_script"
+```
+Specify any commands that should be run before building the image.
+
 ### `run`
 
 ```
