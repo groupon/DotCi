@@ -72,7 +72,7 @@ public class BuildConfiguration {
         String fileName = getDockerComposeFileName();
         ShellCommands shellCommands = new ShellCommands();
         shellCommands.add(checkoutCommands);
-        if (config.get("before") != null) {
+        if (config.containsKey("before")) {
             shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape((String)config.get("before"))));
         }
 
