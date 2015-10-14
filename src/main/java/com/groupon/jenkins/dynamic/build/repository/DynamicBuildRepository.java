@@ -215,7 +215,7 @@ public class DynamicBuildRepository extends MongoRepository {
         return (Iterable<T>) builds;
     }
 
-    private Query<DbBackedBuild> filterExpression(String filterExpression, Query<DbBackedBuild> query) {
+    public <T extends DbBackedBuild> Query<T> filterExpression(String filterExpression, Query<T> query) {
         if(filterExpression.contains("=")){
             String[] paramExpression = filterExpression.split("=");
             String paramName = paramExpression[0];
