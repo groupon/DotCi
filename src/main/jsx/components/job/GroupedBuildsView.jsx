@@ -3,6 +3,7 @@ import LinearBuildsView from './LinearBuildsView.jsx';
 import BuildStep from './BuildStep.jsx';
 import Avatar from '../lib/Avatar.jsx';
 import sortBy from 'ramda/src/sortBy'
+import reverse from 'ramda/src/reverse';
 require('./grouped_builds_view.css')
 const PipeLineBuild =  React.createClass({
   getInitialState(){
@@ -43,7 +44,7 @@ export default React.createClass({
     const sourceBuilds = this.props.builds
     .filter(build => !this._isTriggeredBuild(build))
     .reduce((map,build) => {
-      map[build.number+'']=[build]
+      map[build.number]=[build]
       return map;
     }, {});
     const groupedBuilds = this.props.builds.filter(build => this._isTriggeredBuild(build)).reduce((map,build) => {
@@ -55,11 +56,11 @@ export default React.createClass({
       builds.push(build);
       return map;
     },sourceBuilds)
-
-    const buildGroups = []
-    for (var buildNumber in groupedBuilds){
-      buildGroups.push(<PipeLineBuild key={buildNumber} builds={groupedBuilds[buildNumber]}/>);
-    } 
+    const buildNums = reverse()(sortBy(n => parseInt(n))(Object.keys(groupedBuilds)));
+    const buildGroups = buildNums.reduce((groups,buildNumber) => {
+      groups.push(<PipeLineBuild key={buildNumber} builds={groupedBuilds[buildNumber]}/>);
+      return groups;
+    }, []);
     return(<span className="pipeline-build-view">{buildGroups}</span>);
   },
   _isTriggeredBuild(build) {
