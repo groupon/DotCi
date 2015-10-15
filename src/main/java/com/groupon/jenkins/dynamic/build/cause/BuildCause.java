@@ -49,6 +49,8 @@ public abstract class BuildCause extends Cause {
 
     public abstract String getSha();
 
+    public abstract String getParentSha();
+
     public abstract String getPusher();
 
     public abstract String getPullRequestNumber();

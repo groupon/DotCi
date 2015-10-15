@@ -235,6 +235,17 @@ public class PayloadTest {
         Payload payload = new Payload(readFile("pull_request.json"));
         assertEquals("Update .ci.yml",payload.getCommitMessage());
     }
+    @Test
+    public void should_get_base_commit_sha_for_parent_sha_in_a_pr() throws IOException {
+        Payload payload = new Payload(readFile("pull_request.json"));
+        assertEquals("2e8f55ee8489308b6d3b3e6d640774c3b857c9f5",payload.getParentSha());
+    }
+
+    @Test
+    public void should_get_previous_commit_sha_for_parent_sha_for_push() throws IOException {
+        Payload payload = new Payload(readFile("push.json"));
+        assertEquals("7974a8062f45ecab27387b763bd39277f3ba5aac",payload.getParentSha());
+    }
 
     private String readFile(String fileName) throws IOException {
         InputStream stream = getClass().getResourceAsStream("/" + fileName);

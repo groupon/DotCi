@@ -176,4 +176,10 @@ public class Payload {
         return  payloadJson.getJSONObject("head_commit").getString("message");
     }
 
+    public String getParentSha() {
+        if(isPullRequest()) {
+            return payloadJson.getJSONObject("pull_request").getJSONObject("base").getString("sha");
+        }
+        return payloadJson.getString("before");
+    }
 }

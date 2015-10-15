@@ -25,10 +25,12 @@ package com.groupon.jenkins.dynamic.build;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
+import com.groupon.jenkins.*;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.BuildEnvironment;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
+import com.groupon.jenkins.dynamic.build.repository.*;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import hudson.EnvVars;
@@ -52,6 +54,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Map;
 import jenkins.model.Jenkins;
+import org.apache.commons.lang.*;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.stapler.HttpResponse;
@@ -185,6 +188,10 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     }
     public GHRepository getGithubRepository() {
         return getGithubRepositoryService().getGithubRepository();
+    }
+
+    public boolean isPullRequest() {
+        return StringUtils.isNotEmpty( getCause().getPullRequestNumber());
     }
 
     protected class DynamicRunExecution extends Build.BuildExecution implements BuildExecutionContext {
@@ -330,5 +337,12 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     public String getDescription() {
        String description = super.getDescription();
         return description == null? getCurrentBranch().toString() : description;
+    }
+
+    @Override
+    public DynamicBuild getPreviousBuild() {
+        String parentSha = getCause().getParentSha();
+        DynamicBuildRepository buildRepository = SetupConfig.get().getDynamicBuildRepository();
+        return StringUtils.isEmpty(parentSha) ?  null: (DynamicBuild) buildRepository.getBuildBySha(this.getProject(), parentSha);
     }
 }

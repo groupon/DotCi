@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.dynamic.build;
 
+import com.google.common.collect.*;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
 import com.groupon.jenkins.dynamic.build.cause.UnknownBuildCause;
@@ -125,8 +126,10 @@ public class DynamicBuildModelTest {
     public void should_add_unknown_build_cause_if_build_kickedoff_by_an_upstream_build() throws IOException {
         DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().get();
         when(dynamicBuild.getCause()).thenReturn(BuildCause.NULL_BUILD_CAUSE);
+        when(dynamicBuild.getEnvVars()).thenReturn(ImmutableMap.of("BRANCH","master"));
+
         GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
-        when(githubRepositoryService.getHeadCommitForBranch(null)).thenReturn(getGHCommit());
+        when(githubRepositoryService.getHeadCommitForBranch("master")).thenReturn(getGHCommit());
         DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
         model.run();
         ArgumentCaptor<UnknownBuildCause> argument = ArgumentCaptor.forClass(UnknownBuildCause.class);

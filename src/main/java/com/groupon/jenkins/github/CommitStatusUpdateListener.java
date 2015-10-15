@@ -55,11 +55,15 @@ public class CommitStatusUpdateListener extends RunListener<DynamicBuild> {
                 // do nothing
                 // TODO DO SOMETHING
             }
-            repository.createCommitStatus(build.getSha(), GHCommitState.PENDING, url, "Build in progress", "DotCi");
+            repository.createCommitStatus(build.getSha(), GHCommitState.PENDING, url, "Build in progress", getContext(build));
         } catch (IOException e) {
             // Ignore if cannot create a pending status
             LOGGER.log(Level.WARNING, "Failed to Update commit status", e);
         }
+    }
+
+    private String getContext(DynamicBuild build) {
+        return build.isPullRequest()? "DotCi/PR": "DotCi/push";
     }
 
     @Override
@@ -87,7 +91,7 @@ public class CommitStatusUpdateListener extends RunListener<DynamicBuild> {
 		    msg += " - Skipped";
 	    }
         try {
-            repository.createCommitStatus(sha1, state, build.getFullUrl(), msg,"DotCi");
+            repository.createCommitStatus(sha1, state, build.getFullUrl(), msg,getContext(build));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

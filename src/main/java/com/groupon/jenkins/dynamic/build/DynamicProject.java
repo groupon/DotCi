@@ -368,4 +368,9 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     @Override
     protected synchronized void saveNextBuildNumber() throws IOException {
     }
+
+    @Override
+    public long getEstimatedDuration() {
+        return -1;
+    }
 }

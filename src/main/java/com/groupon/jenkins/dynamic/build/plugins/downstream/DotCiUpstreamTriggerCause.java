@@ -42,6 +42,7 @@ public class DotCiUpstreamTriggerCause extends BuildCause {
     private final String description;
     private final CommitInfo commitInfo;
     private final String sha;
+    private final String parentSha;
     private GitBranch branch;
 
     public DotCiUpstreamTriggerCause(DynamicBuild sourceBuild, DynamicProject targetJob, Map<String, String> jobOptions) {
@@ -55,12 +56,18 @@ public class DotCiUpstreamTriggerCause extends BuildCause {
         this.pusher =  sourceBuild.getCause().getPusher();
         this.description ="Started by upstream job  " + sourceBuild.getParent().getFullDisplayName() +".: " + sourceBuild.getNumber() ;
         this.sha = commit.getSHA1();
+        this.parentSha = commit.getParentSHA1s().size()>0 ? commit.getParentSHA1s().get(0):null;
         this.commitInfo = new CommitInfo(commit,branch);
     }
 
     @Override
     public String getSha() {
      return sha;
+    }
+
+    @Override
+    public String getParentSha() {
+        return parentSha;
     }
 
     private GHCommit getHeadCommitForBranch(DynamicProject targetJob, String branch) {

@@ -33,10 +33,12 @@ public class UnknownBuildCause extends BuildCause {
 
     private final String sha;
     private final GitBranch branch;
+    private String parentSha;
     private final CommitInfo commitInfo;
 
-    public UnknownBuildCause(GitBranch branch, GHCommit commit) {
+    public UnknownBuildCause(GitBranch branch, GHCommit commit, String parentSha) {
         this.branch = branch;
+        this.parentSha = parentSha;
         this.sha = commit.getSHA1();
         this.commitInfo = new CommitInfo(commit,branch);
     }
@@ -46,6 +48,10 @@ public class UnknownBuildCause extends BuildCause {
         return sha;
     }
 
+    @Override
+    public String getParentSha() {
+        return parentSha;
+    }
 
     @Override
     public String getPusher() {
