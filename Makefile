@@ -10,5 +10,5 @@ publish:
 	git push -f;\
 	git checkout master
 serve: 
-	gitbook serve	
+	cd docs && gitbook serve	
 
