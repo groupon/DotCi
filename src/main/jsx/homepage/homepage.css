@@ -1,0 +1,33 @@
+@import './../colors.css';
+#cards {
+  @apply(--layout-vertical);
+  @apply(--center-justified);
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+paper-card {
+  width: 100%;
+  margin-bottom: 16px;
+}
+.fancy .title {
+  position: absolute;
+  top: 30px;
+  left: 100px;
+  color: var(--paper-teal-700);
+}
+.fancy img {
+  width: 100%;
+}
+.fancy .big {
+  font-size: 22px;
+  padding: 8px 0 16px;
+  color: var(--google-grey-500);
+}
+.fancy .medium {
+  font-size: 16px;
+  padding-bottom: 8px;
+}
+.pink {
+  --paper-card-header-color: var(--paper-pink-500);
+}
