@@ -26,7 +26,6 @@ package com.groupon.jenkins.buildtype.dockercompose;
 
 import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
-import com.groupon.jenkins.buildtype.docker.CheckoutCommands;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.buildtype.util.shell.ShellScriptRunner;
@@ -86,7 +85,7 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
         return new BuildConfiguration(fullName,config,buildId,checkoutCommands,sha,number);
     }
     public ShellCommands getCheckoutCommands(Map<String, Object> dotCiEnvVars) {
-        GitUrl gitRepoUrl = new GitUrl((String) dotCiEnvVars.get("GIT_URL"));
+        GitUrl gitRepoUrl = new GitUrl((String) dotCiEnvVars.get("DOTCI_DOCKER_COMPOSE_GIT_CLONE_URL"));
         boolean isPrivateRepo = Boolean.parseBoolean((String) dotCiEnvVars.get("DOTCI_IS_PRIVATE_REPO"));
         String gitUrl = isPrivateRepo ? gitRepoUrl.getGitUrl() : gitRepoUrl.getHttpsUrl();
         ShellCommands shellCommands = new ShellCommands();

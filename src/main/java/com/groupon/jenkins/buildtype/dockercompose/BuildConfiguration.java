@@ -24,11 +24,9 @@
 
 package com.groupon.jenkins.buildtype.dockercompose;
 
-import com.groupon.jenkins.buildtype.docker.CheckoutCommands;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.extensions.DotCiExtensionsHelper;
-import com.groupon.jenkins.git.GitUrl;
 import com.google.common.escape.Escaper;
 import com.google.common.escape.Escapers;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
