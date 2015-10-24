@@ -1,8 +1,0 @@
-{
-  "plugins": [ "github" ,"mermaid"],
-  "pluginsConfig": {
-    "github": {
-      "url": "https://github.com/groupon/DotCi"
-    }
-  }
-}
