@@ -1,14 +1,12 @@
 publish:
-	cd docs;\
-	rm -rf _book;\
-	gitbook build;\
-	cd ..;\
+	rm -rf site;\
+	mkdocs build;\
 	git checkout gh-pages;\
-	cp -R docs/_book/* .;\
+	cp -R site/* .;\
 	git add --all;\
 	git commit -am "Update docs";\
 	git push -f;\
 	git checkout master
 serve: 
-	cd docs && gitbook serve	
+	mkdocs serve	
 
