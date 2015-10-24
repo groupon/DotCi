@@ -1,0 +1,25 @@
+site_name: DotCi
+site_url: http://groupon.github.io/DotCi/
+site_description: Project Documentation for DotCi.
+site_author: Groupon Inc.
+repo_url: https://github.com/groupon/DotCi
+pages:
+  - Home: index.md
+  - User Guide:
+    - Create New Job: user-guide/CreateNewJob.md
+    - .ci.yml reference: user-guide/DockerCompose.md
+    - .ci.yml Plugins Reference: user-guide/Plugins.md
+    - .ci.yml Notifications Reference: user-guide/Notifications.md
+    - .ci.yml Templating: user-guide/Templating.md
+    - UI Reference : user-guide/UI.md
+  - Installation: installation/Installation.md
+  - Development: 
+     - Development Setup: development/DevelopmentSetup.md
+     - Extending DotCi: development/Extending.md
+markdown_extensions:
+    - toc:
+        permalink: 
+    - admonition:
+copyright: Copyright (c) 2015, Groupon, Inc.
+
+    

@@ -1,7 +1,4 @@
-# Docker Compose
-
-This build type is intended to use `docker-compose` to isolate all
-dependencies. The author should assume that only that tool is available.
+This build type uses [docker-compose](https://docs.docker.com/compose/) to execute the build.
 
 ## `.ci.yml` Sections
 
@@ -33,15 +30,16 @@ run:
   cuke_test: 'cucumber'
   integration:
 ```
-Runs in parallel:
-* A container defined by `test` in `docker-compose.yml` with the command
+Parallel Run:
+
+ - A container defined by `test` in `docker-compose.yml` with the command
   `rspec`.
-* A container defined by `cuke_test` in `docker-compose.yml` with the command
+ - A container defined by `cuke_test` in `docker-compose.yml` with the command
   `cucumber`.
-* A container defined by `integration` in `docker-compose.yml` with its default `CMD`.
+ - A container defined by `integration` in `docker-compose.yml` with its default `CMD`.
 
 ### `plugins`
-See [Plugins](../Plugins.md)
+See [Plugins](Plugins)
 
 ### `notifications`
-See [Notifications](../Notifications.md)
+See [Notifications](Notifications)
