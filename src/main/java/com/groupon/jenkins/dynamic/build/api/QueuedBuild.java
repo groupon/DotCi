@@ -91,6 +91,16 @@ public class QueuedBuild extends Build {
     }
 
     @Override
+    public String getUrl() {
+        return item.getUrl();
+    }
+
+    @Override
+    public String getFullUrl() {
+        return item.getUrl();
+    }
+
+    @Override
     public BuildCause getCause() {
         for (Cause cause: item.getCauses()){
            if(cause instanceof  BuildCause) {

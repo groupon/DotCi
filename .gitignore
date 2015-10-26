@@ -22,3 +22,4 @@ _book
 src/main/webapp/webcomponent-imports-vulcanized.html
 src/main/webapp/css/dotci.css
 site/
+src/main/webapp/js/homepage.js

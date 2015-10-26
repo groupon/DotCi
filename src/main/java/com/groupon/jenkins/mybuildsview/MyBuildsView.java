@@ -23,20 +23,16 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.mybuildsview;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.*;
+import com.google.common.collect.*;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.api.*;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.views.AuthenticatedView;
 import hudson.Extension;
-import hudson.model.Computer;
+import hudson.model.*;
 import hudson.model.Descriptor.FormException;
-import hudson.model.Item;
-import hudson.model.ItemGroup;
-import hudson.model.Job;
-import hudson.model.ModifiableItemGroup;
-import hudson.model.TopLevelItem;
-import hudson.model.ViewDescriptor;
 import hudson.util.RunList;
 import java.io.IOException;
 import java.util.Collection;
@@ -48,7 +44,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.export.*;
 
+import javax.annotation.*;
 import javax.servlet.ServletException;
 
 public class MyBuildsView extends AuthenticatedView {
@@ -71,6 +69,17 @@ public class MyBuildsView extends AuthenticatedView {
     public RunList getBuilds() {
         Iterable<DynamicBuild> builds = makeDynamicBuildRepository().getLastBuildsForUser(getCurrentUser(), 20);
         return RunList.fromRuns(Lists.newArrayList(builds));
+    }
+    @Exported
+    public Iterable<ProcessedBuild> getUserBuilds(){
+        Iterable<DynamicBuild> builds = makeDynamicBuildRepository().getLastBuildsForUser(getCurrentUser(), 20);
+        Iterable<ProcessedBuild> processedBuilds = Iterables.transform(builds, new Function<DynamicBuild, ProcessedBuild>() {
+            @Override
+            public ProcessedBuild apply(DynamicBuild input) {
+                return new ProcessedBuild(input);
+            }
+        });
+        return Lists.newArrayList(processedBuilds);
     }
 
     private String getCurrentUser() {
@@ -141,5 +150,10 @@ public class MyBuildsView extends AuthenticatedView {
     @Override
     public boolean isEditable() {
         return false;
+    }
+
+    @Override
+    public Api getApi() {
+        return super.getApi();
     }
 }
