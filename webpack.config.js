@@ -25,10 +25,13 @@
 module.exports = require('./make-webpack-config.js')(
   { 
     debug: false ,
-    entry:"./src/main/jsx/app.jsx",
+    entry:{
+      "dotci": "./src/main/jsx/app.jsx",
+      "homepage": "./src/main/jsx/homepage/homepage.js"
+    },
     output: {
-        path: "src/main/webapp/js",
-        filename: "dotci.js"
+      path: "src/main/webapp/js",
+      filename: "[name].js"
     }
   }
 );

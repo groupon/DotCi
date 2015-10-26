@@ -104,6 +104,16 @@ public class ProcessedBuild extends Build {
     }
 
     @Override
+    public String getUrl() {
+        return build.getUrl();
+    }
+
+    @Override
+    public String getFullUrl() {
+        return build.getFullUrl();
+    }
+
+    @Override
     public BuildCause getCause() {
         return build.getCause();
     }
@@ -116,10 +126,6 @@ public class ProcessedBuild extends Build {
         return Lists.newArrayList();
     }
 
-    @Override
-    public long getEstimatedDuration() {
-        return build.getEstimatedDurationForDefaultBranch();
-    }
 
     @Exported
     public Iterable<Map> getAxisList(){
@@ -153,7 +159,6 @@ public class ProcessedBuild extends Build {
         subBuild.put("result", getResult(run));
         if (run != null) {
             subBuild.put("url", run.getUrl());
-            subBuild.put("estimatedDuration",run.getEstimatedDurationForDefaultBranch());
             subBuild.put("duration",getBuildDuration(run));
         } else {
             subBuild.put("url", build.getUrl());

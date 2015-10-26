@@ -33,11 +33,13 @@ public class ManualBuildCause extends BuildCause {
 
     private final String user;
     private final GitBranch branch;
+    private String parentSha;
     private final String sha;
     private final CommitInfo commitInfo;
 
-    public ManualBuildCause(GitBranch branch, GHCommit commit, String user) {
+    public ManualBuildCause(GitBranch branch, GHCommit commit, String parentSha,String user) {
         this.branch = branch;
+        this.parentSha = parentSha;
         this.sha = commit.getSHA1();
         this.user = user;
         this.commitInfo = new CommitInfo(commit,branch);
@@ -54,6 +56,10 @@ public class ManualBuildCause extends BuildCause {
         return sha;
     }
 
+    @Override
+    public String getParentSha() {
+        return parentSha;
+    }
 
 
     @Override

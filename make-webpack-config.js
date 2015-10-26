@@ -70,11 +70,11 @@ module.exports = function(config){
     },
     devtool: config.debug ? '#inline-source-map' : false,
     plugins: config.debug ? [
-      new ExtractTextPlugin("dotci.css")
+      new ExtractTextPlugin("[name].css")
     ] : [
       new webpack.EnvironmentPlugin('NODE_ENV'),
       new webpack.optimize.DedupePlugin(),
-      new ExtractTextPlugin("./../css/dotci.css"),
+      new ExtractTextPlugin("./../css/[name].css"),
       new webpack.optimize.UglifyJsPlugin(
         {
           compressor: {

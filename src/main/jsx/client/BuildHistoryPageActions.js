@@ -7,8 +7,8 @@ import Drawer from './../Drawer.jsx';
 import {Job as AutoRefreshComponent} from './../components/lib/AutoRefreshComponent.js';
 function dataChange(buildHistory){
   const buildHistoryPage = <BuildHistoryPage buildHistory={buildHistory}/>
-  const refreshFunction =()=>{};
-  ReactDOM.render(<AutoRefreshComponent component={buildHistoryPage} refreshFunction={refreshFunction}  />, document.getElementById('content'));
+  const refreshFunction =()=>buildHistory.actions.QueryChange(buildHistory.query);
+  ReactDOM.render(<AutoRefreshComponent component={buildHistoryPage} refreshFunction={refreshFunction} refreshInterval={10000}  />, document.getElementById('content'));
   ReactDOM.render(<Drawer menu="job"/>, document.getElementById('nav'));
 }
 function queryChange(buildHistory,oldQuery){

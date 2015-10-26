@@ -24,11 +24,9 @@
 
 package com.groupon.jenkins.buildtype.dockercompose;
 
-import com.groupon.jenkins.buildtype.docker.CheckoutCommands;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.extensions.DotCiExtensionsHelper;
-import com.groupon.jenkins.git.GitUrl;
 import com.google.common.escape.Escaper;
 import com.google.common.escape.Escapers;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
@@ -72,6 +70,10 @@ public class BuildConfiguration {
         String fileName = getDockerComposeFileName();
         ShellCommands shellCommands = new ShellCommands();
         shellCommands.add(checkoutCommands);
+        if (config.containsKey("before")) {
+            shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape((String)config.get("before"))));
+        }
+
         shellCommands.add(String.format("trap \"docker-compose -f %s -p %s kill; docker-compose -f %s -p %s rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",fileName,projectName,fileName,projectName));
         shellCommands.add(String.format("docker-compose -f %s -p %s pull",fileName,projectName));
         if (config.get("run") != null) {

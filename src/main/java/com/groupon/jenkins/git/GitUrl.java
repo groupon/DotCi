@@ -75,4 +75,8 @@ public class GitUrl {
     public String getHttpsUrl() {
         return String.format("https://%s/%s/%s",domain,orgName,name);
     }
+
+    public String applyTemplate(String template) {
+        return template.replace("<DOMAIN>",domain).replace("<ORG>",orgName).replace("<REPO>",name);
+    }
 }

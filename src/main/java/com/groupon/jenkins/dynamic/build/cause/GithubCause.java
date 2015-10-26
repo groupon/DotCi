@@ -29,6 +29,7 @@ import java.util.List;
 
 public abstract class GithubCause extends BuildCause {
     private final String sha;
+    private final String parentSha;
     private final String pullRequestNumber;
     private final String pusher;
     @SuppressWarnings("unused")
@@ -41,6 +42,7 @@ public abstract class GithubCause extends BuildCause {
         this.pusher = payload.getPusher();
         this.pullRequestNumber = payload.isPullRequest() ? payload.getPullRequestNumber() : null;
         this.sha = sha;
+        this.parentSha = payload.getParentSha();
         this.branch = new GitBranch(payload.getBranch());
         this.logEntries = payload.getLogEntries();
         this.commitInfo = new CommitInfo(payload);
@@ -51,6 +53,10 @@ public abstract class GithubCause extends BuildCause {
         return sha;
     }
 
+    @Override
+    public String getParentSha() {
+        return parentSha;
+    }
 
     @Override
     public String getShortDescription() {

@@ -133,7 +133,7 @@ public class GithubWebhookTest {
 
         DynamicProjectRepository projectRepo = mock(DynamicProjectRepository.class);
 
-        when(payload.needsBuild(false)).thenReturn(true);
+        when(payload.needsBuild(false,false)).thenReturn(true);
         when(payload.getProjectUrl()).thenReturn("git@repo");
         when(projectRepo.getJobsFor("git@repo")).thenReturn(newArrayList(projectForRepo));
 

@@ -1,7 +1,9 @@
 import createAction from './createAction.js';
+import Page from './Page.js';
 import last from 'ramda/src/last';
-export default class {
+export default class extends Page{
   constructor(){
+    super();
     this.query={}
     this.selectedLine=0;
     const self = this;

@@ -38,7 +38,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.kohsuke.github.GHCommit;
+
+import org.kohsuke.github.*;
 
 //Testable proxy of dyanamicbuild
 public class DynamicBuildModel {
@@ -64,16 +65,29 @@ public class DynamicBuildModel {
 
     private void addBuildCauseForNonGithubCauses() throws IOException {
         String branch = build.getEnvVars().get("BRANCH");
+        GitBranch gitBranch = new GitBranch(branch);
         if (build.getCause(UserIdCause.class) != null) {
             GHCommit commit = githubRepositoryService.getHeadCommitForBranch(branch);
             String user = build.getCause(UserIdCause.class).getUserId();
-            ManualBuildCause manualCause = new ManualBuildCause(new GitBranch(branch), commit, user);
+            ManualBuildCause manualCause = new ManualBuildCause(gitBranch, commit, getParentSha(commit, gitBranch), user);
             build.addCause(manualCause);
         }
         if (build.getCause() == BuildCause.NULL_BUILD_CAUSE) {
             GHCommit commit = githubRepositoryService.getHeadCommitForBranch(branch);
-            build.addCause(new UnknownBuildCause(new GitBranch(branch), commit));
+            build.addCause(new UnknownBuildCause(gitBranch, commit,getParentSha(commit,gitBranch)));
         }
+    }
+
+    private String getParentSha(GHCommit commit, GitBranch gitBranch) throws IOException {
+        String parentSha;
+        if(gitBranch.isPullRequest()){
+            GHPullRequest pullRequest = githubRepositoryService.getGithubRepository().getPullRequest(gitBranch.pullRequestNumber());
+            parentSha = pullRequest.getBase().getSha();
+
+        }else{
+            parentSha = (commit.getParentSHA1s() !=null && commit.getParentSHA1s().size() > 0)? commit.getParentSHA1s().get(0): null;
+        }
+        return parentSha;
     }
 
     public void deleteBuild() throws IOException {
@@ -103,8 +117,13 @@ public class DynamicBuildModel {
     public Map<String, String> getDotCiEnvVars() {
         Map<String, String> vars = new HashMap<String, String>();
         vars.put("SHA", build.getSha());
-        vars.put("GIT_URL", new GitUrl(build.getParent().getGithubRepoUrl()).getUrl());
-        vars.put("DOTCI_IS_PRIVATE_REPO", new Boolean(build.isPrivateRepo()).toString()) ;
+        if (build.isPrivateRepo()) {
+          vars.put("GIT_URL", new GitUrl(build.getParent().getGithubRepoUrl()).getUrl()) ;
+          vars.put("DOTCI_IS_PRIVATE_REPO", "true") ;
+        } else {
+          vars.put("GIT_URL", build.getParent().getGithubRepoUrl()) ;
+          vars.put("DOTCI_IS_PRIVATE_REPO", "false") ;
+        }
         return vars;
     }
 

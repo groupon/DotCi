@@ -27,14 +27,20 @@ module.exports = require('./make-webpack-config.js')(
   { 
     debug: true ,
     entry:{
-       dotci:  [
-           'webpack-dev-server/client?http://localhost:3000',
-           'webpack/hot/only-dev-server',
+      dotci:  [
+        'webpack-dev-server/client?http://localhost:3000',
+        'webpack/hot/only-dev-server',
         "./src/main/jsx/app.jsx"
-    ]},
+      ],
+      homepage:  [
+        'webpack-dev-server/client?http://localhost:3000',
+        'webpack/hot/only-dev-server',
+        "./src/main/jsx/homepage/homepage.js"
+      ]
+    },
     output: {
-        filename: "dotci.js",
-        publicPath: "http://localhost:3000/assets/"
+      filename: "[name].js",
+      publicPath: "http://localhost:3000/assets/"
     }
   }
 );

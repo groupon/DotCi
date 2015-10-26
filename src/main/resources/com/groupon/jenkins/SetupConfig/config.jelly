@@ -71,7 +71,7 @@ THE SOFTWARE.
                    </f:entry>
 
                    <f:entry title="Enable private repository support">
-                      <f:checkbox name="dotci.privateRepoSupport" value="${instance.privateRepoSupport}"/>
+                      <f:checkbox name="dotci.privateRepoSupport" checked="${instance.privateRepoSupport}"/>
                    </f:entry>
 
                     <f:entry title="Github callback url">

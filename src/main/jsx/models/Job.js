@@ -1,6 +1,8 @@
 import createAction from './createAction.js';
-export default class {
+import Page from './Page.js';
+export default class extends Page{
   constructor(){
+    super();
     this.query={
       filter: 'All',
       limit: 50

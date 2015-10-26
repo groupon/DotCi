@@ -379,8 +379,4 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
             IOUtils.closeQuietly(out);
         }
     }
-
-    public long getEstimatedDurationForDefaultBranch() {
-        return isBuilding()? getDynamicBuildRepository().getEstimatedDuration(this):-1;
-    }
 }
