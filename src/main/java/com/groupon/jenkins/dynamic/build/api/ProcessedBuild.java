@@ -104,6 +104,16 @@ public class ProcessedBuild extends Build {
     }
 
     @Override
+    public String getUrl() {
+        return build.getUrl();
+    }
+
+    @Override
+    public String getFullUrl() {
+        return build.getFullUrl();
+    }
+
+    @Override
     public BuildCause getCause() {
         return build.getCause();
     }

@@ -31,27 +31,6 @@ import PageLink from './../lib/PageLink.jsx';
 require('./build_row.css');
 require('./build_row_small.css');
 export default React.createClass({
-  renderSmall(){
-    let {result,number,displayTime,commit} = this.props.build.toObject();
-    let {message,committerName,branch, avatarUrl} = commit.toObject();
-    return (   <paper-material >
-      <a   to={'job-widgets'} params={{widget: number}}>
-        <paper-item className={"build-row-small "+result}> 
-          <BuildProgressBar build={this.props.build}/>
-          <paper-item-body three-line>
-            <div>{number}-{message}</div>
-            <div secondary>
-              <Avatar avatarUrl={avatarUrl} />
-              <span>{committerName}({branch})</span>
-            </div>
-            <div  secondary>
-              {displayTime} 
-            </div>
-          </paper-item-body>
-        </paper-item>
-      </a>
-    </paper-material>);
-  },
   render(){
     let {result,number, cancelUrl,commit,durationString,displayTime,cause, duration} = this.props.build;
     let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit;
@@ -61,7 +40,7 @@ export default React.createClass({
           {this._statusRow(result,cause)}
           <span>
             <div className="build-row--title"><small>{branch}</small> 
-              <PageLink  href={'/'+number}>{message}</PageLink>
+              <PageLink  href={this._buildUrl()}>{message}</PageLink>
             </div> 
             <div className="build-row--committer">
               <Avatar avatarUrl={avatarUrl} />
@@ -70,7 +49,7 @@ export default React.createClass({
             <div className="build-row--cause">{cause['shortDescription']}</div>
           </span>
           <span>  
-            <div>#<PageLink  className="build-row--number" href={'/'+number}>{number}{result.toLowerCase()}</PageLink></div>
+            <div>#<PageLink  className="build-row--number" href={this._buildUrl()}>{number}{result.toLowerCase()}</PageLink></div>
             <div><iron-icon icon="github:octoface"/><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>
           </span>
           <span>
@@ -93,4 +72,7 @@ export default React.createClass({
       <BuildCauseIcon cause={cause['name']} />
     </span>
   },
+  _buildUrl(){
+    return this.props.fullUrl? this.props.build.url: "/"+this.props.build.number;
+  }
 });

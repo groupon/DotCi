@@ -53,7 +53,10 @@ THE SOFTWARE.
             rootURL = '${rootURL}';
             resURL= '${resURL}/plugin/DotCi/';
         </script>
-        <div id="homepage"/>
+        <h3>Your Recent Builds</h3>
+        <div id="homepage">
+            <paper-progress class="blue" indeterminate="true" value="800" min="100" max="1000"></paper-progress>
+        </div>
 
     </j:jelly>
 </html>

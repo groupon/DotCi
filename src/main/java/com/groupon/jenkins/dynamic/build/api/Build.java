@@ -58,6 +58,14 @@ public abstract class Build {
     public abstract boolean isCancelable();
     @Exported
     public abstract String getCancelUrl();
+
+    @Exported
+    public abstract String getUrl();
+
+
+    @Exported
+    public abstract String getFullUrl();
+
     @Exported
     public abstract Cause getCause();
 
