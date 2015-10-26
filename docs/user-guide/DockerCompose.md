@@ -2,6 +2,13 @@ This build type uses [docker-compose](https://docs.docker.com/compose/) to execu
 
 ## `.ci.yml` Sections
 
+### `docker-compose-file`
+
+```
+docker-compose-file: "./jenkins/docker-compose.yml"
+```
+Specify an alternate compose file (default: docker-compose.yml)
+
 ### `before`
 
 ```
