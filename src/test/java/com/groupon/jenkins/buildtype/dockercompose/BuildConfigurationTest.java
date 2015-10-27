@@ -69,6 +69,16 @@ public class BuildConfigurationTest {
     Assert.assertEquals("trap \"docker-compose -f docker-compose.yml -p unitgroupondotci8 kill; docker-compose -f docker-compose.yml -p unitgroupondotci8 rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(1));
   }
 
+  @Test
+  public void should_accept_alternative_docker_compose_file(){
+    Map ci_config = ImmutableMap.of("docker-compose-file", "./jenkins/docker-compose.yml", "run",  of("unit", "command"));
+    BuildConfiguration buildConfiguration = new BuildConfiguration("groupon/DotCi", ci_config, "buildId", new ShellCommands(), "abc123", 8);
+    ShellCommands commands = buildConfiguration.getCommands(Combination.fromString("script=unit"));
+    Assert.assertEquals("trap \"docker-compose -f ./jenkins/docker-compose.yml -p unitgroupondotci8 kill; docker-compose -f ./jenkins/docker-compose.yml -p unitgroupondotci8 rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(0));
+    Assert.assertEquals("docker-compose -f ./jenkins/docker-compose.yml -p unitgroupondotci8 pull",commands.get(1));
+    Assert.assertEquals("docker-compose -f ./jenkins/docker-compose.yml -p unitgroupondotci8 run -T unit sh -xc 'command'",commands.get(2));
+  }
+
   private ShellCommands getRunCommands() {
     BuildConfiguration buildConfiguration = new BuildConfiguration("groupon/DotCi", ImmutableMap.of("run", of("unit", "command", "integration", "integration")), "buildId", new ShellCommands(), "abc123", 8);
     return buildConfiguration.getCommands(Combination.fromString("script=unit"));
