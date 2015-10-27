@@ -3,7 +3,6 @@ import React from 'react';
 import qwest from 'qwest';
 import BuildRow from './../components/job/BuildRow.jsx'
 import {stringify} from 'qs';
-require('./homepage.css');
 var HomePage = ({builds}) => {
   return <div className="layout vertical wrap">
   {builds.map((build,idx) =>  <BuildRow  fullUrl key={idx} build={build}/>)}

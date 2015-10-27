@@ -25,35 +25,12 @@ THE SOFTWARE.
 <!DOCTYPE html>
 <html lang="en">
     <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-            <st:setHeader name="Expires" value="0" />
-            <st:contentType value="text/html;charset=UTF-8" />
-            <j:new var="h" className="hudson.Functions" /><!-- instead of JSP functions -->
-            <j:invokeStatic var="developmentMode" className="java.lang.Boolean" method="getBoolean">
-                <j:arg type="java.lang.String" value="hudson.hpi.run"/>
-            </j:invokeStatic>
-            ${h.initPageVariables(context)}
-            <title>${it.displayName}${not empty it.parent.fullDisplayName?' ['+it.parent.fullDisplayName+']':''}</title>
-            <meta charset="utf-8"/>
-            <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-            <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes"/>
-
-            <script src="${resURL}/plugin/DotCi/js/webcomponentsjs/webcomponents-lite.min.js"></script>
-            <link rel="icon" href="${resURL}/plugin/DotCi/favicons/default.ico" type="image/vnd.microsoft.icon" />
-            <j:if test='${developmentMode}'>
-                <script src="http://localhost:3000/assets/homepage.js"/>
-                <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports.html"/>
-               <link rel="stylesheet"  is="custom-style" type="text/css" href="http://localhost:3000/assets/homepage.css"/>
-            </j:if>
-            <j:if test='${!developmentMode}'>
-                <script src="${resURL}/plugin/DotCi/js/homepage.js"/>
-                <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports-vulcanized.html"/>
-                <link rel="stylesheet" is="custom-style" type="text/css" href="${resURL}/plugin/DotCi/css/homepage.css"/>
-            </j:if>
+        <j:set var="pageName" value="homepage" />
         <script>
             viewUrl = '${it.viewUrl}';
-            rootURL = '${rootURL}';
-            resURL= '${resURL}/plugin/DotCi/';
         </script>
+
+        <st:include page="/com/groupon/jenkins/NewUi/head.jelly" />
         <h3>Your Recent Builds</h3>
         <div id="homepage">
             <paper-progress class="blue" indeterminate="true" value="800" min="100" max="1000"></paper-progress>

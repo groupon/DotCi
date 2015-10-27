@@ -45,19 +45,14 @@
             DEVELOPMENT_MODE = '${developmentMode}'
         </script>
         <j:if test='${developmentMode}'>
-            <script src="http://localhost:3000/assets/dotci.js"/>
-            <link rel="stylesheet" type="text/css" href="http://localhost:3000/assets/dotci.css"/>
+            <script src="http://localhost:3000/assets/${pageName}.js"/>
+            <link rel="stylesheet" type="text/css" href="http://localhost:3000/assets/${pageName}.css"/>
             <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports.html"/>
         </j:if>
         <j:if test='${!developmentMode}'>
-            <script src="${resURL}/plugin/DotCi/js/dotci.js"/>
-            <link rel="stylesheet" type="text/css" href="${resURL}/plugin/DotCi/css/dotci.css"/>
+            <script src="${resURL}/plugin/DotCi/js/${pageName}.js"/>
+            <link rel="stylesheet" type="text/css" href="${resURL}/plugin/DotCi/css/${pageName}.css"/>
             <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports-vulcanized.html"/>
         </j:if>
-        <script>
-            rootURL = '${rootURL}';
-            jobUrl = rootURL+'/' + '${it.jobUrl}' +"/";
-            DEVELOPMENT_MODE = '${developmentMode}'
-        </script>
     </head>
 </j:jelly>
