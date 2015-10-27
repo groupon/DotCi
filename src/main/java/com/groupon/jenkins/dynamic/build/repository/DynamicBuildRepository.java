@@ -318,7 +318,7 @@ public class DynamicBuildRepository extends MongoRepository {
         Query<DbBackedBuild> query = getQuery(project);
         filterExpression(branch, query);
         DbBackedBuild build = query
-                .order("-number").get();
+                .order("-$natural").get();
         associateProject(project, build);
         return (T) build;
     }
