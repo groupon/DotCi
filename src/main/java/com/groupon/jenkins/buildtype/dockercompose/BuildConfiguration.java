@@ -80,10 +80,10 @@ public class BuildConfiguration {
             Map runConfig = (Map) config.get("run");
             Object dockerComposeCommand = runConfig.get(dockerComposeContainerName);
             if (dockerComposeCommand != null ) {
-                shellCommands.add(String.format("docker-compose -f %s -p %s run -T %s sh -xc '%s'", fileName, projectName, dockerComposeContainerName,SHELL_ESCAPE.escape((String) dockerComposeCommand)));
+                shellCommands.add(String.format("docker-compose -f %s -p %s run --rm -T %s sh -xc '%s'", fileName, projectName, dockerComposeContainerName,SHELL_ESCAPE.escape((String) dockerComposeCommand)));
             }
             else {
-                shellCommands.add(String.format("docker-compose -f %s -p %s run -T %s",fileName,projectName,dockerComposeContainerName));
+                shellCommands.add(String.format("docker-compose -f %s -p %s run --rm -T %s",fileName,projectName,dockerComposeContainerName));
             }
         }
         extractWorkingDirIntoWorkSpace(dockerComposeContainerName, projectName, shellCommands);
