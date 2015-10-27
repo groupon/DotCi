@@ -23,3 +23,5 @@ src/main/webapp/webcomponent-imports-vulcanized.html
 src/main/webapp/css/dotci.css
 site/
 src/main/webapp/js/homepage.js
+src/main/webapp/css/
+src/main/resources/com/groupon/jenkins/dynamic/build/DynamicProject/server.js
