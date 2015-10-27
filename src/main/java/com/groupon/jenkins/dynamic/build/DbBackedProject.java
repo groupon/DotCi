@@ -245,4 +245,8 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
         //Default to master for now; TODO: make this configurable
         return "master";
     }
+    @Override
+    public long getEstimatedDuration() {
+        return -1;
+    }
 }
