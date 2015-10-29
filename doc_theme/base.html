@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if page_description %}<meta name="description" content="{{ page_description }}">{% endif %}
+    {% if site_author %}<meta name="author" content="{{ site_author }}">{% endif %}
+    {% if canonical_url %}<link rel="canonical" href="{{ canonical_url }}">{% endif %}
+    {% if favicon %}<link rel="shortcut icon" href="{{ base_url }}/{{ favicon }}">
+    {% else %}<link rel="shortcut icon" href="{{ base_url }}/img/favicon.ico">{% endif %}
+
+    <title>{% if page_title %}{{ page_title }} - {% endif %}{{ site_name }}</title>
+
+    <link rel="stylesheet" href="{{ base_url }}/css/highlight.css">
+    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.indigo-pink.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    {%- for path in extra_css %}
+    <link href="{{ path }}" rel="stylesheet">
+    {%- endfor %}
+
+  </head>
+
+  <body{% if current_page and current_page.is_homepage %} class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base"{% endif %}>
+
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      {% include "nav.html" %}
+    <main class="mdl-layout__content">
+    <div class="mdl-layout__tab-panel is-active" id="overview">
+      <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+        <header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">
+          <i class="material-icons">play_circle_filled</i>
+        </header>
+        <div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+          <div class="mdl-card__supporting-text">
+            <h4>Features</h4>
+            Dolore ex deserunt aute fugiat aute nulla ea sunt aliqua nisi cupidatat eu. Nostrud in laboris labore nisi amet do dolor eu fugiat consectetur elit cillum esse.
+          </div>
+          <div class="mdl-card__actions">
+            <a href="#" class="mdl-button">Read our features</a>
+          </div>
+        </div>
+        <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="btn1">
+          <i class="material-icons">more_vert</i>
+        </button>
+        <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="btn1">
+          <li class="mdl-menu__item">Lorem</li>
+          <li class="mdl-menu__item" disabled>Ipsum</li>
+          <li class="mdl-menu__item">Dolor</li>
+        </ul>
+      </section>
+    </div>
+    </main>
+    <footer class="mdl-mega-footer">
+      <div class="mdl-mega-footer--middle-section">
+        <div class="mdl-mega-footer--drop-down-section">
+          <hr>
+          {% if copyright %}
+          <p>{{ copyright }}</p>
+          {% endif %}
+          <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </div>
+      </div>
+    </div>
+    </footer>
+
+    <script src="{{ base_url }}/js/highlight.pack.js"></script>
+    <script>var base_url = '{{ base_url }}';</script>
+    <script src="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.js"></script>
+
+
+  </body>
+</html>
+{% if current_page and current_page.is_homepage %}
+<!--
+  MkDocs version : {{ mkdocs_version }}
+  Build Date UTC : {{ build_date_utc }}
+-->
+{% endif %}
