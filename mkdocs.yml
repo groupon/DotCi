@@ -21,4 +21,4 @@ markdown_extensions:
         permalink: 
     - admonition:
 copyright: Copyright (c) 2015, Groupon, Inc.
-theme_dir: ./doc_theme
+theme_dir: ./docs/theme
