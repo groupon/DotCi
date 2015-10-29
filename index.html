@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Project Documentation for DotCi.">
+    <meta name="author" content="Groupon Inc.">
+    <link rel="canonical" href="http://groupon.github.io/DotCi/">
+    <link rel="shortcut icon" href="./img/favicon.ico">
+
+    <title>DotCi</title>
+
+    <link rel="stylesheet" href="./css/prism.css">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.green-indigo.min.css" /> 
+  </head>
+
+  <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
+
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
+  <div class="mdl-layout--large-screen-only mdl-layout__header-row">
+    <h3>DotCi</h3>
+  </div>
+  <nav class="mdl-navigation">
+    
+    
+    <a href="." class="mdl-layout__tab is-active ">Home</a>
+    
+    
+    
+    <button id="UserGuide" class="mdl-layout__tab mdl-button mdl-js-button mdl-button ">
+  User Guide
+</button>
+<ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+    for="UserGuide">
+  
+  <li >    <a class="mdl-menu__item" href="user-guide/CreateNewJob/">Create New Job</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="user-guide/DockerCompose/">.ci.yml reference</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="user-guide/Plugins/">.ci.yml Plugins Reference</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="user-guide/Notifications/">.ci.yml Notifications Reference</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="user-guide/Templating/">.ci.yml Templating</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="user-guide/UI/">UI Reference</a> </li>
+  
+</ul>
+
+    
+    
+    
+    <a href="installation/Installation/" class="mdl-layout__tab  ">Installation</a>
+    
+    
+    
+    <button id="Development" class="mdl-layout__tab mdl-button mdl-js-button mdl-button ">
+  Development
+</button>
+<ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+    for="Development">
+  
+  <li >    <a class="mdl-menu__item" href="development/DevelopmentSetup/">Development Setup</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="development/Extending/">Extending DotCi</a> </li>
+  
+</ul>
+
+    
+    
+  </nav>
+</header>
+      <main class="mdl-layout__content">
+      <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+        <div class="mdl-cell mdl-cell--12-col">
+          
+          <h2 id="dotci-jenkins-github-integration-ciyml">DotCi - Jenkins github integration, .ci.yml.<a class="headerlink" href="#dotci-jenkins-github-integration-ciyml" title="Permanent link"></a></h2>
+<p>Brings ease of build configuration of cloud ci systems like travisci and ease of runtime environment configuration of docker to jenkins.</p>
+<h3 id="docker-based-build-environments">Docker Based Build Environments<a class="headerlink" href="#docker-based-build-environments" title="Permanent link"></a></h3>
+<ul>
+<li>Use <a href="usage/DockerBuild.md">Docker-Compose</a> for build setup.</li>
+</ul>
+<h3 id="github-integration">Github Integration<a class="headerlink" href="#github-integration" title="Permanent link"></a></h3>
+<ul>
+<li>Automatically sets up Github <a href="https://help.github.com/articles/about-webhooks/">webhooks</a> for pull requests and github pushes when a new job is setup.</li>
+<li>Private Repo support via generated <a href="https://developer.github.com/guides/managing-deploy-keys/">deploy keys</a>.</li>
+<li>Sets <a href="https://github.com/blog/1227-commit-status-api">commit status</a> during and after build run.</li>
+<li>Jobs follow name-spacing structure of github, jobs are nested under organization folder(<a href="./screenshots/org-view.png">Screenshot</a>)</li>
+<li><strong>Authorization</strong> scheme mapped to corresponding github repo permissions.
+   (<a href="./screenshots/authorization.png">Screenshot</a>)</li>
+<li>Changeset is calculated  from github payload.</li>
+<li>Builds for master branch get special treatment<ul>
+<li><code>LastBuild</code> permalink points to last build for master.</li>
+<li><code>master</code> branch status is treated as job status( useful for dashboard/job weather tools)</li>
+<li><code>lastSuccessfulMaster</code> permalink.</li>
+</ul>
+</li>
+</ul>
+<h3 id="new-jenkins-ui">New Jenkins UI<a class="headerlink" href="#new-jenkins-ui" title="Permanent link"></a></h3>
+<ul>
+<li>See <a href="usage/UI.md">UI</a></li>
+</ul>
+<h3 id="job-enhancements">Job Enhancements<a class="headerlink" href="#job-enhancements" title="Permanent link"></a></h3>
+<ul>
+<li>Custom build history branch tabs. </li>
+<li>Fetch builds by git sha (<code>job/meow/sha?value=&lt;sha&gt;</code>)</li>
+<li>Fetch last build for a branch (<code>job/meow?branch=&lt;branch-name&gt;</code>)</li>
+<li>Scaling Jenkins.</li>
+<li>Backed by a mongodb database.</li>
+<li>Store unlimited number of builds without performance degradation.</li>
+<li>Query build statistics by querying database. Job/Build data is stored in mongodb bson format.</li>
+<li>User builds view (This is the default view in our jenkins installation) (<a href="./screenshots/user-view.png">Screenshot</a>)</li>
+</ul>   
+          
+        </div>
+      </section>
+      </main>
+      <footer class="mdl-mega-footer">
+        <div class="mdl-mega-footer--middle-section">
+          <div class="mdl-mega-footer--drop-down-section">
+            <hr>
+            
+            <p>Copyright (c) 2015, Groupon, Inc.</p>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+          </div>
+        </div>
+    </div>
+      </footer>
+
+      <script src="./js/prism.js"></script>
+      <script>var base_url = '.';</script>
+      <script src="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.js"></script>
+      <script>
+var codeBlocks = document.querySelectorAll('code');
+
+[].forEach.call(codeBlocks, function(code) {
+  code.className = code.className + " language-yaml";
+});
+      </script>
+
+
+  </body>
+</html>
+
+<!--
+  MkDocs version : 0.14.0
+  Build Date UTC : 2015-10-29 21:42:14.698713
+-->

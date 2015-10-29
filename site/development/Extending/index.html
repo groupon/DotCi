@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Groupon Inc.">
+    <link rel="canonical" href="http://groupon.github.io/DotCi/development/Extending/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+
+    <title>Extending DotCi - DotCi</title>
+
+    <link rel="stylesheet" href="../../css/prism.css">
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.green-indigo.min.css" /> 
+  </head>
+
+  <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
+
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
+  <div class="mdl-layout--large-screen-only mdl-layout__header-row">
+    <h3>DotCi</h3>
+  </div>
+  <nav class="mdl-navigation">
+    
+    
+    <a href="../.." class="mdl-layout__tab  ">Home</a>
+    
+    
+    
+    <button id="UserGuide" class="mdl-layout__tab mdl-button mdl-js-button mdl-button ">
+  User Guide
+</button>
+<ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+    for="UserGuide">
+  
+  <li >    <a class="mdl-menu__item" href="../../user-guide/CreateNewJob/">Create New Job</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="../../user-guide/DockerCompose/">.ci.yml reference</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="../../user-guide/Plugins/">.ci.yml Plugins Reference</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="../../user-guide/Notifications/">.ci.yml Notifications Reference</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="../../user-guide/Templating/">.ci.yml Templating</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="../../user-guide/UI/">UI Reference</a> </li>
+  
+</ul>
+
+    
+    
+    
+    <a href="../../installation/Installation/" class="mdl-layout__tab  ">Installation</a>
+    
+    
+    
+    <button id="Development" class="mdl-layout__tab mdl-button mdl-js-button mdl-button is-active">
+  Development
+</button>
+<ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+    for="Development">
+  
+  <li >    <a class="mdl-menu__item" href="../DevelopmentSetup/">Development Setup</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="./">Extending DotCi</a> </li>
+  
+</ul>
+
+    
+    
+  </nav>
+</header>
+      <main class="mdl-layout__content">
+      <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+        <div class="mdl-cell mdl-cell--12-col">
+          
+          <p>DotCi defines three new [extension points] ( https://wiki.jenkins-ci.org/display/JENKINS/Extension+points)</p>
+<h4 id="add-new-build-type-this-would-be-populated-in-the-build-type-dropdown">Add <strong>new build type</strong>, this would be populated in the build type dropdown.<a class="headerlink" href="#add-new-build-type-this-would-be-populated-in-the-build-type-dropdown" title="Permanent link"></a></h4>
+<p>Eg:</p>
+<pre><code class="java">
+@Extension
+public class DockerImageBuild extends BuildType implements SubBuildRunner {
+   @Override
+    public String getDescription() {
+        return &quot;Docker Build&quot;;
+    }
+
+    @Override
+    public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+    }
+}
+</code></pre>
+
+<h4 id="add-new-notifications-is-done-by-extending-postbuildnotifier">Add <strong>new notifications</strong> is done by extending <code>PostBuildNotifier</code><a class="headerlink" href="#add-new-notifications-is-done-by-extending-postbuildnotifier" title="Permanent link"></a></h4>
+<p>Eg: Adding a hipchat notifier in notifications section of <code>.ci.yml</code></p>
+<pre><code class="java">  @Extension
+public class HipchatNotifier extends PostBuildNotifier {
+    public HipchatNotifier() {
+        super(&quot;hipchat&quot;);
+    }
+    @Override
+    public boolean notify(DynamicBuild build, BuildListener listener) {
+      //notify hipchat room
+    }
+</code></pre>
+
+<h4 id="adding-a-new-plugin-for-use-through-plugins-section-of-ciyml-is-done-by-extending-dotcipluginadapter">Adding a <strong>new plugin</strong> for use through plugins section of <code>.ci.yml</code> is done by extending <code>DotCiPluginAdapter</code><a class="headerlink" href="#adding-a-new-plugin-for-use-through-plugins-section-of-ciyml-is-done-by-extending-dotcipluginadapter" title="Permanent link"></a></h4>
+<p>Eg: Adding cobertura to plugins section</p>
+<pre><code class="java">@Extension
+public class CoberturaPluginAdapter extends DotCiPluginAdapter {
+
+    public CoberturaPluginAdapter() {
+        super(&quot;cobertura&quot;, &quot;target/site/cobertura/coverage.xml&quot;);
+    }
+
+    @Override
+    public boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener) {
+        CoberturaPublisher publisher = new CoberturaPublisher(pluginInputFiles, false, false, false, false, false, false, false, null, 0);
+
+        try {
+            return publisher.perform(((AbstractBuild) dynamicBuild), launcher, listener);
+        } catch (Exception e) {
+            e.printStackTrace(listener.getLogger());
+            return false;
+        }
+    }
+
+}
+</code></pre>
+
+<h3 id="license">LICENSE<a class="headerlink" href="#license" title="Permanent link"></a></h3>
+<p>The MIT License (MIT)</p>
+<p>Copyright (c) 2014, Groupon, Inc.</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.  </p>   
+          
+        </div>
+      </section>
+      </main>
+      <footer class="mdl-mega-footer">
+        <div class="mdl-mega-footer--middle-section">
+          <div class="mdl-mega-footer--drop-down-section">
+            <hr>
+            
+            <p>Copyright (c) 2015, Groupon, Inc.</p>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+          </div>
+        </div>
+    </div>
+      </footer>
+
+      <script src="../../js/prism.js"></script>
+      <script>var base_url = '../..';</script>
+      <script src="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.js"></script>
+      <script>
+var codeBlocks = document.querySelectorAll('code');
+
+[].forEach.call(codeBlocks, function(code) {
+  code.className = code.className + " language-yaml";
+});
+      </script>
+
+
+  </body>
+</html>
