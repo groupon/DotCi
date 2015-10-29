@@ -18,7 +18,7 @@ Specify any commands that should be run before building the image.
 
 ### `run`
 
-```
+```yml
 run:
   test:
 ```
