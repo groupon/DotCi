@@ -1,14 +1,14 @@
 <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
   <div class="mdl-layout--large-screen-only mdl-layout__header-row">
-  </div>
-  <div class="mdl-layout--large-screen-only mdl-layout__header-row">
     <h3>{{ site_name }}</h3>
   </div>
-  <div class="mdl-layout--large-screen-only mdl-layout__header-row">
-  </div>
-  <div class="mdl-layout__tab-bar mdl-js-ripple-effect mdl-color--primary-dark">
+  <nav class="mdl-navigation">
     {% for nav_item in nav %}
-    <a href="#overview" class="mdl-layout__tab {% if nav_item.active %}is-active{% endif %} ">{{ nav_item.title }}</a>
+    {% if nav_item.children %}
+    {% include "nav-sub.html" %}
+    {% else %}
+    <a href="{{nav_item.url}}" class="mdl-layout__tab {% if nav_item.active %}is-active{% endif %} ">{{ nav_item.title }}</a>
+    {% endif %}
     {% endfor %}
-  </div>
+  </nav>
 </header>

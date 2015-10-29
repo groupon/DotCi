@@ -1,14 +1,10 @@
-{% if not nav_item.children %}
-<li {% if nav_item.active %}class="active"{% endif %}>
-    <a href="{{ nav_item.url }}">{{ nav_item.title }}</a>
-</li>
-{% else %}
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">{{ nav_item.title }}</a>
-    <ul class="dropdown-menu">
-        {% for nav_item in nav_item.children %}
-            {% include "nav-sub.html" %}
-        {% endfor %}
-    </ul>
-  </li>
-{% endif %}
+<button id="{{ nav_item.title.replace(' ','')}}" class="mdl-layout__tab mdl-button mdl-js-button mdl-button">
+  {{ nav_item.title}}
+</button>
+<ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+    for="{{ nav_item.title.replace(' ','')}}">
+  {% for nav_item in nav_item.children %}
+  <li >    <a class="mdl-menu__item" href="{{nav_item.url}}">{{ nav_item.title }}</a> </li>
+  {% endfor %}
+</ul>
+
