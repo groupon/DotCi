@@ -1,8 +1,13 @@
-<header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
+<header class="mdl-layout__header mdl-layout__header mdl-color--primary">
   <div class="mdl-layout--large-screen-only mdl-layout__header-row">
     <img  class="header-logo" src="{{ base_url }}/img/dotci.gif" width="50" height="50"/>
      <h4> DotCi </h4>
+    <div class="mdl-layout-spacer"></div>
+    <a href="https://github.com/groupon/DotCi">
+    <img  class="header-logo" src="{{ base_url }}/img/github.png" width="30" height="30"/>
+    </a>
   </div>
+   
   <nav class="mdl-navigation">
     {% for nav_item in nav %}
     {% if nav_item.children %}
