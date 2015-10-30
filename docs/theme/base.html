@@ -34,19 +34,16 @@
           {% endblock %}
         </div>
       {% endif %}
-      </main>
-      <footer class="mdl-mega-footer">
-        <div class="mdl-mega-footer--middle-section">
-          <div class="mdl-mega-footer--drop-down-section">
-            <hr>
+      <footer class="mdl-mini-footer">
+        <div class="mdl-min-footer--middle-section">
             {% if copyright %}
             <p>{{ copyright }}</p>
             {% endif %}
             <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
-          </div>
         </div>
     </div>
       </footer>
+      </main>
 
       <script src="{{ base_url }}/js/prism.js"></script>
       <script>var base_url = '{{ base_url }}';</script>
