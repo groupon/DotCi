@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Groupon Inc.">
+    <link rel="canonical" href="http://groupon.github.io/DotCi/user-guide/Notifications/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+
+    <title>.ci.yml Notifications Reference - DotCi</title>
+
+    <link rel="stylesheet" href="../../css/prism.css">
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+ <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.yellow-purple.min.css" /> 
+  </head>
+
+  <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
+
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
+  <div class="mdl-layout--large-screen-only mdl-layout__header-row">
+    <img  class="header-logo" src="../../img/dotci.gif" width="50" height="50"/>
+     <h4> DotCi </h4>
+  </div>
+  <nav class="mdl-navigation">
+    
+    
+    <a href="../.." class="mdl-layout__tab  ">Home</a>
+    
+    
+    
+    <button id="UserGuide" class="mdl-layout__tab mdl-button mdl-js-button mdl-button is-active">
+  User Guide
+</button>
+<ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+    for="UserGuide">
+  
+  <li >    <a class="mdl-menu__item" href="../CreateNewJob/">Create New Job</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="../DockerCompose/">.ci.yml reference</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="../Plugins/">.ci.yml Plugins Reference</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="./">.ci.yml Notifications Reference</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="../Templating/">.ci.yml Templating</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="../UI/">UI Reference</a> </li>
+  
+</ul>
+
+    
+    
+    
+    <a href="../../installation/Installation/" class="mdl-layout__tab  ">Installation</a>
+    
+    
+    
+    <button id="Development" class="mdl-layout__tab mdl-button mdl-js-button mdl-button ">
+  Development
+</button>
+<ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+    for="Development">
+  
+  <li >    <a class="mdl-menu__item" href="../../development/DevelopmentSetup/">Development Setup</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="../../development/Extending/">Extending DotCi</a> </li>
+  
+</ul>
+
+    
+    
+  </nav>
+</header>
+      <main class="mdl-layout__content">
+      
+        <div class="page-content mdl-cell mdl-cell--12-col">
+          
+          <h2 id="built-in-notifications">Built-In Notifications<a class="headerlink" href="#built-in-notifications" title="Permanent link"></a></h2>
+<p>These are common to the built-in Build Types; while its
+suggested that any new Build Types utilize them, it is not enforced
+through the DotCi Notification Framework. Any Build Type that respects the
+<code>notifications</code> key can use these:</p>
+<ul>
+<li><a href="#-campfire">campfire</a></li>
+<li><a href="#-email">email</a></li>
+<li><a href="#-hipchat">hipchat</a></li>
+<li><a href="#-pusher-email">pusher_email</a></li>
+</ul>
+<h3 id="campfire"><code>campfire</code><a class="headerlink" href="#campfire" title="Permanent link"></a></h3>
+<pre><code class="yaml">---
+notifications:
+  - campfire:
+    - room1
+    - room2
+</code></pre>
+
+<p><strong>FIXME: Describe or move out since not in base install</strong></p>
+<h3 id="email"><code>email</code><a class="headerlink" href="#email" title="Permanent link"></a></h3>
+<pre><code class="yaml">---
+notifications:
+  - email:
+    - email1@example.com
+    - email2@example.com
+</code></pre>
+
+<p>Sends a notification on failure or recovery (success after failure) to
+the single email or array of emails listed.</p>
+<h3 id="hipchat"><code>hipchat</code><a class="headerlink" href="#hipchat" title="Permanent link"></a></h3>
+<pre><code class="yaml">---
+notifications:
+  - hipchat:
+    - room1
+    - room2
+</code></pre>
+
+<p><strong>FIXME: Describe or move out since not in base install</strong></p>
+<h3 id="pusher_email"><code>pusher_email</code><a class="headerlink" href="#pusher_email" title="Permanent link"></a></h3>
+<pre><code class="yaml">---
+notifications:
+  - pusher_email
+</code></pre>
+
+<p>Sends a notification on failure or recovery (success after failure) to
+the person who caused the build to occur.</p>   
+          
+        </div>
+      
+      </main>
+      <footer class="mdl-mega-footer">
+        <div class="mdl-mega-footer--middle-section">
+          <div class="mdl-mega-footer--drop-down-section">
+            <hr>
+            
+            <p>Copyright (c) 2015, Groupon, Inc.</p>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+          </div>
+        </div>
+    </div>
+      </footer>
+
+      <script src="../../js/prism.js"></script>
+      <script>var base_url = '../..';</script>
+      <script src="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.js"></script>
+      <script>
+var codeBlocks = document.querySelectorAll('code');
+[].forEach.call(codeBlocks, function(code) {
+  if(code.className){
+  code.className = code.className + " language-"+code.className;
+  }
+});
+      </script>
+
+
+  </body>
+</html>
