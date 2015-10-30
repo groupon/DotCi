@@ -96,7 +96,7 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
         if(dotCiEnvVars.get("DOTCI_PULL_REQUEST") != null){
             if(isPrivateRepo){
 
-                shellCommands.add(format("ssh-agent bash -c \"ssh-add -D && ssh-add \\%s/deploykey_rsa && git fetch origin '+refs/pull/%s/merge:' \"",dotCiEnvVars.get("WORKSPACE"), dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
+                shellCommands.add(format("ssh-agent bash -c \"ssh-add -D && ssh-add ./deploykey_rsa && git fetch origin '+refs/pull/%s/merge:' \"",dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
             }else {
                 shellCommands.add(format("git fetch origin \"+refs/pull/%s/merge:\"", dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
             }
@@ -104,7 +104,7 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
         }else {
             if(isPrivateRepo){
 
-                shellCommands.add(format("ssh-agent bash -c \"ssh-add -D && ssh-add \\%s/deploykey_rsa && git fetch origin %s \"",dotCiEnvVars.get("WORKSPACE"), dotCiEnvVars.get("DOTCI_BRANCH")));
+                shellCommands.add(format("ssh-agent bash -c \"ssh-add -D && ssh-add ./deploykey_rsa && git fetch origin %s \"",dotCiEnvVars.get("DOTCI_BRANCH")));
             }else{
                shellCommands.add(format("git fetch origin %s",dotCiEnvVars.get("DOTCI_BRANCH")));
             }
