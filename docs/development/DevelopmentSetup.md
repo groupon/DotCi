@@ -16,6 +16,8 @@
 * Run plugin
   * Non-docker: `mvn hpi:run`
   * Docker: `docker-compose up plugin`
+* Run webpack devserver
+  * Both: `npm run watch`
 *  Go to `Manage Jenkins` > `Configure Global Security`
   * Under `Security Realm` select `Github Authentication Plugin` and fill out required oauth credentials.
 *  Go to `Manage Jenkins`> `Configure System`
