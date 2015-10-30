@@ -219,3 +219,12 @@ html, body {
   display: inline;
   padding-left: .5em;
 }
+.page-content{
+  border-radius: 2px;
+  padding: 80px 56px;
+  padding-top: 10px;
+  margin-bottom: 80px;
+}
+.header-logo{
+  padding-right: 5px;
+}

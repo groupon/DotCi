@@ -28,13 +28,11 @@
       {% if current_page and current_page.is_homepage %}
       {% include "homepage.html" %}
       {% else %}
-      <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
-        <div class="mdl-cell mdl-cell--12-col">
+        <div class="page-content mdl-cell mdl-cell--12-col">
           {% block content %}
           {{ content }}   
           {% endblock %}
         </div>
-      </section>
       {% endif %}
       </main>
       <footer class="mdl-mega-footer">
@@ -55,9 +53,10 @@
       <script src="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.js"></script>
       <script>
 var codeBlocks = document.querySelectorAll('code');
-
 [].forEach.call(codeBlocks, function(code) {
-  code.className = code.className + " language-yaml";
+  if(code.className){
+  code.className = code.className + " language-"+code.className;
+  }
 });
       </script>
 
