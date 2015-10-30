@@ -29,6 +29,7 @@ import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.extensions.DotCiExtensionsHelper;
 import com.google.common.escape.Escaper;
 import com.google.common.escape.Escapers;
+import com.groupon.jenkins.git.*;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
 import hudson.matrix.Axis;
 import hudson.matrix.AxisList;
@@ -40,12 +41,7 @@ import static java.lang.String.format;
 
 public class BuildConfiguration {
     private final String dockerComposeProjectName;
-    private String repoName;
-    private ShellCommands checkoutCommands;
-    private String sha;
-    private int number;
     private Map config;
-    private String buildId;
 
     public static final Escaper SHELL_ESCAPE;
     static {
@@ -54,22 +50,17 @@ public class BuildConfiguration {
         SHELL_ESCAPE = builder.build();
     }
 
-    public BuildConfiguration(String repoName, Map config, String buildId, ShellCommands checkoutCommands, String sha, int number) {
-        this.repoName = repoName;
-        this.sha = sha;
-        this.number = number;
+    public BuildConfiguration(String repoName, Map config, int number) {
         this.dockerComposeProjectName = repoName.replaceAll("[^A-Za-z0-9]", "").replaceAll("$", String.valueOf(number)).toLowerCase();
         this.config = config;
-        this.buildId = buildId;
-        this.checkoutCommands = checkoutCommands;
     }
 
-    public ShellCommands getCommands(Combination combination) {
+    public ShellCommands getCommands(Combination combination, Map<String, Object> dotCiEnvVars) {
         String dockerComposeContainerName = combination.get("script");
         String projectName = dockerComposeContainerName + this.dockerComposeProjectName;
         String fileName = getDockerComposeFileName();
         ShellCommands shellCommands = new ShellCommands();
-        shellCommands.add(checkoutCommands);
+        shellCommands.add(getCheckoutCommands(dotCiEnvVars));
         if (config.containsKey("before")) {
             shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape((String)config.get("before"))));
         }
@@ -139,5 +130,35 @@ public class BuildConfiguration {
 
     public String getDockerComposeFileName() {
         return config.get("docker-compose-file") !=null ? (String) config.get("docker-compose-file") : "docker-compose.yml";
+    }
+    private ShellCommands getCheckoutCommands(Map<String, Object> dotCiEnvVars) {
+        GitUrl gitRepoUrl = new GitUrl((String) dotCiEnvVars.get("DOTCI_DOCKER_COMPOSE_GIT_CLONE_URL"));
+        boolean isPrivateRepo = Boolean.parseBoolean((String) dotCiEnvVars.get("DOTCI_IS_PRIVATE_REPO"));
+        String gitUrl = isPrivateRepo ? gitRepoUrl.getGitUrl() : gitRepoUrl.getHttpsUrl();
+        ShellCommands shellCommands = new ShellCommands();
+        shellCommands.add("chmod -R u+w . ; find . ! -path \"./deploykey_rsa.pub\" ! -path \"./deploykey_rsa\" -delete");
+        shellCommands.add("git init");
+        shellCommands.add(format("git remote add origin %s",gitUrl));
+
+        if(dotCiEnvVars.get("DOTCI_PULL_REQUEST") != null){
+            if(isPrivateRepo){
+
+                shellCommands.add(format("ssh-agent bash -c \"ssh-add -D && ssh-add \\%s/deploykey_rsa && git fetch origin '+refs/pull/%s/merge:' \"",dotCiEnvVars.get("WORKSPACE"), dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
+            }else {
+                shellCommands.add(format("git fetch origin \"+refs/pull/%s/merge:\"", dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
+            }
+            shellCommands.add("git reset --hard FETCH_HEAD");
+        }else {
+            if(isPrivateRepo){
+
+                shellCommands.add(format("ssh-agent bash -c \"ssh-add -D && ssh-add \\%s/deploykey_rsa && git fetch origin %s \"",dotCiEnvVars.get("WORKSPACE"), dotCiEnvVars.get("DOTCI_BRANCH")));
+            }else{
+                shellCommands.add(format("git fetch origin %s",dotCiEnvVars.get("DOTCI_BRANCH")));
+            }
+            shellCommands.add(format("git reset --hard  %s", dotCiEnvVars.get("SHA")));
+            //TODO Handle dockerfiles with onbuild add directives
+            shellCommands.add("( for dockerfile in $(find . -name '*Dockerfile*'); do dockerfileName=$(basename $dockerfile) ; dockerfilePath=$(dirname $dockerfile); pushd $dockerfilePath >/dev/null ; for filename in $(grep ADD $dockerfileName | sed -e 's/^\\s*ADD\\s*//g' ; grep COPY $dockerfileName | sed -e 's/^\\s*COPY\\s*//g' ); do test -d $filename && continue ; test -f $filename || continue ; sha=$(git rev-list -n 1 HEAD $filename) ; touch -d \"$(git show -s --format=%ai $sha)\" $filename ; popd >/dev/null ; done ; done ) || true # Set modified time of files added in Dockerfiles to allow for build caching");
+        }
+        return shellCommands;
     }
 }

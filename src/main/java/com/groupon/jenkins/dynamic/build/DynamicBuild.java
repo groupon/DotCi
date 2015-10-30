@@ -205,6 +205,17 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
             DynamicBuild.this.setResult(r);
         }
 
+        @Override
+        public Map<String, Object> getBuildEnvironmentVariables() {
+            try {
+                return DynamicBuild.this.getEnvironmentWithChangeSet(getListener());
+            } catch (IOException e) {
+               throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
 
         @Override
         protected Result doRun(BuildListener listener) throws Exception, hudson.model.Run.RunnerAbortedException {

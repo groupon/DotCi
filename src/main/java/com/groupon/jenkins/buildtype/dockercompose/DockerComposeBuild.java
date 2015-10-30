@@ -63,15 +63,11 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
     @Override
     public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
         Map<String,Object> buildEnvironment = build.getEnvironmentWithChangeSet(listener);
-        ShellCommands checkoutCommands = getCheckoutCommands(buildEnvironment);
         Map config = new GroovyYamlTemplateProcessor(getDotCiYml(build), buildEnvironment).getConfig();
-        this.buildConfiguration = getBuildConfiguration(build.getParent().getFullName(),config,build.getBuildId(),checkoutCommands,build.getSha(),build.getNumber());
+        this.buildConfiguration = new BuildConfiguration(build.getParent().getFullName(),config,build.getNumber());
         build.setAxisList(buildConfiguration.getAxisList());
         Result result ;
         if(buildConfiguration.isParallelized()){
-            ShellScriptRunner shellScriptRunner = new ShellScriptRunner(buildExecutionContext, listener);
-            Result checkoutResult = shellScriptRunner.runScript(checkoutCommands);
-            if(Result.FAILURE.equals(checkoutResult)) return checkoutResult;
             result = runMultiConfigbuildRunner(build, buildConfiguration, listener,launcher);
         }else{
             result = runSubBuild(new Combination(ImmutableMap.of("script", buildConfiguration.getOnlyRun())), buildExecutionContext, listener);
@@ -81,43 +77,11 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
         return  result.combine(pluginResult).combine(notifierResult);
     }
 
-    private BuildConfiguration getBuildConfiguration(String fullName, Map config, String buildId, ShellCommands checkoutCommands , String sha, int number) {
-        return new BuildConfiguration(fullName,config,buildId,checkoutCommands,sha,number);
-    }
-    public ShellCommands getCheckoutCommands(Map<String, Object> dotCiEnvVars) {
-        GitUrl gitRepoUrl = new GitUrl((String) dotCiEnvVars.get("DOTCI_DOCKER_COMPOSE_GIT_CLONE_URL"));
-        boolean isPrivateRepo = Boolean.parseBoolean((String) dotCiEnvVars.get("DOTCI_IS_PRIVATE_REPO"));
-        String gitUrl = isPrivateRepo ? gitRepoUrl.getGitUrl() : gitRepoUrl.getHttpsUrl();
-        ShellCommands shellCommands = new ShellCommands();
-        shellCommands.add("chmod -R u+w . ; find . ! -path \"./deploykey_rsa.pub\" ! -path \"./deploykey_rsa\" -delete");
-        shellCommands.add("git init");
-        shellCommands.add(format("git remote add origin %s",gitUrl));
 
-        if(dotCiEnvVars.get("DOTCI_PULL_REQUEST") != null){
-            if(isPrivateRepo){
-
-                shellCommands.add(format("ssh-agent bash -c \"ssh-add -D && ssh-add \\%s/deploykey_rsa && git fetch origin '+refs/pull/%s/merge:' \"",dotCiEnvVars.get("WORKSPACE"), dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
-            }else {
-                shellCommands.add(format("git fetch origin \"+refs/pull/%s/merge:\"", dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
-            }
-            shellCommands.add("git reset --hard FETCH_HEAD");
-        }else {
-            if(isPrivateRepo){
-
-                shellCommands.add(format("ssh-agent bash -c \"ssh-add -D && ssh-add \\%s/deploykey_rsa && git fetch origin %s \"",dotCiEnvVars.get("WORKSPACE"), dotCiEnvVars.get("DOTCI_BRANCH")));
-            }else{
-               shellCommands.add(format("git fetch origin %s",dotCiEnvVars.get("DOTCI_BRANCH")));
-            }
-            shellCommands.add(format("git reset --hard  %s", dotCiEnvVars.get("SHA")));
-            //TODO Handle dockerfiles with onbuild add directives
-            shellCommands.add("( for dockerfile in $(find . -name '*Dockerfile*'); do dockerfileName=$(basename $dockerfile) ; dockerfilePath=$(dirname $dockerfile); pushd $dockerfilePath >/dev/null ; for filename in $(grep ADD $dockerfileName | sed -e 's/^\\s*ADD\\s*//g' ; grep COPY $dockerfileName | sed -e 's/^\\s*COPY\\s*//g' ); do test -d $filename && continue ; test -f $filename || continue ; sha=$(git rev-list -n 1 HEAD $filename) ; touch -d \"$(git show -s --format=%ai $sha)\" $filename ; popd >/dev/null ; done ; done ) || true # Set modified time of files added in Dockerfiles to allow for build caching");
-        }
-        return shellCommands;
-    }
     @Override
     public Result runSubBuild(Combination combination, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
         ShellScriptRunner shellScriptRunner = new ShellScriptRunner(buildExecutionContext, listener);
-        return shellScriptRunner.runScript(buildConfiguration.getCommands(combination));
+        return shellScriptRunner.runScript(buildConfiguration.getCommands(combination,buildExecutionContext.getBuildEnvironmentVariables()));
     }
     private String getDotCiYml(DynamicBuild build) throws IOException {
         try {
