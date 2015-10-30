@@ -1,0 +1,52 @@
+<div class="mdl-layout__tab-panel is-active" id="overview">
+  <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+    <div class="mdl-card mdl-cell mdl-cell--12-col">
+      <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
+        <h4 class="mdl-cell mdl-cell--12-col">Features</h4>
+        <div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">
+          <img src="{{ base_url }}/img/docker.png" />
+        </div>
+        <div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
+          <h5>Docker Based Build Environments</h5>
+          Use <a href="usage/DockerBuild.md">Docker-Compose</a> for running builds.
+        </div>
+        <div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">
+          <img src="{{ base_url }}/img/github.png" />
+        </div>
+        <div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
+          <h5>Out of box Github Integration</h5>
+          <ul>
+            <li>Automatically sets up Github <a href="https://help.github.com/articles/about-webhooks/">webhooks</a> for pull requests and github pushes when a new job is setup.</li>
+            <li>Private Repo support via generated <a href="https://developer.github.com/guides/managing-deploy-keys/">deploy keys</a>.</li>
+            <li>Sets <a href="https://github.com/blog/1227-commit-status-api">commit status</a> during and after build run.</li>
+            <li>Jobs follow name-spacing structure of github, jobs are nested under organization folder(<a href="./screenshots/org-view.png">Screenshot</a>)</li>
+            <li><strong>Authorization</strong> scheme mapped to corresponding github repo permissions.
+              (<a href="./screenshots/authorization.png">Screenshot</a>)</li>
+            <li>Changeset is calculated  from github payload.</li>
+            <li>Builds for master branch get special treatment<ul>
+                <li><code>LastBuild</code> permalink points to last build for master.</li>
+                <li><code>master</code> branch status is treated as job status( useful for dashboard/job weather tools)</li>
+                <li><code>lastSuccessfulMaster</code> permalink.</li>
+              </ul>
+        </div>
+        <div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">
+          <img src="{{ base_url }}/img/jenkins.png" />
+        </div>
+        <div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
+          <h5>Fixes Jenkins</h5>
+          <ul>
+            <li>Custom build history branch tabs. </li>
+            <li>Fetch builds by git sha (<code>job/meow/sha?value=&lt;sha&gt;</code>)</li>
+            <li>Fetch last build for a branch (<code>job/meow?branch=&lt;branch-name&gt;</code>)</li>
+            <li>Scaling Jenkins.</li>
+            <li>Backed by a mongodb database.</li>
+            <li>Store unlimited number of builds without performance degradation.</li>
+            <li>Query build statistics by querying database. Job/Build data is stored in mongodb bson format.</li>
+            <li>User builds view (This is the default view in our jenkins installation) (<a href="./screenshots/user-view.png">Screenshot</a>)</li>
+          </ul> 
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+

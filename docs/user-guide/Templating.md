@@ -22,7 +22,7 @@ through a groovy preprocessor before build starts.
 
 ### Examples
 Send extra notification to yourself for a build you started:
-```groovy
+```yaml
 notifications:
   <% if (DOTCI_PUSHER == 'joe') { %>
   - sms: 1234344453
@@ -30,7 +30,7 @@ notifications:
 ```
 
 Run certain commands after tests when `DOTCI_BRANCH` is `production`:
-```groovy
+```yaml
 build:
    run: rake spec
    #run integration tests only on production branch
@@ -40,7 +40,7 @@ build:
 ```
 
 Notify hipchat room `DevOps` when `DOTCI_BRANCH` is `master`:
-```groovy
+```yaml
 notifications:
   <% if (DOTCI_BRANCH == 'master') { %>
   - hipchat: 'DevOps'
@@ -48,7 +48,7 @@ notifications:
 ```
 
 Pass `DOTCI_BRANCH` as a parameter to webhook:
-```groovy
+```yaml
 plugins:
   - webhook:
       url: http://example.com/hook
@@ -57,7 +57,7 @@ plugins:
 ```
 
 Artifact files when `DOTCI_BRANCH` is `master`:
-```groovy
+```yaml
 build:
   <% if( DOTCI_BRANCH != 'master') {%>
   - artifacts: 'packages/**/*.war'
