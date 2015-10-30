@@ -56,18 +56,37 @@
       margin: 12px;
       @apply(--shadow-elevation-2dp);
       }
+        paper-tabs, paper-toolbar {
+        background-color: #3f51b5;
+        color: #fff;
+        box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+        }
+        paper-toolbar paper-tabs {
+        box-shadow: none;
+        }
+        paper-tabs[noink][no-bar] paper-tab.iron-selected {
+        color: #ffff8d;
+        }
+        paper-tabs[align-bottom] {
+        box-shadow: 0px -2px 6px rgba(0, 0, 0, 0.15);
+        }
+        .org-tab{
+        color: #FFFFFF;
+        text-decoration: none;
+        }
       </style>
     </head>
 
 
     <body>
+
       <paper-toolbar>
         <paper-icon-button  src='${resURL}/plugin/DotCi/logo.png' onclick="window.location='${rootURL}'" />
         <div class="title"> New DotCi Project</div>
       </paper-toolbar>
       <paper-tabs selected="${it.selectedOrgIndex}">
         <j:forEach items="${it.orgs}" var="i">
-          <paper-tab> <a href="${i}">${i}</a> </paper-tab>
+          <paper-tab link="true"> <a  class=" org-tab horizontal center-center layout" href="${i}"><h3>${i}</h3></a> </paper-tab>
         </j:forEach>
       </paper-tabs>
       <div class="list">
