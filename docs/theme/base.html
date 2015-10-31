@@ -25,15 +25,21 @@
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
       {% include "nav.html" %}
       <main class="mdl-layout__content">
+      <div class="mdl-grid">
+        <div class=" mdl-cell mdl-cell--1-col">
+        </div>
+        <div class="page-content mdl-cell mdl-cell--10-col">
       {% if current_page and current_page.is_homepage %}
       {% include "homepage.html" %}
       {% else %}
-        <div class="page-content mdl-cell mdl-cell--12-col">
           {% block content %}
           {{ content }}   
           {% endblock %}
-        </div>
       {% endif %}
+        </div>
+        <div class=" mdl-cell mdl-cell--1-col">
+        </div>
+      </div>
       <footer class="mdl-mini-footer">
         <div class="mdl-min-footer--middle-section">
             {% if copyright %}
