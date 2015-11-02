@@ -23,53 +23,34 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
-import com.google.common.base.Joiner;
-import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.dynamic.build.cause.BuildCause;
-import com.groupon.jenkins.dynamic.build.execution.WorkspaceFileExporter;
-import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
-import com.groupon.jenkins.git.GitBranch;
-import com.groupon.jenkins.github.DeployKeyPair;
-import com.mongodb.DBObject;
-import hudson.EnvVars;
-import hudson.Launcher;
-import hudson.Util;
-import hudson.console.PlainTextConsoleOutputStream;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.Build;
-import hudson.model.BuildListener;
-import hudson.model.Computer;
-import hudson.model.Executor;
+import com.google.common.base.*;
+import com.groupon.jenkins.*;
+import com.groupon.jenkins.dynamic.build.cause.*;
+import com.groupon.jenkins.dynamic.build.execution.*;
+import com.groupon.jenkins.dynamic.build.repository.*;
+import com.groupon.jenkins.git.*;
+import com.groupon.jenkins.github.*;
+import com.mongodb.*;
+import hudson.*;
+import hudson.console.*;
+import hudson.model.*;
 import hudson.model.Queue.Executable;
-import hudson.model.Run;
-import hudson.model.TaskListener;
-import hudson.model.User;
-import hudson.scm.ChangeLogSet;
-import hudson.scm.ChangeLogSet.Entry;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import hudson.util.FlushProofOutputStream;
-import jenkins.model.Jenkins;
+import hudson.scm.*;
+import hudson.scm.ChangeLogSet.*;
+import hudson.util.*;
+import jenkins.model.*;
 import org.apache.commons.io.IOUtils;
-import org.bson.types.ObjectId;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-import org.kohsuke.stapler.export.Exported;
+import org.bson.types.*;
+import org.kohsuke.stapler.*;
+import org.kohsuke.stapler.export.*;
 import org.mongodb.morphia.annotations.*;
 import org.springframework.util.ReflectionUtils;
 
-import javax.servlet.ServletException;
+import javax.servlet.*;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.logging.*;
 
 @Entity("run")
 public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> extends Build<P, B> {
@@ -379,4 +360,10 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
             IOUtils.closeQuietly(out);
         }
     }
+
+    @Override
+    public BallColor getIconColor() {
+        return !isBuilding()? getResult().color: BallColor.YELLOW_ANIME;
+    }
+
 }
