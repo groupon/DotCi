@@ -1,4 +1,5 @@
 import React from "react";
+import page from 'page';
 import simpleStorage from './../../../vendor/simpleStorage.js';
 export default React.createClass( {
   componentDidUpdate(){
@@ -14,11 +15,11 @@ export default React.createClass( {
         this._add(buildActions,"visibility", <a onClick={this._watchBuild} href="#">Watch</a>);
       }
     }else{
-      this._add(buildActions,"autorenew", <a href={this.props.number+"/rebuild"}>Restart</a>);
+      this._add(buildActions,"autorenew", <a href={this._actionUrl("rebuild")}>Restart</a>);
     }
-    this._add(buildActions,"delete", <a href={this.props.number+"/confirmDelete"}>Delete</a>);
+    this._add(buildActions,"delete", <a href={this._actionUrl("confirmDelete")}>Delete</a>);
     this._add(buildActions,"label",
-              <a href={this.props.number+"/detail"}>More...</a>);
+              <a href={this._actionUrl("detail")}>More...</a>);
               return <span> {buildActions} </span>
   },
   _supportsNotifications(){
@@ -39,6 +40,9 @@ export default React.createClass( {
       new Notification(`Build #${this.props.number} finished with ${this.props.result}`, {body:`${this.props.commit.get('message')}`, icon: "<iron-icon icon='done'></iron-icon>"});
       simpleStorage.deleteKey(url);
     }
+  },
+  _actionUrl(action) {
+    return page.base() + "/" + this.props.number + "/" + action;
   },
   _cancelBuild(e){
     e.preventDefault();
