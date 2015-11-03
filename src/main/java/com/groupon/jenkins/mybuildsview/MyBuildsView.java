@@ -87,11 +87,6 @@ public class MyBuildsView extends AuthenticatedView {
     }
 
 
-    public void doBuilds(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        req.getSession().setAttribute("viewType", "builds");
-        rsp.forwardToPreviousPage(req);
-    }
-
     @Override
     public boolean contains(TopLevelItem item) {
         return item.hasPermission(Job.CONFIGURE);

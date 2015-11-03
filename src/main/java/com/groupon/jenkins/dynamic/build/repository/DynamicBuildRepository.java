@@ -345,7 +345,7 @@ public class DynamicBuildRepository extends MongoRepository {
 
 
     public List getLastBuildsPerProjectForUser(String user) {
-        BasicDBObject groupQuery = new BasicDBObject(of("$group", of("_id", "$projectId", "build", of("$first", "$$ROOT"))));
+        BasicDBObject groupQuery = new BasicDBObject(of("$group", of("_id", "$projectId")));
         BasicDBObject filterQuery = new BasicDBObject(
                 of("$match",
                         of("className", "com.groupon.jenkins.dynamic.build.DynamicBuild"

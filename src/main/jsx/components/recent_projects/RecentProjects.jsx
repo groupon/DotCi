@@ -27,9 +27,11 @@ import Avatar from '../lib/Avatar.jsx';
 import AutoRefreshHelper from './../mixins/AutoRefreshHelper.jsx'
 import Loading from './../mixins/Loading.jsx';
 import {recentProjects} from './../../api/Api.jsx';
-require("./recent-projects.css");
+import groupBy from 'ramda/src/groupBy';
+import BuildIcon  from './../job/BuildIcon.jsx';
+// require("./recent-projects.css");
 
-var RecentProject = React.createClass({
+var RecentProject1 = React.createClass({
   render(){
     return (
       <paper-item className={"recent-project " + this.props.lastBuildResult}> 
@@ -52,6 +54,18 @@ var RecentProject = React.createClass({
     return this.props.small? this.props.projectName.split('/')[1]: this.props.projectName;
   }
 });
+
+var RecentProject = React.createClass({
+  render(){
+    return    <div >
+      <b>{this.props.project}</b>
+      <div>
+        {this.props.builds.map(build => <BuildIcon key={build.number} result={build.lastBuildResult}/>)}
+      </div>
+    </div>
+
+  }
+})
 
 export default React.createClass({
   mixins: [AutoRefreshHelper],
@@ -76,12 +90,14 @@ export default React.createClass({
   },
   _render(small){
     if(!this.state.recentProjects) return <Loading/>;
-    var recentProjects = this.state.recentProjects.map(project => <RecentProject key={project.url} small={true} {...project}/>);
+    const grouped = groupBy(proj => proj.projectName)(this.state.recentProjects);
+    // var recentProjects = projs.map(project => <RecentProject key={project.url} small={true} {...project}/>);
+    const recentProjects = Object.keys(grouped).map(project => {
+      return <RecentProject key={project} project={project} builds={grouped[project]}/>
+    });
     return (
-      <div id="recent-projects">
-        <paper-menu id="project-list" className="list">
-          {recentProjects}
-        </paper-menu>
+      <div className="layout vertical wrap">
+        {recentProjects}
       </div>
     );
   }
