@@ -59,7 +59,7 @@ public class BuildConfigurationTest {
   @Test
   public  void should_run_cmd_from_ci_yml(){
     ShellCommands commands = getRunCommands();
-    Assert.assertEquals("docker-compose -f docker-compose.yml -p unitgroupondotci8 run -T unit sh -xc 'command'",commands.get(8));
+    Assert.assertEquals("docker-compose -f docker-compose.yml -p unitgroupondotci8 run -T unit command",commands.get(8));
   }
 
   @Test
@@ -76,7 +76,7 @@ public class BuildConfigurationTest {
     ShellCommands commands = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
     Assert.assertEquals("trap \"docker-compose -f ./jenkins/docker-compose.yml -p unitgroupondotci8 kill; docker-compose -f ./jenkins/docker-compose.yml -p unitgroupondotci8 rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(6));
     Assert.assertEquals("docker-compose -f ./jenkins/docker-compose.yml -p unitgroupondotci8 pull",commands.get(7));
-    Assert.assertEquals("docker-compose -f ./jenkins/docker-compose.yml -p unitgroupondotci8 run -T unit sh -xc 'command'",commands.get(8));
+    Assert.assertEquals("docker-compose -f ./jenkins/docker-compose.yml -p unitgroupondotci8 run -T unit command",commands.get(8));
   }
 
   private ShellCommands getRunCommands() {
