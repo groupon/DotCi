@@ -38,13 +38,15 @@ import java.util.logging.Logger;
 public class DockerComposeEnvContributor extends EnvironmentContributor {
     private static final Logger LOGGER = Logger.getLogger(DockerComposeEnvContributor.class.getName());
 
+    public final static String COMPOSE_PROJECT_NAME = "COMPOSE_PROJECT_NAME";
+
     @Override
     public void buildEnvironmentFor(Run run, EnvVars envs, TaskListener listener) throws IOException, InterruptedException {
         if(isDockerComposeBuild(run)) {
-            String composeProjectName = String.format("%s%s", run.getParent().getFullName(), run.getNumber())
+            String composeProjectName = String.format("%s%s", envs.get("JOB_NAME"), run.getNumber())
                     .replaceAll("[^A-Za-z0-9]", "").toLowerCase();
             LOGGER.info("Setting COMPOSE_PROJECT_NAME=" + composeProjectName);
-            envs.put("COMPOSE_PROJECT_NAME", composeProjectName);
+            envs.put(COMPOSE_PROJECT_NAME, composeProjectName);
         }
     }
 
