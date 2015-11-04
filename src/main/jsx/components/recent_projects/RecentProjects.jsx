@@ -27,31 +27,20 @@ import Avatar from '../lib/Avatar.jsx';
 import AutoRefreshHelper from './../mixins/AutoRefreshHelper.jsx'
 import Loading from './../mixins/Loading.jsx';
 import {recentProjects} from './../../api/Api.jsx';
-require("./recent-projects.css");
+import BuildIcon  from './../job/BuildIcon.jsx';
+import BuildRow  from './../job/BuildRow.jsx';
+var RecentProject = (props) => {
+  const builds = props.builds.map(build => {
+    return  <BuildRow tiny={props.tiny} fullUrl key={build.number} build={build}/>
+  });
 
-var RecentProject = React.createClass({
-  render(){
-    return (
-      <paper-item className={"recent-project " + this.props.lastBuildResult}> 
-        <paper-item-body three-line>
-          <a href={this.props.url} className="project-name">
-            <span className="project-title">{this._projectName()}</span>-{this.props.number}
-          </a>
-          <div secondary>
-            <iron-icon icon="github:commit"/> {this.props.commit.message}
-          </div>
-          <div secondary className="finished">
-            <iron-icon icon="alarm"/>
-            <span className="detail">{this.props.startTime}</span>
-          </div>
-        </paper-item-body>
-      </paper-item>
-    );
-  },
-  _projectName(){
-    return this.props.small? this.props.projectName.split('/')[1]: this.props.projectName;
-  }
-});
+  return <div >
+    <b>{props.project}</b>
+    <div>
+      {builds}
+    </div>
+  </div>
+};
 
 export default React.createClass({
   mixins: [AutoRefreshHelper],
@@ -68,20 +57,14 @@ export default React.createClass({
       self.setState({recentProjects: data.recentProjects});
     });
   },
-  renderSmall(){
-    return this._render(true);
-  },
   render(){
-    return this._render(false);
-  },
-  _render(small){
     if(!this.state.recentProjects) return <Loading/>;
-    var recentProjects = this.state.recentProjects.map(project => <RecentProject key={project.url} small={true} {...project}/>);
+    const recentProjects = this.state.recentProjects.map(project => {
+      return <RecentProject tiny={this.props.tiny} key={project.name} project={project.name} builds={project.builds}/>
+    });
     return (
-      <div id="recent-projects">
-        <paper-menu id="project-list" className="list">
-          {recentProjects}
-        </paper-menu>
+      <div className="layout vertical wrap">
+        {recentProjects}
       </div>
     );
   }

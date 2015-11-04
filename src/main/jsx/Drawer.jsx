@@ -15,7 +15,7 @@ export default React.createClass( {
         <div className="title">{this._isCurrent()?"Current": "Recent"}</div>
         <paper-icon-button onClick={this._onJobChange} icon={this._isCurrent()?"expand-more": "expand-less"}></paper-icon-button>
       </paper-toolbar>
-      {this._isCurrent()? this._currentMenu(): <RecentProjects flux ={this.props.flux}/>}
+      {this._isCurrent()? this._currentMenu(): <RecentProjects tiny/>}
     </div>
   },
   _onJobChange(e){

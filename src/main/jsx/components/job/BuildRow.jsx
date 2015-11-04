@@ -32,6 +32,18 @@ require('./build_row.css');
 require('./build_row_small.css');
 export default React.createClass({
   render(){
+    return this.props.tiny? this._renderTiny(): this._renderLarge();
+  },
+  _renderTiny(){
+    const build = this.props.build;
+    return <span >
+      <paper-tooltip position="right" for={'id'+build.id}>{build.number}<br/>{build.commit.message}</paper-tooltip>
+      <a  className={"build-row-small "+build.result} id={'id'+build.id} href={rootURL+"/"+build.url}>
+        <BuildIcon result={build.result} />
+      </a>
+    </span>;
+  },
+  _renderLarge(){
     let {result,number, cancelUrl,commit,durationString,displayTime,cause, duration} = this.props.build;
     let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit;
     return (

@@ -115,4 +115,9 @@ public class QueuedBuild extends Build {
         return Lists.newArrayList();
     }
 
+    @Override
+    public String getId() {
+        return item.getId()+"";
+    }
+
 }

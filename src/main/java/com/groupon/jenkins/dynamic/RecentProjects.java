@@ -24,26 +24,21 @@
 
 package com.groupon.jenkins.dynamic;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.base.*;
+import com.google.common.collect.*;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.dynamic.build.api.*;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.util.JsonResponse;
 import hudson.Extension;
-import hudson.model.Result;
 import hudson.model.RootAction;
 import jenkins.model.Jenkins;
-import net.sf.json.JSONSerializer;
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
-import org.kohsuke.stapler.export.Exported;
-import org.kohsuke.stapler.export.ExportedBean;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.util.*;
 
 @Extension
 public class RecentProjects implements RootAction{
@@ -63,8 +58,9 @@ public class RecentProjects implements RootAction{
     }
 
     public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-        List recentProjects = getDynamicBuildRepository().getLastBuildsPerProjectForUser(getCurrentUser());
-        JsonResponse.render(req,rsp,new RecentProjectsRsp(recentProjects));
+        Iterable<DynamicBuild> builds = getDynamicBuildRepository().getLastBuildsForUser(getCurrentUser(), 20);
+
+        JsonResponse.render(req,rsp,new RecentBuilds(builds));
     }
     private DynamicBuildRepository getDynamicBuildRepository() {
         return SetupConfig.get().getDynamicBuildRepository();

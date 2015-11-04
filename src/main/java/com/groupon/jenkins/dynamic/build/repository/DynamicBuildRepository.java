@@ -39,12 +39,14 @@ import hudson.util.RunList;
 
 import java.util.*;
 import java.util.regex.Pattern;
+
 import jenkins.model.Jenkins;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
-import static  com.google.common.collect.ImmutableMap.of;
-import static  java.util.Arrays.asList;
+
+import static com.google.common.collect.ImmutableMap.of;
+import static java.util.Arrays.asList;
 import static com.groupon.jenkins.dynamic.build.repository.MongoQueryProjectionBuilder.projection;
 
 
@@ -216,13 +218,13 @@ public class DynamicBuildRepository extends MongoRepository {
     }
 
     public <T extends DbBackedBuild> Query<T> filterExpression(String filterExpression, Query<T> query) {
-        if(filterExpression.contains("=")){
+        if (filterExpression.contains("=")) {
             String[] paramExpression = filterExpression.split("=");
             String paramName = paramExpression[0];
             String paramValue = paramExpression[1];
             query = query.filter("actions.parameters.name", paramName);
             query = query.filter("actions.parameters.value", Pattern.compile(paramValue));
-        }else{
+        } else {
 
             query = query.filter("actions.causes.branch.branch", Pattern.compile(filterExpression));
         }
@@ -342,43 +344,5 @@ public class DynamicBuildRepository extends MongoRepository {
             build.postMorphiaLoad();
         }
     }
-
-
-    public List getLastBuildsPerProjectForUser(String user) {
-        BasicDBObject groupQuery = new BasicDBObject(of("$group", of("_id", "$projectId", "build", of("$first", "$$ROOT"))));
-        BasicDBObject filterQuery = new BasicDBObject(
-                of("$match",
-                        of("className", "com.groupon.jenkins.dynamic.build.DynamicBuild"
-                                , "$or", asList(of("actions.causes.user", user), of("actions.causes.pusher", user))
-                        )
-
-                ));
-        BasicDBObject sortQuery = new BasicDBObject(of("$sort", of("timestamp", 1)));
-        Map buildFields = projection("projectId", "result", "number", "startTime").noId().field("commit", "$actions.causes.commitInfo").get();
-        //Project == Projection not BuildProject
-        BasicDBObject projectQuery = new BasicDBObject(of("$project", buildFields));
-        AggregationOutput builds = getDatastore().getDB().getCollection("run").aggregate(filterQuery, sortQuery, projectQuery, groupQuery);
-        List output = new ArrayList();
-        DynamicProjectRepository repo = SetupConfig.get().getDynamicProjectRepository();
-        for (DBObject build : builds.results()) {
-            DBObject buildObject = (DBObject) build.get("build");
-            BasicDBList list = (BasicDBList) ((BasicDBList) buildObject.get("commit")).get(0);
-            Map commit = list == null ? new HashMap() : ((BasicDBObject) list.get(0)).toMap();
-            ObjectId parentId = (ObjectId) buildObject.get("projectId");
-            String parentName = repo.getProjectById(parentId).getFullName();
-            Object result = buildObject.get("result");
-            result = result == null ? "IN_PROGRESS" : result;
-            output.add(of("projectName", parentName,
-                    "number", buildObject.get("number"),
-                    "startTime", buildObject.get("startTime"),
-                    "lastBuildResult", result,
-                    "commit", commit));
-
-        }
-
-        return output;
-
-    }
-
 }
 
