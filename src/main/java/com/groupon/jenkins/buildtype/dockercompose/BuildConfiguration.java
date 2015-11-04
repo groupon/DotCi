@@ -90,7 +90,7 @@ public class BuildConfiguration {
             Map runConfig = (Map) config.get("run");
             Object dockerComposeCommand = runConfig.get(dockerComposeContainerName);
             if (dockerComposeCommand != null ) {
-                shellCommands.add(String.format("docker-compose -f %s run -T %s %s", fileName, dockerComposeContainerName,SHELL_ESCAPE.escape((String) dockerComposeCommand))));
+                shellCommands.add(String.format("docker-compose -f %s run -T %s %s", fileName, dockerComposeContainerName,SHELL_ESCAPE.escape((String) dockerComposeCommand)));
             }
             else {
                 shellCommands.add(String.format("docker-compose -f %s run -T %s",fileName,dockerComposeContainerName));
