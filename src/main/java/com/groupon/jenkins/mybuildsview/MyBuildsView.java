@@ -55,11 +55,6 @@ public class MyBuildsView extends AuthenticatedView {
         super(name);
     }
 
-    protected DynamicBuildRepository makeDynamicBuildRepository() {
-        return SetupConfig.get().getDynamicBuildRepository();
-    }
-
-
     @Override
     public List<Computer> getComputers() {
         return Collections.emptyList();
@@ -67,25 +62,8 @@ public class MyBuildsView extends AuthenticatedView {
 
     @Override
     public RunList getBuilds() {
-        Iterable<DynamicBuild> builds = makeDynamicBuildRepository().getLastBuildsForUser(getCurrentUser(), 20);
-        return RunList.fromRuns(Lists.newArrayList(builds));
+        return null;
     }
-    @Exported
-    public Iterable<ProcessedBuild> getUserBuilds(){
-        Iterable<DynamicBuild> builds = makeDynamicBuildRepository().getLastBuildsForUser(getCurrentUser(), 20);
-        Iterable<ProcessedBuild> processedBuilds = Iterables.transform(builds, new Function<DynamicBuild, ProcessedBuild>() {
-            @Override
-            public ProcessedBuild apply(DynamicBuild input) {
-                return new ProcessedBuild(input);
-            }
-        });
-        return Lists.newArrayList(processedBuilds);
-    }
-
-    private String getCurrentUser() {
-        return Jenkins.getAuthentication().getName();
-    }
-
 
     @Override
     public boolean contains(TopLevelItem item) {
@@ -122,7 +100,7 @@ public class MyBuildsView extends AuthenticatedView {
 
         @Override
         public String getDisplayName() {
-            return "My Builds View";
+            return "DotCi - LoggedIn User Builds View";
         }
     }
 
@@ -136,19 +114,8 @@ public class MyBuildsView extends AuthenticatedView {
         // noop
     }
 
-    public String getViewType() {
-        StaplerRequest currentRequest = Stapler.getCurrentRequest();
-        String viewType = (String) currentRequest.getSession().getAttribute("viewType");
-        return viewType == null ? "builds" : viewType;
-    }
-
     @Override
     public boolean isEditable() {
         return false;
-    }
-
-    @Override
-    public Api getApi() {
-        return super.getApi();
     }
 }

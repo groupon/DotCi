@@ -72,5 +72,7 @@ public abstract class Build {
     @Exported
     public abstract List<ParameterValue> getParameters();
 
+    @Exported(inline = true)
+    public abstract String getId();
 
 }

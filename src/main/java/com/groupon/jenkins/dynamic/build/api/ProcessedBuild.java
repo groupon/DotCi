@@ -126,6 +126,11 @@ public class ProcessedBuild extends Build {
         return Lists.newArrayList();
     }
 
+    @Override
+    public String getId() {
+        return build.getProjectId() + build.getId();
+    }
+
 
     @Exported
     public Iterable<Map> getAxisList(){

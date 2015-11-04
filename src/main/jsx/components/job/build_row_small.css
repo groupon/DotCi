@@ -1,23 +1,20 @@
 @import './../../colors.css';
 .build-row-small{
-  border-left-style: solid;
-  border-left-width: 8px;
-  border-radius: 3px;
-  margin-bottom: 10px;
-
+  margin-left: 10px;
 }
+
 .build-row-small.FAILURE{
-  border-left-color: var(--failure);
+  color: var(--failure);
 }
 
 .build-row-small.SUCCESS{
-  border-left-color: var(--success);
+  color: var(--success);
 }
 
 .build-row-small.IN_PROGRESS{
-  border-left-color: var(--in_progress);
+  color: var(--in_progress);
 }
 
 .build-row-small.ABORTED{
-  border-left-color: var(--aborted);
+  color: var(--aborted);
 }
