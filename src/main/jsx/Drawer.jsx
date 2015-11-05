@@ -11,7 +11,7 @@ export default React.createClass( {
   render(){
     return <div>
       <paper-toolbar id="drawerToolbar">
-        <paper-icon-button  src={`${resURL}/logo.png`} disabled />
+        <a href={rootURL}><paper-icon-button   src={`${resURL}/logo.png`} >   </paper-icon-button> </a>
         <div className="title">{this._isCurrent()?"Current": "Recent"}</div>
         <paper-icon-button onClick={this._onJobChange} icon={this._isCurrent()?"expand-more": "expand-less"}></paper-icon-button>
       </paper-toolbar>
