@@ -7,7 +7,6 @@ export default React.createClass({
     </a>
   },
   _onClick(e){
-    debugger
     e.preventDefault();
     page(this.props.href+'')
   }
