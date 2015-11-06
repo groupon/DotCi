@@ -1,26 +1,8 @@
 ## Built-In Notifications
 
-These are common to the built-in Build Types; while its
-suggested that any new Build Types utilize them, it is not enforced
-through the DotCi Notification Framework. Any Build Type that respects the
-`notifications` key can use these:
+All notifications default to notifying only when there is a failure or recovery( for that particualar branch).
 
-* [campfire](#-campfire)
-* [email](#-email)
-* [hipchat](#-hipchat)
-* [pusher_email](#-pusher-email)
-
-
-### `campfire`
-```yaml
----
-notifications:
-  - campfire:
-    - room1
-    - room2
-```
-**FIXME: Describe or move out since not in base install**
-
+Core Notifications that are bundled with DotCi.
 
 ### `email`
 ```yaml
@@ -30,26 +12,33 @@ notifications:
     - email1@example.com
     - email2@example.com
 ```
-Sends a notification on failure or recovery (success after failure) to
-the single email or array of emails listed.
 
+##  Starter-Pack Notifications
 
-### `hipchat`
+There are optional set of notifications that are available if you install [DotCi-Plugins-Starter-Pack](https://github.com/groupon/DotCi-Plugins-Starter-Pack) from update center.
+
+### `campfire`
+```yaml
+---
+notifications:
+  - campfire:
+    - room1
+    - room2
+```
+
+### `hipchat` 
+( Token for hipchat notifications needs to be configured under global jenkins settings, look for `DotCi Hipchat Configuration`)
 ```yaml
 ---
 notifications:
   - hipchat:
     - room1
     - room2
+#or pass in extra options
+  - hipchat: 
+    room: test
+    notify_on:  FAILURE_AND_RECOVERY| ALL
+    message: optional message
 ```
-**FIXME: Describe or move out since not in base install**
 
 
-### `pusher_email`
-```yaml
----
-notifications:
-  - pusher_email
-```
-Sends a notification on failure or recovery (success after failure) to
-the person who caused the build to occur.
