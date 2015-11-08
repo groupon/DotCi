@@ -132,9 +132,10 @@ public class BuildConfiguration {
         return config.get("docker-compose-file") !=null ? (String) config.get("docker-compose-file") : "docker-compose.yml";
     }
     private ShellCommands getCheckoutCommands(Map<String, Object> dotCiEnvVars) {
-        GitUrl gitRepoUrl = new GitUrl((String) dotCiEnvVars.get("DOTCI_DOCKER_COMPOSE_GIT_CLONE_URL"));
+        String gitCloneUrl = (String) dotCiEnvVars.get("DOTCI_DOCKER_COMPOSE_GIT_CLONE_URL");
+        GitUrl gitRepoUrl = new GitUrl(gitCloneUrl);
         boolean isPrivateRepo = Boolean.parseBoolean((String) dotCiEnvVars.get("DOTCI_IS_PRIVATE_REPO"));
-        String gitUrl = isPrivateRepo ? gitRepoUrl.getGitUrl() : gitRepoUrl.getHttpsUrl();
+        String gitUrl = isPrivateRepo ? gitRepoUrl.getGitUrl() : gitCloneUrl;
         ShellCommands shellCommands = new ShellCommands();
         shellCommands.add("chmod -R u+w . ; find . ! -path \"./deploykey_rsa.pub\" ! -path \"./deploykey_rsa\" -delete");
         shellCommands.add("git init");
