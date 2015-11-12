@@ -11,7 +11,7 @@ public class GlobalConfiguration extends jenkins.model.GlobalConfiguration {
     public static GlobalConfiguration get() {
         return jenkins.model.GlobalConfiguration.all().get(GlobalConfiguration.class);
     }
-    public static final String DEFAULT_CLONE_URL_TEMPlATE = "https://<DOMAIN>/<ORG>/<REPO>.git";
+    public static final String DEFAULT_CLONE_URL_TEMPlATE = "https://<DOMAIN>/<ORG>/<REPO>";
 
 
     public String getCloneUrlTemplate() {
