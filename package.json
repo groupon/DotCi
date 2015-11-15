@@ -4,9 +4,9 @@
   "author": "Surya Gaddipati",
   "description": "DotCi frontend",
   "preferGlobal": true,
-  "main": "lib/cli.js",
+  "main": "src/main/jsx/terminal/terminal.js",
   "bin": {
-    "dotci": "./dotci.js"
+    "dotci": "src/main/jsx/terminal/cli.js"
   },
   "repository": {
     "type": "git",
