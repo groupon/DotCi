@@ -1,12 +1,12 @@
 {
   "name": "dotci",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Surya Gaddipati",
   "description": "DotCi frontend",
   "preferGlobal": true,
-  "main": "src/main/jsx/terminal/terminal.js",
+  "main": "package/terminal.js",
   "bin": {
-    "dotci": "src/main/jsx/terminal/cli.js"
+    "dotci": "package/cli.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
     "autoprefixer-core": "^5.2.0",
     "autoprefixer-loader": "^1.1.0",
     "babel-core": "^5.8.25",
+    "babel": "^5.8.25",
     "babel-eslint": "^3.0.1",
     "babel-loader": "^5.3.2",
     "babel-polyfill": "^6.0.16",
@@ -78,6 +79,8 @@
     "webpack-dev-server": "latest"
   },
   "scripts": {
+    "compile-cli":"$(npm bin)/babel  src/main/jsx/terminal/ --out-dir package",
+    "prepublish": "npm run compile-cli",
     "build": "npm install && npm run package && npm run vulcanize",
     "package": "$(npm bin)/webpack --release=true  --colors --progress",
     "lint": "eslint src/main/jsx/**/*",
