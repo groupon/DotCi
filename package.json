@@ -74,7 +74,6 @@
     "karma-webpack": "latest",
     "mocha": "^2.0.1",
     "react-hot-loader": "^1.1.1",
-    "redux-devtools": "^2.1.2",
     "webpack": "^1.12.2",
     "webpack-dev-server": "latest"
   },
