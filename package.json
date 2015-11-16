@@ -1,13 +1,8 @@
 {
   "name": "dotci",
   "version": "0.0.4",
-  "author": "Surya Gaddipati",
-  "description": "DotCi frontend",
-  "preferGlobal": true,
-  "main": "package/terminal.js",
-  "bin": {
-    "dotci": "package/cli.js"
-  },
+  "description": "DotCi",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/groupon/DotCi.git"
@@ -21,13 +16,10 @@
     "autoprefixer-core": "^5.2.0",
     "autoprefixer-loader": "^1.1.0",
     "babel-core": "^5.8.25",
-    "babel": "^5.8.25",
     "babel-eslint": "^3.0.1",
     "babel-loader": "^5.3.2",
     "babel-polyfill": "^6.0.16",
     "babel-runtime": "^5.8.25",
-    "blessed": "^0.1.81",
-    "blessed-contrib": "^2.5.1",
     "bower": "latest",
     "chai": "latest",
     "chart.js": "^1.0.2",
@@ -43,7 +35,6 @@
     "less": "^2.4.0",
     "less-loader": "^2.0.0",
     "lesshat": "^3.0.2",
-    "minimist": "^1.2.0",
     "page": "^1.6.3",
     "postcss-custom-properties": "^4.0.0",
     "postcss-import": "^6.0.0",
@@ -56,10 +47,8 @@
     "react-dom": "^0.14.2",
     "react-proxy-loader": "^0.3.1",
     "react-tools": "latest",
-    "request": "^2.65.0",
     "scroll-into-view": "^1.5.0",
     "semantic-ui-checkbox": "^1.12.3",
-    "simple-git": "^1.11.0",
     "style-loader": "^0.8.3",
     "url-loader": "latest",
     "vulcanize": "^1.13.1"
@@ -78,8 +67,6 @@
     "webpack-dev-server": "latest"
   },
   "scripts": {
-    "compile-cli":"$(npm bin)/babel  src/main/jsx/terminal/ --out-dir package",
-    "prepublish": "npm run compile-cli",
     "build": "npm install && npm run package && npm run vulcanize",
     "package": "$(npm bin)/webpack --release=true  --colors --progress",
     "lint": "eslint src/main/jsx/**/*",

@@ -1,4 +1,3 @@
-import React, {Component} from 'react';
 import blessed from 'blessed';
 import buildHistoryTable from './buildHistory.js';
 var simpleGit = require('simple-git')('.');
