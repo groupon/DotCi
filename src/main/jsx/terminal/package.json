@@ -1,6 +1,6 @@
 {
   "name": "dotci",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "cli for DotCi",
   "main": "lib/index.js",
   "preferGlobal": true,
@@ -8,7 +8,7 @@
     "dotci": "lib/cli.js"
   },
   "scripts": {
-    "compile": "$(npm bin)/babel  --optional runtime -d lib/ src/",
+    "compile": "$(npm bin)/babel  -d lib/ src/",
     "prepublish": "npm run compile"
   },
   "repository": {
