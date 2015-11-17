@@ -116,7 +116,7 @@ public class ShellCommands {
         return this;
     }
 
-    private Collection<? extends String> getCommands() {
+    public Collection<? extends String> getCommands() {
         return commands;
     }
 

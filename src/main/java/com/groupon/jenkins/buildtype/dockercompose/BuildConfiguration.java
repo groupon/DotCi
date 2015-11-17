@@ -55,14 +55,30 @@ public class BuildConfiguration {
         this.config = config;
     }
 
+    public ShellCommands getBeforeRunCommandWithCheckoutIfPresent(Map<String, Object> dotCiEnvVars) {
+        if (!config.containsKey("before_run")) {
+            return null;
+        }
+        ShellCommands shellCommands = new ShellCommands();
+        shellCommands.add(getCheckoutCommands(dotCiEnvVars));
+        shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape((String) config.get("before_run"))));
+        return shellCommands;
+    }
+
     public ShellCommands getCommands(Combination combination, Map<String, Object> dotCiEnvVars) {
         String dockerComposeContainerName = combination.get("script");
         String projectName = dockerComposeContainerName + this.dockerComposeProjectName;
         String fileName = getDockerComposeFileName();
+
         ShellCommands shellCommands = new ShellCommands();
         shellCommands.add(getCheckoutCommands(dotCiEnvVars));
-        if (config.containsKey("before")) {
-            shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape((String)config.get("before"))));
+        if (config.containsKey("before_run") && !isParallelized()) {
+            shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape((String) config.get("before_run"))));
+        }
+
+        if (config.containsKey("before_each") || config.containsKey("before")) {
+            String beforeScript = (String) (config.containsKey("before_each") ? config.get("before_each") : config.get("before"));
+            shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape(beforeScript)));
         }
 
         shellCommands.add(String.format("trap \"docker-compose -f %s -p %s kill; docker-compose -f %s -p %s rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",fileName,projectName,fileName,projectName));
