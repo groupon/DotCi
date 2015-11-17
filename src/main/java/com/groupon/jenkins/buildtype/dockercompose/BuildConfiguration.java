@@ -36,13 +36,10 @@ import hudson.matrix.AxisList;
 import hudson.matrix.Combination;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 import static java.lang.String.format;
 
 public class BuildConfiguration {
-
-    private static final Logger LOGGER = Logger.getLogger(BuildConfiguration.class.getName());
 
     private Map config;
 
