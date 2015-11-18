@@ -225,7 +225,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
                     return Result.FAILURE;
                 }
                 exportDeployKeysIfPrivateRepo(listener, launcher);
-                BuildType buildType = BuildType.getBuildType(getParent());
+                BuildType buildType = BuildType.newBuildType(getParent());
                 Result buildRunResult =   buildType.runBuild(DynamicBuild.this, this, launcher, listener);
                 setResult(buildRunResult);
                 return buildRunResult;

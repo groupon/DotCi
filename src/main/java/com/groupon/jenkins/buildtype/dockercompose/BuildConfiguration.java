@@ -40,7 +40,7 @@ import java.util.*;
 import static java.lang.String.format;
 
 public class BuildConfiguration {
-    private final String dockerComposeProjectName;
+
     private Map config;
 
     public static final Escaper SHELL_ESCAPE;
@@ -50,8 +50,7 @@ public class BuildConfiguration {
         SHELL_ESCAPE = builder.build();
     }
 
-    public BuildConfiguration(String repoName, Map config, int number) {
-        this.dockerComposeProjectName = repoName.replaceAll("[^A-Za-z0-9]", "").replaceAll("$", String.valueOf(number)).toLowerCase();
+    public BuildConfiguration(Map config) {
         this.config = config;
     }
 
@@ -67,11 +66,12 @@ public class BuildConfiguration {
 
     public ShellCommands getCommands(Combination combination, Map<String, Object> dotCiEnvVars) {
         String dockerComposeContainerName = combination.get("script");
-        String projectName = dockerComposeContainerName + this.dockerComposeProjectName;
+        String projectName = (String) dotCiEnvVars.get("COMPOSE_PROJECT_NAME");
         String fileName = getDockerComposeFileName();
 
         ShellCommands shellCommands = new ShellCommands();
         shellCommands.add(getCheckoutCommands(dotCiEnvVars));
+
         if (config.containsKey("before_run") && !isParallelized()) {
             shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape((String) config.get("before_run"))));
         }
@@ -81,16 +81,16 @@ public class BuildConfiguration {
             shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape(beforeScript)));
         }
 
-        shellCommands.add(String.format("trap \"docker-compose -f %s -p %s kill; docker-compose -f %s -p %s rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",fileName,projectName,fileName,projectName));
-        shellCommands.add(String.format("docker-compose -f %s -p %s pull",fileName,projectName));
+        shellCommands.add(String.format("trap \"docker-compose -f %s kill; docker-compose -f %s rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",fileName,fileName));
+        shellCommands.add(String.format("docker-compose -f %s pull",fileName));
         if (config.get("run") != null) {
             Map runConfig = (Map) config.get("run");
             Object dockerComposeCommand = runConfig.get(dockerComposeContainerName);
             if (dockerComposeCommand != null ) {
-                shellCommands.add(String.format("docker-compose -f %s -p %s run -T %s %s", fileName, projectName, dockerComposeContainerName,SHELL_ESCAPE.escape((String) dockerComposeCommand)));
+                shellCommands.add(String.format("docker-compose -f %s run -T %s %s", fileName, dockerComposeContainerName,SHELL_ESCAPE.escape((String) dockerComposeCommand)));
             }
             else {
-                shellCommands.add(String.format("docker-compose -f %s -p %s run -T %s",fileName,projectName,dockerComposeContainerName));
+                shellCommands.add(String.format("docker-compose -f %s run -T %s",fileName,dockerComposeContainerName));
             }
         }
         extractWorkingDirIntoWorkSpace(dockerComposeContainerName, projectName, shellCommands);
