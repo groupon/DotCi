@@ -86,6 +86,8 @@ public class DynamicBuildFactory {
         for (DynamicSubBuild subBuild : subBuilds) {
             DynamicSubProject subProject = mock(DynamicSubProject.class);
             when(subProject.getBuildByNumber(build.getNumber())).thenReturn(subBuild);
+            when(subBuild.getParent()).thenReturn(subProject);
+            when(subProject.getParent()).thenReturn(dynamicProject);
             subProjects.add(subProject);
         }
         when(dynamicProject.getItems()).thenReturn(subProjects);
