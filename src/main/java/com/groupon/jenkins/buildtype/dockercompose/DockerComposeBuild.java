@@ -61,7 +61,7 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
     public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
         Map<String,Object> buildEnvironment = build.getEnvironmentWithChangeSet(listener);
         Map config = new GroovyYamlTemplateProcessor(getDotCiYml(build), buildEnvironment).getConfig();
-        this.buildConfiguration = new BuildConfiguration(build.getParent().getFullName(),config,build.getNumber());
+        this.buildConfiguration = new BuildConfiguration(config);
         build.setAxisList(buildConfiguration.getAxisList());
 
         Result result;
