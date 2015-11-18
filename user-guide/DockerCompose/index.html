@@ -96,11 +96,16 @@
 </code></pre>
 
 <p>Specify an alternate compose file (default: docker-compose.yml)</p>
-<h3 id="before"><code>before</code><a class="headerlink" href="#before" title="Permanent link"></a></h3>
-<pre><code class="yaml">before: &quot;./some_script &amp;&amp; ./another_script&quot;
+<h3 id="before_run"><code>before_run</code><a class="headerlink" href="#before_run" title="Permanent link"></a></h3>
+<pre><code class="yaml">before_run: &quot;./some_script &amp;&amp; ./another_script&quot;
 </code></pre>
 
-<p>Specify any commands that should be run before building the image.</p>
+<p>Specify commands that should be run before the run commands. These commands will execute once. </p>
+<h3 id="before_each"><code>before_each</code><a class="headerlink" href="#before_each" title="Permanent link"></a></h3>
+<pre><code class="yaml">before_each: &quot;./some_script &amp;&amp; ./another_script&quot;
+</code></pre>
+
+<p>Specify commands that should be run before each run sub-command. </p>
 <h3 id="run"><code>run</code><a class="headerlink" href="#run" title="Permanent link"></a></h3>
 <pre><code class="yaml">run:
   test:
