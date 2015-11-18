@@ -9,7 +9,7 @@ work/
 .classpath
 .vagrant
 /bin
-_site
+site
 *.iws
 *.ipr
 *.iml
