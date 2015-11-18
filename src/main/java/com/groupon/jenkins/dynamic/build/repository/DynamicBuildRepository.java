@@ -23,34 +23,19 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.repository;
 
-import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.*;
 import com.groupon.jenkins.dynamic.build.*;
-import com.groupon.jenkins.mongo.BuildInfo;
-import com.groupon.jenkins.mongo.MongoRepository;
-import com.groupon.jenkins.mongo.MongoRunMap;
-import com.groupon.jenkins.util.GReflectionUtils;
-import com.mongodb.AggregationOutput;
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import hudson.model.Result;
-import hudson.model.Run;
-import hudson.util.RunList;
+import com.groupon.jenkins.mongo.*;
+import com.groupon.jenkins.util.*;
+import hudson.model.*;
+import hudson.util.*;
+import jenkins.model.*;
+import org.mongodb.morphia.*;
+import org.mongodb.morphia.query.*;
 
+import javax.inject.*;
 import java.util.*;
-import java.util.regex.Pattern;
-
-import jenkins.model.Jenkins;
-import org.bson.types.ObjectId;
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.query.Query;
-
-import static com.google.common.collect.ImmutableMap.of;
-import static java.util.Arrays.asList;
-import static com.groupon.jenkins.dynamic.build.repository.MongoQueryProjectionBuilder.projection;
-
-
-import javax.inject.Inject;
+import java.util.regex.*;
 
 public class DynamicBuildRepository extends MongoRepository {
 
