@@ -35,7 +35,6 @@ import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildRunner;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildScheduler;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
-import com.groupon.jenkins.git.GitUrl;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
 import com.groupon.jenkins.util.GroovyYamlTemplateProcessor;
 import hudson.Extension;
@@ -48,8 +47,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
-import static java.lang.String.format;
 
 @Extension
 public class DockerComposeBuild extends BuildType implements SubBuildRunner {
@@ -66,23 +63,30 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
         Map config = new GroovyYamlTemplateProcessor(getDotCiYml(build), buildEnvironment).getConfig();
         this.buildConfiguration = new BuildConfiguration(build.getParent().getFullName(),config,build.getNumber());
         build.setAxisList(buildConfiguration.getAxisList());
-        Result result ;
+
+        Result result;
         if(buildConfiguration.isParallelized()){
-            result = runMultiConfigbuildRunner(build, buildConfiguration, listener,launcher);
+            result = runParallelBuild(build, buildExecutionContext, buildConfiguration, listener);
         }else{
             result = runSubBuild(new Combination(ImmutableMap.of("script", buildConfiguration.getOnlyRun())), buildExecutionContext, listener);
         }
+
         Result pluginResult = runPlugins(build, buildConfiguration.getPlugins(), listener, launcher);
         Result notifierResult = runNotifiers(build, buildConfiguration.getNotifiers(), listener);
-        return  result.combine(pluginResult).combine(notifierResult);
+        return result.combine(pluginResult).combine(notifierResult);
     }
-
 
     @Override
     public Result runSubBuild(Combination combination, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
-        ShellScriptRunner shellScriptRunner = new ShellScriptRunner(buildExecutionContext, listener);
-        return shellScriptRunner.runScript(buildConfiguration.getCommands(combination,buildExecutionContext.getBuildEnvironmentVariables()));
+        ShellCommands commands = buildConfiguration.getCommands(combination, buildExecutionContext.getBuildEnvironmentVariables());
+        return runCommands(commands, buildExecutionContext, listener);
     }
+
+    private Result runCommands(ShellCommands commands, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
+        ShellScriptRunner shellScriptRunner = new ShellScriptRunner(buildExecutionContext, listener);
+        return shellScriptRunner.runScript(commands);
+    }
+
     private String getDotCiYml(DynamicBuild build) throws IOException {
         try {
             return build.getGithubRepositoryService().getGHFile(".ci.yml", build.getSha()).getContent();
@@ -91,7 +95,9 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
         }
     }
 
-    private Result runMultiConfigbuildRunner(final DynamicBuild dynamicBuild, final BuildConfiguration buildConfiguration, final BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
+    private Result runParallelBuild(final DynamicBuild dynamicBuild, final  BuildExecutionContext buildExecutionContext, final BuildConfiguration buildConfiguration, final BuildListener listener) throws IOException, InterruptedException {
+        Result beforeRunResult = runBeforeCommands(buildExecutionContext, listener);
+
         SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, this, new SubBuildScheduler.SubBuildFinishListener() {
             @Override
             public void runFinished(DynamicSubBuild subBuild) throws IOException {
@@ -104,7 +110,7 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
         try {
             Iterable<Combination> axisList = buildConfiguration.getAxisList().list();
             Result combinedResult = subBuildScheduler.runSubBuilds(axisList, listener);
-            dynamicBuild.setResult(combinedResult);
+            dynamicBuild.setResult(combinedResult.combine(beforeRunResult));
             return combinedResult;
         } finally {
             try {
@@ -113,6 +119,14 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
                 // There is nothing much we can do at this point
             }
         }
+    }
+
+    private Result runBeforeCommands(final BuildExecutionContext buildExecutionContext, final BuildListener listener) throws IOException, InterruptedException {
+        ShellCommands beforeCommands = buildConfiguration.getBeforeRunCommandWithCheckoutIfPresent(buildExecutionContext.getBuildEnvironmentVariables());
+        if (beforeCommands != null) {
+            return runCommands(beforeCommands, buildExecutionContext, listener);
+        }
+        return Result.SUCCESS;
     }
 
     private Result runPlugins(DynamicBuild dynamicBuild, List<DotCiPluginAdapter> plugins, BuildListener listener, Launcher launcher) {
