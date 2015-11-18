@@ -1,0 +1,46 @@
+{
+  "name": "paper-tooltip",
+  "version": "1.0.2",
+  "description": "Material design tooltip popup for content",
+  "authors": [
+    "The Polymer Authors"
+  ],
+  "keywords": [
+    "web-components",
+    "polymer",
+    "tooltip"
+  ],
+  "main": [
+    "paper-tooltip.html"
+  ],
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/PolymerElements/paper-tooltip.git"
+  },
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/PolymerElements/paper-tooltip",
+  "ignore": [],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0",
+    "paper-styles": "PolymerElements/paper-styles#^1.0.0",
+    "neon-animation": "PolymerElements/neon-animation#^1.0.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-test-helpers": "PolymerElements/iron-test-helpers#^1.0.0",
+    "test-fixture": "PolymerElements/test-fixture#^1.0.0",
+    "web-component-tester": "*",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0",
+    "paper-icon-button": "PolymerElements/paper-icon-button#^1.0.0"
+  },
+  "_release": "1.0.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.0.2",
+    "commit": "b05fd605975aca7d3f59f675637f9b0e0cfe0cf9"
+  },
+  "_source": "git://github.com/PolymerElements/paper-tooltip.git",
+  "_target": "~1.0.2",
+  "_originalSource": "PolymerElements/paper-tooltip"
+}
