@@ -71,15 +71,15 @@ function buildHistoryWidget(title,url,screen,inputBuilds,onBack){
 export default function(title,url,screen,onBack){
   request(
     {
-      uri: url+ 'appData/info/',
+      uri: url+ 'api/json/',
       qs: {
-        tree:  "buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]",
+        tree:  "appData[info[buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]]]",
         branchTab: 'All',
         count: 50
       }
     }, function (error, response, body) {
       if (!error && response.statusCode == 200) {
-        var builds = JSON.parse(body)['builds'];
+        var builds = JSON.parse(body)['appData']['info']['builds'];
         buildHistoryWidget(title,url,screen,builds,onBack);
         screen.render();
       }

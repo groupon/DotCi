@@ -29,8 +29,7 @@ import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
 import com.groupon.jenkins.dynamic.build.api.metrics.BuildTimeMetric;
 import com.groupon.jenkins.dynamic.build.api.metrics.JobMetric;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.*;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
@@ -44,18 +43,9 @@ import  static com.google.common.collect.ImmutableMap.of;
 public class JobInfo extends  ApiModel{
 
     private DynamicProject dynamicProject;
-    private String branchTab;
-    private String buildCount;
 
     public JobInfo(DynamicProject dynamicProject) {
         this.dynamicProject = dynamicProject;
-    }
-
-    @Override
-    public void doIndex(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-        setBranchTab(req.getParameter("branchTab"));
-        setBuildCount(req.getParameter("count"));
-        super.doIndex(req, rsp);
     }
 
     @Exported
@@ -83,21 +73,16 @@ public class JobInfo extends  ApiModel{
     }
     @Exported
     public List<Build> getBuilds(){
+        StaplerRequest req= Stapler.getCurrent().getCurrentRequest();
+        String branchTab = req.getParameter("branchTab");
+        String buildCount = req.getParameter("count");
         return Lists.newArrayList(new BuildHistory(dynamicProject).getBuilds(branchTab,Integer.parseInt(buildCount)));
     }
     @Exported
     public List<JobMetric> getMetrics(){
+        StaplerRequest req= Stapler.getCurrent().getCurrentRequest();
+        String branchTab = req.getParameter("branchTab");
+        String buildCount = req.getParameter("count");
       return  JobMetric.getApplicableJobMetrics(dynamicProject,branchTab,Integer.parseInt(buildCount));
-    }
-    public void setBranchTab(String branchTab) {
-        this.branchTab = branchTab;
-    }
-
-    private String getBranchTab() {
-        return branchTab;
-    }
-
-    public void setBuildCount(String buildCount) {
-        this.buildCount = buildCount;
     }
 }
