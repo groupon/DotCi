@@ -72,7 +72,7 @@ public class DynamicBuildRepository extends MongoRepository {
     }
 
     public <T extends DbBackedBuild> T getFirstBuild(DbBackedProject project) {
-        DbBackedBuild build = getDatastore().createQuery(DbBackedBuild.class).
+        DbBackedBuild build = getDatastore().createQuery(DbBackedBuild.class).disableValidation().
                 limit(1).order("number").
                 get();
 
@@ -86,7 +86,7 @@ public class DynamicBuildRepository extends MongoRepository {
     }
 
     public <T extends DbBackedBuild> T getLastBuild(DbBackedProject project) {
-        DbBackedBuild build = getQuery(project).limit(1).order("-number").get();
+        DbBackedBuild build = getQuery(project).limit(1).order("-number").disableValidation().get();
 
         associateProject(project, build);
 
