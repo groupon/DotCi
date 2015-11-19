@@ -17,18 +17,19 @@ function buildWidget(onBack){
   const backButton = blessed.button({
     parent: build,
     height: 1,
-    width: 15,
-    content: '<--- Back',
+    width: 25,
+    content: '<--- Back (Ctrl+b)',
     align: 'center',
     bg: 'blue',
     hoverBg: 'green',
     mouse: true
   });
   backButton.on('press',onBack);
+
   return build;
 }
 function logWidget(parent){
-  return blessed.log({
+  const log = blessed.log({
     scrollable: true,
     parent,
     top: 2,
@@ -51,9 +52,15 @@ function logWidget(parent){
       }
     }
   });
+  log.focus();
+  return log;
 }
 
 export default  function(url,screen,buildNumber,onBack){
+
+  screen.key(['C-b'], function(ch, key) {
+    onBack();
+  });
   request(
     {
       uri:url+buildNumber+'/logTail',

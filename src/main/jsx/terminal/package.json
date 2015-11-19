@@ -28,9 +28,10 @@
   "dependencies": {
     "blessed": "^0.1.81",
     "blessed-contrib": "^2.5.1",
+    "colors": "^1.1.2",
+    "minimist": "^1.2.0",
     "request": "^2.65.0",
-    "simple-git": "^1.11.0",
-    "minimist": "^1.2.0"
+    "simple-git": "^1.11.0"
   },
   "devDependencies": {
     "babel": "^5.8.25"

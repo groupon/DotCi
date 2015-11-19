@@ -2,10 +2,27 @@ var request = require('request');
 import build from './build.js';
 import contrib from 'blessed-contrib';
 import blessed from 'blessed';
+var colors = require('colors/safe');
 function buildRow(build){
   let {number,displayTime,result,commit} = build;
   let {committerName,message,shortSha,branch} = commit;
-  return [number+'', displayTime, result, branch, committerName,message,shortSha];
+  let color = colors.black;
+  switch(result){
+    case 'SUCCESS': 
+      color = colors.green
+    break;
+    case 'FAILURE': 
+      color = colors.red
+    break;
+    case 'ABORTED': 
+      color = colors.grey
+    break;
+    default:
+      color = colors.yellow
+    break;
+  }
+  let cols = [displayTime, result, branch, committerName,message,shortSha].map( col => color(col));
+  return [number + ''].concat(cols);
 }
 function buildHistoryWidget(title,url,screen,inputBuilds,onBack){
   let builds =[];
@@ -28,13 +45,14 @@ function buildHistoryWidget(title,url,screen,inputBuilds,onBack){
     keys:true,
     vi:true,
     mouse: true,
+    noCellBorders: true,
     style: {
       header: {
         fg: 'blue',
         bold: true
       },
       cell: {
-        fg: 'green',
+        fg: 'white',
         selected: {
           bg: 'blue'
         }
