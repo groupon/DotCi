@@ -344,8 +344,9 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
     public Object getTarget() {
         StaplerRequest currentRequest = Stapler.getCurrentRequest();
         //@formatter:off 
-        if (!currentRequest.getRequestURI().matches(".*(api/(json|xml)).*") 
-            && !currentRequest.getRequestURI().contains("buildWithParameters") 
+        if (!currentRequest.getRequestURI().matches(".*(api/(json|xml)).*")
+            && !currentRequest.getRequestURI().contains("buildWithParameters")
+            && !currentRequest.getRequestURI().contains("logTail")
             && !currentRequest.getRequestURI().contains("artifact")) {
         //@formatter:on
             authenticate();
