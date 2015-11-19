@@ -7,32 +7,13 @@ function buildRow(build){
   let {committerName,message,shortSha,branch} = commit;
   return [number+'', displayTime, result, branch, committerName,message,shortSha];
 }
-function header(title){
-  return {
-    obj: blessed.box,
-    opts:{
-      top: 'center',
-      left: 'center',
-      width: '100%',
-      height: '100%',
-      content: title,
-      tags: true
-    }
-  }
-}
 function buildHistoryWidget(title,url,screen,inputBuilds,onBack){
-
-  var grid = new contrib.grid({rows: 12, cols: 12, screen: screen})
-  //grid.set(row, col, rowSpan, colSpan, obj, opts)
-  let headerRow = header(title);
-  var map = grid.set(0, 0, 2, 12, headerRow.obj, headerRow.opts);
-  var parent = grid.set(2, 0, 12, 12, blessed.box, {});
-
   let builds =[];
   builds.push(['number','Ago', 'Result','Branch', 'Commiter','Message','Sha']);
   inputBuilds.forEach(build => builds.push( buildRow(build)));
   const table=  blessed.ListTable({
-    parent,
+    parent:screen,
+    screen,
     width: '100%',
     height: '100%',
     border: {
