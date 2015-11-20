@@ -27,9 +27,11 @@ import com.groupon.jenkins.dynamic.build.cause.GitHubPullRequestCause;
 import com.groupon.jenkins.dynamic.build.cause.GitHubPushCause;
 import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
 import hudson.model.Cause;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -89,13 +91,13 @@ public class Payload {
     private boolean shouldBuildPullRequest(boolean buildPrsFromSameRepo) {
         return !isPullRequestClosed() &&
                 shouldBuildPullRequestBasedOnAction() &&
-                ( buildPrsFromSameRepo || !isPullRequestFromWithinSameRepo());
+                (buildPrsFromSameRepo || !isPullRequestFromWithinSameRepo());
     }
 
     //only build for webhook actions of "opened", "reopened", or "synchronize"
     //https://developer.github.com/v3/activity/events/types/#events-api-payload-17
     private boolean shouldBuildPullRequestBasedOnAction() {
-        return isOpenedAction() ||  isReOpenedAction() || isSynchronizeAction();
+        return isOpenedAction() || isReOpenedAction() || isSynchronizeAction();
     }
 
     private boolean isPullRequestClosed() {
@@ -107,11 +109,11 @@ public class Payload {
     }
 
     private boolean isReOpenedAction() {
-        return  isPullRequest() && "reopened".equals(payloadJson.getString("action"));
+        return isPullRequest() && "reopened".equals(payloadJson.getString("action"));
     }
 
     private boolean isSynchronizeAction() {
-        return  isPullRequest() && "synchronize".equals(payloadJson.getString("action"));
+        return isPullRequest() && "synchronize".equals(payloadJson.getString("action"));
     }
 
     private boolean isPullRequestFromWithinSameRepo() {
@@ -161,10 +163,10 @@ public class Payload {
     }
 
     public String getProjectUrl() {
-        if(isPullRequest()){
+        if (isPullRequest()) {
             return getPullRequest().getJSONObject("base").getJSONObject("repo").getString("html_url");
         }
-        return  payloadJson.getJSONObject("repository").getString("url");
+        return payloadJson.getJSONObject("repository").getString("url");
     }
 
     public List<GithubLogEntry> getLogEntries() {
@@ -183,38 +185,39 @@ public class Payload {
         affectedPaths.addAll((java.util.Collection<? extends String>) commit.get("added"));
         affectedPaths.addAll((java.util.Collection<? extends String>) commit.get("modified"));
         affectedPaths.addAll((java.util.Collection<? extends String>) commit.get("removed"));
-        return new GithubLogEntry(commit.get("message").toString(), commit.get("url").toString(), commit.get("id").toString(),affectedPaths);
+        return new GithubLogEntry(commit.get("message").toString(), commit.get("url").toString(), commit.get("id").toString(), affectedPaths);
     }
 
     public String getCommitterName() {
-        if(isPullRequest()){
-            return  payloadJson.getJSONObject("sender").getString("login");
+        if (isPullRequest()) {
+            return payloadJson.getJSONObject("sender").getString("login");
         }
-        return  payloadJson.getJSONObject("head_commit").getJSONObject("committer").getString("name");
+        return payloadJson.getJSONObject("head_commit").getJSONObject("committer").getString("name");
     }
 
     public String getCommitterEmail() {
-        if(isPullRequest()){
+        if (isPullRequest()) {
             return null;
         }
-        return  payloadJson.getJSONObject("head_commit").getJSONObject("committer").getString("email");
+        return payloadJson.getJSONObject("head_commit").getJSONObject("committer").getString("email");
     }
+
     public String getAvatarUrl() {
-        if(isPullRequest()){
-            return  payloadJson.getJSONObject("sender").getString("avatar_url");
+        if (isPullRequest()) {
+            return payloadJson.getJSONObject("sender").getString("avatar_url");
         }
         return null;
     }
 
     public String getCommitMessage() {
-        if(isPullRequest()){
-            return  payloadJson.getJSONObject("pull_request").getString("title");
+        if (isPullRequest()) {
+            return payloadJson.getJSONObject("pull_request").getString("title");
         }
-        return  payloadJson.getJSONObject("head_commit").getString("message");
+        return payloadJson.getJSONObject("head_commit").getString("message");
     }
 
     public String getParentSha() {
-        if(isPullRequest()) {
+        if (isPullRequest()) {
             return payloadJson.getJSONObject("pull_request").getJSONObject("base").getString("sha");
         }
         return payloadJson.getString("before");
