@@ -13,6 +13,8 @@ DotCi provides the following global variables:
 * `GIT_URL` - git url
 * `DOTCI_PUSHER` - github username whose git push triggred this build
 * `DOTCI_PULL_REQUEST` - pull request number being built
+* `DOTCI_PULL_REQUEST_SOURCE_BRANCH` - the pull request branch
+* `DOTCI_PULL_REQUEST_TARGET_BRANCH` - the branch the pull request is targeting
 
 ## Groovy templating
 

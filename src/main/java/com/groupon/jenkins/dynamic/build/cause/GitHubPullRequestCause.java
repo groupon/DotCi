@@ -25,15 +25,29 @@ package com.groupon.jenkins.dynamic.build.cause;
 
 import com.groupon.jenkins.github.Payload;
 
+import java.util.Map;
+
 public class GitHubPullRequestCause extends GithubCause {
     private final String label;
     private final String number;
+    private final String targetBranch;
+    private final String sourceBranch;
 
-    public GitHubPullRequestCause(Payload payload, String sha, String label, String number) {
+    public GitHubPullRequestCause(Payload payload, String sha, String label, String number, String sourceBranch, String targetBranch) {
         super(payload, sha);
         this.label = label;
         this.number = number;
+        this.targetBranch = targetBranch;
+        this.sourceBranch = sourceBranch;
 
+    }
+
+    @Override
+    public Map<String, String> getEnvVars() {
+        Map vars = super.getEnvVars();
+        putIfNotNull(vars, "DOTCI_PULL_REQUEST_TARGET_BRANCH", getTargetBranch());
+        putIfNotNull(vars, "DOTCI_PULL_REQUEST_SOURCE_BRANCH", getSourceBranch());
+        return vars;
     }
 
     @Override
@@ -44,5 +58,13 @@ public class GitHubPullRequestCause extends GithubCause {
     @Override
     public String getName() {
         return "GITHUB_PULL_REQUEST";
+    }
+
+    public String getTargetBranch() {
+        return targetBranch;
+    }
+
+    public String getSourceBranch() {
+        return sourceBranch;
     }
 }

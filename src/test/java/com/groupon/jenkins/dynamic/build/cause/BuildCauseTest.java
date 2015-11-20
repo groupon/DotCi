@@ -52,6 +52,19 @@ public class BuildCauseTest {
     }
 
     @Test
+    public void should_export_pr_env_vars() {
+        GitHubPullRequestCause cause = mock(GitHubPullRequestCause.class);
+        doCallRealMethod().when(cause).getEnvVars();
+
+        doReturn("feature").when(cause).getSourceBranch();
+        doReturn("master").when(cause).getTargetBranch();
+
+        assertNotNull(cause.getEnvVars());
+        assertEquals("feature", cause.getEnvVars().get("DOTCI_PULL_REQUEST_SOURCE_BRANCH"));
+        assertEquals("master", cause.getEnvVars().get("DOTCI_PULL_REQUEST_TARGET_BRANCH"));
+    }
+
+    @Test
     public void should_export_not_export_null_env_vars() {
         BuildCause cause = mock(BuildCause.class);
         doCallRealMethod().when(cause).getEnvVars();
