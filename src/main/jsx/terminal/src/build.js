@@ -1,5 +1,6 @@
 var request = require('request');
 import blessed from 'blessed';
+import buildColor from './buildColors.js'
 function buildHeader(serverUrl,onBack,axisList,screen,logWidget){
   const header = blessed.listbar({
     height: 'shrink',// : 3,
@@ -9,9 +10,9 @@ function buildHeader(serverUrl,onBack,axisList,screen,logWidget){
     border: 'line',
     vi: true,
     style: {
-      bg: 'green',
+      // bg: 'green',
       item: {
-        bg: 'red',
+        // bg: 'red',
         hover: {
           bg: 'blue'
         },
@@ -31,7 +32,7 @@ function buildHeader(serverUrl,onBack,axisList,screen,logWidget){
     }
   }
   axisList.forEach( axis =>{
-    commands[axis['script']] = { callback: ()=>{
+    commands[buildColor(axis.result)((axis['script']))] = { callback: ()=>{
       loadLog(serverUrl+'/'+axis.url,onBack,logWidget,screen);
     }}
   })

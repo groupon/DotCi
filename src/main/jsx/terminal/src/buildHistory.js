@@ -2,25 +2,11 @@ var request = require('request');
 import build from './build.js';
 import contrib from 'blessed-contrib';
 import blessed from 'blessed';
-var colors = require('colors/safe');
+import buildColor from './buildColors.js'
 function buildRow(build){
   let {number,displayTime,result,commit} = build;
   let {committerName,message,shortSha,branch} = commit;
-  let color = colors.black;
-  switch(result){
-    case 'SUCCESS': 
-      color = colors.green
-    break;
-    case 'FAILURE': 
-      color = colors.red
-    break;
-    case 'ABORTED': 
-      color = colors.grey
-    break;
-    default:
-      color = colors.yellow
-    break;
-  }
+  let color = buildColor(result);
   let cols = [displayTime, result, branch, committerName,message,shortSha].map( col => color(col));
   return [number + ''].concat(cols);
 }
