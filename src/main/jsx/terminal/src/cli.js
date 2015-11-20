@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 //--server http://localhost:8080/jenkins  --repo suryagaddipati/DotCi
 import terminal from './index.js';
-let {server,repo} =  require('minimist')(process.argv.slice(2));
-terminal(server,repo);
+var program = require('commander');
+program
+.option('-s, --server <server>', 'Server Url(eg: http://www.myci.com)')
+.option('-r, --repo <repo>', 'Repo eg: surya/mycoolapp, defaults to current git repo if not passed in')
+.parse(process.argv);
+terminal(program.server,program.repo);
