@@ -75,6 +75,19 @@ public class PayloadTest {
     }
 
     @Test
+    public void pullRequestLabeledShouldNotTriggerABuild() throws IOException {
+        Payload payload = new Payload(readFile("pull_request_labeled.json"));
+        assertFalse(payload.needsBuild(false,true));
+    }
+
+    @Test
+    public void pullRequestReopenedShouldTriggerABuild() throws IOException {
+        String payloadReq = readFile("pull_request_reopened.json");
+        Payload payload = new Payload(payloadReq);
+        assertTrue(payload.needsBuild(false, true));
+    }
+
+    @Test
     public void testNonDeletePushShouldTriggerAbuild() throws IOException {
         Payload payload = new Payload(readFile("push.json"));
         assertTrue(payload.needsBuild(false,false));
@@ -86,6 +99,7 @@ public class PayloadTest {
         Payload payload = new Payload(payloadReq);
         assertFalse(payload.needsBuild(false,false));
     }
+
     @Test
     public void pullRequestFromTheSameRepoShouldTriggerABuildIfAllowed() throws IOException {
         String payloadReq = readFile("pull_request_from_the_same_repo.json");
