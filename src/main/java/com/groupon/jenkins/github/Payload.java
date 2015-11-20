@@ -81,13 +81,37 @@ public class Payload {
             return shouldBuildTags;
         }
         if (isPullRequest()) {
-            return !isPullRequestClosed() && ( buildPrsFromSameRepo || !isPullRequestFromWithinSameRepo());
+            return shouldBuildPullRequest(buildPrsFromSameRepo);
         }
         return !payloadJson.getBoolean("deleted");
     }
 
+    private boolean shouldBuildPullRequest(boolean buildPrsFromSameRepo) {
+        return !isPullRequestClosed() &&
+                shouldBuildPullRequestBasedOnAction() &&
+                ( buildPrsFromSameRepo || !isPullRequestFromWithinSameRepo());
+    }
+
+    //only build for webhook actions of "opened", "reopened", or "synchronize"
+    //https://developer.github.com/v3/activity/events/types/#events-api-payload-17
+    private boolean shouldBuildPullRequestBasedOnAction() {
+        return isOpenedAction() ||  isReOpenedAction() || isSynchronizeAction();
+    }
+
     private boolean isPullRequestClosed() {
         return "closed".equals(getPullRequest().getString("state"));
+    }
+
+    private boolean isOpenedAction() {
+        return isPullRequest() && "opened".equals(payloadJson.getString("action"));
+    }
+
+    private boolean isReOpenedAction() {
+        return  isPullRequest() && "reopened".equals(payloadJson.getString("action"));
+    }
+
+    private boolean isSynchronizeAction() {
+        return  isPullRequest() && "synchronize".equals(payloadJson.getString("action"));
     }
 
     private boolean isPullRequestFromWithinSameRepo() {
