@@ -24,7 +24,8 @@ function buildRow(build){
   let cols = [displayTime, result, branch, committerName,message,shortSha].map( col => color(col));
   return [number + ''].concat(cols);
 }
-function buildHistoryWidget(title,url,screen,inputBuilds,onBack){
+function buildHistoryWidget(serverUrl,repoName,screen,inputBuilds,onBack){
+  const url = getUrl(serverUrl,repoName);
   let builds =[];
   builds.push(['number','Ago', 'Result','Branch', 'Commiter','Message','Sha']);
   inputBuilds.forEach(build => builds.push( buildRow(build)));
@@ -60,17 +61,24 @@ function buildHistoryWidget(title,url,screen,inputBuilds,onBack){
     },
     rows:builds
   });
+  table.builds = inputBuilds;
   table.on('select',item => {
     const number =item.parent.rows[item.parent.selected][0];
-    build(url,screen,number,onBack);
+    const axisList = item.parent.builds[item.parent.selected-1]['axisList'];
+    build(serverUrl,url,screen,number,axisList,onBack);
   });
   table.focus();
 }
 
-export default function(title,url,screen,onBack){
+function getUrl(serverUrl,repoName){
+  const org =  repoName.split('/')[0];
+  const repo =  repoName.split('/')[1];
+  return `${serverUrl}/job/${org}/job/${repo}/`
+}
+export default function(serverUrl,repoName,screen,onBack){
   request(
     {
-      uri: url+ 'api/json/',
+      uri: getUrl(serverUrl,repoName)+ 'api/json/',
       qs: {
         tree:  "appData[info[buildHistoryTabs,builds[*,commit[*],cause[*],parameters[*]]]]",
         branchTab: 'All',
@@ -79,7 +87,7 @@ export default function(title,url,screen,onBack){
     }, function (error, response, body) {
       if (!error && response.statusCode == 200) {
         var builds = JSON.parse(body)['appData']['info']['builds'];
-        buildHistoryWidget(title,url,screen,builds,onBack);
+        buildHistoryWidget(serverUrl,repoName,screen,builds,onBack);
         screen.render();
       }
     })

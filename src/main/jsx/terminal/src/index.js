@@ -12,16 +12,13 @@ export default function(server,repo){
   }
 
 }
-function terminal(server,repoName){
-  const org =  repoName.split('/')[0];
-  const repo =  repoName.split('/')[1];
-  const url =`${server}/job/${org}/job/${repo}/`;
+function terminal(serverUrl,repoName){
   let screen = getScreen(repoName);
   function onBack(){
     screen.realloc();
-    buildHistoryTable(repoName,url,screen,onBack);
+    buildHistoryTable(serverUrl,repoName,screen,onBack);
   }
-  buildHistoryTable(repoName,url,screen,onBack);
+  buildHistoryTable(serverUrl,repoName,screen,onBack);
 }
 function getScreen(title){
   const screen = blessed.screen({
