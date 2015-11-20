@@ -50,8 +50,7 @@ public class Payload {
             JSONObject pullRequest = getPullRequest();
             final String label = pullRequest.getJSONObject("head").getString("label");
             String number = pullRequest.getString("number");
-            return new GitHubPullRequestCause(this, getSha(), label, number);
-
+            return new GitHubPullRequestCause(this, getSha(), label, number, getPullRequestSourceBranch(), getPullRequestTargetBranch());
         } else {
             final String pusherName = payloadJson.getJSONObject("pusher").getString("name");
             final String email = payloadJson.getJSONObject("pusher").getString("email");
@@ -95,6 +94,20 @@ public class Payload {
         String headRepoUrl = getPullRequest().getJSONObject("head").getJSONObject("repo").getString("ssh_url");
         String pullRequestRepoUrl = getPullRequest().getJSONObject("base").getJSONObject("repo").getString("ssh_url");
         return headRepoUrl.equals(pullRequestRepoUrl);
+    }
+
+    public String getPullRequestSourceBranch() {
+        if (!isPullRequest()) {
+            return null;
+        }
+        return getPullRequest().getJSONObject("head").getString("ref");
+    }
+
+    public String getPullRequestTargetBranch() {
+        if (!isPullRequest()) {
+            return null;
+        }
+        return getPullRequest().getJSONObject("base").getString("ref");
     }
 
     public String getBranchDescription() {
