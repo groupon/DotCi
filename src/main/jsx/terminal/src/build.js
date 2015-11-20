@@ -5,6 +5,7 @@ function buildHeader(serverUrl,onBack,axisList,screen,logWidget){
   const header = blessed.listbar({
     height: 'shrink',// : 3,
     mouse: true,
+    width: '100%',
     keys: true,
     autoCommandKeys: true,
     border: 'line',
