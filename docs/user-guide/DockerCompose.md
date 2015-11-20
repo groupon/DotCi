@@ -2,14 +2,14 @@ This build type uses [docker-compose](https://docs.docker.com/compose/) to execu
 
 ## `.ci.yml` Sections
 
-### `docker-compose-file`
+### `docker-compose-file` (Optional)
 
 ```yaml
 docker-compose-file: "./jenkins/docker-compose.yml"
 ```
 Specify an alternate compose file (default: docker-compose.yml)
 
-### `before_run`
+### `before_run` (Optional)
 
 ```yaml
 before_run: "./some_script && ./another_script"
@@ -17,14 +17,14 @@ before_run: "./some_script && ./another_script"
 Specify commands that should be run before the run commands. These commands will execute once. 
 
 
-### `before_each`
+### `before_each` (Optional)
 
 ```yaml
 before_each: "./some_script && ./another_script"
 ```
 Specify commands that should be run before each run sub-command. 
 
-### `run`
+### `run` (Required)
 
 ```yaml
 run:
