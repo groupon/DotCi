@@ -1,6 +1,6 @@
 {
   "name": "dotci",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "cli for DotCi",
   "main": "lib/index.js",
   "preferGlobal": true,
