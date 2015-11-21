@@ -54,12 +54,11 @@ public class BuildConfiguration {
         this.config = config;
     }
 
-    public ShellCommands getBeforeRunCommandWithCheckoutIfPresent(Map<String, Object> dotCiEnvVars) {
+    public ShellCommands getBeforeRunCommandIfPresent() {
         if (!config.containsKey("before_run")) {
             return null;
         }
         ShellCommands shellCommands = new ShellCommands();
-        shellCommands.add(getCheckoutCommands(dotCiEnvVars));
         shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape((String) config.get("before_run"))));
         return shellCommands;
     }
@@ -70,7 +69,7 @@ public class BuildConfiguration {
         String fileName = getDockerComposeFileName();
 
         ShellCommands shellCommands = new ShellCommands();
-        shellCommands.add(getCheckoutCommands(dotCiEnvVars));
+        shellCommands.add(BuildConfiguration.getCheckoutCommands(dotCiEnvVars));
 
         if (config.containsKey("before_run") && !isParallelized()) {
             shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape((String) config.get("before_run"))));
@@ -147,7 +146,8 @@ public class BuildConfiguration {
     public String getDockerComposeFileName() {
         return config.get("docker-compose-file") !=null ? (String) config.get("docker-compose-file") : "docker-compose.yml";
     }
-    private ShellCommands getCheckoutCommands(Map<String, Object> dotCiEnvVars) {
+
+    public static ShellCommands getCheckoutCommands(Map<String, Object> dotCiEnvVars) {
         String gitCloneUrl = (String) dotCiEnvVars.get("DOTCI_DOCKER_COMPOSE_GIT_CLONE_URL");
         GitUrl gitRepoUrl = new GitUrl(gitCloneUrl);
         boolean isPrivateRepo = Boolean.parseBoolean((String) dotCiEnvVars.get("DOTCI_IS_PRIVATE_REPO"));
