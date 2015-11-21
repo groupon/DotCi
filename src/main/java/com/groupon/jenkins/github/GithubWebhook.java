@@ -81,7 +81,7 @@ public class GithubWebhook implements UnprotectedRootAction {
         LOGGER.info("Received kicking off build for " + payload.getProjectUrl());
         for (final DynamicProject job : makeDynamicProjectRepo().getJobsFor(payload.getProjectUrl())) {
 
-            if (payload.needsBuild(job.shouldBuildTags(), job.shouldBuildPullRequestFromSameRepo())) {
+            if (payload.needsBuild(job.shouldBuildTags())) {
                 LOGGER.info("starting job" + job.getName());
                 queue.execute(new Runnable() {
                     @Override
