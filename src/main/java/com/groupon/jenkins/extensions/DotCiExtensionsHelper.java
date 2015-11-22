@@ -24,7 +24,7 @@
 
 package com.groupon.jenkins.extensions;
 
-import com.google.common.collect.Iterables;
+import com.google.common.collect.*;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
@@ -34,12 +34,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import hudson.model.*;
+import hudson.tasks.*;
 import jenkins.model.Jenkins;
+import jenkins.tasks.*;
 
 public class DotCiExtensionsHelper {
     private Jenkins jenkins;
 
-     DotCiExtensionsHelper(Jenkins jenkins) {
+    DotCiExtensionsHelper(Jenkins jenkins) {
         this.jenkins = jenkins;
     }
     public DotCiExtensionsHelper() {
@@ -74,6 +78,8 @@ public class DotCiExtensionsHelper {
         }
         return plugins;
     }
+
+
     public <T extends DotCiExtension>  T create(String pluginName, Object options, Class<T> extensionClass) {
         for (T adapter : all(extensionClass)) {
             if (adapter.getName().equals(pluginName)) {
@@ -87,9 +93,33 @@ public class DotCiExtensionsHelper {
             }
 
         }
+
+        for(Descriptor<?> pluginDescriptor : getDescriptors()){
+            if(pluginDescriptor.clazz.getSimpleName().equals(pluginName)){
+                return (T) new GenericSimpleBuildStepPlugin(pluginDescriptor,options);
+            }
+        }
         throw new InvalidBuildConfigurationException("Plugin " + pluginName + " not supported");
     }
 
+    private ArrayList<Descriptor<?>> getDescriptors() {
+        ArrayList<Descriptor<?>> r = new ArrayList<Descriptor<?>>();
+        r.addAll( getClassList(Builder.class));
+        r. addAll( getClassList(Publisher.class));
+        return r;
+    }
+    private <T extends Describable<T>,D extends Descriptor<T>> List<Descriptor<?>> getClassList( Class<T> c) {
+        ArrayList<Descriptor<?>> r = new ArrayList<Descriptor<?>>();
+        if (jenkins == null) {
+            return new ArrayList<Descriptor<?>>();
+        }
+        for (Descriptor<?> d : jenkins.getDescriptorList(c)) {
+            if (SimpleBuildStep.class.isAssignableFrom(d.clazz)) {
+                r.add(d);
+            }
+        }
+        return r;
+    }
     public <T extends ExtensionPoint> Iterable<T> all(Class<T> extensionClass) {
         return jenkins.getExtensionList(extensionClass);
     }
