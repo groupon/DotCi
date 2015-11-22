@@ -23,11 +23,11 @@
  */
 package com.groupon.jenkins.dynamic.build;
 
-import hudson.*;
 import hudson.model.*;
 import net.sf.json.*;
 import org.kohsuke.stapler.*;
 
+@Deprecated
 public class PullRequestRebuildProperty extends JobProperty<Job<?, ?>> {
 
     private final boolean buildPullRequestsFromSameRepo;
@@ -41,7 +41,6 @@ public class PullRequestRebuildProperty extends JobProperty<Job<?, ?>> {
     }
 
 
-    @Extension
     public static final class PullRequestRebuildPropertyDescriptor extends JobPropertyDescriptor {
 
         @Override
