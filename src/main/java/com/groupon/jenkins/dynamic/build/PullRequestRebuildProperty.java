@@ -23,6 +23,7 @@
  */
 package com.groupon.jenkins.dynamic.build;
 
+import hudson.*;
 import hudson.model.*;
 import net.sf.json.*;
 import org.kohsuke.stapler.*;
@@ -41,11 +42,12 @@ public class PullRequestRebuildProperty extends JobProperty<Job<?, ?>> {
     }
 
 
+    @Extension
     public static final class PullRequestRebuildPropertyDescriptor extends JobPropertyDescriptor {
 
         @Override
         public String getDisplayName() {
-            return "(Re)Build Pull Requests from the same Repository";
+            return "(Re)Build Pull Requests from the same Repository (Not used anymore. Here for backward compatibility)";
         }
 
         @Override
