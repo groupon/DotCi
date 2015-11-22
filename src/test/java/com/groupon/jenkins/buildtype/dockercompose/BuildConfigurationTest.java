@@ -77,15 +77,10 @@ public class BuildConfigurationTest {
   }
 
   @Test
-  public void should_run_before_run_with_checkout_command_with_non_parallel_build(){
+  public void should_run_before_run_with_parallel_build(){
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("before_run", "before_run cmd", "run", of("unit", "command", "integration", "integration")));
-    ShellCommands commands = buildConfiguration.getBeforeRunCommandWithCheckoutIfPresent(getEnvVars());
-    Assert.assertEquals("chmod -R u+w . ; find . ! -path \"./deploykey_rsa.pub\" ! -path \"./deploykey_rsa\" -delete", commands.get(0));
-    Assert.assertEquals("git init", commands.get(1));
-    Assert.assertEquals("git remote add origin git@github.com:groupon/DotCi.git", commands.get(2));
-    Assert.assertEquals("git fetch origin master", commands.get(3));
-    Assert.assertEquals("git reset --hard  abc123", commands.get(4));
-    Assert.assertEquals("sh -xc 'before_run cmd'", commands.get(6));
+    ShellCommands commands = buildConfiguration.getBeforeRunCommandIfPresent();
+    Assert.assertEquals("sh -xc 'before_run cmd'", commands.get(0));
   }
 
   @Test

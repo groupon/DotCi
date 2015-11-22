@@ -76,26 +76,25 @@ public class Payload {
         return payloadJson.getString("ref").replaceAll("refs/", "").replaceAll("heads/", "");
     }
 
-    public boolean needsBuild(boolean shouldBuildTags, boolean buildPrsFromSameRepo) {
+    public boolean needsBuild(boolean shouldBuildTags) {
         if (payloadJson.has("ref") && payloadJson.getString("ref").startsWith("refs/tags/")) {
             return shouldBuildTags;
         }
         if (isPullRequest()) {
-            return shouldBuildPullRequest(buildPrsFromSameRepo);
+            return shouldBuildPullRequest();
         }
         return !payloadJson.getBoolean("deleted");
     }
 
-    private boolean shouldBuildPullRequest(boolean buildPrsFromSameRepo) {
+    private boolean shouldBuildPullRequest() {
         return !isPullRequestClosed() &&
-                shouldBuildPullRequestBasedOnAction() &&
-                ( buildPrsFromSameRepo || !isPullRequestFromWithinSameRepo());
+                shouldBuildPullRequestBasedOnAction();
     }
 
     //only build for webhook actions of "opened", "reopened", or "synchronize"
     //https://developer.github.com/v3/activity/events/types/#events-api-payload-17
     private boolean shouldBuildPullRequestBasedOnAction() {
-        return isOpenedAction() ||  isReOpenedAction() || isSynchronizeAction();
+        return isOpenedAction() || isReOpenedAction() || isSynchronizeAction();
     }
 
     private boolean isPullRequestClosed() {
@@ -107,17 +106,11 @@ public class Payload {
     }
 
     private boolean isReOpenedAction() {
-        return  isPullRequest() && "reopened".equals(payloadJson.getString("action"));
+        return isPullRequest() && "reopened".equals(payloadJson.getString("action"));
     }
 
     private boolean isSynchronizeAction() {
-        return  isPullRequest() && "synchronize".equals(payloadJson.getString("action"));
-    }
-
-    private boolean isPullRequestFromWithinSameRepo() {
-        String headRepoUrl = getPullRequest().getJSONObject("head").getJSONObject("repo").getString("ssh_url");
-        String pullRequestRepoUrl = getPullRequest().getJSONObject("base").getJSONObject("repo").getString("ssh_url");
-        return headRepoUrl.equals(pullRequestRepoUrl);
+        return isPullRequest() && "synchronize".equals(payloadJson.getString("action"));
     }
 
     public String getPullRequestSourceBranch() {

@@ -35,9 +35,11 @@ import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildRunner;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildScheduler;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import com.groupon.jenkins.git.GitUrl;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
 import com.groupon.jenkins.util.GroovyYamlTemplateProcessor;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.matrix.Combination;
 import hudson.model.BuildListener;
@@ -47,6 +49,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import static java.lang.String.format;
 
 @Extension
 public class DockerComposeBuild extends BuildType implements SubBuildRunner {
@@ -60,11 +64,16 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
     @Override
     public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
         Map<String,Object> buildEnvironment = build.getEnvironmentWithChangeSet(listener);
+
+        Result result = doCheckout(buildEnvironment, buildExecutionContext, listener);
+        if (!Result.SUCCESS.equals(result)) {
+            return result;
+        }
+
         Map config = new GroovyYamlTemplateProcessor(getDotCiYml(build), buildEnvironment).getConfig();
         this.buildConfiguration = new BuildConfiguration(config);
         build.setAxisList(buildConfiguration.getAxisList());
 
-        Result result;
         if(buildConfiguration.isParallelized()){
             result = runParallelBuild(build, buildExecutionContext, buildConfiguration, listener);
         }else{
@@ -82,17 +91,23 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
         return runCommands(commands, buildExecutionContext, listener);
     }
 
+    private Result doCheckout(Map<String,Object> buildEnvironment, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
+        ShellCommands commands = BuildConfiguration.getCheckoutCommands(buildEnvironment);
+        return runCommands(commands, buildExecutionContext, listener);
+    }
+
     private Result runCommands(ShellCommands commands, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
         ShellScriptRunner shellScriptRunner = new ShellScriptRunner(buildExecutionContext, listener);
         return shellScriptRunner.runScript(commands);
     }
 
-    private String getDotCiYml(DynamicBuild build) throws IOException {
-        try {
-            return build.getGithubRepositoryService().getGHFile(".ci.yml", build.getSha()).getContent();
-        } catch (FileNotFoundException _){
+    private String getDotCiYml(DynamicBuild build) throws IOException, InterruptedException {
+        FilePath fp = new FilePath(build.getWorkspace(), ".ci.yml");
+        if (!fp.exists()) {
             throw new InvalidBuildConfigurationException("No .ci.yml found.");
         }
+
+        return fp.readToString();
     }
 
     private Result runParallelBuild(final DynamicBuild dynamicBuild, final  BuildExecutionContext buildExecutionContext, final BuildConfiguration buildConfiguration, final BuildListener listener) throws IOException, InterruptedException {
@@ -122,7 +137,7 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
     }
 
     private Result runBeforeCommands(final BuildExecutionContext buildExecutionContext, final BuildListener listener) throws IOException, InterruptedException {
-        ShellCommands beforeCommands = buildConfiguration.getBeforeRunCommandWithCheckoutIfPresent(buildExecutionContext.getBuildEnvironmentVariables());
+        ShellCommands beforeCommands = buildConfiguration.getBeforeRunCommandIfPresent();
         if (beforeCommands != null) {
             return runCommands(beforeCommands, buildExecutionContext, listener);
         }
