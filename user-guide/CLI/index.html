@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <meta name="author" content="Groupon Inc.">
-    <link rel="canonical" href="http://groupon.github.io/DotCi/user-guide/Notifications/">
+    <link rel="canonical" href="http://groupon.github.io/DotCi/user-guide/CLI/">
     <link rel="shortcut icon" href="../../img/favicon.ico">
 
-    <title>.ci.yml Notifications Reference - DotCi</title>
+    <title>cli - DotCi</title>
 
     <link rel="stylesheet" href="../../css/prism.css">
     <link rel="stylesheet" href="../../css/styles.css">
@@ -52,13 +52,13 @@
   
   <li >    <a class="mdl-menu__item" href="../Plugins/">.ci.yml Plugins Reference</a> </li>
   
-  <li >    <a class="mdl-menu__item" href="./">.ci.yml Notifications Reference</a> </li>
+  <li >    <a class="mdl-menu__item" href="../Notifications/">.ci.yml Notifications Reference</a> </li>
   
   <li >    <a class="mdl-menu__item" href="../Templating/">.ci.yml Templating</a> </li>
   
   <li >    <a class="mdl-menu__item" href="../Examples/">Examples</a> </li>
   
-  <li >    <a class="mdl-menu__item" href="../CLI/">cli</a> </li>
+  <li >    <a class="mdl-menu__item" href="./">cli</a> </li>
   
   <li >    <a class="mdl-menu__item" href="../UI/">UI Reference</a> </li>
   
@@ -94,40 +94,19 @@
         <div class="page-content mdl-cell mdl-cell--10-col">
       
           
-          <h2 id="built-in-notifications">Built-In Notifications<a class="headerlink" href="#built-in-notifications" title="Permanent link"></a></h2>
-<p>All notifications default to notifying only when there is a failure or recovery( for that particualar branch).</p>
-<p>Core Notifications that are bundled with DotCi.</p>
-<h3 id="email"><code>email</code><a class="headerlink" href="#email" title="Permanent link"></a></h3>
-<pre><code class="yaml">---
-notifications:
-  - email:
-    - email1@example.com
-    - email2@example.com
+          <h3 id="cli-guide">Cli guide<a class="headerlink" href="#cli-guide" title="Permanent link"></a></h3>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link"></a></h2>
+<pre><code class="yaml">  npm install -g dotci
 </code></pre>
 
-<h2 id="starter-pack-notifications">Starter-Pack Notifications<a class="headerlink" href="#starter-pack-notifications" title="Permanent link"></a></h2>
-<p>There are optional set of notifications that are available if you install <a href="https://github.com/groupon/DotCi-Plugins-Starter-Pack">DotCi-Plugins-Starter-Pack</a> from update center.</p>
-<h3 id="campfire"><code>campfire</code><a class="headerlink" href="#campfire" title="Permanent link"></a></h3>
-<pre><code class="yaml">---
-notifications:
-  - campfire:
-    - room1
-    - room2
+<h2 id="user-guide">User Guide<a class="headerlink" href="#user-guide" title="Permanent link"></a></h2>
+<pre><code class="yaml">  dotci -s http://localhost:8080/jenkins --repo suryagaddipati/DotCi ##repo defaults to current if not specified
 </code></pre>
 
-<h3 id="hipchat"><code>hipchat</code><a class="headerlink" href="#hipchat" title="Permanent link"></a></h3>
-<p>( Token for hipchat notifications needs to be configured under global jenkins settings, look for <code>DotCi Hipchat Configuration</code>)</p>
-<pre><code class="yaml">---
-notifications:
-  - hipchat:
-    - room1
-    - room2
-#or pass in extra options
-  - hipchat: 
-    room: test
-    notify_on:  FAILURE_AND_RECOVERY| ALL
-    message: optional message
-</code></pre>   
+<h2 id="build-history">Build History<a class="headerlink" href="#build-history" title="Permanent link"></a></h2>
+<p><img alt="History" src="../screenshots/cli-history.png" /></p>
+<h2 id="console-view">Console View<a class="headerlink" href="#console-view" title="Permanent link"></a></h2>
+<p><img alt="History" src="../screenshots/cli-console.png" /></p>   
           
       
         </div>

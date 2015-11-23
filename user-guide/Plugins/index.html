@@ -56,6 +56,10 @@
   
   <li >    <a class="mdl-menu__item" href="../Templating/">.ci.yml Templating</a> </li>
   
+  <li >    <a class="mdl-menu__item" href="../Examples/">Examples</a> </li>
+  
+  <li >    <a class="mdl-menu__item" href="../CLI/">cli</a> </li>
+  
   <li >    <a class="mdl-menu__item" href="../UI/">UI Reference</a> </li>
   
 </ul>
@@ -90,20 +94,17 @@
         <div class="page-content mdl-cell mdl-cell--10-col">
       
           
-          <h2 id="built-in-plugins">Built-In Plugins<a class="headerlink" href="#built-in-plugins" title="Permanent link"></a></h2>
-<p>Core Plugins that are bundled with DotCi.</p>
-<h3 id="artifacts"><code>artifacts</code><a class="headerlink" href="#artifacts" title="Permanent link"></a></h3>
-<pre><code class="yaml">plugins:
-  - artifacts: file1.txt,dist/file2.*
+          <h3 id="jenkins-plugins">Jenkins  Plugins<a class="headerlink" href="#jenkins-plugins" title="Permanent link"></a></h3>
+<p>Any <a href="https://wiki.jenkins-ci.org/display/JENKINS/Extension+points#Extensionpoints-hudson.tasks.Builder">Builder</a> and 
+  <a href="http://javadoc.jenkins-ci.org/?hudson/tasks/Publisher.html">Publisher</a> can be specified with ClassName and setter options</p>
+<p>eg: </p>
+<pre><code class="yaml">    plugins:
+      - CheckStylePublisher: # https://github.com/jenkinsci/checkstyle-plugin/blob/master/src/main/java/hudson/plugins/checkstyle/CheckStylePublisher.java
+           pattern: 'checkstyle/*.xml' #https://github.com/jenkinsci/checkstyle-plugin/blob/master/src/main/java/hudson/plugins/checkstyle/CheckStylePublisher.java#L65
 </code></pre>
 
-<p>This plugin configures Jenkin's default artifact archiver; it is a
-comma-separated list of matchers to archive. <strong>NOTE: the artifacts must
-exist, there is no exposure of the Advanced options to ignore missing
-artifacts.</strong></p>
-<p>See <a href="http://ant.apache.org/manual/Types/fileset.html">ant fileset</a> for
-matcher specifications.</p>
-<p><em>NOTE: Configure your project's Build Environment: "Delete workspace before build starts" to avoid accumulative artifacts.</em></p>
+<h3 id="built-in-plugins">Built-In Plugins<a class="headerlink" href="#built-in-plugins" title="Permanent link"></a></h3>
+<p>Plugins that are bundled with DotCi.</p>
 <h3 id="downstream_job"><code>downstream_job</code><a class="headerlink" href="#downstream_job" title="Permanent link"></a></h3>
 <pre><code class="yaml">plugins:
   - downstream_job:
@@ -119,27 +120,6 @@ result matches the value of <code>on_result</code>, which comes from
 The hash that is the key <code>groupon/DotCi</code>'s value are passed into the downstream job as its parameterized values ( these don't necessarily have to be predefined in the target job).</p>
 <h2 id="starter-pack-plugins">Starter-Pack Plugins<a class="headerlink" href="#starter-pack-plugins" title="Permanent link"></a></h2>
 <p>There are optional set of plugins that are available if you install <a href="https://github.com/groupon/DotCi-Plugins-Starter-Pack">DotCi-Plugins-Starter-Pack</a> from update center.</p>
-<h3 id="checkstyle"><code>checkstyle</code><a class="headerlink" href="#checkstyle" title="Permanent link"></a></h3>
-<pre><code class="yaml">plugins:
-  - checkstyle
-</code></pre>
-
-<h3 id="cobertura"><code>cobertura</code><a class="headerlink" href="#cobertura" title="Permanent link"></a></h3>
-<pre><code class="yaml">plugins:
-  - cobertura
-</code></pre>
-
-<h3 id="findbugs"><code>findbugs</code><a class="headerlink" href="#findbugs" title="Permanent link"></a></h3>
-<pre><code class="yaml">plugins:
-  - findbugs
-</code></pre>
-
-<h3 id="test_output"><code>test_output</code><a class="headerlink" href="#test_output" title="Permanent link"></a></h3>
-<pre><code class="yaml">plugins:
-  - junit #expects **/surefire-reports/*.xml
-  - tap
-</code></pre>
-
 <h3 id="review_line_comments"><code>review_line_comments</code><a class="headerlink" href="#review_line_comments" title="Permanent link"></a></h3>
 <pre><code class="yaml">plugins:
   - review_line_comments

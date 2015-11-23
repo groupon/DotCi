@@ -2,13 +2,8 @@
     "docs": [
         {
             "location": "/", 
-            "text": "DotCi - Jenkins github integration, .ci.yml.\n\uf0c1\n\n\nBrings ease of build configuration of cloud ci systems like travisci and ease of runtime environment configuration of docker to jenkins.\n\n\nDocker Based Build Environments\n\uf0c1\n\n\n\n\nUse \nDocker-Compose\n for build setup.\n\n\n\n\nGithub Integration\n\uf0c1\n\n\n\n\nAutomatically sets up Github \nwebhooks\n for pull requests and github pushes when a new job is setup.\n\n\nPrivate Repo support via generated \ndeploy keys\n.\n\n\nSets \ncommit status\n during and after build run.\n\n\nJobs follow name-spacing structure of github, jobs are nested under organization folder(\nScreenshot\n)\n\n\nAuthorization\n scheme mapped to corresponding github repo permissions.\n   (\nScreenshot\n)\n\n\nChangeset is calculated  from github payload.\n\n\nBuilds for master branch get special treatment\n\n\nLastBuild\n permalink points to last build for master.\n\n\nmaster\n branch status is treated as job status( useful for dashboard/job weather tools)\n\n\nlastSuccessfulMaster\n permalink.\n\n\n\n\n\n\n\n\nNew Jenkins UI\n\uf0c1\n\n\n\n\nSee \nUI\n\n\n\n\nJob Enhancements\n\uf0c1\n\n\n\n\nCustom build history branch tabs. \n\n\nFetch builds by git sha (\njob/meow/sha?value=\nsha\n)\n\n\nFetch last build for a branch (\njob/meow?branch=\nbranch-name\n)\n\n\nScaling Jenkins.\n\n\nBacked by a mongodb database.\n\n\nStore unlimited number of builds without performance degradation.\n\n\nQuery build statistics by querying database. Job/Build data is stored in mongodb bson format.\n\n\nUser builds view (This is the default view in our jenkins installation) (\nScreenshot\n)", 
+            "text": "", 
             "title": "Home"
-        }, 
-        {
-            "location": "/#dotci-jenkins-github-integration-ciyml", 
-            "text": "Brings ease of build configuration of cloud ci systems like travisci and ease of runtime environment configuration of docker to jenkins.  Docker Based Build Environments \uf0c1   Use  Docker-Compose  for build setup.   Github Integration \uf0c1   Automatically sets up Github  webhooks  for pull requests and github pushes when a new job is setup.  Private Repo support via generated  deploy keys .  Sets  commit status  during and after build run.  Jobs follow name-spacing structure of github, jobs are nested under organization folder( Screenshot )  Authorization  scheme mapped to corresponding github repo permissions.\n   ( Screenshot )  Changeset is calculated  from github payload.  Builds for master branch get special treatment  LastBuild  permalink points to last build for master.  master  branch status is treated as job status( useful for dashboard/job weather tools)  lastSuccessfulMaster  permalink.     New Jenkins UI \uf0c1   See  UI   Job Enhancements \uf0c1   Custom build history branch tabs.   Fetch builds by git sha ( job/meow/sha?value= sha )  Fetch last build for a branch ( job/meow?branch= branch-name )  Scaling Jenkins.  Backed by a mongodb database.  Store unlimited number of builds without performance degradation.  Query build statistics by querying database. Job/Build data is stored in mongodb bson format.  User builds view (This is the default view in our jenkins installation) ( Screenshot )", 
-            "title": "DotCi - Jenkins github integration, .ci.yml."
         }, 
         {
             "location": "/user-guide/CreateNewJob/", 
@@ -32,17 +27,12 @@
         }, 
         {
             "location": "/user-guide/Plugins/", 
-            "text": "Built-In Plugins\n\uf0c1\n\n\nCore Plugins that are bundled with DotCi.\n\n\nartifacts\n\uf0c1\n\n\nplugins:\n  - artifacts: file1.txt,dist/file2.*\n\n\n\n\nThis plugin configures Jenkin's default artifact archiver; it is a\ncomma-separated list of matchers to archive. \nNOTE: the artifacts must\nexist, there is no exposure of the Advanced options to ignore missing\nartifacts.\n\n\nSee \nant fileset\n for\nmatcher specifications.\n\n\nNOTE: Configure your project's Build Environment: \"Delete workspace before build starts\" to avoid accumulative artifacts.\n\n\ndownstream_job\n\uf0c1\n\n\nplugins:\n  - downstream_job:\n      on_result: \nSUCCESS|UNSTABLE|FAILURE|NOT_BUILT|ABORTED\n # From hudson.model.Result static types\n      groupon/DotCi: # Repo\n        k1: 'v1' #param k1\n        k2: 'v2' #param k2\n\n\n\n\nThis triggers the job for the repo \ngroupon/DotCi\n when the current job's\nresult matches the value of \non_result\n, which comes from\n\nhudson.model.Result\n.\nThe hash that is the key \ngroupon/DotCi\n's value are passed into the downstream job as its parameterized values ( these don't necessarily have to be predefined in the target job).\n\n\nStarter-Pack Plugins\n\uf0c1\n\n\nThere are optional set of plugins that are available if you install \nDotCi-Plugins-Starter-Pack\n from update center.\n\n\ncheckstyle\n\uf0c1\n\n\nplugins:\n  - checkstyle\n\n\n\n\ncobertura\n\uf0c1\n\n\nplugins:\n  - cobertura\n\n\n\n\nfindbugs\n\uf0c1\n\n\nplugins:\n  - findbugs\n\n\n\n\ntest_output\n\uf0c1\n\n\nplugins:\n  - junit #expects **/surefire-reports/*.xml\n  - tap\n\n\n\n\nreview_line_comments\n\uf0c1\n\n\nplugins:\n  - review_line_comments\n\n\n\n\nCollects output from \nAnalysis Collector Plugin\n and Cobertura Plugin and converts them into line comments on github Pull Requests.", 
+            "text": "Jenkins  Plugins\n\uf0c1\n\n\nAny \nBuilder\n and \n  \nPublisher\n can be specified with ClassName and setter options\n\n\neg: \n\n\n    plugins:\n      - CheckStylePublisher: # https://github.com/jenkinsci/checkstyle-plugin/blob/master/src/main/java/hudson/plugins/checkstyle/CheckStylePublisher.java\n           pattern: 'checkstyle/*.xml' #https://github.com/jenkinsci/checkstyle-plugin/blob/master/src/main/java/hudson/plugins/checkstyle/CheckStylePublisher.java#L65\n\n\n\n\nBuilt-In Plugins\n\uf0c1\n\n\nPlugins that are bundled with DotCi.\n\n\ndownstream_job\n\uf0c1\n\n\nplugins:\n  - downstream_job:\n      on_result: \nSUCCESS|UNSTABLE|FAILURE|NOT_BUILT|ABORTED\n # From hudson.model.Result static types\n      groupon/DotCi: # Repo\n        k1: 'v1' #param k1\n        k2: 'v2' #param k2\n\n\n\n\nThis triggers the job for the repo \ngroupon/DotCi\n when the current job's\nresult matches the value of \non_result\n, which comes from\n\nhudson.model.Result\n.\nThe hash that is the key \ngroupon/DotCi\n's value are passed into the downstream job as its parameterized values ( these don't necessarily have to be predefined in the target job).\n\n\nStarter-Pack Plugins\n\uf0c1\n\n\nThere are optional set of plugins that are available if you install \nDotCi-Plugins-Starter-Pack\n from update center.\n\n\nreview_line_comments\n\uf0c1\n\n\nplugins:\n  - review_line_comments\n\n\n\n\nCollects output from \nAnalysis Collector Plugin\n and Cobertura Plugin and converts them into line comments on github Pull Requests.", 
             "title": ".ci.yml Plugins Reference"
         }, 
         {
-            "location": "/user-guide/Plugins/#built-in-plugins", 
-            "text": "Core Plugins that are bundled with DotCi.  artifacts \uf0c1  plugins:\n  - artifacts: file1.txt,dist/file2.*  This plugin configures Jenkin's default artifact archiver; it is a\ncomma-separated list of matchers to archive.  NOTE: the artifacts must\nexist, there is no exposure of the Advanced options to ignore missing\nartifacts.  See  ant fileset  for\nmatcher specifications.  NOTE: Configure your project's Build Environment: \"Delete workspace before build starts\" to avoid accumulative artifacts.  downstream_job \uf0c1  plugins:\n  - downstream_job:\n      on_result:  SUCCESS|UNSTABLE|FAILURE|NOT_BUILT|ABORTED  # From hudson.model.Result static types\n      groupon/DotCi: # Repo\n        k1: 'v1' #param k1\n        k2: 'v2' #param k2  This triggers the job for the repo  groupon/DotCi  when the current job's\nresult matches the value of  on_result , which comes from hudson.model.Result .\nThe hash that is the key  groupon/DotCi 's value are passed into the downstream job as its parameterized values ( these don't necessarily have to be predefined in the target job).", 
-            "title": "Built-In Plugins"
-        }, 
-        {
             "location": "/user-guide/Plugins/#starter-pack-plugins", 
-            "text": "There are optional set of plugins that are available if you install  DotCi-Plugins-Starter-Pack  from update center.  checkstyle \uf0c1  plugins:\n  - checkstyle  cobertura \uf0c1  plugins:\n  - cobertura  findbugs \uf0c1  plugins:\n  - findbugs  test_output \uf0c1  plugins:\n  - junit #expects **/surefire-reports/*.xml\n  - tap  review_line_comments \uf0c1  plugins:\n  - review_line_comments  Collects output from  Analysis Collector Plugin  and Cobertura Plugin and converts them into line comments on github Pull Requests.", 
+            "text": "There are optional set of plugins that are available if you install  DotCi-Plugins-Starter-Pack  from update center.  review_line_comments \uf0c1  plugins:\n  - review_line_comments  Collects output from  Analysis Collector Plugin  and Cobertura Plugin and converts them into line comments on github Pull Requests.", 
             "title": "Starter-Pack Plugins"
         }, 
         {
@@ -79,6 +69,51 @@
             "location": "/user-guide/Templating/#groovy-templating", 
             "text": ".ci.yml  acts as a  groovy\ntemplate  which is run\nthrough a groovy preprocessor before build starts.  Examples \uf0c1  Send extra notification to yourself for a build you started:  notifications:\n   % if (DOTCI_PUSHER == 'joe') { % \n  - sms: 1234344453\n   % } %   Run certain commands after tests when  DOTCI_BRANCH  is  production :  build:\n   run: rake spec\n   #run integration tests only on production branch\n    % if (DOTCI_BRANCH == 'production') { % \n   after: rake integration\n    %} %   Notify hipchat room  DevOps  when  DOTCI_BRANCH  is  master :  notifications:\n   % if (DOTCI_BRANCH == 'master') { % \n  - hipchat: 'DevOps'\n   %}%   Pass  DOTCI_BRANCH  as a parameter to webhook:  plugins:\n  - webhook:\n      url: http://example.com/hook\n      params:\n        branch: ${DOTCI_BRANCH}  Artifact files when  DOTCI_BRANCH  is  master :  build:\n   % if( DOTCI_BRANCH != 'master') {% \n  - artifacts: 'packages/**/*.war'\n   %}%", 
             "title": "Groovy templating"
+        }, 
+        {
+            "location": "/user-guide/Examples/", 
+            "text": ".ci.yml Example\n\uf0c1\n\n\n\n   before: \ngit submodule init\n #optional\n   run: \n     unit: \n     integration: \nrake integration\n\n   plugins: \n      - CheckStylePublisher:   \n          pattern: 'checkstyle/*.xml'\n\n\n\n\nProtect a branch to ensure all commits go through CI before getting into master.\n\uf0c1\n\n\n\n\nProtect a branch to ensure all commits go through Pull Request Process.\n\uf0c1", 
+            "title": "Examples"
+        }, 
+        {
+            "location": "/user-guide/Examples/#ciyml-example", 
+            "text": "before:  git submodule init  #optional\n   run: \n     unit: \n     integration:  rake integration \n   plugins: \n      - CheckStylePublisher:   \n          pattern: 'checkstyle/*.xml'", 
+            "title": ".ci.yml Example"
+        }, 
+        {
+            "location": "/user-guide/Examples/#protect-a-branch-to-ensure-all-commits-go-through-ci-before-getting-into-master", 
+            "text": "", 
+            "title": "Protect a branch to ensure all commits go through CI before getting into master."
+        }, 
+        {
+            "location": "/user-guide/Examples/#protect-a-branch-to-ensure-all-commits-go-through-pull-request-process", 
+            "text": "", 
+            "title": "Protect a branch to ensure all commits go through Pull Request Process."
+        }, 
+        {
+            "location": "/user-guide/CLI/", 
+            "text": "Cli guide\n\uf0c1\n\n\nInstallation\n\uf0c1\n\n\n  npm install -g dotci\n\n\n\n\nUser Guide\n\uf0c1\n\n\n  dotci -s http://localhost:8080/jenkins --repo suryagaddipati/DotCi ##repo defaults to current if not specified\n\n\n\n\nBuild History\n\uf0c1\n\n\n\n\nConsole View\n\uf0c1", 
+            "title": "cli"
+        }, 
+        {
+            "location": "/user-guide/CLI/#installation", 
+            "text": "npm install -g dotci", 
+            "title": "Installation"
+        }, 
+        {
+            "location": "/user-guide/CLI/#user-guide", 
+            "text": "dotci -s http://localhost:8080/jenkins --repo suryagaddipati/DotCi ##repo defaults to current if not specified", 
+            "title": "User Guide"
+        }, 
+        {
+            "location": "/user-guide/CLI/#build-history", 
+            "text": "", 
+            "title": "Build History"
+        }, 
+        {
+            "location": "/user-guide/CLI/#console-view", 
+            "text": "", 
+            "title": "Console View"
         }, 
         {
             "location": "/user-guide/UI/", 

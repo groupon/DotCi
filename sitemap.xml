@@ -42,6 +42,18 @@
     </url>
         
     <url>
+     <loc>http://groupon.github.io/DotCi//user-guide/Examples/</loc>
+     <lastmod>2015-11-23</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>http://groupon.github.io/DotCi//user-guide/CLI/</loc>
+     <lastmod>2015-11-23</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
      <loc>http://groupon.github.io/DotCi//user-guide/UI/</loc>
      <lastmod>2015-11-23</lastmod>
      <changefreq>daily</changefreq>
