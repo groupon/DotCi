@@ -49,7 +49,7 @@ THE SOFTWARE.
         </developer>
     </developers>
     <description> Github integration, build management through .ci.yml, environment management though docker. </description>
-    <url>https://github.com/groupon/DotCi</url>
+    <url>https://wiki.jenkins-ci.org/display/JENKINS/DotCi+Plugin</url>
     <scm>
         <connection>scm:git:ssh://github.com/groupon/DotCi.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/groupon/DotCi.git</developerConnection>
