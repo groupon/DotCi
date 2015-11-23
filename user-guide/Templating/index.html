@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="../../css/prism.css">
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
  <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.yellow-purple.min.css" /> 
@@ -102,6 +103,8 @@ DotCi provides the following global variables:</p>
 <li><code>GIT_URL</code> - git url</li>
 <li><code>DOTCI_PUSHER</code> - github username whose git push triggred this build</li>
 <li><code>DOTCI_PULL_REQUEST</code> - pull request number being built</li>
+<li><code>DOTCI_PULL_REQUEST_SOURCE_BRANCH</code> - the pull request branch</li>
+<li><code>DOTCI_PULL_REQUEST_TARGET_BRANCH</code> - the branch the pull request is targeting</li>
 </ul>
 <h2 id="groovy-templating">Groovy templating<a class="headerlink" href="#groovy-templating" title="Permanent link"></a></h2>
 <p><code>.ci.yml</code> acts as a <a href="http://groovy.codehaus.org/Groovy+Templates">groovy

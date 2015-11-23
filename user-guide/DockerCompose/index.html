@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="../../css/prism.css">
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
  <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.yellow-purple.min.css" /> 
@@ -91,22 +92,22 @@
           
           <p>This build type uses <a href="https://docs.docker.com/compose/">docker-compose</a> to execute the build.</p>
 <h2 id="ciyml-sections"><code>.ci.yml</code> Sections<a class="headerlink" href="#ciyml-sections" title="Permanent link"></a></h2>
-<h3 id="docker-compose-file"><code>docker-compose-file</code><a class="headerlink" href="#docker-compose-file" title="Permanent link"></a></h3>
+<h3 id="docker-compose-file-optional"><code>docker-compose-file</code> (Optional)<a class="headerlink" href="#docker-compose-file-optional" title="Permanent link"></a></h3>
 <pre><code class="yaml">docker-compose-file: &quot;./jenkins/docker-compose.yml&quot;
 </code></pre>
 
 <p>Specify an alternate compose file (default: docker-compose.yml)</p>
-<h3 id="before_run"><code>before_run</code><a class="headerlink" href="#before_run" title="Permanent link"></a></h3>
+<h3 id="before_run-optional"><code>before_run</code> (Optional)<a class="headerlink" href="#before_run-optional" title="Permanent link"></a></h3>
 <pre><code class="yaml">before_run: &quot;./some_script &amp;&amp; ./another_script&quot;
 </code></pre>
 
 <p>Specify commands that should be run before the run commands. These commands will execute once. </p>
-<h3 id="before_each"><code>before_each</code><a class="headerlink" href="#before_each" title="Permanent link"></a></h3>
+<h3 id="before_each-optional"><code>before_each</code> (Optional)<a class="headerlink" href="#before_each-optional" title="Permanent link"></a></h3>
 <pre><code class="yaml">before_each: &quot;./some_script &amp;&amp; ./another_script&quot;
 </code></pre>
 
 <p>Specify commands that should be run before each run sub-command. </p>
-<h3 id="run"><code>run</code><a class="headerlink" href="#run" title="Permanent link"></a></h3>
+<h3 id="run-required"><code>run</code> (Required)<a class="headerlink" href="#run-required" title="Permanent link"></a></h3>
 <pre><code class="yaml">run:
   test:
 </code></pre>

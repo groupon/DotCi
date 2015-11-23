@@ -209,15 +209,13 @@ html, body {
   z-index: 99;
 }
 .headerlink {
-  font-family: FontAwesome; 
-  font-size: 14px; 
+  font-family: FontAwesome;
+  font-size: 14px;
   display: none;
   padding-left: .5em;
 }
-.headerlink:hover{
-  font-size: 14px; 
-  display: inline;
-  padding-left: .5em;
+h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink, h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink{
+  display:inline-block;
 }
 .page-content{
   border-radius: 2px;

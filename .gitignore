@@ -18,3 +18,4 @@ src/main/webapp/js/*dotci.js
 src/main/webapp/js/*.svg
 src/main/webapp/js/*dotci.js.map
 docs/_book
+bower_components
