@@ -1,22 +1,17 @@
-##  Built-In Plugins
 
-Core Plugins that are bundled with DotCi.
+### Jenkins  Plugins
+ Any [Builder](https://wiki.jenkins-ci.org/display/JENKINS/Extension+points#Extensionpoints-hudson.tasks.Builder) and 
+  [Publisher](http://javadoc.jenkins-ci.org/?hudson/tasks/Publisher.html) can be specified with ClassName and setter options
 
-### `artifacts`
+eg: 
+
 ```yaml
-plugins:
-  - artifacts: file1.txt,dist/file2.*
+    plugins:
+      - CheckStylePublisher: # https://github.com/jenkinsci/checkstyle-plugin/blob/master/src/main/java/hudson/plugins/checkstyle/CheckStylePublisher.java
+           pattern: 'checkstyle/*.xml' #https://github.com/jenkinsci/checkstyle-plugin/blob/master/src/main/java/hudson/plugins/checkstyle/CheckStylePublisher.java#L65
 ```
-This plugin configures Jenkin's default artifact archiver; it is a
-comma-separated list of matchers to archive. __NOTE: the artifacts must
-exist, there is no exposure of the Advanced options to ignore missing
-artifacts.__
-
-See [ant fileset](http://ant.apache.org/manual/Types/fileset.html) for
-matcher specifications.
-
-_NOTE: Configure your project's Build Environment: "Delete workspace before build starts" to avoid accumulative artifacts._
-
+###  Built-In Plugins
+Plugins that are bundled with DotCi.
 ### `downstream_job`
 ```yaml
 plugins:
@@ -36,33 +31,6 @@ The hash that is the key `groupon/DotCi`'s value are passed into the downstream 
 
 There are optional set of plugins that are available if you install [DotCi-Plugins-Starter-Pack](https://github.com/groupon/DotCi-Plugins-Starter-Pack) from update center.
 
-
-### `checkstyle`
-```yaml
-plugins:
-  - checkstyle
-```
-
-
-### `cobertura`
-```yaml
-plugins:
-  - cobertura
-```
-
-### `findbugs`
-```yaml
-plugins:
-  - findbugs
-```
-
-
-### `test_output`
-```yaml
-plugins:
-  - junit #expects **/surefire-reports/*.xml
-  - tap
-```
 
 ### `review_line_comments`
 ```yaml
