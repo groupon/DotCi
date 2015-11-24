@@ -76,6 +76,8 @@ function loadLog(url,onBack,logWidget,screen){
         logWidget.setContent(body);
         // screen.append(buildScreen);
         screen.render();
+      }else{
+        console.error(error);
       }
     })
 }

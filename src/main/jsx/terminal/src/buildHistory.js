@@ -75,6 +75,8 @@ export default function(serverUrl,repoName,screen,onBack){
         var builds = JSON.parse(body)['appData']['info']['builds'];
         buildHistoryWidget(serverUrl,repoName,screen,builds,onBack);
         screen.render();
+      }else{
+        console.error(error);
       }
     })
 
