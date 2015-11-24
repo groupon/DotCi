@@ -6,4 +6,9 @@ program
 .option('-s, --server <server>', 'Server Url(eg: http://www.myci.com)')
 .option('-r, --repo <repo>', 'Repo eg: surya/mycoolapp, defaults to current git repo if not passed in')
 .parse(process.argv);
-terminal(program.server,program.repo);
+
+if(!program.server){
+  program.help();
+}else{
+  terminal(program.server,program.repo);
+}
