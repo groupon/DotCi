@@ -33,8 +33,9 @@ public class GenericSimpleBuildStepPlugin extends DotCiPluginAdapter {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return false;
+        return true;
     }
+
     private SimpleBuildStep getPlugin(){
 
         try {
