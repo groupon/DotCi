@@ -136,6 +136,20 @@
   <code>cucumber</code>.</li>
 <li>A container defined by <code>integration</code> in <code>docker-compose.yml</code> with its default <code>CMD</code>.</li>
 </ul>
+<h3 id="skip-optional"><code>skip</code> (Optional)<a class="headerlink" href="#skip-optional" title="Permanent link"></a></h3>
+<pre><code class="yaml">skip: true
+</code></pre>
+
+<p>Skip build. 
+This is useful when combined with templating. Eg, </p>
+<pre><code class="yaml">#only build master or pull request.
+&lt;% if (DOTCI_BRANCH != 'master' &amp;&amp; !DOTCI_PULL_REQUEST ) { %&gt;
+skip:
+&lt;% } %&gt;
+run:
+  ci: 
+</code></pre>
+
 <h3 id="plugins"><code>plugins</code><a class="headerlink" href="#plugins" title="Permanent link"></a></h3>
 <p>See <a href="../Plugins">Plugins</a></p>
 <h3 id="notifications"><code>notifications</code><a class="headerlink" href="#notifications" title="Permanent link"></a></h3>
