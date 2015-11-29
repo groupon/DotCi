@@ -178,4 +178,8 @@ public class BuildConfiguration {
         }
         return shellCommands;
     }
+
+    public boolean isSkipped() {
+        return config.containsKey("skip");
+    }
 }

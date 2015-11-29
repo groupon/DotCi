@@ -53,6 +53,24 @@ Parallel Run:
   `cucumber`.
  - A container defined by `integration` in `docker-compose.yml` with its default `CMD`.
 
+### `skip` (Optional)
+
+```yaml
+skip: true
+```
+Skip build. 
+This is useful when combined with templating. Eg, 
+
+```yaml
+#only build master or pull request.
+<% if (DOTCI_BRANCH != 'master' && !DOTCI_PULL_REQUEST ) { %>
+skip:
+<% } %>
+run:
+  ci: 
+```
+
+
 ### `plugins`
 See [Plugins](Plugins)
 

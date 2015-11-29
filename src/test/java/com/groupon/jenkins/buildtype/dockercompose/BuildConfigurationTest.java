@@ -99,6 +99,16 @@ public class BuildConfigurationTest {
     Assert.assertEquals("docker-compose -f ./jenkins/docker-compose.yml pull",commands.get(7));
     Assert.assertEquals("docker-compose -f ./jenkins/docker-compose.yml run -T unit command",commands.get(8));
   }
+  @Test
+  public void should_be_skipped_if_skip_specified(){
+    BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("skip",true));
+    Assert.assertTrue(buildConfiguration.isSkipped());
+  }
+  @Test
+  public void should_not_be_skipped_if_not_specified(){
+    BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("before_run", "before_run cmd", "run", of("unit", "command", "integration", "integration")));
+    Assert.assertFalse(buildConfiguration.isSkipped());
+  }
 
   private ShellCommands getRunCommands(Map ciConfig) {
     BuildConfiguration buildConfiguration = new BuildConfiguration(ciConfig);
