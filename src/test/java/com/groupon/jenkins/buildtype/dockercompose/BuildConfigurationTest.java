@@ -45,9 +45,9 @@ public class BuildConfigurationTest {
   }
 
   @Test
-  public  void should_cleanup_after_test_run(){
+  public  void should_cleanup_after_test_run() {
     ShellCommands commands = getRunCommands();
-    Assert.assertEquals("trap \"docker-compose -f docker-compose.yml kill; docker-compose -f docker-compose.yml rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(6));
+    Assert.assertEquals("trap \"docker-compose -f docker-compose.yml kill; docker ps -a --filter 'name=groupon123_8_' -q | xargs docker rm -v --force || true; docker images | grep groupon123_8_ | awk '{print $3}' | xargs docker rmi --force || true; exit\" PIPE QUIT INT HUP EXIT TERM", commands.get(6));
   }
 
   @Test
@@ -65,15 +65,15 @@ public class BuildConfigurationTest {
   @Test
   public void should_run_before_each_command_if_present(){
     ShellCommands commands = getRunCommands(ImmutableMap.of("before_each", "before_each cmd", "run", of("unit", "command", "integration", "integration")));
-    Assert.assertEquals("sh -xc 'before_each cmd'", commands.get(6));
-    Assert.assertEquals("trap \"docker-compose -f docker-compose.yml kill; docker-compose -f docker-compose.yml rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(7));
+    Assert.assertEquals("trap \"docker-compose -f docker-compose.yml kill; docker ps -a --filter 'name=groupon123_8_' -q | xargs docker rm -v --force || true; docker images | grep groupon123_8_ | awk '{print $3}' | xargs docker rmi --force || true; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(6));
+    Assert.assertEquals("sh -xc 'before_each cmd'", commands.get(7));
   }
 
   @Test
   public void should_run_before_run_command_in_before_run_if_present(){
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("before_run", "before_run cmd", "run", of("unit", "command")));
     ShellCommands commands = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
-    Assert.assertEquals("sh -xc 'before_run cmd'", commands.get(6));
+    Assert.assertEquals("sh -xc 'before_run cmd'", commands.get(7));
   }
 
   @Test
@@ -95,10 +95,11 @@ public class BuildConfigurationTest {
   @Test
   public void should_accept_alternative_docker_compose_file(){
     ShellCommands commands = getRunCommands(ImmutableMap.of("docker-compose-file", "./jenkins/docker-compose.yml", "run",  of("unit", "command")));
-    Assert.assertEquals("trap \"docker-compose -f ./jenkins/docker-compose.yml kill; docker-compose -f ./jenkins/docker-compose.yml rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(6));
+    Assert.assertEquals("trap \"docker-compose -f ./jenkins/docker-compose.yml kill; docker ps -a --filter 'name=groupon123_8_' -q | xargs docker rm -v --force || true; docker images | grep groupon123_8_ | awk '{print $3}' | xargs docker rmi --force || true; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(6));
     Assert.assertEquals("docker-compose -f ./jenkins/docker-compose.yml pull",commands.get(7));
     Assert.assertEquals("docker-compose -f ./jenkins/docker-compose.yml run -T unit command",commands.get(8));
   }
+
   @Test
   public void should_be_skipped_if_skip_specified(){
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("skip",true));
@@ -121,6 +122,6 @@ public class BuildConfigurationTest {
   }
 
   private Map<String, Object> getEnvVars() {
-    return ImmutableMap.<String,Object>of("DOTCI_DOCKER_COMPOSE_GIT_CLONE_URL","git@github.com:groupon/DotCi.git", "DOTCI_BRANCH", "master", "SHA", "abc123");
+    return ImmutableMap.<String,Object>of("DOTCI_DOCKER_COMPOSE_GIT_CLONE_URL","git@github.com:groupon/DotCi.git", "DOTCI_BRANCH", "master", "SHA", "abc123", "COMPOSE_PROJECT_NAME", "groupon123_8");
   }
 }
