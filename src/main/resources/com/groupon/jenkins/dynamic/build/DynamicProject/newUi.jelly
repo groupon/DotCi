@@ -26,6 +26,12 @@
 <!DOCTYPE html>
 <html lang="en">
     <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+      <j:new var="h" className="hudson.Functions" /><!-- instead of JSP functions -->
+      ${h.initPageVariables(context)}
+      <script>
+        jobUrl = '${rootURL}'+'/' + '${it.jobUrl}' +"/";
+      </script>
+      <j:set var="pageName" value="dotci" />
         <st:include page="/com/groupon/jenkins/NewUi/index.jelly" />
       <paper-toast duration="500000" id="connectionError" text="Connection timed out.">
         <span role="button" tabindex="0" style="color: #eeff41;margin: 10px" onclick="window.location.reload();">Reload</span>

@@ -23,34 +23,19 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.repository;
 
-import com.google.common.collect.Iterables;
-import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.*;
 import com.groupon.jenkins.dynamic.build.*;
-import com.groupon.jenkins.mongo.BuildInfo;
-import com.groupon.jenkins.mongo.MongoRepository;
-import com.groupon.jenkins.mongo.MongoRunMap;
-import com.groupon.jenkins.util.GReflectionUtils;
-import com.mongodb.AggregationOutput;
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import hudson.model.Result;
-import hudson.model.Run;
-import hudson.util.RunList;
+import com.groupon.jenkins.mongo.*;
+import com.groupon.jenkins.util.*;
+import hudson.model.*;
+import hudson.util.*;
+import jenkins.model.*;
+import org.mongodb.morphia.*;
+import org.mongodb.morphia.query.*;
 
+import javax.inject.*;
 import java.util.*;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-import jenkins.model.Jenkins;
-import org.bson.types.ObjectId;
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.query.Query;
-import static  com.google.common.collect.ImmutableMap.of;
-import static  java.util.Arrays.asList;
-import static com.groupon.jenkins.dynamic.build.repository.MongoQueryProjectionBuilder.projection;
-
-
-import javax.inject.Inject;
+import java.util.regex.*;
 
 public class DynamicBuildRepository extends MongoRepository {
 
@@ -72,7 +57,7 @@ public class DynamicBuildRepository extends MongoRepository {
     }
 
     public <T extends DbBackedBuild> T getFirstBuild(DbBackedProject project) {
-        DbBackedBuild build = getDatastore().createQuery(DbBackedBuild.class).
+        DbBackedBuild build = getDatastore().createQuery(DbBackedBuild.class).disableValidation().
                 limit(1).order("number").
                 get();
 
@@ -86,7 +71,7 @@ public class DynamicBuildRepository extends MongoRepository {
     }
 
     public <T extends DbBackedBuild> T getLastBuild(DbBackedProject project) {
-        DbBackedBuild build = getQuery(project).limit(1).order("-number").get();
+        DbBackedBuild build = getQuery(project).limit(1).order("-number").disableValidation().get();
 
         associateProject(project, build);
 
@@ -202,7 +187,7 @@ public class DynamicBuildRepository extends MongoRepository {
         Query<DbBackedBuild> query = getQuery(project).limit(i).order("-number");
 
         if (branch != null) {
-            query = filterBranch(branch, query);
+            query = filterExpression(branch, query);
         }
         if (result != null) {
             query = query.filter("result", result.toString());
@@ -217,9 +202,17 @@ public class DynamicBuildRepository extends MongoRepository {
         return (Iterable<T>) builds;
     }
 
-    private Query<DbBackedBuild> filterBranch(String branch, Query<DbBackedBuild> query) {
-        Pattern branchRegex = Pattern.compile(branch);
-        query = query.filter("actions.causes.branch.branch", branchRegex);
+    public <T extends DbBackedBuild> Query<T> filterExpression(String filterExpression, Query<T> query) {
+        if (filterExpression.contains("=")) {
+            String[] paramExpression = filterExpression.split("=");
+            String paramName = paramExpression[0];
+            String paramValue = paramExpression[1];
+            query = query.filter("actions.parameters.name", paramName);
+            query = query.filter("actions.parameters.value", Pattern.compile(paramValue));
+        } else {
+
+            query = query.filter("actions.causes.branch.branch", Pattern.compile(filterExpression));
+        }
         return query;
     }
 
@@ -257,7 +250,7 @@ public class DynamicBuildRepository extends MongoRepository {
         DbBackedProject project = (DbBackedProject) build.getProject();
 
         Query<DbBackedBuild> query = getQuery(project);
-        if (branch != null) filterBranch(branch, query);
+        if (branch != null) filterExpression(branch, query);
         DbBackedBuild previousBuild = query.
                 limit(1).
                 order("-number").
@@ -310,9 +303,9 @@ public class DynamicBuildRepository extends MongoRepository {
 
     public <T extends DbBackedBuild> T getLastBuild(DbBackedProject project, String branch) {
         Query<DbBackedBuild> query = getQuery(project);
-        filterBranch(branch, query);
+        filterExpression(branch, query);
         DbBackedBuild build = query
-                .order("-number").get();
+                .order("-$natural").get();
         associateProject(project, build);
         return (T) build;
     }
@@ -335,61 +328,6 @@ public class DynamicBuildRepository extends MongoRepository {
             GReflectionUtils.setField(Run.class, "project", build, project);
             build.postMorphiaLoad();
         }
-    }
-
-
-    public List getLastBuildsPerProjectForUser(String user) {
-        BasicDBObject groupQuery = new BasicDBObject(of("$group", of("_id", "$projectId", "build", of("$first", "$$ROOT"))));
-        BasicDBObject filterQuery = new BasicDBObject(
-                of("$match",
-                        of("className", "com.groupon.jenkins.dynamic.build.DynamicBuild"
-                                , "$or", asList(of("actions.causes.user", user), of("actions.causes.pusher", user))
-                        )
-
-                ));
-        BasicDBObject sortQuery = new BasicDBObject(of("$sort", of("timestamp", 1)));
-        Map buildFields = projection("projectId", "result", "number", "startTime").noId().field("commit", "$actions.causes.commitInfo").get();
-        //Project == Projection not BuildProject
-        BasicDBObject projectQuery = new BasicDBObject(of("$project", buildFields));
-        AggregationOutput builds = getDatastore().getDB().getCollection("run").aggregate(filterQuery, sortQuery, projectQuery, groupQuery);
-        List output = new ArrayList();
-        DynamicProjectRepository repo = SetupConfig.get().getDynamicProjectRepository();
-        for (DBObject build : builds.results()) {
-            DBObject buildObject = (DBObject) build.get("build");
-            BasicDBList list = (BasicDBList) ((BasicDBList) buildObject.get("commit")).get(0);
-            Map commit = list == null ? new HashMap() : ((BasicDBObject) list.get(0)).toMap();
-            ObjectId parentId = (ObjectId) buildObject.get("projectId");
-            String parentName = repo.getProjectById(parentId).getFullName();
-            Object result = buildObject.get("result");
-            result = result == null ? "IN_PROGRESS" : result;
-            output.add(of("projectName", parentName,
-                    "number", buildObject.get("number"),
-                    "startTime", buildObject.get("startTime"),
-                    "lastBuildResult", result,
-                    "commit", commit));
-
-        }
-
-        return output;
-
-    }
-
-    public <P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> long getEstimatedDuration(DbBackedBuild<P, B> build) {
-        BasicDBObject groupStage = new BasicDBObject(of("$group", of("_id", "$projectId", "duration", of("$avg", "$duration"))));
-        BasicDBObject filterStage = new BasicDBObject(
-                of("$match", of("$and", asList(
-                                of("actions.causes.branch.branch", build.getParent().getDefaultBranch()),
-                                of("projectId", build.getParent().getId()),
-                                of("state", "COMPLETED"),
-                                of("result", Result.SUCCESS.toString())
-                        )
-                )));
-        BasicDBObject sortStage = new BasicDBObject(of("$sort", of("timestamp", -1)));
-        BasicDBObject limitStage = new BasicDBObject(of("$limit", 5));
-        AggregationOutput avgDurations = getDatastore().getDB().getCollection("run").aggregate(filterStage, sortStage, limitStage, groupStage);
-        if (Iterables.size(avgDurations.results()) != 1) return -1;
-        Double avgDuration = (Double) Iterables.getOnlyElement(avgDurations.results()).get("duration");
-        return avgDuration.longValue();
     }
 }
 

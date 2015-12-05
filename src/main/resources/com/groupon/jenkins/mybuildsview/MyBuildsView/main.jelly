@@ -22,9 +22,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
- <div class="main">
-        <h3>Recent Builds </h3>
-        <t:buildListTable builds="${it.builds}" jobBaseUrl="${rootURL}/" />
-   </div>
-</j:jelly>
+<!DOCTYPE html>
+<html lang="en">
+    <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+        <j:set var="pageName" value="homepage" />
+        <script>
+            viewUrl = '${it.viewUrl}';
+        </script>
+
+        <st:include page="/com/groupon/jenkins/NewUi/head.jelly" />
+        <h3>Your Recent Builds</h3>
+        <div id="homepage">
+            <paper-progress class="blue" indeterminate="true" value="800" min="100" max="1000"></paper-progress>
+        </div>
+
+    </j:jelly>
+</html>

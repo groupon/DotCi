@@ -25,14 +25,9 @@ package com.groupon.jenkins.dynamic.build.cause;
 
 import com.groupon.jenkins.git.GitBranch;
 import com.groupon.jenkins.github.Payload;
-import com.jcraft.jsch.jce.MD5;
 import hudson.model.Cause;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,11 +44,14 @@ public abstract class BuildCause extends Cause {
 
     public abstract String getSha();
 
+    public abstract String getParentSha();
+
     public abstract String getPusher();
 
     public abstract String getPullRequestNumber();
 
     public abstract CommitInfo getCommitInfo();
+
     @Exported
     public abstract String getName();
 
@@ -65,7 +63,7 @@ public abstract class BuildCause extends Cause {
         return vars;
     }
 
-    private static void putIfNotNull(Map<String, String> vars, String key, String value) {
+    protected static void putIfNotNull(Map<String, String> vars, String key, String value) {
         if (value != null) {
             vars.put(key, value);
         }
@@ -86,6 +84,7 @@ public abstract class BuildCause extends Cause {
         private String branch;
         private final String sha;
         private String commitUrl;
+
         //for backward compat
         private CommitInfo(){
             this.committerEmail = "unknown@unknown.com";

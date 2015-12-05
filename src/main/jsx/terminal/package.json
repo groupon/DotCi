@@ -1,0 +1,40 @@
+{
+  "name": "dotci",
+  "version": "0.0.14",
+  "description": "cli for DotCi",
+  "main": "lib/index.js",
+  "preferGlobal": true,
+  "bin": {
+    "dotci": "lib/cli.js"
+  },
+  "scripts": {
+    "compile": "$(npm bin)/babel  -d lib/ src/",
+    "prepublish": "npm run compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/groupon/DotCi.git"
+  },
+  "keywords": [
+    "dotci",
+    "jenkins",
+    "ci"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/groupon/DotCi/issues"
+  },
+  "dependencies": {
+    "blessed": "^0.1.81",
+    "blessed-contrib": "^2.5.1",
+    "colors": "^1.1.2",
+    "commander": "^2.9.0",
+    "request": "^2.65.0",
+    "simple-git": "^1.11.0"
+  },
+  "devDependencies": {
+    "babel": "^5.8.25"
+  },
+  "homepage": "https://github.com/groupon/DotCi#readme"
+}

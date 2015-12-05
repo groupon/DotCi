@@ -6,8 +6,8 @@ export default React.createClass({
   _resultIcon(){
     switch(this.props.cause){
       case "MANUAL": return "account-circle";
-      case "GITHUB_PUSH": return "octicon octicon-git-commit";
-      case "GITHUB_PULL_REQUEST": return "octicon octicon-git-pull-request";
+      case "GITHUB_PUSH": return "github:commit";
+      case "GITHUB_PULL_REQUEST": return "github:pull-request";
       case "UPSTREAM": return "eject";
       default: return "warning";
     }

@@ -24,10 +24,10 @@
 import qwest from 'qwest';
 import {stringify} from 'qs';
 export function recentProjects(){
-  return _get(window.rootURL + '/recentProjects/');
+  return _get(rootURL + '/recentProjects/');
 }
 export function cancelBuild(url){
-  return qwest.post(`${window.rootURL}/${url}`)
+  return qwest.post(`${rootURL}/${url}`)
 }
 export function buildLog(buildNumber,subBuild){
   const consoleUrl = subBuild === 'main'?`${_jobUrl()}/${buildNumber}/logTail`: `${_jobUrl()}/${buildNumber}/script=${subBuild}/logTail`;
@@ -40,10 +40,10 @@ export function job(tree, branchTab,count){
   return _get(_jobApiUrl()+"/info/",{tree,branchTab,count});
 }
 
-export function removeBranchTab(tabRegex){
+export function removeFilter(tabRegex){
   qwest.post( `${_jobUrl()}/removeBranchTab?tabRegex=`+tabRegex);
 }
-export function addBranchTab(tabRegex){
+export function addFilter(tabRegex){
   qwest.post(`${_jobUrl()}/addBranchTab?tabRegex=`+tabRegex);
 }
 
@@ -64,6 +64,7 @@ function _get(url, params){
   .catch(errorHandler);
 }
 
-function errorHandler(){
+function errorHandler(e){
+  console.error(e.stack);
   document.getElementById('connectionError').toggle();
 }

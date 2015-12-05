@@ -26,7 +26,9 @@
   width: 100%;
 }
 .build-row iron-icon {
-  width: 1.5vw;
+  width: 1vw;
+  margin-left: 0.2em;
+  margin-right: 0.2em;
 }
 .build-info{
   background-color: #FAFAF8;

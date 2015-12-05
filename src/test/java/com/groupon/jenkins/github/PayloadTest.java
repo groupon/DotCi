@@ -75,16 +75,35 @@ public class PayloadTest {
     }
 
     @Test
-    public void testNonDeletePushShouldTriggerAbuild() throws IOException {
-        Payload payload = new Payload(readFile("push.json"));
+    public void pullRequestOpenedShouldTriggerABuild() throws IOException {
+        Payload payload = new Payload(readFile("pull_request_opened.json"));
         assertTrue(payload.needsBuild(false));
     }
 
     @Test
-    public void pullRequestFromTheSameRepoShouldNotTriggerABuild() throws IOException {
-        String payloadReq = readFile("pull_request_from_the_same_repo.json");
+    public void pullRequestReopenedShouldTriggerABuild() throws IOException {
+        String payloadReq = readFile("pull_request_reopened.json");
         Payload payload = new Payload(payloadReq);
+        assertTrue(payload.needsBuild(false));
+    }
+
+    @Test
+    public void pullRequestSynchronizeShouldTriggerABuild() throws IOException {
+        String payloadReq = readFile("pull_request_synchronized.json");
+        Payload payload = new Payload(payloadReq);
+        assertTrue(payload.needsBuild(false));
+    }
+
+    @Test
+    public void pullRequestLabeledShouldNotTriggerABuild() throws IOException {
+        Payload payload = new Payload(readFile("pull_request_labeled.json"));
         assertFalse(payload.needsBuild(false));
+    }
+
+    @Test
+    public void testNonDeletePushShouldTriggerAbuild() throws IOException {
+        Payload payload = new Payload(readFile("push.json"));
+        assertTrue(payload.needsBuild(false));
     }
 
     @Test
@@ -228,6 +247,17 @@ public class PayloadTest {
     public void should_get_commit_message_from_pr_payload_description() throws IOException {
         Payload payload = new Payload(readFile("pull_request.json"));
         assertEquals("Update .ci.yml",payload.getCommitMessage());
+    }
+    @Test
+    public void should_get_base_commit_sha_for_parent_sha_in_a_pr() throws IOException {
+        Payload payload = new Payload(readFile("pull_request.json"));
+        assertEquals("2e8f55ee8489308b6d3b3e6d640774c3b857c9f5",payload.getParentSha());
+    }
+
+    @Test
+    public void should_get_previous_commit_sha_for_parent_sha_for_push() throws IOException {
+        Payload payload = new Payload(readFile("push.json"));
+        assertEquals("7974a8062f45ecab27387b763bd39277f3ba5aac",payload.getParentSha());
     }
 
     private String readFile(String fileName) throws IOException {

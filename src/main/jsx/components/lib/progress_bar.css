@@ -1,0 +1,9 @@
+.progressBar > paper-progress{
+  display: block;
+  width: 100%;
+}
+.progressPlaceholder{
+  display: block;
+  width: 100%;
+  height: 4px;
+}

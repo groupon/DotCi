@@ -23,80 +23,48 @@
  * THE SOFTWARE.
  */
 import React from "react";
-import FluxComponent from 'flummox/component';
 import Avatar from '../lib/Avatar.jsx';
 import AutoRefreshHelper from './../mixins/AutoRefreshHelper.jsx'
-import Responsive from './../mixins/Responsive.jsx';
-import CustomAttributes from './../mixins/CustomAttributes.jsx'
 import Loading from './../mixins/Loading.jsx';
-require("./recent-projects.css");
+import {recentProjects} from './../../api/Api.jsx';
+import BuildIcon  from './../job/BuildIcon.jsx';
+import BuildRow  from './../job/BuildRow.jsx';
+var RecentProject = (props) => {
+  const builds = props.builds.map(build => {
+    return  <BuildRow tiny={props.tiny} fullUrl key={build.number} build={build}/>
+  });
 
-var RecentProject = React.createClass({
-  mixins: [CustomAttributes],
-  render(){
-    return (
-      <paper-item className={"recent-project " + this.props.lastBuildResult}> 
-        <paper-item-body ref="ca-1" attrs={{"three-line": ""}}>
-          <a href={this.props.url} className="project-name">
-            <span className="project-title">{this._projectName()}</span>-{this.props.number}
-          </a>
-          <div ref="ca-2" attrs={{secondary: ""}}>
-            <span className="icon-text octicon octicon-git-commit"/>{this.props.commit.message}
-          </div>
-          <div ref="ca-3" attrs={{secondary: ""}} className="finished">
-            <iron-icon icon="alarm"/>
-            <span className="detail">{this.props.startTime}</span>
-          </div>
-        </paper-item-body>
-      </paper-item>
-    );
+  return <div >
+    <b>{props.project}</b>
+    <div>
+      {builds}
+    </div>
+  </div>
+};
+
+export default React.createClass({
+  mixins: [AutoRefreshHelper],
+  getInitialState(){
+    return {};
   },
-  _projectName(){
-    return this.props.small? this.props.projectName.split('/')[1]: this.props.projectName;
-  }
-});
-
-var RecentProjectsWidget =React.createClass({
-  mixins: [CustomAttributes, AutoRefreshHelper,Responsive(
-    {
-      "only screen and (max-width: 1450px)": "renderSmall",
-      "all and (min-width: 1450px)": "renderDefault",
-    }
-  )],
   componentWillMount(){
     this._loadRecentProjects()
     this.setRefreshTimer(this._loadRecentProjects);
   },
   _loadRecentProjects(){
-    this.props.flux.getRecentProjectsFromServer();
+    var self =this;
+    recentProjects().then(data =>{ 
+      self.setState({recentProjects: data.recentProjects});
+    });
   },
-  renderSmall(){
-    return this._render(true);
-  },
-  renderDefault(){
-    return this._render(false);
-  },
-  _render(small){
-    if(!this.props.recentProjects) return <Loading/>;
-    var recentProjects = this.props.recentProjects.map(function (project) {
-      return ( <RecentProject key={project.url} small={true} {...project}/>);
+  render(){
+    if(!this.state.recentProjects) return <Loading/>;
+    const recentProjects = this.state.recentProjects.map(project => {
+      return <RecentProject tiny={this.props.tiny} key={project.name} project={project.name} builds={project.builds}/>
     });
     return (
-      <div id="recent-projects">
-        <paper-menu id="project-list" className="list">
-          {recentProjects}
-        </paper-menu>
-      </div>
-    );
-  }
-});
-export default React.createClass({
-  render(){
-    return (
-      <div className={this.props.className}>
-        <FluxComponent connectToStores={['recentProjects']} flux={this.props.flux}>
-          <RecentProjectsWidget/>
-        </FluxComponent>
+      <div className="layout vertical wrap">
+        {recentProjects}
       </div>
     );
   }

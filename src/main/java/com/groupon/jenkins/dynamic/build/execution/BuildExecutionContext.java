@@ -27,11 +27,14 @@ import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.tasks.BuildStep;
 import java.io.IOException;
+import java.util.*;
 
 public interface BuildExecutionContext {
 
     boolean performStep(BuildStep buildStep, BuildListener listener) throws InterruptedException, IOException;
 
     void setResult(Result r);
+
+    Map<String,Object> getBuildEnvironmentVariables();
 
 }

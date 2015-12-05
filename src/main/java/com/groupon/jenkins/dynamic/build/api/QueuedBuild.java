@@ -91,6 +91,16 @@ public class QueuedBuild extends Build {
     }
 
     @Override
+    public String getUrl() {
+        return item.getUrl();
+    }
+
+    @Override
+    public String getFullUrl() {
+        return item.getUrl();
+    }
+
+    @Override
     public BuildCause getCause() {
         for (Cause cause: item.getCauses()){
            if(cause instanceof  BuildCause) {
@@ -106,8 +116,8 @@ public class QueuedBuild extends Build {
     }
 
     @Override
-    public long getEstimatedDuration() {
-        return -1;
+    public String getId() {
+        return item.getId()+"";
     }
 
 }

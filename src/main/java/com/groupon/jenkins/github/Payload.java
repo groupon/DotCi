@@ -50,8 +50,7 @@ public class Payload {
             JSONObject pullRequest = getPullRequest();
             final String label = pullRequest.getJSONObject("head").getString("label");
             String number = pullRequest.getString("number");
-            return new GitHubPullRequestCause(this, getSha(), label, number);
-
+            return new GitHubPullRequestCause(this, getSha(), label, number, getPullRequestSourceBranch(), getPullRequestTargetBranch());
         } else {
             final String pusherName = payloadJson.getJSONObject("pusher").getString("name");
             final String email = payloadJson.getJSONObject("pusher").getString("email");
@@ -82,19 +81,50 @@ public class Payload {
             return shouldBuildTags;
         }
         if (isPullRequest()) {
-            return !isPullRequestClosed() && !isPullRequestFromWithinSameRepo();
+            return shouldBuildPullRequest();
         }
         return !payloadJson.getBoolean("deleted");
+    }
+
+    private boolean shouldBuildPullRequest() {
+        return !isPullRequestClosed() &&
+                shouldBuildPullRequestBasedOnAction();
+    }
+
+    //only build for webhook actions of "opened", "reopened", or "synchronize"
+    //https://developer.github.com/v3/activity/events/types/#events-api-payload-17
+    private boolean shouldBuildPullRequestBasedOnAction() {
+        return isOpenedAction() || isReOpenedAction() || isSynchronizeAction();
     }
 
     private boolean isPullRequestClosed() {
         return "closed".equals(getPullRequest().getString("state"));
     }
 
-    private boolean isPullRequestFromWithinSameRepo() {
-        String headRepoUrl = getPullRequest().getJSONObject("head").getJSONObject("repo").getString("ssh_url");
-        String pullRequestRepoUrl = getPullRequest().getJSONObject("base").getJSONObject("repo").getString("ssh_url");
-        return headRepoUrl.equals(pullRequestRepoUrl);
+    private boolean isOpenedAction() {
+        return isPullRequest() && "opened".equals(payloadJson.getString("action"));
+    }
+
+    private boolean isReOpenedAction() {
+        return isPullRequest() && "reopened".equals(payloadJson.getString("action"));
+    }
+
+    private boolean isSynchronizeAction() {
+        return isPullRequest() && "synchronize".equals(payloadJson.getString("action"));
+    }
+
+    public String getPullRequestSourceBranch() {
+        if (!isPullRequest()) {
+            return null;
+        }
+        return getPullRequest().getJSONObject("head").getString("ref");
+    }
+
+    public String getPullRequestTargetBranch() {
+        if (!isPullRequest()) {
+            return null;
+        }
+        return getPullRequest().getJSONObject("base").getString("ref");
     }
 
     public String getBranchDescription() {
@@ -176,4 +206,10 @@ public class Payload {
         return  payloadJson.getJSONObject("head_commit").getString("message");
     }
 
+    public String getParentSha() {
+        if(isPullRequest()) {
+            return payloadJson.getJSONObject("pull_request").getJSONObject("base").getString("sha");
+        }
+        return payloadJson.getString("before");
+    }
 }

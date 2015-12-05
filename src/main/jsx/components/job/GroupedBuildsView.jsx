@@ -1,17 +1,19 @@
 import React from 'react';
 import LinearBuildsView from './LinearBuildsView.jsx';
-import {OrderedMap,List} from 'immutable';
 import BuildStep from './BuildStep.jsx';
 import Avatar from '../lib/Avatar.jsx';
+import sortBy from 'ramda/src/sortBy'
+import reverse from 'ramda/src/reverse';
 require('./grouped_builds_view.css')
 const PipeLineBuild =  React.createClass({
   getInitialState(){
     return {detail: 0}
   },
   render(){
-    const build =this.props.builds.get(0);
-    let {commit} = build.toObject();
-    let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
+    const build =this.props.builds[0];
+    let {commit} = build;
+    let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit;
+    const builds = sortBy(b=> b.number)(this.props.builds);
     return <span className="pipeline-build"> 
       <span className="commit">
         <div> {message} </div>
@@ -20,15 +22,16 @@ const PipeLineBuild =  React.createClass({
           <span>{committerName}</span>
         </span>
         <div> {branch} </div>
-        <div><i className="octicon octicon-mark-github"></i><a className="github-link link-no-decoration" href={commitUrl}>{shortSha}</a></div>
+        <div><iron-icon icon="github:octoface"/><a className="github-link link-no-decoration" href={commitUrl}>{shortSha}</a></div>
       </span>
       <div className="pipeline-steps">
-        {this.props.builds.sortBy(b => b.get('number')).map(build =><BuildStep ref={build.get('number')} onClick={this._onBuildStepClick} detail={this._isDetail(build)} key={build.get('number')} build={build}/> )}
+        {builds.map(build =><BuildStep ref={build.number} onClick={this._onBuildStepClick} detail={this._isDetail(build)} 
+          key={build.number} build={build}/> )}
       </div>
     </span>
   },
   _isDetail(build){
-    return this.state.detail === build.get('number');
+    return this.state.detail === build.number;
   },
   _onBuildStepClick(number){
     this.setState({detail: number})
@@ -38,24 +41,32 @@ const PipeLineBuild =  React.createClass({
 
 export default React.createClass({
   render(){
-    const sourceBuilds = this.props.builds.filter(build => !this._isTriggeredBuild(build))
-    .reduce((map,build) => map.set(build.get('number')+'',List.of(build)), OrderedMap());
+    const sourceBuilds = this.props.builds
+    .filter(build => !this._isTriggeredBuild(build))
+    .reduce((map,build) => {
+      map[build.number]=[build]
+      return map;
+    }, {});
     const groupedBuilds = this.props.builds.filter(build => this._isTriggeredBuild(build)).reduce((map,build) => {
       const sourceBuildNumber = this._sourceBuildNumber(build);
-      const builds =map.get(sourceBuildNumber);
+      const builds =map[sourceBuildNumber];
       if(!builds){ //Source Build might not be fetched && show only complete pipelines
         return map;
       }
-      return map.set(sourceBuildNumber, builds.push(build));
+      builds.push(build);
+      return map;
     },sourceBuilds)
-
-    const buildGroups = groupedBuilds.map((builds,buildNumber) => <PipeLineBuild key={buildNumber} builds={builds}/>);
-    return(<span className="pipeline-build-view">{buildGroups.toArray()}</span>);
+    const buildNums = reverse()(sortBy(n => parseInt(n))(Object.keys(groupedBuilds)));
+    const buildGroups = buildNums.reduce((groups,buildNumber) => {
+      groups.push(<PipeLineBuild key={buildNumber} builds={groupedBuilds[buildNumber]}/>);
+      return groups;
+    }, []);
+    return(<span className="pipeline-build-view">{buildGroups}</span>);
   },
   _isTriggeredBuild(build) {
-    return build.get('cause').get('name') === 'UPSTREAM';
+    return build.cause.name === 'UPSTREAM';
   },
   _sourceBuildNumber(build){
-    return build.get('parameters').filter(param => param.get('name')==='SOURCE_BUILD').get(0).get('value');
+    return build.parameters.filter(param => param.name==='SOURCE_BUILD')[0].value;
   }
 });

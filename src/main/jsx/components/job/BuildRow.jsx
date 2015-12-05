@@ -25,63 +25,44 @@
 
 import React from 'react';
 import Avatar from '../lib/Avatar.jsx';
-import Router from 'react-router';
 import BuildIcon from './BuildIcon.jsx';
 import BuildCauseIcon from './BuildCauseIcon.jsx';
-import BuildProgressBar from './BuildProgressBar.jsx';
-import Responsive from './../mixins/Responsive.jsx';
-import CustomAttributes from './../mixins/CustomAttributes.jsx';
+import PageLink from './../lib/PageLink.jsx';
 require('./build_row.css');
 require('./build_row_small.css');
 export default React.createClass({
-  mixins: [CustomAttributes,Responsive(
-    {
-      "only screen and (max-width: 680px)": "renderSmall",
-      "all and (min-width: 680px)": "renderDefault",
-    }
-  )],
-  renderSmall(){
-    let {result,number,displayTime,commit} = this.props.build.toObject();
-    let {message,committerName,branch, avatarUrl} = commit.toObject();
-    return (   <paper-material >
-      <Router.Link   to={'job-widgets'} params={{widget: number}}>
-        <paper-item className={"build-row-small "+result}> 
-          <BuildProgressBar build={this.props.build}/>
-          <paper-item-body ref="ca-1" attrs={{"three-line": ""}}>
-            <div>{number}-{message}</div>
-            <div ref="ca-2" attrs={{secondary: ""}}>
-              <Avatar avatarUrl={avatarUrl} />
-              <span>{committerName}({branch})</span>
-            </div>
-            <div ref="ca-3" attrs={{secondary: ""}}>
-              {displayTime} 
-            </div>
-          </paper-item-body>
-        </paper-item>
-      </Router.Link>
-    </paper-material>);
+  render(){
+    return this.props.tiny? this._renderTiny(): this._renderLarge();
   },
-  renderDefault(){
-    let {result,number, cancelUrl,commit,durationString,displayTime,cause, estimatedDuration,duration} = this.props.build.toObject();
-    let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit.toObject();
+  _renderTiny(){
+    const build = this.props.build;
+    return <span >
+      <paper-tooltip position="right" for={'id'+build.id}>{build.number}<br/>{build.commit.message}</paper-tooltip>
+      <a  className={"build-row-small "+build.result} id={'id'+build.id} href={rootURL+"/"+build.url}>
+        <BuildIcon result={build.result} />
+      </a>
+    </span>;
+  },
+  _renderLarge(){
+    let {result,number, cancelUrl,commit,durationString,displayTime,cause, duration} = this.props.build;
+    let {message,commitUrl,shortSha,committerName,branch, avatarUrl} = commit;
     return (
       <div className="build-row">
-        <BuildProgressBar build={this.props.build}/>
         <div className ={"build-info build-info-"+result}>
           {this._statusRow(result,cause)}
           <span>
             <div className="build-row--title"><small>{branch}</small> 
-              <Router.Link  to={'job-widgets'} params={{widget: number}}>{message}</Router.Link>
+              <PageLink  href={this._buildUrl()}>{message}</PageLink>
             </div> 
             <div className="build-row--committer">
               <Avatar avatarUrl={avatarUrl} />
               <span>{committerName}</span>
             </div>
-            <div className="build-row--cause">{cause.get('shortDescription')}</div>
+            <div className="build-row--cause">{cause['shortDescription']}</div>
           </span>
           <span>  
-            <div>#<Router.Link  className="build-row--number" to={'job-widgets'} params={{widget: number}}>{number}{result.toLowerCase()}</Router.Link></div>
-            <div><i className="octicon octicon-mark-github"></i><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>
+            <div>#<PageLink  className="build-row--number" href={this._buildUrl()}>{number}{result.toLowerCase()}</PageLink></div>
+            <div><iron-icon icon="github:octoface"/><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>
           </span>
           <span>
             <div>
@@ -89,7 +70,7 @@ export default React.createClass({
               <span className="detail">{durationString}</span>
             </div>
             <div>
-              <iron-icon icon="view-day" />
+              <iron-icon icon="dotci:calendar" />
               <span className="detail">{displayTime}</span>
             </div>
           </span>
@@ -100,7 +81,10 @@ export default React.createClass({
   _statusRow(result, cause){
     return this.props.compact? <span/>:<span>
       <BuildIcon result={result} />
-      <BuildCauseIcon cause={cause.get('name')} />
+      <BuildCauseIcon cause={cause['name']} />
     </span>
   },
+  _buildUrl(){
+    return this.props.fullUrl? this.props.build.url: "/"+this.props.build.number;
+  }
 });

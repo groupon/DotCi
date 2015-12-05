@@ -32,45 +32,71 @@ import com.groupon.jenkins.git.GitBranch;
 import com.groupon.jenkins.github.DeployKeyPair;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.mongodb.gridfs.GridFS;
-import com.mongodb.gridfs.GridFSDBFile;
-import com.mongodb.gridfs.GridFSFile;
-import com.mongodb.gridfs.GridFSInputFile;
 import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.console.*;
-import hudson.model.*;
-import hudson.model.Queue;
+import hudson.console.AnnotatedLargeText;
+import hudson.console.ConsoleLogFilter;
+import hudson.console.ConsoleNote;
+import hudson.console.ModelHyperlinkNote;
+import hudson.console.PlainTextConsoleOutputStream;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.BallColor;
+import hudson.model.Build;
+import hudson.model.BuildListener;
+import hudson.model.BuildableItemWithBuildWrappers;
+import hudson.model.CheckPoint;
+import hudson.model.Computer;
+import hudson.model.Executor;
 import hudson.model.Queue.Executable;
+import hudson.model.Result;
+import hudson.model.Run;
+import hudson.model.StreamBuildListener;
+import hudson.model.TaskListener;
+import hudson.model.User;
 import hudson.model.listeners.RunListener;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.ChangeLogSet.Entry;
-
-import java.io.*;
-import java.lang.reflect.Field;
-import java.nio.charset.Charset;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import hudson.security.ACL;
 import hudson.tasks.BuildWrapper;
 import hudson.util.FlushProofOutputStream;
 import jenkins.model.Jenkins;
 import org.acegisecurity.Authentication;
-import org.apache.commons.io.*;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
-import org.mongodb.morphia.annotations.*;
-import org.mongodb.morphia.query.Query;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.PostLoad;
+import org.mongodb.morphia.annotations.PrePersist;
 import org.springframework.util.ReflectionUtils;
 
 import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.nio.charset.Charset;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.FINER;
@@ -385,11 +411,11 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
         }
     }
 
-    public long getEstimatedDurationForDefaultBranch() {
-        return isBuilding()? getDynamicBuildRepository().getEstimatedDuration(this):-1;
+    @Override
+    public BallColor getIconColor() {
+        return !isBuilding()? getResult().color: BallColor.YELLOW_ANIME;
     }
 
-    @Nonnull
     @Override
     public File getLogFile() {
         File logFile = super.getLogFile();

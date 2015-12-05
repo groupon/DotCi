@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if page_description %}<meta name="description" content="{{ page_description }}">{% endif %}
+    {% if site_author %}<meta name="author" content="{{ site_author }}">{% endif %}
+    {% if canonical_url %}<link rel="canonical" href="{{ canonical_url }}">{% endif %}
+    {% if favicon %}<link rel="shortcut icon" href="{{ base_url }}/{{ favicon }}">
+    {% else %}<link rel="shortcut icon" href="{{ base_url }}/img/favicon.ico">{% endif %}
+
+    <title>{% if page_title %}{{ page_title }} - {% endif %}{{ site_name }}</title>
+
+    <link rel="stylesheet" href="{{ base_url }}/css/prism.css">
+    <link rel="stylesheet" href="{{ base_url }}/css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+ <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.yellow-purple.min.css" /> 
+  </head>
+
+  <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
+
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      {% include "nav.html" %}
+      <main class="mdl-layout__content">
+      <div class="mdl-grid">
+        <div class=" mdl-cell mdl-cell--1-col">
+        </div>
+        <div class="page-content mdl-cell mdl-cell--10-col">
+      {% if current_page and current_page.is_homepage %}
+      {% include "homepage.html" %}
+      {% else %}
+          {% block content %}
+          {{ content }}   
+          {% endblock %}
+      {% endif %}
+        </div>
+        <div class=" mdl-cell mdl-cell--1-col">
+        </div>
+      </div>
+      <footer class="mdl-mini-footer">
+        <div class="mdl-min-footer--middle-section">
+            {% if copyright %}
+            <p>{{ copyright }}</p>
+            {% endif %}
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </div>
+    </div>
+      </footer>
+      </main>
+
+      <script src="{{ base_url }}/js/prism.js"></script>
+      <script>var base_url = '{{ base_url }}';</script>
+      <script src="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.js"></script>
+      <script>
+var codeBlocks = document.querySelectorAll('code');
+[].forEach.call(codeBlocks, function(code) {
+  if(code.className){
+  code.className = code.className + " language-"+code.className;
+  }
+});
+      </script>
+
+
+  </body>
+</html>
+{% if current_page and current_page.is_homepage %}
+<!--
+  MkDocs version : {{ mkdocs_version }}
+  Build Date UTC : {{ build_date_utc }}
+-->
+{% endif %}

@@ -23,20 +23,16 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.mybuildsview;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.*;
+import com.google.common.collect.*;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.api.*;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.views.AuthenticatedView;
 import hudson.Extension;
-import hudson.model.Computer;
+import hudson.model.*;
 import hudson.model.Descriptor.FormException;
-import hudson.model.Item;
-import hudson.model.ItemGroup;
-import hudson.model.Job;
-import hudson.model.ModifiableItemGroup;
-import hudson.model.TopLevelItem;
-import hudson.model.ViewDescriptor;
 import hudson.util.RunList;
 import java.io.IOException;
 import java.util.Collection;
@@ -48,7 +44,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.export.*;
 
+import javax.annotation.*;
 import javax.servlet.ServletException;
 
 public class MyBuildsView extends AuthenticatedView {
@@ -57,11 +55,6 @@ public class MyBuildsView extends AuthenticatedView {
         super(name);
     }
 
-    protected DynamicBuildRepository makeDynamicBuildRepository() {
-        return SetupConfig.get().getDynamicBuildRepository();
-    }
-
-
     @Override
     public List<Computer> getComputers() {
         return Collections.emptyList();
@@ -69,18 +62,7 @@ public class MyBuildsView extends AuthenticatedView {
 
     @Override
     public RunList getBuilds() {
-        Iterable<DynamicBuild> builds = makeDynamicBuildRepository().getLastBuildsForUser(getCurrentUser(), 20);
-        return RunList.fromRuns(Lists.newArrayList(builds));
-    }
-
-    private String getCurrentUser() {
-        return Jenkins.getAuthentication().getName();
-    }
-
-
-    public void doBuilds(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        req.getSession().setAttribute("viewType", "builds");
-        rsp.forwardToPreviousPage(req);
+        return null;
     }
 
     @Override
@@ -118,7 +100,7 @@ public class MyBuildsView extends AuthenticatedView {
 
         @Override
         public String getDisplayName() {
-            return "My Builds View";
+            return "DotCi - LoggedIn User Builds View";
         }
     }
 
@@ -130,12 +112,6 @@ public class MyBuildsView extends AuthenticatedView {
     @Override
     protected void submit(StaplerRequest req) throws IOException, ServletException, FormException {
         // noop
-    }
-
-    public String getViewType() {
-        StaplerRequest currentRequest = Stapler.getCurrentRequest();
-        String viewType = (String) currentRequest.getSession().getAttribute("viewType");
-        return viewType == null ? "builds" : viewType;
     }
 
     @Override

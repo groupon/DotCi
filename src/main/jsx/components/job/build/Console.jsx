@@ -1,13 +1,10 @@
 import React from "react";
-import Router from 'react-router';
 import Convert from  'ansi-to-html';
-import LocationHashHelper from './../../mixins/LocationHashHelper.jsx'
-import LoadingHelper from './../../mixins/LoadingHelper.jsx'
 import loadingsvg from './tail-spin.svg';
-import {OrderedMap,List} from 'immutable';
+import scrollIntoView from 'scroll-into-view';
 require('./console.less');
+import last from 'ramda/src/last'
 export default React.createClass({
-  mixins: [LocationHashHelper ,LoadingHelper], 
   getInitialState(){
     return {logPinned: false}
   },
@@ -18,6 +15,9 @@ export default React.createClass({
   componentWillUnmount() {
     document.getElementById('mainContainer').removeEventListener('scroll',this._onLogScroll);
   },
+  selectedHash(){
+    return this.props.selectedLine;
+  },
   componentDidUpdate(){
     if(this.state.logPinned){
       this._scrollToBottom();
@@ -25,53 +25,32 @@ export default React.createClass({
       this._scrollToLine(this.selectedHash());
     }
   },
-  _onLocationHashChange(event){
-    const [oldId, newId] = this.getHashIds(event);
-    if(oldId){
-      document.getElementById(oldId).classList.remove('highlight');
-    }
-    if(newId){
-      document.getElementById(newId).classList.add('highlight');
-    }
-  },
   _isBuildLoaded(){
     return this.props.log && this.props.log.size > 1;
   },
-  _render(){
+  render(){
     return <span  id="buildLog">
-      {this._consoleHeader()}
       <pre> 
         <span ref="buildLog" >
           {this._scrollButtons()}
-          {this._renderLog(this.props.log)} {this._spinner()} 
+          {this._renderLog(this.props.log)} 
+          {this._spinner()} 
         </span>
       </pre>
-      <span ref="bottom"/>
+      <span id="bottom" ref="bottom"/>
     </span>;
   },
   _spinner(){
-    return this.props.buildResult === 'IN_PROGRESS'? <img src={loadingsvg} />: <span/>;
+    return this.props.inProgress? <img src={loadingsvg} />: <span/>;
   },
   _scrollButtons(){
-    const color = this.state.logPinned? "green": "#999" ; 
-    return ( <paper-button 
-      ref="pinLog" 
-      className="pinLog" 
-      id="pinLog" 
-      style = {{color}} 
-      onClick={this._onPinLog}>
-      <iron-icon icon="arrow-drop-down-circle"/>
-      <paper-tooltip  htmlFor="pinLog">Scroll to tail</paper-tooltip>
-    </paper-button>);
-  },
-  _consoleHeader(){
-    return <div id="console-header">
-      <paper-icon-button 
-        className="hint--left" 
-        data-hint="Full Log" 
-        style={{color: "white"}} 
-        onClick={this._fullLog} icon="reorder"></paper-icon-button>
-    </div>
+    const color = this.state.logPinned? "green": "white" ; 
+    return ( <div  ref="floatingMenu" className="floatingMenu">
+      <paper-toolbar middleJustify="start">
+        <paper-icon-button  onClick={this._fullLog} icon="reorder" ></paper-icon-button>
+        <paper-icon-button style = {{color}} icon="arrow-drop-down-circle" onClick={this._onPinLog} ></paper-icon-button>
+      </paper-toolbar>
+    </div>);
   },
   _fullLog(e){
     e.preventDefault();
@@ -79,16 +58,16 @@ export default React.createClass({
   },
   _setInitialTop(){
     if(!this.intialTop){
-      this.intialTop = this.refs.buildLog.getDOMNode().getBoundingClientRect().top;
+      this.intialTop = this.refs.buildLog.getBoundingClientRect().top;
     }
   },
 
   _onLogScroll(e){
     this._setInitialTop();
-    const newPos = this.refs.buildLog.getDOMNode().getBoundingClientRect().top
+    const newPos = this.refs.buildLog.getBoundingClientRect().top
     const scroll =  this.intialTop - newPos;
     // console.log(`Initial : ${this.intialTop}  newPos: ${newPos} scroll: ${Math.abs(scroll)}`);
-    this.refs.pinLog.getDOMNode().style.top= Math.abs(scroll)+"px"
+    this.refs.floatingMenu.style.top= Math.abs(scroll)+"px"
   },
   _onPinLog(e){
     this.setState({logPinned: !this.state.logPinned});
@@ -99,39 +78,47 @@ export default React.createClass({
       e.preventDefault();
     }
     this._setInitialTop();
-    this.refs.bottom.getDOMNode().scrollIntoView();
+    scrollIntoView( this.refs.bottom);
     this._onLogScroll();
   },
   _onLineSelect(event){
     if(event.target.tagName === 'SPAN'|| event.target.tagName === 'A'){
       event.stopPropagation();
+    }
+    if(event.target.tagName === 'A'){
       const lineId = event.currentTarget.getAttribute('id');
-      Router.HashLocation.push(lineId);
+      this.props.actions.LineSelect(lineId);
     }
   },
   _scrollToLine(lineId){
     if(lineId){
       const line = document.getElementById(lineId);
       if(line)
-        line.scrollIntoView();
+        scrollIntoView(line);
     }
   },
   _isLineSelected(lineNumber){
-    return `L${lineNumber}`  == this.selectedHash();
+    return `L${lineNumber}`  === this.selectedHash();
   },
   _openFold(e){
-    e.stopPropagation();
-    e.currentTarget.classList.toggle('closed');
-    e.currentTarget.classList.toggle('open');
+    const left = e.target.getClientRects()[0].left;
+    if(e.clientX < left + 50){
+      e.stopPropagation();
+      e.currentTarget.classList.toggle('closed');
+      e.currentTarget.classList.toggle('open');
+    }
   },
   _logFold(lines,startIdx,isLast){
-    if(lines.size  === 1){
-      return this._logLine(lines.get(0),startIdx);
+    if(lines.length  === 1){
+      return this._logLine(lines[0],startIdx);
     }
     const selectedLine = this.selectedHash()!=''? parseInt(this.selectedHash().replace("L",'')) :0;
-    const lineSelectedInFold = selectedLine > startIdx && selectedLine < startIdx + lines.size;
+    const lineSelectedInFold = selectedLine > startIdx && selectedLine < startIdx + lines.length;
     const isOpen = isLast || lineSelectedInFold; 
-    const logLines = lines.reduce((list,line,idx) => list.push( this._logLine(line,idx+startIdx)), List());
+    const logLines = lines.reduce((list,line,idx) => {
+      list.push( this._logLine(line,idx+startIdx))
+      return list;
+    }, []);
     return <div key={'fold'+(startIdx)} className={"fold "+ (isOpen? "open":"closed")} onClick={this._openFold}>{logLines}</div>
   },
   _logLine(log,idx){
@@ -151,21 +138,15 @@ export default React.createClass({
     return String(string).replace(/[&<>"'\/]/g,s =>  this.entityMap[s])
   },
   _renderLog(logLines){
-    const groupedLines = logLines.reduce((list,line)=>{
-      if( line.startsWith('$')){
-        return  list.push(List.of(line))
-      }
-      const newLast = list.last().push(line)
-      return list.set(-1,newLast);
-    } , List.of(List()));
-    //Add start indexes Turn [[..],[...],..] => [[[...],1] [[....],4], ..]
-    const groupedLinesWithIdx =  groupedLines.reduce((list,group) => {
-      if(list.last()){
-        return list.push(List.of(group,list.last().get(0).size+ list.last().get(1)))
-      }
-      return list.push(List.of(group,1));
-    }, List());
-    return groupedLinesWithIdx.reduce((list,group) => list.push(this._logFold(group.get(0),group.get(1), groupedLinesWithIdx.last() == group  ) ), List() )
+    const log =this.props.log;
+    // _logFold(lines,startIdx,isLast){
+    let startIdx =1 ; 
+    return log.reduce((groups,logGroup,idx) =>{
+      const fold = this._logFold(logGroup,startIdx,idx == log.length-1);
+      groups.push(fold);
+      startIdx+=logGroup.length;
+      return groups;
+    },[]);
   }
 
 });

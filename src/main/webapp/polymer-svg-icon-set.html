@@ -1,0 +1,83 @@
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="import" href="./bower_components/polymer/polymer.html">
+<link rel="import" href="./bower_components/iron-meta/iron-meta.html">
+<script>
+    Polymer({
+
+    is: 'polymer-svg-icon-set',
+    properties: {
+      name: {
+        type: String,
+        observer: '_nameChanged'
+      },
+
+      size: {
+        type: Number,
+        value: 24
+      }
+
+    },
+
+    getIconNames: function() {
+      this._icons = this._createIconMap();
+      return Object.keys(this._icons).map(function(n) {
+        return this.name + ':' + n;
+      }, this);
+    },
+
+    applyIcon: function(element, iconName) {
+      element = element.root || element;
+      this.removeIcon(element);
+      var svg = this._cloneIcon(iconName);
+      if (svg) {
+        var pde = Polymer.dom(element);
+        pde.insertBefore(svg, pde.childNodes[0]);
+        return element._svgIcon = svg;
+      }
+      return null;
+    },
+
+    removeIcon: function(element) {
+      if (element._svgIcon) {
+        Polymer.dom(element).removeChild(element._svgIcon);
+        element._svgIcon = null;
+      }
+    },
+
+    _nameChanged: function() {
+      new Polymer.IronMeta({type: 'iconset', key: this.name, value: this});
+    },
+
+    _createIconMap: function() {
+      var icons = Object.create(null);
+      Polymer.dom(this).querySelectorAll('[id]')
+        .forEach(function(icon) {
+          icons[icon.id] = icon;
+        });
+      return icons;
+    },
+
+    _cloneIcon: function(id) {
+      this._icons = this._icons || this._createIconMap();
+      return this._prepareSvgClone(this._icons[id], this.size);
+    },
+    _prepareSvgClone: function(sourceSvg, size) {
+      if (sourceSvg) {
+      return sourceSvg.parentNode.cloneNode(true);
+      }
+      return null;
+    }
+
+  });
+</script>
+    </head>
+<body>
+
+<iron-component-page></iron-component-page>
+
+</body>
+</html>

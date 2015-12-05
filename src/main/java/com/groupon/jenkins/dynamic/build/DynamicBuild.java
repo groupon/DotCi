@@ -25,10 +25,12 @@ package com.groupon.jenkins.dynamic.build;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
+import com.groupon.jenkins.*;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.BuildEnvironment;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
+import com.groupon.jenkins.dynamic.build.repository.*;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import hudson.EnvVars;
@@ -52,6 +54,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Map;
 import jenkins.model.Jenkins;
+import org.apache.commons.lang.*;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.stapler.HttpResponse;
@@ -187,6 +190,10 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         return getGithubRepositoryService().getGithubRepository();
     }
 
+    public boolean isPullRequest() {
+        return StringUtils.isNotEmpty( getCause().getPullRequestNumber());
+    }
+
     protected class DynamicRunExecution extends Build.BuildExecution implements BuildExecutionContext {
         @Override
         public boolean performStep(BuildStep execution, BuildListener listener) throws IOException, InterruptedException {
@@ -198,6 +205,17 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
             DynamicBuild.this.setResult(r);
         }
 
+        @Override
+        public Map<String, Object> getBuildEnvironmentVariables() {
+            try {
+                return DynamicBuild.this.getEnvironmentWithChangeSet(getListener());
+            } catch (IOException e) {
+               throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
 
         @Override
         protected Result doRun(BuildListener listener) throws Exception, hudson.model.Run.RunnerAbortedException {
@@ -207,7 +225,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
                     return Result.FAILURE;
                 }
                 exportDeployKeysIfPrivateRepo(listener, launcher);
-                BuildType buildType = BuildType.getBuildType(getParent());
+                BuildType buildType = BuildType.newBuildType(getParent());
                 Result buildRunResult =   buildType.runBuild(DynamicBuild.this, this, launcher, listener);
                 setResult(buildRunResult);
                 return buildRunResult;
@@ -330,5 +348,12 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     public String getDescription() {
        String description = super.getDescription();
         return description == null? getCurrentBranch().toString() : description;
+    }
+
+    @Override
+    public DynamicBuild getPreviousBuild() {
+        String parentSha = getCause().getParentSha();
+        DynamicBuildRepository buildRepository = SetupConfig.get().getDynamicBuildRepository();
+        return StringUtils.isEmpty(parentSha) ?  null: (DynamicBuild) buildRepository.getBuildBySha(this.getProject(), parentSha);
     }
 }

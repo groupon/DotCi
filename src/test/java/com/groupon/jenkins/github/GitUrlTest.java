@@ -63,4 +63,10 @@ public class GitUrlTest {
         String projectUrl = new GitUrl("git@github.com:groupon/DotCi.git").getHttpsUrl();
         assertEquals("https://github.com/groupon/DotCi", projectUrl);
     }
+
+    @Test
+    public void should_apply_template() {
+        String template = new GitUrl("git@github.com:suryagaddipati/cancan.git").applyTemplate("http://<DOMAIN>:<ORG>/<REPO>");
+        assertEquals("http://github.com:suryagaddipati/cancan", template);
+    }
 }

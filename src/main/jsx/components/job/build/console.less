@@ -1,8 +1,8 @@
 #console-header{
-   background-color: #666;
-   display: flex;
-   justify-content: flex-end;
-   padding-right: 5px;
+  background-color: #666;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 5px;
 }
 #buildLog p a {
   display: inline-block;
@@ -37,14 +37,17 @@
 #buildLog .fold {
   position: relative;
   overflow: hidden;
-  cursor: pointer;
+  // cursor: pointer;
   p:first-of-type{
     background:  8px 3px no-repeat #333;
   }
 }
- #buildLog  p.highlight {
-   background-color: #666;
- }
+#buildLog  p.highlight {
+  background-color: #666;
+}
+#buildLog  p:hover {
+  background-color: #444!important;
+}
 #buildLog p {
   position: relative;
   padding: 0 15px 0 55px;
@@ -69,8 +72,8 @@
   position: relative !important;
 }
 
-#buildLog .pinLog{
-  top: 10px;
+.floatingMenu{
+  top: 40px;
   z-index: 80;
   position: absolute;
   display: block;
@@ -78,5 +81,11 @@
   margin-right: 2px;
   padding-right: 16px;
   text-align: right;
-  height: 10px;
+  paper-toolbar{
+    background-color: transparent;
+  }
+  paper-icon-button{
+    width: 40px;
+  }
 }
+

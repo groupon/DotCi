@@ -49,6 +49,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.export.*;
 import org.mongodb.morphia.annotations.PostLoad;
 import org.mongodb.morphia.annotations.PrePersist;
 
@@ -337,6 +338,7 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         save();
     }
 
+    @Exported
     public DynamicProjectApi getAppData() throws IOException {
         return new DynamicProjectApi(this);
     }

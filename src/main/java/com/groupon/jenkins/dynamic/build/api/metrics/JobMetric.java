@@ -9,6 +9,7 @@ import com.groupon.jenkins.dynamic.build.DbBackedProject;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.api.metrics.charts.Chart;
+import com.groupon.jenkins.dynamic.build.repository.*;
 import com.groupon.jenkins.util.GReflectionUtils;
 import com.mongodb.DB;
 import hudson.ExtensionPoint;
@@ -32,7 +33,7 @@ public abstract class JobMetric implements ExtensionPoint {
     public abstract Chart getChart();
 
     protected DB getDB() {
-        return SetupConfig.get().getDynamicBuildRepository().getDatastore().getDB();
+        return getDynamicBuildRepository().getDatastore().getDB();
     }
 
     @Exported(inline = true)
@@ -83,8 +84,7 @@ public abstract class JobMetric implements ExtensionPoint {
         return branch;
     }
     protected List<DynamicBuild> getBuilds(Query<DynamicBuild> query) {
-        query = applyQueryValues(query);
-        query = applyQueryValues(query);
+        query = applyQueryFilters(query);
 
         List<DynamicBuild> builds = query.asList();
         for(DynamicBuild build: builds){
@@ -93,9 +93,14 @@ public abstract class JobMetric implements ExtensionPoint {
         return builds;
     }
     protected Query<DynamicBuild> getQuery() {
-        return SetupConfig.get().getDynamicBuildRepository().getDatastore().createQuery(DynamicBuild.class).disableValidation().field("projectId").equal(project.getId());
+        return getDynamicBuildRepository().getDatastore().createQuery(DynamicBuild.class).disableValidation().field("projectId").equal(project.getId());
     }
-    private Query<DynamicBuild> applyQueryValues(Query<DynamicBuild> query) {
+
+    private DynamicBuildRepository getDynamicBuildRepository() {
+        return SetupConfig.get().getDynamicBuildRepository();
+    }
+
+    private Query<DynamicBuild> applyQueryFilters(Query<DynamicBuild> query) {
         query = filterBranch(query);
         query = query.limit(getBuildCount());
         return query.order("number");
@@ -113,11 +118,9 @@ public abstract class JobMetric implements ExtensionPoint {
             return query;
         }
 
-
-        Pattern branchRegex = Pattern.compile(branch);
-        query = query.filter("actions.causes.branch.branch", branchRegex);
-        return query;
+        return getDynamicBuildRepository().filterExpression(branch,query);
     }
+
     private void associateProject(DbBackedProject project, DbBackedBuild build) {
         if(build != null) {
             GReflectionUtils.setField(Run.class, "project", build, project);

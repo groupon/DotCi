@@ -33,12 +33,13 @@ import hudson.Launcher;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import java.io.IOException;
+
 import jenkins.model.Jenkins;
 
 public abstract class BuildType implements ExtensionPoint{
-    public static BuildType getBuildType(DynamicProject project) {
-        String requestedBuildType = project.getBuildType() == null ? SetupConfig.get().getDefaultBuildType() : project.getBuildType();
-        for(BuildType buildType: all() ){
+    public static BuildType newBuildType(DynamicProject project) {
+        String requestedBuildType = getBuildType(project);
+        for(BuildType buildType: all()){
             if(buildType.getId().equals(requestedBuildType)){
                 try {
                     return buildType.getClass().newInstance();
@@ -48,11 +49,18 @@ public abstract class BuildType implements ExtensionPoint{
                     throw new RuntimeException(e);
                 }
             }
-
         }
-      throw new IllegalStateException("Build Type not found for the build");
+        throw new IllegalStateException("Build Type not found for the build");
     }
 
+    public static boolean isProjectOfBuildType(DynamicProject project, Class<? extends BuildType> clazz) {
+        String projectBuildType = getBuildType(project);
+        return clazz.getName().equals(projectBuildType);
+    }
+
+    private static String getBuildType(DynamicProject project) {
+        return project.getBuildType() == null ? SetupConfig.get().getDefaultBuildType() : project.getBuildType();
+    }
 
     public static ExtensionList<BuildType> all() {
         return Jenkins.getInstance().getExtensionList(BuildType.class);

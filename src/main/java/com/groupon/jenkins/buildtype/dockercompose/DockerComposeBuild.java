@@ -26,7 +26,6 @@ package com.groupon.jenkins.buildtype.dockercompose;
 
 import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
-import com.groupon.jenkins.buildtype.docker.CheckoutCommands;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.buildtype.util.shell.ShellScriptRunner;
@@ -40,6 +39,7 @@ import com.groupon.jenkins.git.GitUrl;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
 import com.groupon.jenkins.util.GroovyYamlTemplateProcessor;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.matrix.Combination;
 import hudson.model.BuildListener;
@@ -64,71 +64,59 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
     @Override
     public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
         Map<String,Object> buildEnvironment = build.getEnvironmentWithChangeSet(listener);
-        ShellCommands checkoutCommands = getCheckoutCommands(buildEnvironment);
+        Result result = doCheckout(buildEnvironment, buildExecutionContext, listener);
+        if (!Result.SUCCESS.equals(result)) {
+            return result;
+        }
         Map config = new GroovyYamlTemplateProcessor(getDotCiYml(build), buildEnvironment).getConfig();
-        this.buildConfiguration = getBuildConfiguration(build.getParent().getFullName(),config,build.getBuildId(),checkoutCommands,build.getSha(),build.getNumber());
+        this.buildConfiguration = new BuildConfiguration(config);
+        if(buildConfiguration.isSkipped()){
+            build.skip();
+            return Result.SUCCESS;
+        }
+
+
         build.setAxisList(buildConfiguration.getAxisList());
-        Result result ;
+
         if(buildConfiguration.isParallelized()){
-            ShellScriptRunner shellScriptRunner = new ShellScriptRunner(buildExecutionContext, listener);
-            Result checkoutResult = shellScriptRunner.runScript(checkoutCommands);
-            if(Result.FAILURE.equals(checkoutResult)) return checkoutResult;
-            result = runMultiConfigbuildRunner(build, buildConfiguration, listener,launcher);
+            result = runParallelBuild(build, buildExecutionContext, buildConfiguration, listener);
         }else{
             result = runSubBuild(new Combination(ImmutableMap.of("script", buildConfiguration.getOnlyRun())), buildExecutionContext, listener);
         }
+
         Result pluginResult = runPlugins(build, buildConfiguration.getPlugins(), listener, launcher);
         Result notifierResult = runNotifiers(build, buildConfiguration.getNotifiers(), listener);
-        return  result.combine(pluginResult).combine(notifierResult);
+        return result.combine(pluginResult).combine(notifierResult);
     }
 
-    private BuildConfiguration getBuildConfiguration(String fullName, Map config, String buildId, ShellCommands checkoutCommands , String sha, int number) {
-        return new BuildConfiguration(fullName,config,buildId,checkoutCommands,sha,number);
-    }
-    public ShellCommands getCheckoutCommands(Map<String, Object> dotCiEnvVars) {
-        GitUrl gitRepoUrl = new GitUrl((String) dotCiEnvVars.get("GIT_URL"));
-        boolean isPrivateRepo = Boolean.parseBoolean((String) dotCiEnvVars.get("DOTCI_IS_PRIVATE_REPO"));
-        String gitUrl = gitRepoUrl.getGitUrl();
-        ShellCommands shellCommands = new ShellCommands();
-        shellCommands.add("chmod -R u+w . ; find . ! -path \"./deploykey_rsa.pub\" ! -path \"./deploykey_rsa\" -delete");
-        shellCommands.add("git init");
-        shellCommands.add(format("git remote add origin %s",gitUrl));
-
-        if(dotCiEnvVars.get("DOTCI_PULL_REQUEST") != null){
-            if(isPrivateRepo){
-
-                shellCommands.add(format("ssh-agent bash -c \"ssh-add -D && ssh-add \\%s/deploykey_rsa && git fetch origin '+refs/pull/%s/merge:' \"",dotCiEnvVars.get("WORKSPACE"), dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
-            }else {
-                shellCommands.add(format("git fetch origin \"+refs/pull/%s/merge:\"", dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
-            }
-            shellCommands.add("git reset --hard FETCH_HEAD");
-        }else {
-            if(isPrivateRepo){
-
-                shellCommands.add(format("ssh-agent bash -c \"ssh-add -D && ssh-add \\%s/deploykey_rsa && git fetch origin %s \"",dotCiEnvVars.get("WORKSPACE"), dotCiEnvVars.get("DOTCI_BRANCH")));
-            }else{
-               shellCommands.add(format("git fetch origin %s",dotCiEnvVars.get("DOTCI_BRANCH")));
-            }
-            shellCommands.add(format("git reset --hard  %s", dotCiEnvVars.get("SHA")));
-            //TODO Handle dockerfiles with onbuild add directives
-            shellCommands.add("( for dockerfile in $(find . -name '*Dockerfile*'); do dockerfileName=$(basename $dockerfile) ; dockerfilePath=$(dirname $dockerfile); pushd $dockerfilePath >/dev/null ; for filename in $(grep ADD $dockerfileName | sed -e 's/^\\s*ADD\\s*//g' ; grep COPY $dockerfileName | sed -e 's/^\\s*COPY\\s*//g' ); do test -d $filename && continue ; test -f $filename || continue ; sha=$(git rev-list -n 1 HEAD $filename) ; touch -d \"$(git show -s --format=%ai $sha)\" $filename ; popd >/dev/null ; done ; done ) || true # Set modified time of files added in Dockerfiles to allow for build caching");
-        }
-        return shellCommands;
-    }
     @Override
     public Result runSubBuild(Combination combination, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
-        ShellScriptRunner shellScriptRunner = new ShellScriptRunner(buildExecutionContext, listener);
-        return shellScriptRunner.runScript(buildConfiguration.getCommands(combination));
-    }
-    private String getDotCiYml(DynamicBuild build) throws IOException {
-        try {
-            return build.getGithubRepositoryService().getGHFile(".ci.yml", build.getSha()).getContent();
-        } catch (FileNotFoundException _){
-            throw new InvalidBuildConfigurationException("No .ci.yml found.");
-        }
+        ShellCommands commands = buildConfiguration.getCommands(combination, buildExecutionContext.getBuildEnvironmentVariables());
+        return runCommands(commands, buildExecutionContext, listener);
     }
 
-    private Result runMultiConfigbuildRunner(final DynamicBuild dynamicBuild, final BuildConfiguration buildConfiguration, final BuildListener listener, Launcher launcher) throws IOException, InterruptedException {
+    private Result doCheckout(Map<String,Object> buildEnvironment, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
+        ShellCommands commands = BuildConfiguration.getCheckoutCommands(buildEnvironment);
+        return runCommands(commands, buildExecutionContext, listener);
+    }
+
+    private Result runCommands(ShellCommands commands, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
+        ShellScriptRunner shellScriptRunner = new ShellScriptRunner(buildExecutionContext, listener);
+        return shellScriptRunner.runScript(commands);
+    }
+
+    private String getDotCiYml(DynamicBuild build) throws IOException, InterruptedException {
+        FilePath fp = new FilePath(build.getWorkspace(), ".ci.yml");
+        if (!fp.exists()) {
+            throw new InvalidBuildConfigurationException("No .ci.yml found.");
+        }
+
+        return fp.readToString();
+    }
+
+    private Result runParallelBuild(final DynamicBuild dynamicBuild, final  BuildExecutionContext buildExecutionContext, final BuildConfiguration buildConfiguration, final BuildListener listener) throws IOException, InterruptedException {
+        Result beforeRunResult = runBeforeCommands(buildExecutionContext, listener);
+
         SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, this, new SubBuildScheduler.SubBuildFinishListener() {
             @Override
             public void runFinished(DynamicSubBuild subBuild) throws IOException {
@@ -141,7 +129,7 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
         try {
             Iterable<Combination> axisList = buildConfiguration.getAxisList().list();
             Result combinedResult = subBuildScheduler.runSubBuilds(axisList, listener);
-            dynamicBuild.setResult(combinedResult);
+            dynamicBuild.setResult(combinedResult.combine(beforeRunResult));
             return combinedResult;
         } finally {
             try {
@@ -150,6 +138,14 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
                 // There is nothing much we can do at this point
             }
         }
+    }
+
+    private Result runBeforeCommands(final BuildExecutionContext buildExecutionContext, final BuildListener listener) throws IOException, InterruptedException {
+        ShellCommands beforeCommands = buildConfiguration.getBeforeRunCommandIfPresent();
+        if (beforeCommands != null) {
+            return runCommands(beforeCommands, buildExecutionContext, listener);
+        }
+        return Result.SUCCESS;
     }
 
     private Result runPlugins(DynamicBuild dynamicBuild, List<DotCiPluginAdapter> plugins, BuildListener listener, Launcher launcher) {

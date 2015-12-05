@@ -40,8 +40,8 @@ import hudson.slaves.WorkspaceList.Lease;
 import hudson.tasks.BuildStep;
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
+
 import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
@@ -149,6 +149,18 @@ public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSub
         @Override
         public void setResult(Result r) {
             DynamicSubBuild.this.setResult(r);
+        }
+
+        @Override
+        public Map<String, Object> getBuildEnvironmentVariables() {
+            try{
+                EnvVars envVars = DynamicSubBuild.this.getJenkinsEnvVariables(getListener());
+                Map<String, Object> buildVariables = DynamicSubBuild.this.getParentBuild().getEnvironmentWithChangeSet(getListener());
+                buildVariables.putAll(envVars);
+                return buildVariables;
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
         }
 
     }

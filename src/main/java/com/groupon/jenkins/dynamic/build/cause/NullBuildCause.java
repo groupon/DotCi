@@ -41,6 +41,11 @@ public class NullBuildCause extends BuildCause {
     }
 
     @Override
+    public String getParentSha() {
+        return null;
+    }
+
+    @Override
     public String getPusher() {
         return "unknown";
     }
