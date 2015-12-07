@@ -38,6 +38,14 @@
     transition: background-color 1s ease-in;
     padding-top: 1em;
   }
+  &-QUEUED{
+    >:nth-child(1){
+      background-color: var(--queued);
+    }
+    .build-row--number{
+      color: var(--queued);
+    }
+  }
   &-FAILURE{
     >:nth-child(1){
       background-color: var(--failure);

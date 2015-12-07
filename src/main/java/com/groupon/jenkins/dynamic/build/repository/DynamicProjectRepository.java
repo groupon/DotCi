@@ -202,6 +202,6 @@ public class DynamicProjectRepository extends MongoRepository {
             return 1;
         }
 
-        return seq.getCounter();
+        return seq.getCounter() + 1;
     }
 }

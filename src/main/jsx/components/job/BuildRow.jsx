@@ -51,18 +51,18 @@ export default React.createClass({
         <div className ={"build-info build-info-"+result}>
           {this._statusRow(result,cause)}
           <span>
-            <div className="build-row--title"><small>{branch}</small> 
-              <PageLink  href={this._buildUrl()}>{message}</PageLink>
-            </div> 
+            <div className="build-row--title"><small>{branch}</small>
+              <PageLink disabled={this._isDisabled()} href={this._buildUrl()}>{message}</PageLink>
+            </div>
             <div className="build-row--committer">
               <Avatar avatarUrl={avatarUrl} />
               <span>{committerName}</span>
             </div>
             <div className="build-row--cause">{cause['shortDescription']}</div>
           </span>
-          <span>  
-            <div>#<PageLink  className="build-row--number" href={this._buildUrl()}>{number}{result.toLowerCase()}</PageLink></div>
-            <div><iron-icon icon="github:octoface"/><a className="github-link link-no-decoration" href={commitUrl}> {shortSha}</a></div>
+          <span>
+            <div>#<PageLink className="build-row--number" href={this._buildUrl()} disabled={this._isDisabled()}>{number}{result.toLowerCase()}</PageLink></div>
+            {this._sha(commitUrl, shortSha)}
           </span>
           <span>
             <div>
@@ -83,6 +83,16 @@ export default React.createClass({
       <BuildIcon result={result} />
       <BuildCauseIcon cause={cause['name']} />
     </span>
+  },
+  _isDisabled() {
+    return this.props.build.result === "QUEUED";
+  },
+  _sha(commitUrl, shortSha) {
+    let child = <a className="github-link link-no-decoration" href={commitUrl}><iron-icon icon="github:octoface"/>{shortSha}</a>
+    if (this._isDisabled()) {
+      child = <span className="github-link link-no-decoration" href={commitUrl}><iron-icon icon="github:octoface"/>{shortSha}</span>
+    }
+    return <div>{child}</div>
   },
   _buildUrl(){
     return this.props.fullUrl? this.props.build.url: "/"+this.props.build.number;

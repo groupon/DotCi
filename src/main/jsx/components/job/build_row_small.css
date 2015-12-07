@@ -3,6 +3,10 @@
   margin-left: 10px;
 }
 
+.build-row-small.QUEUED{
+  color: var(--queued);
+}
+
 .build-row-small.FAILURE{
   color: var(--failure);
 }
