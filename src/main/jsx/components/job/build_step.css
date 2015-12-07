@@ -14,6 +14,9 @@
   display: flex;
   align-items: center;
   .compact{
+    &-QUEUED{
+       border: 3px solid var(--queued) !important;
+    }
     &-SUCCESS{
       border: 3px solid var(--success) !important;
     }
