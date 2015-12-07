@@ -132,14 +132,22 @@ public class DynamicBuildRepository extends MongoRepository {
         return (T) build;
     }
 
-    public <T extends DbBackedBuild> T getBuildBySha(DbBackedProject<?, ?> project, String sha) {
-        DbBackedBuild build = getQuery(project).
-                field("actions.causes.sha").equal(sha).
-                get();
+    public <T extends DbBackedBuild> T getBuildBySha(DbBackedProject<?, ?>  project, String sha, Result result) {
+
+        Query<DbBackedBuild> query = getQuery(project).
+                field("actions.causes.sha").equal(sha);
+
+        if (result != null) {
+            query = query.filter("result", result.toString());
+        }
+        DbBackedBuild build = query.get();
 
         associateProject(project, build);
 
         return (T) build;
+    }
+    public <T extends DbBackedBuild> T getBuildBySha(DbBackedProject<?, ?> project, String sha) {
+        return getBuildBySha(project,sha,null);
     }
 
 
@@ -329,5 +337,6 @@ public class DynamicBuildRepository extends MongoRepository {
             build.postMorphiaLoad();
         }
     }
+
 }
 

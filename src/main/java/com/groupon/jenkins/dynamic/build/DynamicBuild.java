@@ -354,6 +354,6 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     public DynamicBuild getPreviousBuild() {
         String parentSha = getCause().getParentSha();
         DynamicBuildRepository buildRepository = SetupConfig.get().getDynamicBuildRepository();
-        return StringUtils.isEmpty(parentSha) ?  null: (DynamicBuild) buildRepository.getBuildBySha(this.getProject(), parentSha);
+        return StringUtils.isEmpty(parentSha) ?  null: (DynamicBuild) buildRepository.getBuildBySha(this.getProject(), parentSha, Result.SUCCESS);
     }
 }
