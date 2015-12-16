@@ -24,7 +24,7 @@ plugin:
   command: mvn hpi:run
  
 ci:
-  build: .
+  image: maven:3
   volumes_from:
     - mavendata
   volumes:
