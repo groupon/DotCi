@@ -71,6 +71,8 @@ public class BuildConfiguration {
         ShellCommands shellCommands = new ShellCommands();
         shellCommands.add(BuildConfiguration.getCheckoutCommands(dotCiEnvVars));
 
+        //TODO consider piping to /dev/null here to avoid docker errors from confusing users
+        shellCommands.add(String.format("trap \"docker-compose -f %s kill; docker ps -a --filter 'name=%s_' -q | xargs docker rm -v --force || true; docker images | grep %s_ | awk '{print $3}' | xargs docker rmi --force || true; exit\" PIPE QUIT INT HUP EXIT TERM", fileName, projectName, projectName));
         if (config.containsKey("before_run") && !isParallelized()) {
             shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape((String) config.get("before_run"))));
         }
@@ -80,7 +82,6 @@ public class BuildConfiguration {
             shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape(beforeScript)));
         }
 
-        shellCommands.add(String.format("trap \"docker-compose -f %s kill; docker-compose -f %s rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",fileName,fileName));
         shellCommands.add(String.format("docker-compose -f %s pull",fileName));
         if (config.get("run") != null) {
             Map runConfig = (Map) config.get("run");
