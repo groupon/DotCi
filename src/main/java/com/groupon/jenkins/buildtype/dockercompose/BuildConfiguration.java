@@ -63,7 +63,7 @@ public class BuildConfiguration {
         return shellCommands;
     }
 
-    public ShellCommands getCommands(Combination combination, Map<String, Object> dotCiEnvVars) {
+    public List<ShellCommands> getCommands(Combination combination, Map<String, Object> dotCiEnvVars) {
         String dockerComposeContainerName = combination.get("script");
         String projectName = (String) dotCiEnvVars.get("COMPOSE_PROJECT_NAME");
         String fileName = getDockerComposeFileName();
@@ -94,7 +94,12 @@ public class BuildConfiguration {
         }
         extractWorkingDirIntoWorkSpace(dockerComposeContainerName, projectName, shellCommands);
 
-        return shellCommands;
+        List<ShellCommands> commandList = new ArrayList<ShellCommands>();
+        commandList.add(shellCommands);
+        if (config.containsKey("after_each")) {
+            commandList.add(new ShellCommands(String.format("sh -xc '%s'", SHELL_ESCAPE.escape((String) config.get("after_each")))));
+        }
+        return commandList;
     }
 
     private void extractWorkingDirIntoWorkSpace(String dockerComposeContainerName, String projectName, ShellCommands shellCommands) {
@@ -102,7 +107,6 @@ public class BuildConfiguration {
             shellCommands.add(getCopyWorkDirIntoWorkspaceCommands(dockerComposeContainerName, projectName));
         }
     }
-
 
     public AxisList getAxisList() {
         String dockerComposeContainerName = getOnlyRun();

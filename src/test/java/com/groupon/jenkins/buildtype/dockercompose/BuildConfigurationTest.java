@@ -72,8 +72,8 @@ public class BuildConfigurationTest {
   @Test
   public void should_run_before_run_command_in_before_run_if_present(){
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("before_run", "before_run cmd", "run", of("unit", "command")));
-    ShellCommands commands = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
-    Assert.assertEquals("sh -xc 'before_run cmd'", commands.get(5));
+    List<ShellCommands> commands = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
+    Assert.assertEquals("sh -xc 'before_run cmd'", commands.get(0).get(5));
   }
 
   @Test
@@ -86,9 +86,9 @@ public class BuildConfigurationTest {
   @Test
   public void should_not_run_before_run_for_parallel_subbuild(){
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("before_run", "before_run cmd", "run", of("unit", "command", "integration", "integration")));
-    ShellCommands commands = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
-    for (String command : commands.getCommands()) {
-      Assert.assertNotEquals("before_run cmd", command);
+    List<ShellCommands> commands = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
+    for (String command : commands.get(0).getCommands()) {
+      Assert.assertNotEquals("sh -xc 'before_run cmd'", command);
     }
   }
 
@@ -110,14 +110,22 @@ public class BuildConfigurationTest {
     Assert.assertFalse(buildConfiguration.isSkipped());
   }
 
+  @Test
+  public void should_run_after_each(){
+    BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("run", of("unit", "command", "integration", "integration"), "after_each", "after_each cmd"));
+    List<ShellCommands> commandList = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
+    Assert.assertEquals(commandList.size(), 2);
+    Assert.assertEquals("sh -xc 'after_each cmd'",commandList.get(1).get(0));
+  }
+
   private ShellCommands getRunCommands(Map ciConfig) {
     BuildConfiguration buildConfiguration = new BuildConfiguration(ciConfig);
-    return buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
+    return buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars()).get(0);
   }
 
   private ShellCommands getRunCommands() {
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("run", of("unit", "command", "integration", "integration")));
-    return buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
+    return buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars()).get(0);
   }
 
   private Map<String, Object> getEnvVars() {
