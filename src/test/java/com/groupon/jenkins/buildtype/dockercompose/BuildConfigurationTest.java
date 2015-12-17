@@ -65,15 +65,15 @@ public class BuildConfigurationTest {
   @Test
   public void should_run_before_each_command_if_present(){
     ShellCommands commands = getRunCommands(ImmutableMap.of("before_each", "before_each cmd", "run", of("unit", "command", "integration", "integration")));
-    Assert.assertEquals("sh -xc 'before_each cmd'", commands.get(5));
-    Assert.assertEquals("trap \"docker-compose -f docker-compose.yml kill; docker-compose -f docker-compose.yml rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(6));
+    Assert.assertEquals("trap \"docker-compose -f docker-compose.yml kill; docker-compose -f docker-compose.yml rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(5));
+    Assert.assertEquals("sh -xc 'before_each cmd'", commands.get(6));
   }
 
   @Test
   public void should_run_before_run_command_in_before_run_if_present(){
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("before_run", "before_run cmd", "run", of("unit", "command")));
     List<ShellCommands> commands = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
-    Assert.assertEquals("sh -xc 'before_run cmd'", commands.get(0).get(5));
+    Assert.assertEquals("sh -xc 'before_run cmd'", commands.get(0).get(6));
   }
 
   @Test
