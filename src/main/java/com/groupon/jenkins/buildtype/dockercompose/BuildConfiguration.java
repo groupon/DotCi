@@ -54,16 +54,11 @@ public class BuildConfiguration {
         this.config = config;
     }
 
-    public ShellCommands getBeforeRunCommandIfPresent() {
-        if (!config.containsKey("before_run")) {
-            return null;
-        }
-        ShellCommands shellCommands = new ShellCommands();
-        shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape((String) config.get("before_run"))));
-        return shellCommands;
+    public String getBeforeRunCommandIfPresent() {
+        return config.containsKey("before_run")?  SHELL_ESCAPE.escape((String) config.get("before_run")):null;
     }
 
-    public List<ShellCommands> getCommands(Combination combination, Map<String, Object> dotCiEnvVars) {
+    public ShellCommands getCommands(Combination combination, Map<String, Object> dotCiEnvVars) {
         String dockerComposeContainerName = combination.get("script");
         String projectName = (String) dotCiEnvVars.get("COMPOSE_PROJECT_NAME");
         String fileName = getDockerComposeFileName();
@@ -73,12 +68,12 @@ public class BuildConfiguration {
 
         shellCommands.add(String.format("trap \"docker-compose -f %s kill; docker-compose -f %s rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",fileName,fileName));
         if (config.containsKey("before_run") && !isParallelized()) {
-            shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape((String) config.get("before_run"))));
+            shellCommands.add(getBeforeRunCommandIfPresent());
         }
 
         if (config.containsKey("before_each") || config.containsKey("before")) {
-            String beforeScript = (String) (config.containsKey("before_each") ? config.get("before_each") : config.get("before"));
-            shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape(beforeScript)));
+            String beforeCommand = (String) (config.containsKey("before_each") ? config.get("before_each") : config.get("before"));
+            shellCommands.add( SHELL_ESCAPE.escape(beforeCommand));
         }
 
         shellCommands.add(String.format("docker-compose -f %s pull",fileName));
@@ -94,12 +89,10 @@ public class BuildConfiguration {
         }
         extractWorkingDirIntoWorkSpace(dockerComposeContainerName, projectName, shellCommands);
 
-        List<ShellCommands> commandList = new ArrayList<ShellCommands>();
-        commandList.add(shellCommands);
         if (config.containsKey("after_each")) {
-            commandList.add(new ShellCommands(String.format("sh -xc '%s'", SHELL_ESCAPE.escape((String) config.get("after_each")))));
+            shellCommands.add(SHELL_ESCAPE.escape ((String) config.get("after_each")));
         }
-        return commandList;
+        return shellCommands;
     }
 
     private void extractWorkingDirIntoWorkSpace(String dockerComposeContainerName, String projectName, ShellCommands shellCommands) {

@@ -66,28 +66,28 @@ public class BuildConfigurationTest {
   public void should_run_before_each_command_if_present(){
     ShellCommands commands = getRunCommands(ImmutableMap.of("before_each", "before_each cmd", "run", of("unit", "command", "integration", "integration")));
     Assert.assertEquals("trap \"docker-compose -f docker-compose.yml kill; docker-compose -f docker-compose.yml rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(5));
-    Assert.assertEquals("sh -xc 'before_each cmd'", commands.get(6));
+    Assert.assertEquals("before_each cmd", commands.get(6));
   }
 
   @Test
   public void should_run_before_run_command_in_before_run_if_present(){
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("before_run", "before_run cmd", "run", of("unit", "command")));
-    List<ShellCommands> commands = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
-    Assert.assertEquals("sh -xc 'before_run cmd'", commands.get(0).get(6));
+    ShellCommands commands = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
+    Assert.assertEquals("before_run cmd", commands.get(6));
   }
 
   @Test
   public void should_run_before_run_with_parallel_build(){
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("before_run", "before_run cmd", "run", of("unit", "command", "integration", "integration")));
-    ShellCommands commands = buildConfiguration.getBeforeRunCommandIfPresent();
-    Assert.assertEquals("sh -xc 'before_run cmd'", commands.get(0));
+    String command = buildConfiguration.getBeforeRunCommandIfPresent();
+    Assert.assertEquals("before_run cmd", command);
   }
 
   @Test
   public void should_not_run_before_run_for_parallel_subbuild(){
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("before_run", "before_run cmd", "run", of("unit", "command", "integration", "integration")));
-    List<ShellCommands> commands = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
-    for (String command : commands.get(0).getCommands()) {
+    ShellCommands commands = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
+    for (String command : commands.getCommands()) {
       Assert.assertNotEquals("sh -xc 'before_run cmd'", command);
     }
   }
@@ -113,19 +113,18 @@ public class BuildConfigurationTest {
   @Test
   public void should_run_after_each(){
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("run", of("unit", "command", "integration", "integration"), "after_each", "after_each cmd"));
-    List<ShellCommands> commandList = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
-    Assert.assertEquals(commandList.size(), 2);
-    Assert.assertEquals("sh -xc 'after_each cmd'",commandList.get(1).get(0));
+    ShellCommands commandList = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
+    Assert.assertEquals("after_each cmd",Iterables.getLast(commandList.getCommands()));
   }
 
   private ShellCommands getRunCommands(Map ciConfig) {
     BuildConfiguration buildConfiguration = new BuildConfiguration(ciConfig);
-    return buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars()).get(0);
+    return buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
   }
 
   private ShellCommands getRunCommands() {
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("run", of("unit", "command", "integration", "integration")));
-    return buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars()).get(0);
+    return buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
   }
 
   private Map<String, Object> getEnvVars() {
