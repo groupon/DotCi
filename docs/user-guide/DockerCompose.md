@@ -24,6 +24,13 @@ before_each: "./some_script && ./another_script"
 ```
 Specify commands that should be run before each run sub-command. 
 
+### `after_each` (Optional)
+
+```yaml
+after_each: "./some_script && ./another_script"
+```
+Specify commands that should be run after each run sub-command. These will run on success and failure. 
+
 ### `run` (Required)
 
 ```yaml

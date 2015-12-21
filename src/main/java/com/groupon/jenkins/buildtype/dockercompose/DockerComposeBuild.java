@@ -35,7 +35,6 @@ import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildRunner;
 import com.groupon.jenkins.dynamic.build.execution.SubBuildScheduler;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
-import com.groupon.jenkins.git.GitUrl;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
 import com.groupon.jenkins.util.GroovyYamlTemplateProcessor;
 import hudson.Extension;
@@ -45,12 +44,10 @@ import hudson.matrix.Combination;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import static java.lang.String.format;
 
 @Extension
 public class DockerComposeBuild extends BuildType implements SubBuildRunner {
@@ -75,7 +72,6 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
             return Result.SUCCESS;
         }
 
-
         build.setAxisList(buildConfiguration.getAxisList());
 
         if(buildConfiguration.isParallelized()){
@@ -91,18 +87,22 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
 
     @Override
     public Result runSubBuild(Combination combination, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
-        ShellCommands commands = buildConfiguration.getCommands(combination, buildExecutionContext.getBuildEnvironmentVariables());
-        return runCommands(commands, buildExecutionContext, listener);
+        List<ShellCommands> commandList = buildConfiguration.getCommands(combination, buildExecutionContext.getBuildEnvironmentVariables());
+        return runCommands(commandList, buildExecutionContext, listener);
     }
 
     private Result doCheckout(Map<String,Object> buildEnvironment, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
         ShellCommands commands = BuildConfiguration.getCheckoutCommands(buildEnvironment);
-        return runCommands(commands, buildExecutionContext, listener);
+        return runCommands(Arrays.asList(commands), buildExecutionContext, listener);
     }
 
-    private Result runCommands(ShellCommands commands, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
+    private Result runCommands(List<ShellCommands> commandList, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
         ShellScriptRunner shellScriptRunner = new ShellScriptRunner(buildExecutionContext, listener);
-        return shellScriptRunner.runScript(commands);
+        Result result = Result.SUCCESS;
+        for (ShellCommands commands : commandList) {
+            result = result.combine(shellScriptRunner.runScript(commands));
+        }
+        return result;
     }
 
     private String getDotCiYml(DynamicBuild build) throws IOException, InterruptedException {
@@ -143,7 +143,7 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
     private Result runBeforeCommands(final BuildExecutionContext buildExecutionContext, final BuildListener listener) throws IOException, InterruptedException {
         ShellCommands beforeCommands = buildConfiguration.getBeforeRunCommandIfPresent();
         if (beforeCommands != null) {
-            return runCommands(beforeCommands, buildExecutionContext, listener);
+            return runCommands(Arrays.asList(beforeCommands), buildExecutionContext, listener);
         }
         return Result.SUCCESS;
     }
