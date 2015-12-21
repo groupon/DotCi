@@ -63,7 +63,7 @@ public class BuildConfiguration {
         return shellCommands;
     }
 
-    public ShellCommands getCommands(Combination combination, Map<String, Object> dotCiEnvVars) {
+    public List<ShellCommands> getCommands(Combination combination, Map<String, Object> dotCiEnvVars) {
         String dockerComposeContainerName = combination.get("script");
         String projectName = (String) dotCiEnvVars.get("COMPOSE_PROJECT_NAME");
         String fileName = getDockerComposeFileName();
@@ -71,6 +71,7 @@ public class BuildConfiguration {
         ShellCommands shellCommands = new ShellCommands();
         shellCommands.add(BuildConfiguration.getCheckoutCommands(dotCiEnvVars));
 
+        shellCommands.add(String.format("trap \"docker-compose -f %s kill; docker-compose -f %s rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",fileName,fileName));
         if (config.containsKey("before_run") && !isParallelized()) {
             shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape((String) config.get("before_run"))));
         }
@@ -80,7 +81,6 @@ public class BuildConfiguration {
             shellCommands.add(String.format("sh -xc '%s'", SHELL_ESCAPE.escape(beforeScript)));
         }
 
-        shellCommands.add(String.format("trap \"docker-compose -f %s kill; docker-compose -f %s rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",fileName,fileName));
         shellCommands.add(String.format("docker-compose -f %s pull",fileName));
         if (config.get("run") != null) {
             Map runConfig = (Map) config.get("run");
@@ -94,7 +94,12 @@ public class BuildConfiguration {
         }
         extractWorkingDirIntoWorkSpace(dockerComposeContainerName, projectName, shellCommands);
 
-        return shellCommands;
+        List<ShellCommands> commandList = new ArrayList<ShellCommands>();
+        commandList.add(shellCommands);
+        if (config.containsKey("after_each")) {
+            commandList.add(new ShellCommands(String.format("sh -xc '%s'", SHELL_ESCAPE.escape((String) config.get("after_each")))));
+        }
+        return commandList;
     }
 
     private void extractWorkingDirIntoWorkSpace(String dockerComposeContainerName, String projectName, ShellCommands shellCommands) {
@@ -102,7 +107,6 @@ public class BuildConfiguration {
             shellCommands.add(getCopyWorkDirIntoWorkspaceCommands(dockerComposeContainerName, projectName));
         }
     }
-
 
     public AxisList getAxisList() {
         String dockerComposeContainerName = getOnlyRun();
@@ -173,8 +177,6 @@ public class BuildConfiguration {
                 shellCommands.add(format("git fetch origin %s",dotCiEnvVars.get("DOTCI_BRANCH")));
             }
             shellCommands.add(format("git reset --hard  %s", dotCiEnvVars.get("SHA")));
-            //TODO Handle dockerfiles with onbuild add directives
-            shellCommands.add("( for dockerfile in $(find . -name '*Dockerfile*'); do dockerfileName=$(basename $dockerfile) ; dockerfilePath=$(dirname $dockerfile); pushd $dockerfilePath >/dev/null ; for filename in $(grep ADD $dockerfileName | sed -e 's/^\\s*ADD\\s*//g' ; grep COPY $dockerfileName | sed -e 's/^\\s*COPY\\s*//g' ); do test -d $filename && continue ; test -f $filename || continue ; sha=$(git rev-list -n 1 HEAD $filename) ; touch -d \"$(git show -s --format=%ai $sha)\" $filename ; popd >/dev/null ; done ; done ) || true # Set modified time of files added in Dockerfiles to allow for build caching");
         }
         return shellCommands;
     }
