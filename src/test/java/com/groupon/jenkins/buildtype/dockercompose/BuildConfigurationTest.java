@@ -88,7 +88,7 @@ public class BuildConfigurationTest {
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("before_run", "before_run cmd", "run", of("unit", "command", "integration", "integration")));
     ShellCommands commands = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
     for (String command : commands.getCommands()) {
-      Assert.assertNotEquals("sh -xc 'before_run cmd'", command);
+      Assert.assertNotEquals("before_run cmd", command);
     }
   }
 
@@ -115,6 +115,13 @@ public class BuildConfigurationTest {
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("run", of("unit", "command", "integration", "integration"), "after_each", "after_each cmd"));
     ShellCommands commandList = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
     Assert.assertEquals("after_each cmd",Iterables.getLast(commandList.getCommands()));
+  }
+
+  @Test
+  public void should_not_run_after_run_after_parallized_builds_are_finished(){
+    BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("run", of("unit", "command", "integration", "integration"), "after_run", "after_run cmd"));
+    ShellCommands commandList = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
+    Assert.assertNotEquals("after_each cmd",Iterables.getLast(commandList.getCommands()));
   }
 
   private ShellCommands getRunCommands(Map ciConfig) {

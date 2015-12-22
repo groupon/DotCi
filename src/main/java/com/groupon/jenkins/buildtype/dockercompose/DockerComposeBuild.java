@@ -111,7 +111,6 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
     }
 
     private Result runParallelBuild(final DynamicBuild dynamicBuild, final  BuildExecutionContext buildExecutionContext, final BuildConfiguration buildConfiguration, final BuildListener listener) throws IOException, InterruptedException {
-        Result beforeRunResult = runBeforeCommands(buildExecutionContext, listener);
 
         SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, this, new SubBuildScheduler.SubBuildFinishListener() {
             @Override
@@ -123,10 +122,15 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
         });
 
         try {
+            Result beforeRunResult = runBeforeCommands(buildExecutionContext, listener);
             Iterable<Combination> axisList = buildConfiguration.getAxisList().list();
-            Result combinedResult = subBuildScheduler.runSubBuilds(axisList, listener);
-            dynamicBuild.setResult(combinedResult.combine(beforeRunResult));
-            return combinedResult;
+            Result runResult = beforeRunResult.combine(subBuildScheduler.runSubBuilds(axisList, listener));
+            if(runResult.equals(Result.SUCCESS)){
+                Result afterRunResult = runAfterCommands(buildExecutionContext,listener);
+                runResult = runResult.combine(afterRunResult);
+            }
+            dynamicBuild.setResult(runResult);
+            return runResult;
         } finally {
             try {
                 subBuildScheduler.cancelSubBuilds(listener.getLogger());
@@ -134,6 +138,14 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
                 // There is nothing much we can do at this point
             }
         }
+    }
+
+    private Result runAfterCommands(BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
+        String afterCommand = buildConfiguration.getAfterRunCommandIfPresent();
+        if (afterCommand != null) {
+            return runCommands(new ShellCommands(afterCommand), buildExecutionContext, listener);
+        }
+        return Result.SUCCESS;
     }
 
     private Result runBeforeCommands(final BuildExecutionContext buildExecutionContext, final BuildListener listener) throws IOException, InterruptedException {

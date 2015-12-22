@@ -57,6 +57,9 @@ public class BuildConfiguration {
     public String getBeforeRunCommandIfPresent() {
         return config.containsKey("before_run")?  SHELL_ESCAPE.escape((String) config.get("before_run")):null;
     }
+    public String getAfterRunCommandIfPresent() {
+        return config.containsKey("after_run")?  SHELL_ESCAPE.escape((String) config.get("after_run")):null;
+    }
 
     public ShellCommands getCommands(Combination combination, Map<String, Object> dotCiEnvVars) {
         String dockerComposeContainerName = combination.get("script");
@@ -91,6 +94,9 @@ public class BuildConfiguration {
 
         if (config.containsKey("after_each")) {
             shellCommands.add(SHELL_ESCAPE.escape ((String) config.get("after_each")));
+        }
+        if (config.containsKey("after_run") && !isParallelized()) {
+            shellCommands.add(getAfterRunCommandIfPresent());
         }
         return shellCommands;
     }
