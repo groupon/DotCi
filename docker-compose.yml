@@ -24,6 +24,8 @@ plugin:
   command: mvn hpi:run
  
 ci:
+  tty: false
+  stdin_open: false
   image: maven:3
   volumes_from:
     - mavendata
