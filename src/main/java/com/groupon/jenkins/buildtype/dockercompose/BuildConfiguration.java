@@ -24,19 +24,22 @@
 
 package com.groupon.jenkins.buildtype.dockercompose;
 
+import com.google.common.escape.Escaper;
+import com.google.common.escape.Escapers;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.extensions.DotCiExtensionsHelper;
-import com.google.common.escape.Escaper;
-import com.google.common.escape.Escapers;
-import com.groupon.jenkins.git.*;
+import com.groupon.jenkins.git.GitUrl;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
 import hudson.matrix.Axis;
 import hudson.matrix.AxisList;
 import hudson.matrix.Combination;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import static java.lang.String.format;
 
 public class BuildConfiguration {
@@ -82,13 +85,8 @@ public class BuildConfiguration {
         shellCommands.add(String.format("docker-compose -f %s pull",fileName));
         if (config.get("run") != null) {
             Map runConfig = (Map) config.get("run");
-            Object dockerComposeCommand = runConfig.get(dockerComposeContainerName);
-            if (dockerComposeCommand != null ) {
-                shellCommands.add(String.format("docker-compose -f %s run -T %s %s", fileName, dockerComposeContainerName,SHELL_ESCAPE.escape((String) dockerComposeCommand)));
-            }
-            else {
-                shellCommands.add(String.format("docker-compose -f %s run -T %s",fileName,dockerComposeContainerName));
-            }
+            String dockerComposeRunCommand = getDockerComposeRunCommand(dockerComposeContainerName, fileName, runConfig);
+            shellCommands.add(format("hash unbuffer >/dev/null 2>&1 && unbuffer %s || %s",dockerComposeRunCommand,dockerComposeRunCommand));
         }
         extractWorkingDirIntoWorkSpace(dockerComposeContainerName, projectName, shellCommands);
 
@@ -99,6 +97,16 @@ public class BuildConfiguration {
             shellCommands.add(getAfterRunCommandIfPresent());
         }
         return shellCommands;
+    }
+
+    private String getDockerComposeRunCommand(String dockerComposeContainerName, String fileName, Map runConfig) {
+        Object dockerComposeCommand = runConfig.get(dockerComposeContainerName);
+        if (dockerComposeCommand != null ) {
+            return String.format("docker-compose -f %s run -T %s %s", fileName, dockerComposeContainerName,SHELL_ESCAPE.escape((String) dockerComposeCommand));
+        }
+        else {
+            return String.format("docker-compose -f %s run %s ",fileName,dockerComposeContainerName);
+        }
     }
 
     private void extractWorkingDirIntoWorkSpace(String dockerComposeContainerName, String projectName, ShellCommands shellCommands) {
