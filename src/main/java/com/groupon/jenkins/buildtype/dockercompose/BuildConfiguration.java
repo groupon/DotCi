@@ -86,7 +86,7 @@ public class BuildConfiguration {
         if (config.get("run") != null) {
             Map runConfig = (Map) config.get("run");
             String dockerComposeRunCommand = getDockerComposeRunCommand(dockerComposeContainerName, fileName, runConfig);
-            shellCommands.add(format("hash unbuffer >/dev/null 2>&1 && unbuffer %s || %s",dockerComposeRunCommand,dockerComposeRunCommand));
+            shellCommands.add(format("hash unbuffer >/dev/null 2>&1 ;  if [ $? = 0 ]; then unbuffer %s ;else %s ;fi",dockerComposeRunCommand,dockerComposeRunCommand));
         }
         extractWorkingDirIntoWorkSpace(dockerComposeContainerName, projectName, shellCommands);
 
