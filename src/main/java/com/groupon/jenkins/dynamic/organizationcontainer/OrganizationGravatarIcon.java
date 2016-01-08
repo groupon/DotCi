@@ -30,13 +30,6 @@ import hudson.model.AbstractStatusIcon;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.Hudson;
-
-import java.io.IOException;
-
-import org.acegisecurity.Authentication;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.jenkinsci.plugins.GithubAuthenticationToken;
-import org.kohsuke.github.GitHub;
 import org.kohsuke.stapler.Stapler;
 
 public class OrganizationGravatarIcon extends AbstractStatusIcon implements Describable<OrganizationGravatarIcon>, ExtensionPoint {
@@ -48,27 +41,8 @@ public class OrganizationGravatarIcon extends AbstractStatusIcon implements Desc
 
     }
 
-    private String getGravatarUrl() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth instanceof GithubAuthenticationToken) {
-            GitHub gh = ((GithubAuthenticationToken) auth).getGitHub();
-            try {
-                return gh.getOrganization(orgName).getAvatarUrl();
-            } catch (IOException e) {
-                // try user
-                try {
-                    return gh.getUser(orgName).getAvatarUrl();
-                } catch (IOException e1) {
-                    // give up
-                }
-            }
-        }
-        return null;
-    }
-
     public String getImageOf(String size) {
-        String gravatarUrl = getGravatarUrl();
-        return gravatarUrl == null ? Stapler.getCurrentRequest().getContextPath() + Hudson.RESOURCE_PATH + "/images/" + size + "/folder.png" : gravatarUrl;
+        return Stapler.getCurrentRequest().getContextPath() + Hudson.RESOURCE_PATH + "/images/" + size + "/folder.png";
     }
 
     public String getDescription() {

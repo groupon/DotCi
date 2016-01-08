@@ -46,16 +46,6 @@ import hudson.util.CopyOnWriteMap;
 import hudson.util.CopyOnWriteMap.Tree;
 import hudson.views.DefaultViewsTabBar;
 import hudson.views.ViewsTabBar;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import jenkins.model.Jenkins;
 import org.acegisecurity.Authentication;
 import org.acegisecurity.context.SecurityContextHolder;
@@ -68,6 +58,16 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import javax.servlet.ServletException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class OrganizationContainer extends AbstractItem implements IdentifableItemGroup<DynamicProject>, ViewGroup, TopLevelItem, StaplerOverridable, StaplerFallback, StaplerProxy {
     private ObjectId id;
@@ -343,7 +343,7 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
     @Override
     public Object getTarget() {
         StaplerRequest currentRequest = Stapler.getCurrentRequest();
-        //@formatter:off 
+        //@formatter:off
         if (!currentRequest.getRequestURI().matches(".*(api/(json|xml)).*")
             && !currentRequest.getRequestURI().contains("buildWithParameters")
             && !currentRequest.getRequestURI().contains("logTail")
