@@ -1,2 +1,2 @@
 run: 
- ci:
+ ci: echo meow
