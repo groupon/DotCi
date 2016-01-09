@@ -33,3 +33,14 @@ ci:
     - .:/code
   working_dir: /code
   command: mvn test
+  
+ci1:
+  tty: false
+  stdin_open: false
+  image: maven:3
+  volumes_from:
+    - mavendata
+  volumes:
+    - .:/code
+  working_dir: /code
+  command: mvn test  
