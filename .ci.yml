@@ -1,3 +1,5 @@
 run: 
- ci: echo 'meow licious'
+ ci: > 
+  echo 'meow 
+  
  ci1: echo ci1
