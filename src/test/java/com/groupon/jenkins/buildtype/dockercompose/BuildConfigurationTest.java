@@ -59,7 +59,8 @@ public class BuildConfigurationTest {
   @Test
   public  void should_run_cmd_from_ci_yml(){
     ShellCommands commands = getRunCommands();
-    Assert.assertEquals("hash unbuffer >/dev/null 2>&1 ;  if [ $? = 0 ]; then unbuffer docker-compose -f docker-compose.yml run -T unit command ;else docker-compose -f docker-compose.yml run -T unit command ;fi",commands.get(7));
+    Assert.assertEquals("export COMPOSE_CMD='docker-compose -f docker-compose.yml run -T unit command'",commands.get(7));
+    Assert.assertEquals("hash unbuffer >/dev/null 2>&1 ;  if [ $? = 0 ]; then unbuffer $COMPOSE_CMD ;else $COMPOSE_CMD ;fi",commands.get(8));
   }
 
   @Test
@@ -97,7 +98,8 @@ public class BuildConfigurationTest {
     ShellCommands commands = getRunCommands(ImmutableMap.of("docker-compose-file", "./jenkins/docker-compose.yml", "run",  of("unit", "command")));
     Assert.assertEquals("trap \"docker-compose -f ./jenkins/docker-compose.yml kill; docker-compose -f ./jenkins/docker-compose.yml rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(5));
     Assert.assertEquals("docker-compose -f ./jenkins/docker-compose.yml pull",commands.get(6));
-    Assert.assertEquals("hash unbuffer >/dev/null 2>&1 ;  if [ $? = 0 ]; then unbuffer docker-compose -f ./jenkins/docker-compose.yml run -T unit command ;else docker-compose -f ./jenkins/docker-compose.yml run -T unit command ;fi",commands.get(7));
+    Assert.assertEquals("export COMPOSE_CMD='docker-compose -f ./jenkins/docker-compose.yml run -T unit command'",commands.get(7));
+    Assert.assertEquals("hash unbuffer >/dev/null 2>&1 ;  if [ $? = 0 ]; then unbuffer $COMPOSE_CMD ;else $COMPOSE_CMD ;fi",commands.get(8));
   }
   @Test
   public void should_be_skipped_if_skip_specified(){
