@@ -28,15 +28,9 @@ import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import hudson.model.JobProperty;
-import java.io.Serializable;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.bson.types.ObjectId;
-import org.jenkinsci.plugins.GithubAuthenticationToken;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -57,7 +51,15 @@ import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.powermock.api.mockito.PowerMockito;
 
-import static org.junit.Assert.*;
+import java.io.Serializable;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class MongoRepositoryTest {
 
@@ -173,13 +175,10 @@ public class MongoRepositoryTest {
         PowerMockito.when(github.getMyself()).thenReturn(myself);
         PowerMockito.when(github.getRepository("groupon/DotCi")).thenReturn(ghRepository);
 
-        GithubAuthenticationToken token = PowerMockito.mock(GithubAuthenticationToken.class);
-        PowerMockito.when(token.getGitHub()).thenReturn(github);
-        PowerMockito.when(token.getAccessToken()).thenReturn("thisismytoken");
-        PowerMockito.when(token.getName()).thenReturn("thisismyname");
+
 
         SecurityContext context = PowerMockito.mock(SecurityContext.class);
-        PowerMockito.when(context.getAuthentication()).thenReturn(token);
+//        PowerMockito.when(context.getAuthentication()).thenReturn(token);
         SecurityContextHolder.setContext(context);
 
         return ghRepository;

@@ -43,9 +43,9 @@ public class DockerComposeEnvContributor extends EnvironmentContributor {
     @Override
     public void buildEnvironmentFor(Run run, EnvVars envs, TaskListener listener) throws IOException, InterruptedException {
         if(isDockerComposeBuild(run)) {
-            String composeProjectName = String.format("%s%s", envs.get("JOB_NAME"), run.getNumber())
+            String composeProjectName = String.format("%s%s", run.getParent().getFullName(), run.getNumber())
                     .replaceAll("[^A-Za-z0-9]", "").toLowerCase();
-            LOGGER.info("Setting COMPOSE_PROJECT_NAME=" + composeProjectName);
+            LOGGER.fine("Setting COMPOSE_PROJECT_NAME=" + composeProjectName);
             envs.put(COMPOSE_PROJECT_NAME, composeProjectName);
         }
     }
