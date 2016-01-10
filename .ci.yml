@@ -1,6 +1,5 @@
 run: 
- ci: > 
-  echo meow 
+ ci: fail 
   
   
 
