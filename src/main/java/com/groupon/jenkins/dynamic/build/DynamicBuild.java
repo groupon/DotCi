@@ -86,6 +86,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     public void postMorphiaLoad() {
         super.postMorphiaLoad();
         this.model = new DynamicBuildModel(this);
+        this.description = getDescription();
     }
 
     @SuppressWarnings("unchecked")
@@ -107,7 +108,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     public DynamicBuildLayouter getLayouter() {
 
         return new DynamicBuildLayouter(axisList, this);
-   }
+    }
 
     // This needs to be overriden here to override @RequirePOST annotation,
     // which seems like a bug in the version were are using.
@@ -210,7 +211,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
             try {
                 return DynamicBuild.this.getEnvironmentWithChangeSet(getListener());
             } catch (IOException e) {
-               throw new RuntimeException(e);
+                throw new RuntimeException(e);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -346,7 +347,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 
     @Override
     public String getDescription() {
-       String description = super.getDescription();
+        String description = super.getDescription();
         return description == null? getCurrentBranch().toString() : description;
     }
 
