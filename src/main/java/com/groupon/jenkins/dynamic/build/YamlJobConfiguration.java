@@ -8,6 +8,7 @@ import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import hudson.model.listeners.ItemListener;
 import hudson.tasks.BuildWrapper;
+import hudson.tasks.BuildWrapperDescriptor;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.github.GHContent;
@@ -31,9 +32,9 @@ public class YamlJobConfiguration extends ItemListener{
             try {
                 apply((DynamicProject) item);
             } catch (IOException e) {
-               throw  new RuntimeException(e) ;
+                throw  new RuntimeException(e) ;
             } catch (Descriptor.FormException e) {
-               throw new RuntimeException(e);
+                throw new RuntimeException(e);
             }
         }
     }
@@ -46,37 +47,58 @@ public class YamlJobConfiguration extends ItemListener{
             Yaml yaml= new Yaml();
             Map<String,Object> jobConfig= (Map) yaml.load(configFile.read());
 
-            Map<String, Descriptor<?>> jobProperties = getDescriptors(JobProperty.class);
 
+            Map<String, Descriptor<?>> descriptors = getDescriptors();
             for(String key: jobConfig.keySet()){
-                    JobPropertyDescriptor descriptor = (JobPropertyDescriptor) (jobProperties.containsKey(key)? jobProperties.get(key): jobProperties.get(key+"Property"));
-                    if(descriptor != null && descriptor.isApplicable(job.getClass())){
-                        JSONObject jsonConfig=new JSONObject();
-                        jsonConfig.accumulateAll((Map) jobConfig.get(key));
-                        JobProperty newProperty  = descriptor.newInstance(Stapler.getCurrentRequest(),jsonConfig);
-                        if(newProperty !=null){
-                            JobProperty oldProperty = job.getProperty(newProperty.getClass());
-                            job.removeProperty(oldProperty);
-                            job.addProperty(newProperty );
-                        }
-                    }
+                Descriptor descriptor =  descriptors.containsKey(key)? descriptors.get(key): descriptors.get(key+"Property");
+                JSONObject jsonConfig=new JSONObject();
+                jsonConfig.accumulateAll((Map) jobConfig.get(key));
+
+                if(descriptor instanceof JobPropertyDescriptor){
+                    addJobProperty(job, (JobPropertyDescriptor) descriptor, jsonConfig);
+                }
+                if(descriptor instanceof BuildWrapperDescriptor){
+                   addBuildWrapper(job,(BuildWrapperDescriptor)descriptor,jsonConfig) ;
+                }
 
             }
-//            Map<String, Descriptor<?>> jobWrappers = getDescriptors(BuildWrapper.class);
-//
-//
-////            for(BuildWrapper wrapper :  job.getBuildWrappersList()){
-////                Descriptor<BuildWrapper> descriptor = wrapper.getDescriptor();
-//////                descriptor.
-//////            descriptor.newInstance()
-////
-////            }
+
             job.save();
 
         }catch (FileNotFoundException _){
-           //do nothing
+            //do nothing
         }
 
+    }
+
+    private void addBuildWrapper(DynamicProject job, BuildWrapperDescriptor descriptor, JSONObject jsonConfig) throws Descriptor.FormException {
+        if(descriptor != null && descriptor.isApplicable(job)) {
+           BuildWrapper newWrapper = descriptor.newInstance(Stapler.getCurrentRequest(),jsonConfig);
+            if(newWrapper != null){
+                Map<Descriptor<BuildWrapper>, BuildWrapper> jobWrappers = job.getBuildWrappers();
+                BuildWrapper oldWrapper = jobWrappers.get(descriptor);
+                job.getBuildWrappersList().remove(oldWrapper);
+                job.getBuildWrappersList().add(newWrapper);
+            }
+        }
+    }
+
+    public Map<String, Descriptor<?>> getDescriptors(){
+        Map<String,Descriptor<?>> descriptors = new HashMap<String, Descriptor<?>>();
+        descriptors.putAll( getDescriptors(JobProperty.class));
+        descriptors.putAll( getDescriptors(BuildWrapper.class));
+        return descriptors;
+    }
+
+    private void addJobProperty(DynamicProject job, JobPropertyDescriptor descriptor, JSONObject jsonConfig) throws Descriptor.FormException, IOException {
+        if(descriptor != null && descriptor.isApplicable(job.getClass())){
+            JobProperty newProperty  = descriptor.newInstance(Stapler.getCurrentRequest(),jsonConfig);
+            if(newProperty !=null){
+                JobProperty oldProperty = job.getProperty(newProperty.getClass());
+                job.removeProperty(oldProperty);
+                job.addProperty(newProperty );
+            }
+        }
     }
 
 
@@ -87,7 +109,7 @@ public class YamlJobConfiguration extends ItemListener{
             return r;
         }
         for (Descriptor<?> d : jenkins.getDescriptorList(c)) {
-                r.put(d.clazz.getSimpleName(), d);
+            r.put(d.clazz.getSimpleName(), d);
         }
         return r;
     }
