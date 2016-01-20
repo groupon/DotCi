@@ -100,7 +100,7 @@ public class GithubWebhook implements UnprotectedRootAction {
 
     private void applyJobConfiguration(Payload payload, DynamicProject job) {
         for(GithubLogEntry logEntry: payload.getLogEntries()){
-            if(logEntry.getAffectedPaths().contains(".ci.config.yml")){
+            if(logEntry.getAffectedPaths().contains(YamlJobConfiguration.CI_CONFIG_YML)){
                 try {
                     new YamlJobConfiguration().apply(job);
                 } catch (IOException e) {

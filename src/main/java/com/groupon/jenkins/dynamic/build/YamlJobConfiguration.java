@@ -22,6 +22,9 @@ import java.util.Map;
 
 @Extension
 public class YamlJobConfiguration extends ItemListener{
+
+    public static final String CI_CONFIG_YML = ".ci.config.yml";
+
     @Override
     public void onCreated(Item item) {
         if (item instanceof DynamicProject) {
@@ -39,7 +42,7 @@ public class YamlJobConfiguration extends ItemListener{
     public void apply(DynamicProject job) throws IOException, Descriptor.FormException {
         try{
             GHRepository repo = job.getGithubRepository();
-            GHContent configFile = repo.getFileContent(".ci.config.yml", repo.getMasterBranch());
+            GHContent configFile = repo.getFileContent(CI_CONFIG_YML, repo.getMasterBranch());
             Yaml yaml= new Yaml();
             Map<String,Object> jobConfig= (Map) yaml.load(configFile.read());
 
