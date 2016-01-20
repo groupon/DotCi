@@ -1,5 +1,8 @@
 BuildTags:
    shouldBuildTags: true
+JobUi:
+   newUi: false
 RebuildSettings:
    autoRebuild: true
    rebuildDisabled: false
+   
