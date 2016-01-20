@@ -1,1 +1,2 @@
-shouldBuildTags: false
+BuildTagsProperty:
+   shouldBuildTags: true
