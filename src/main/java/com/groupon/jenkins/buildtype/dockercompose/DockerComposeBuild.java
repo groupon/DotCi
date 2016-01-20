@@ -60,6 +60,7 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
 
     @Override
     public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+        build.save();
         Map<String,Object> buildEnvironment = build.getEnvironmentWithChangeSet(listener);
         Result result = doCheckout(buildEnvironment, buildExecutionContext, listener);
         if (!Result.SUCCESS.equals(result)) {
