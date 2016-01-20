@@ -34,6 +34,7 @@ import com.groupon.jenkins.dynamic.buildtype.BuildTypeProperty;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainer;
 import com.groupon.jenkins.dynamic.organizationcontainer.OrganizationContainerRepository;
 import com.groupon.jenkins.github.GithubRepoProperty;
+import com.groupon.jenkins.github.services.GithubRepositoryService;
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 import hudson.Extension;
 import hudson.PermalinkList;
@@ -46,6 +47,7 @@ import hudson.widgets.HistoryWidget;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.kohsuke.github.GHRepository;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -113,6 +115,13 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
     public boolean shouldBuildTags() {
         return getProperty(BuildTagsProperty.class)!=null && getProperty(BuildTagsProperty.class).isShouldBuildTags();
+    }
+
+    public GithubRepositoryService getGithubRepositoryService() {
+        return new GithubRepositoryService(getGithubRepoUrl());
+    }
+    public GHRepository getGithubRepository() {
+        return getGithubRepositoryService().getGithubRepository();
     }
 
     public static final class DescriptorImpl extends AbstractProjectDescriptor {
