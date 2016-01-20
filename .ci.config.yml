@@ -1,2 +1,5 @@
 BuildTags:
    shouldBuildTags: true
+RebuildSettings:
+   autoRebuild: true
+   rebuildDisabled: false
