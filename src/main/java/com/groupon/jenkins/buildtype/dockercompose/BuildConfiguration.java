@@ -73,10 +73,6 @@ public class BuildConfiguration {
         shellCommands.add(BuildConfiguration.getCheckoutCommands(dotCiEnvVars));
 
         shellCommands.add(String.format("trap \"docker-compose -f %s kill; docker-compose -f %s rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",fileName,fileName));
-        if (config.containsKey("before_run") && !isParallelized()) {
-            shellCommands.add(getBeforeRunCommandIfPresent());
-        }
-
         if (config.containsKey("before_each") || config.containsKey("before")) {
             String beforeCommand = (String) (config.containsKey("before_each") ? config.get("before_each") : config.get("before"));
             shellCommands.add( SHELL_ESCAPE.escape(beforeCommand));
