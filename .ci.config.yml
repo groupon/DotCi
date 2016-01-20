@@ -11,3 +11,5 @@ BuildTimeoutWrapper:
        timeoutMinutes: 10
    timeoutEnvVar: 10    
    
+BuildType: 
+  buildType: DockerComposeBuild
