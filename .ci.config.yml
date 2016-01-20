@@ -5,4 +5,8 @@ JobUi:
 RebuildSettings:
    autoRebuild: true
    rebuildDisabled: false
+BuildTimeoutWrapper: 
+    strategy: 
+       $class: hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy
+       timeoutMinutes: 10
    
