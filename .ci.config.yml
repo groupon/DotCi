@@ -6,7 +6,8 @@ RebuildSettings:
    autoRebuild: true
    rebuildDisabled: false
 BuildTimeoutWrapper: 
-    strategy: 
+   strategy: 
        $class: hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy
        timeoutMinutes: 10
+   timeoutEnvVar: 10    
    
