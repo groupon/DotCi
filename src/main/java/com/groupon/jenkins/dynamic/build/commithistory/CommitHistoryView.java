@@ -72,11 +72,11 @@ public class CommitHistoryView implements RunAction2 {
         for(GHCommitStatus status : commitStatuses){
             String context = status.getContext();
             if(groupedStatuses.get(context) == null){
-               groupedStatuses.put(context, new ArrayList<GHCommitStatus>());
+                groupedStatuses.put(context, new ArrayList<GHCommitStatus>());
             }
             groupedStatuses.get(context).add(status);
         }
         groupedStatuses.put("- Latest Status -", Arrays.asList(githubRepository.getLastCommitStatus(build.getSha())));
-       return groupedStatuses;
+        return groupedStatuses;
     }
 }
