@@ -71,15 +71,15 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
             build.skip();
             return Result.SUCCESS;
         }
-
-        build.setAxisList(buildConfiguration.getAxisList());
-
-        if(buildConfiguration.isParallelized()){
-            result = runParallelBuild(build, buildExecutionContext, buildConfiguration, listener);
-        }else{
-            result = runSubBuild(new Combination(ImmutableMap.of("script", buildConfiguration.getOnlyRun())), buildExecutionContext, listener);
+        result = runBeforeCommands(buildExecutionContext, listener);
+        if (Result.SUCCESS.equals(result)) {
+            build.setAxisList(buildConfiguration.getAxisList());
+            if(buildConfiguration.isParallelized()){
+                result = runParallelBuild(build, buildExecutionContext, buildConfiguration, listener);
+            }else{
+                result = runSubBuild(new Combination(ImmutableMap.of("script", buildConfiguration.getOnlyRun())), buildExecutionContext, listener);
+            }
         }
-
         Result pluginResult = runPlugins(build, buildConfiguration.getPlugins(), listener, launcher);
         Result notifierResult = runNotifiers(build, buildConfiguration.getNotifiers(), listener);
         return result.combine(pluginResult).combine(notifierResult);
@@ -122,9 +122,8 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
         });
 
         try {
-            Result beforeRunResult = runBeforeCommands(buildExecutionContext, listener);
             Iterable<Combination> axisList = buildConfiguration.getAxisList().list();
-            Result runResult = beforeRunResult.combine(subBuildScheduler.runSubBuilds(axisList, listener));
+            Result runResult = subBuildScheduler.runSubBuilds(axisList, listener);
             if(runResult.equals(Result.SUCCESS)){
                 Result afterRunResult = runAfterCommands(buildExecutionContext,listener);
                 runResult = runResult.combine(afterRunResult);

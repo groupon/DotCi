@@ -71,14 +71,7 @@ public class BuildConfigurationTest {
   }
 
   @Test
-  public void should_run_before_run_command_in_before_run_if_present(){
-    BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("before_run", "before_run cmd", "run", of("unit", "command")));
-    ShellCommands commands = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
-    Assert.assertEquals("before_run cmd", commands.get(6));
-  }
-
-  @Test
-  public void should_run_before_run_with_parallel_build(){
+  public void should_run_before_run_command_if_present(){
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("before_run", "before_run cmd", "run", of("unit", "command", "integration", "integration")));
     String command = buildConfiguration.getBeforeRunCommandIfPresent();
     Assert.assertEquals("before_run cmd", command);
