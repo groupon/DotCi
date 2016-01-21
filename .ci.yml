@@ -3,3 +3,5 @@ run:
   
   
 
+notifications:
+ - hipchat: Surya-Test
