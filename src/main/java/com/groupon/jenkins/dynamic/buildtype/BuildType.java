@@ -55,7 +55,7 @@ public abstract class BuildType implements ExtensionPoint{
 
     public static boolean isProjectOfBuildType(DynamicProject project, Class<? extends BuildType> clazz) {
         String projectBuildType = getBuildType(project);
-        return clazz.getName().equals(projectBuildType);
+        return clazz.getSimpleName().equals(projectBuildType)|| clazz.getName().equals(projectBuildType);
     }
 
     private static String getBuildType(DynamicProject project) {
