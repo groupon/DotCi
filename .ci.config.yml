@@ -1,5 +1,5 @@
 Should Build Tags:
-   shouldBuildTags: true
+   shouldBuildTags: false
 JobUi:
    newUi: false
 Rebuild:
