@@ -110,6 +110,7 @@ public class YamlJobConfiguration extends ItemListener{
         }
         for (Descriptor<?> d : jenkins.getDescriptorList(c)) {
             r.put(d.clazz.getSimpleName(), d);
+            r.put(d.getDisplayName(), d);
         }
         return r;
     }

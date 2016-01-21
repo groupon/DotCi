@@ -49,7 +49,7 @@ public class BuildTagsProperty extends JobProperty<Job<?, ?>> {
 
         @Override
         public String getDisplayName() {
-            return "Should Build Tags";
+            return "Build Tags";
         }
 
         @Override

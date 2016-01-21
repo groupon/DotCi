@@ -40,7 +40,7 @@ public abstract class BuildType implements ExtensionPoint{
     public static BuildType newBuildType(DynamicProject project) {
         String requestedBuildType = getBuildType(project);
         for(BuildType buildType: all()){
-            if(buildType.getId().equals(requestedBuildType)){
+            if(buildType.getId().equals(requestedBuildType) ||buildType.getClass().getSimpleName().equals(requestedBuildType) ){
                 try {
                     return buildType.getClass().newInstance();
                 } catch (InstantiationException e) {
