@@ -1,9 +1,9 @@
-BuildTags:
+Should Build Tags:
    shouldBuildTags: true
 JobUi:
    newUi: false
-RebuildSettings:
-   autoRebuild: true
+Rebuild:
+   autoRebuild: false
    rebuildDisabled: false
 BuildTimeoutWrapper: 
    strategy: 
