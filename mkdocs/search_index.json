@@ -7,12 +7,12 @@
         }, 
         {
             "location": "/user-guide/CreateNewJob/", 
-            "text": "Create new DotCi Job\n\uf0c1\n\n\n\n\nClick new DotCi job on side-panel:\n\n\n\n\n\n\n\n\nSelect Github Org and click new job:\n\n\n\n\n\n\n\n\n(optional) Override build type on the per-job Configuration page:\n\n\n\n\n\n\n\n\n(optional) Add build tags on the per-job Configuratoin page (none by default):", 
+            "text": "Create new DotCi Job\n\uf0c1\n\n\n(1)\n Click the \nNew DotCi Job\n button on the Jenkins side-panel:\n\n\n\n\n(2)\n Select the tab for your project's Github Organization and click the \n+\n button for the project. This will install the Webhook into your Github project's settings:\n\n\n\n\n(3)\n (optional) Override the default build type on the per-job Configuration page:\n\n\n\n\n(4)\n (optional) Add build tags on the per-job Configuration page (none by default):", 
             "title": "Create New Job"
         }, 
         {
             "location": "/user-guide/CreateNewJob/#create-new-dotci-job", 
-            "text": "Click new DotCi job on side-panel:     Select Github Org and click new job:     (optional) Override build type on the per-job Configuration page:     (optional) Add build tags on the per-job Configuratoin page (none by default):", 
+            "text": "(1)  Click the  New DotCi Job  button on the Jenkins side-panel:   (2)  Select the tab for your project's Github Organization and click the  +  button for the project. This will install the Webhook into your Github project's settings:   (3)  (optional) Override the default build type on the per-job Configuration page:   (4)  (optional) Add build tags on the per-job Configuration page (none by default):", 
             "title": "Create new DotCi Job"
         }, 
         {
@@ -117,12 +117,12 @@
         }, 
         {
             "location": "/user-guide/UI/", 
-            "text": "UI Guide\n\uf0c1\n\n\n Coming soon\n\n\nBuild Url shortcuts\n\uf0c1\n\n\n\n\nFetch builds by git sha ( \njob/meow/23/sha?value=\nsha\n)\n\n\nOr branch specific permalinks (\nlastSuccessfulMaster\n) .", 
+            "text": "UI Guide\n\uf0c1\n\n\n Coming soon\n\n\nBuild URL shortcuts\n\uf0c1\n\n\n\n\nFetch builds by git SHA (\njob/meow/23/sha?value=\nsha\n)\n\n\nOr branch-specific permalinks (\nlastSuccessfulMaster\n) .", 
             "title": "UI Reference"
         }, 
         {
             "location": "/installation/Installation/", 
-            "text": "Pre-Requisites\n\uf0c1\n\n\nMongo DB\n\uf0c1\n\n\nInstall \nmongodb\n in a location accessible to your Jenkins instance.\n\n\nGithub Application\n\uf0c1\n\n\nRegister an \nOAuth Application\n with GitHub\nto generate \nClient ID\n and \nClient Secret\n. \nThe \nAuthorization callback URL\n needs to be \nhttp://\nYOUR-JENKINS-URL\n/dotci/finishLogin\n\n\nConfigure Master\n\uf0c1\n\n\n\n\nGoto \nManage Jenkins\n \n \nConfigure Plugins\n and install \nDotCi\n\n   plugin.\n\n\nGoto \nManage Jenkins\n \n \nConfigure System\n and fill out required information under DotCi Configuration:\n\n\n\n\n\n\nDocker Slave\n\uf0c1\n\n\nA slave that can build for docker build types, i.e.  \nDocker Compose\n, must have the\nfollowing installed in addition to required Jenkins software:\n\n\n\n\ndocker\n\n\ndocker-compose\n\n\n\n\nMongoDB indexes\n\uf0c1\n\n\n\n\nBuilds for project\n\n\n\n\ndb.run.ensureIndex( {projectId: 1 } )\n\n\n\n\n\n\nBuilds by number\n\n\n\n\ndb.run.ensureIndex( {number: 1 } )\n\n\n\n\n\n\nBuilds by Result and Project\n\n\n\n\ndb.run.ensureIndex( {projectId: 1, result: 1 } )\n\n\n\n\n\n\nBuilds for user\n\n\n\n\ndb.run.ensureIndex( {className: 1, 'actions.causes.user': 1, 'actions.causes.pusher': 1 } )\n\n\n\n\n\n\nBuilds capped for 30 days\n\n\n\n\ndb.run.ensureIndex( { \ntimestamp\n: 1 }, { expireAfterSeconds: 2592000 } )", 
+            "text": "Pre-Requisites\n\uf0c1\n\n\nMongo DB\n\uf0c1\n\n\nInstall \nmongodb\n in a location accessible to your Jenkins instance.\n\n\nGithub Application\n\uf0c1\n\n\nRegister an \nOAuth Application\n with GitHub\nto generate \nClient ID\n and \nClient Secret\n. \nThe \nAuthorization callback URL\n needs to be \nhttp://\nYOUR-JENKINS-URL\n/dotci/finishLogin\n\n\nConfigure Master\n\uf0c1\n\n\n\n\nGo to \nManage Jenkins\n \n \nConfigure Plugins\n and install \nDotCi\n\n   plugin.\n\n\nGo to \nManage Jenkins\n \n \nConfigure System\n and fill out required information under DotCi Configuration:\n\n\n\n\n\n\nDocker Slave\n\uf0c1\n\n\nA slave that can build for docker build types, i.e.  \nDocker Compose\n, must have the\nfollowing installed in addition to required Jenkins software:\n\n\n\n\ndocker\n\n\ndocker-compose\n\n\n\n\nMongoDB indexes\n\uf0c1\n\n\n\n\nBuilds for project\n\n\n\n\ndb.run.ensureIndex( {projectId: 1 } )\n\n\n\n\n\n\nBuilds by number\n\n\n\n\ndb.run.ensureIndex( {number: 1 } )\n\n\n\n\n\n\nBuilds by Result and Project\n\n\n\n\ndb.run.ensureIndex( {projectId: 1, result: 1 } )\n\n\n\n\n\n\nBuilds for user\n\n\n\n\ndb.run.ensureIndex( {className: 1, 'actions.causes.user': 1, 'actions.causes.pusher': 1 } )\n\n\n\n\n\n\nBuilds capped for 30 days\n\n\n\n\ndb.run.ensureIndex( { \ntimestamp\n: 1 }, { expireAfterSeconds: 2592000 } )", 
             "title": "Installation"
         }, 
         {
@@ -132,7 +132,7 @@
         }, 
         {
             "location": "/installation/Installation/#configure-master", 
-            "text": "Goto  Manage Jenkins     Configure Plugins  and install  DotCi \n   plugin.  Goto  Manage Jenkins     Configure System  and fill out required information under DotCi Configuration:", 
+            "text": "Go to  Manage Jenkins     Configure Plugins  and install  DotCi \n   plugin.  Go to  Manage Jenkins     Configure System  and fill out required information under DotCi Configuration:", 
             "title": "Configure Master"
         }, 
         {
