@@ -111,6 +111,11 @@
 </code></pre>
 
 <p>Specify commands that should be run before each run sub-command. </p>
+<h3 id="after_each-optional"><code>after_each</code> (Optional)<a class="headerlink" href="#after_each-optional" title="Permanent link"></a></h3>
+<pre><code class="yaml">after_each: &quot;./some_script &amp;&amp; ./another_script&quot;
+</code></pre>
+
+<p>Specify commands that should be run after each run sub-command. These will run on success and failure. </p>
 <h3 id="run-required"><code>run</code> (Required)<a class="headerlink" href="#run-required" title="Permanent link"></a></h3>
 <pre><code class="yaml">run:
   test:
