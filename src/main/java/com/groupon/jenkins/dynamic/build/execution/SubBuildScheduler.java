@@ -35,15 +35,18 @@ import hudson.matrix.Messages;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Executor;
+import hudson.model.Label;
 import hudson.model.ParametersAction;
 import hudson.model.Queue;
 import hudson.model.Queue.Item;
 import hudson.model.Result;
 import hudson.model.TaskListener;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import jenkins.model.Jenkins;
 
 public class SubBuildScheduler {
@@ -63,11 +66,16 @@ public class SubBuildScheduler {
         this.subBuildFinishListener = subBuildFinishListener;
     }
 
-
     public Result runSubBuilds(Iterable<Combination> subBuildCombinations, BuildListener listener) throws InterruptedException, IOException {
-        Iterable<DynamicSubProject> subProjects = getRunSubProjects(subBuildCombinations);
-        scheduleSubBuilds(subBuildCombinations, listener);
+        return runSubBuilds(subBuildCombinations, listener, null);
+    }
+
+    public Result runSubBuilds(Iterable<Combination> subBuildCombinations, BuildListener listener, String subBuildLabel) throws InterruptedException, IOException {
+            Iterable<DynamicSubProject> subProjects = getRunSubProjects(subBuildCombinations);
+
+        scheduleSubBuilds(subBuildCombinations, listener, subBuildLabel);
         Result r = Result.SUCCESS;
+
         for (DynamicSubProject c : subProjects) {
             CurrentBuildState runState = waitForCompletion(c, listener);
             Result runResult = getResult(runState);
@@ -82,14 +90,25 @@ public class SubBuildScheduler {
         return run != null ? run.getResult() : Result.ABORTED;
     }
 
-    protected void scheduleSubBuilds(Iterable<Combination> subBuildCombinations, TaskListener listener) {
+    protected void scheduleSubBuilds(Iterable<Combination> subBuildCombinations, TaskListener listener, String subBuildLabel) {
+        Label label = null;
+        if (subBuildLabel != null) {
+            label = Label.get(subBuildLabel);
+        }
+
         for ( Combination subBuildCombination : subBuildCombinations) {
             DynamicSubProject c = dynamicBuild.getSubProject(subBuildCombination);
             listener.getLogger().println(Messages.MatrixBuild_Triggering(ModelHyperlinkNote.encodeTo(c)));
             List<Action> childActions = new ArrayList<Action>();
             childActions.addAll(Util.filter(dynamicBuild.getActions(), ParametersAction.class));
+
             childActions.add(new SubBuildExecutionAction(subBuildRunner));
-      childActions.add(new ParentBuildAction(dynamicBuild));
+            childActions.add(new ParentBuildAction(dynamicBuild));
+
+            if (label != null) {
+                childActions.add(new NodeAssignmentAction(label));
+            }
+
             c.scheduleBuild(childActions, dynamicBuild.getCause());
         }
     }
