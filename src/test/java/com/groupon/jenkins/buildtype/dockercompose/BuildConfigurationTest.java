@@ -24,6 +24,7 @@
 
 package com.groupon.jenkins.buildtype.dockercompose;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
@@ -64,17 +65,35 @@ public class BuildConfigurationTest {
   }
 
   @Test
-  public void should_run_before_each_command_if_present(){
+  public void should_run_before_each_command_string(){
     ShellCommands commands = getRunCommands(ImmutableMap.of("before_each", "before_each cmd", "run", of("unit", "command", "integration", "integration")));
     Assert.assertEquals("trap \"docker-compose -f docker-compose.yml kill; docker-compose -f docker-compose.yml rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(5));
     Assert.assertEquals("before_each cmd", commands.get(6));
   }
 
   @Test
-  public void should_run_before_run_command_if_present(){
+  public void should_run_before_each_command_list(){
+    ShellCommands commands = getRunCommands(ImmutableMap.of("before_each", ImmutableList.of("cmd 1", "cmd 2"), "run", of("unit", "command", "integration", "integration")));
+    Assert.assertEquals("trap \"docker-compose -f docker-compose.yml kill; docker-compose -f docker-compose.yml rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",commands.get(5));
+    Assert.assertEquals("cmd 1", commands.get(6));
+    Assert.assertEquals("cmd 2", commands.get(7));
+  }
+
+  @Test
+  public void should_run_before_run_command_string(){
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("before_run", "before_run cmd", "run", of("unit", "command", "integration", "integration")));
-    String command = buildConfiguration.getBeforeRunCommandIfPresent();
-    Assert.assertEquals("before_run cmd", command);
+    ShellCommands commands = buildConfiguration.getBeforeRunCommandsIfPresent();
+    Assert.assertEquals(1, commands.size());
+    Assert.assertEquals("before_run cmd", commands.get(0));
+  }
+
+  @Test
+  public void should_run_before_run_command_list(){
+    BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("before_run", ImmutableList.of("cmd 1", "cmd 2"), "run", of("unit", "command", "integration", "integration")));
+    ShellCommands commands = buildConfiguration.getBeforeRunCommandsIfPresent();
+    Assert.assertEquals(2, commands.size());
+    Assert.assertEquals("cmd 1", commands.get(0));
+    Assert.assertEquals("cmd 2", commands.get(1));
   }
 
   @Test
@@ -106,10 +125,18 @@ public class BuildConfigurationTest {
   }
 
   @Test
-  public void should_run_after_each(){
+  public void should_run_after_each_string(){
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("run", of("unit", "command", "integration", "integration"), "after_each", "after_each cmd"));
     ShellCommands commandList = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
     Assert.assertEquals("after_each cmd",Iterables.getLast(commandList.getCommands()));
+  }
+
+  @Test
+  public void should_run_after_each_list(){
+    BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("run", of("unit", "command", "integration", "integration"), "after_each", ImmutableList.of("cmd 1", "cmd 2")));
+    ShellCommands commandList = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
+    Assert.assertEquals("cmd 1", commandList.get(commandList.size()-2));
+    Assert.assertEquals("cmd 2", commandList.get(commandList.size()-1));
   }
 
   @Test
@@ -117,6 +144,23 @@ public class BuildConfigurationTest {
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("run", of("unit", "command", "integration", "integration"), "after_run", "after_run cmd"));
     ShellCommands commandList = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
     Assert.assertNotEquals("after_each cmd",Iterables.getLast(commandList.getCommands()));
+  }
+
+  @Test
+  public void should_run_after_run_command_string(){
+    BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("after_run", "after_run cmd", "run", of("unit", "command", "integration", "integration")));
+    ShellCommands commands = buildConfiguration.getAfterRunCommandsIfPresent();
+    Assert.assertEquals(1, commands.size());
+    Assert.assertEquals("after_run cmd", commands.get(0));
+  }
+
+  @Test
+  public void should_run_after_run_command_list(){
+    BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("after_run", ImmutableList.of("cmd 1", "cmd 2"), "run", of("unit", "command", "integration", "integration")));
+    ShellCommands commands = buildConfiguration.getAfterRunCommandsIfPresent();
+    Assert.assertEquals(2, commands.size());
+    Assert.assertEquals("cmd 1", commands.get(0));
+    Assert.assertEquals("cmd 2", commands.get(1));
   }
 
   private ShellCommands getRunCommands(Map ciConfig) {

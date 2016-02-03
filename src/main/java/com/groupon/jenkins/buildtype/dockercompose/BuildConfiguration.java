@@ -57,11 +57,12 @@ public class BuildConfiguration {
         this.config = config;
     }
 
-    public String getBeforeRunCommandIfPresent() {
-        return config.containsKey("before_run")?  SHELL_ESCAPE.escape((String) config.get("before_run")):null;
+    public ShellCommands getBeforeRunCommandsIfPresent() {
+        return getShellCommands("before_run");
     }
-    public String getAfterRunCommandIfPresent() {
-        return config.containsKey("after_run")?  SHELL_ESCAPE.escape((String) config.get("after_run")):null;
+
+    public ShellCommands getAfterRunCommandsIfPresent() {
+        return getShellCommands("after_run");
     }
 
     public ShellCommands getCommands(Combination combination, Map<String, Object> dotCiEnvVars) {
@@ -74,8 +75,8 @@ public class BuildConfiguration {
 
         shellCommands.add(String.format("trap \"docker-compose -f %s kill; docker-compose -f %s rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",fileName,fileName));
         if (config.containsKey("before_each") || config.containsKey("before")) {
-            String beforeCommand = (String) (config.containsKey("before_each") ? config.get("before_each") : config.get("before"));
-            shellCommands.add( SHELL_ESCAPE.escape(beforeCommand));
+            String key = (config.containsKey("before_each") ? "before_each" : "before");
+            appendCommands(key, shellCommands);
         }
 
         shellCommands.add(String.format("docker-compose -f %s pull",fileName));
@@ -88,10 +89,10 @@ public class BuildConfiguration {
         extractWorkingDirIntoWorkSpace(dockerComposeContainerName, projectName, shellCommands);
 
         if (config.containsKey("after_each")) {
-            shellCommands.add(SHELL_ESCAPE.escape ((String) config.get("after_each")));
+            appendCommands("after_each", shellCommands);
         }
         if (config.containsKey("after_run") && !isParallelized()) {
-            shellCommands.add(getAfterRunCommandIfPresent());
+            appendCommands("after_each", shellCommands);
         }
         return shellCommands;
     }
@@ -183,6 +184,33 @@ public class BuildConfiguration {
             shellCommands.add(format("git reset --hard  %s", dotCiEnvVars.get("SHA")));
         }
         return shellCommands;
+    }
+
+    private void appendCommands(String key, ShellCommands commands) {
+        ShellCommands added = getShellCommands(key);
+        commands.add(added);
+    }
+
+    private ShellCommands getShellCommands(String key) {
+        Object value = config.get(key);
+        if (value == null) {
+            return null;
+        }
+
+        ShellCommands commands = new ShellCommands();
+        if (value instanceof String) {
+            commands.add((String) value);
+        } else if (value instanceof List) {
+            List l = (List) value;
+
+            for (Object v : l) {
+                if (!(v instanceof String)) {
+                    throw new RuntimeException(String.format("Unexpected type: %s. Expected String for key: %s", v.getClass().getName(), key));
+                }
+                commands.add((String) v);
+            }
+        }
+        return commands;
     }
 
     public boolean isSkipped() {
