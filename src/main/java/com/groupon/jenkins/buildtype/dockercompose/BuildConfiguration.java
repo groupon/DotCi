@@ -199,22 +199,18 @@ public class BuildConfiguration {
 
         ShellCommands commands = new ShellCommands();
         if (value instanceof String) {
-            commands.add(escapeShellCommand((String) value));
+            commands.add((String) value);
         } else if (value instanceof List) {
             List l = (List) value;
 
             for (Object v : l) {
                 if (!(v instanceof String)) {
-                    throw new RuntimeException("Unexpected type. Expected String");
+                    throw new RuntimeException(String.format("Unexpected type: %s. Expected String for key: %s", v.getClass().getName(), key));
                 }
-                commands.add(escapeShellCommand((String) v));
+                commands.add((String) v);
             }
         }
         return commands;
-    }
-
-    private String escapeShellCommand(String command) {
-        return SHELL_ESCAPE.escape(command);
     }
 
     public boolean isSkipped() {
