@@ -12,7 +12,9 @@ Specify an alternate compose file (default: docker-compose.yml)
 ### `before_run` (Optional)
 
 ```yaml
-before_run: "./some_script && ./another_script"
+before_run: 
+  - ./some_script
+  - ./another_script
 ```
 Specify commands that should be run before the run commands. These commands will execute once. 
 
@@ -20,14 +22,18 @@ Specify commands that should be run before the run commands. These commands will
 ### `before_each` (Optional)
 
 ```yaml
-before_each: "./some_script && ./another_script"
+before_each: 
+  - ./some_script 
+  - ./another_script
 ```
 Specify commands that should be run before each run sub-command. 
 
 ### `after_each` (Optional)
 
 ```yaml
-after_each: "./some_script && ./another_script"
+after_each: 
+  - ./some_script 
+  - ./another_script
 ```
 Specify commands that should be run after each run sub-command. These will run on success and failure. 
 
