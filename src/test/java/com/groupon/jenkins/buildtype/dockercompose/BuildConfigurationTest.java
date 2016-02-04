@@ -143,7 +143,14 @@ public class BuildConfigurationTest {
   public void should_not_run_after_run_after_parallized_builds_are_finished(){
     BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("run", of("unit", "command", "integration", "integration"), "after_run", "after_run cmd"));
     ShellCommands commandList = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
-    Assert.assertNotEquals("after_each cmd",Iterables.getLast(commandList.getCommands()));
+    Assert.assertNotEquals("after_run cmd",Iterables.getLast(commandList.getCommands()));
+  }
+
+  @Test
+  public void should_run_after_run_for_non_parallel(){
+    BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("run", of("unit", "command"), "after_run", "after_run cmd"));
+    ShellCommands commandList = buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars());
+    Assert.assertEquals("after_run cmd",Iterables.getLast(commandList.getCommands()));
   }
 
   @Test
