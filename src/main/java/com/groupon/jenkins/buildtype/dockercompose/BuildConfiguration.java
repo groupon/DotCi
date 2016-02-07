@@ -74,10 +74,9 @@ public class BuildConfiguration {
         shellCommands.add(BuildConfiguration.getCheckoutCommands(dotCiEnvVars));
 
         shellCommands.add(String.format("trap \"docker-compose -f %s kill; docker-compose -f %s rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",fileName,fileName));
-        if (config.containsKey("before_each") || config.containsKey("before")) {
-            String key = (config.containsKey("before_each") ? "before_each" : "before");
-            appendCommands(key, shellCommands);
-        }
+
+        appendCommands("before", shellCommands); //deprecated
+        appendCommands("before_each", shellCommands);
 
         shellCommands.add(String.format("docker-compose -f %s pull",fileName));
         if (config.get("run") != null) {
@@ -88,11 +87,9 @@ public class BuildConfiguration {
         }
         extractWorkingDirIntoWorkSpace(dockerComposeContainerName, projectName, shellCommands);
 
-        if (config.containsKey("after_each")) {
-            appendCommands("after_each", shellCommands);
-        }
-        if (config.containsKey("after_run") && !isParallelized()) {
-            appendCommands("after_each", shellCommands);
+        appendCommands("after_each", shellCommands);
+        if (!isParallelized()) {
+            appendCommands("after_run", shellCommands);
         }
         return shellCommands;
     }
@@ -188,7 +185,9 @@ public class BuildConfiguration {
 
     private void appendCommands(String key, ShellCommands commands) {
         ShellCommands added = getShellCommands(key);
-        commands.add(added);
+        if (added != null) {
+            commands.add(added);
+        }
     }
 
     private ShellCommands getShellCommands(String key) {
