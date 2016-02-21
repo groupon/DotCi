@@ -24,8 +24,6 @@
 
 package com.groupon.jenkins.buildtype.dockercompose;
 
-import com.google.common.escape.Escaper;
-import com.google.common.escape.Escapers;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.extensions.DotCiExtensionsHelper;
@@ -45,13 +43,6 @@ import static java.lang.String.format;
 public class BuildConfiguration {
 
     private Map config;
-
-    public static final Escaper SHELL_ESCAPE;
-    static {
-        final Escapers.Builder builder = Escapers.builder();
-        builder.addEscape('\'', "'\"'\"'");
-        SHELL_ESCAPE = builder.build();
-    }
 
     public BuildConfiguration(Map config) {
         this.config = config;
@@ -97,10 +88,10 @@ public class BuildConfiguration {
     private String getDockerComposeRunCommand(String dockerComposeContainerName, String fileName, Map runConfig) {
         Object dockerComposeCommand = runConfig.get(dockerComposeContainerName);
         if (dockerComposeCommand != null ) {
-            return String.format("docker-compose -f %s run -T %s %s", fileName, dockerComposeContainerName,SHELL_ESCAPE.escape((String) dockerComposeCommand));
+            return String.format("docker-compose -f %s run -T %s %s", fileName, dockerComposeContainerName, dockerComposeCommand);
         }
         else {
-            return String.format("docker-compose -f %s run %s ",fileName,dockerComposeContainerName);
+            return String.format("docker-compose -f %s run %s ",fileName, dockerComposeContainerName);
         }
     }
 
