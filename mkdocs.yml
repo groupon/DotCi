@@ -11,6 +11,7 @@ pages:
     - .ci.yml Plugins Reference: user-guide/Plugins.md
     - .ci.yml Notifications Reference: user-guide/Notifications.md
     - .ci.yml Templating: user-guide/Templating.md
+    - .ci.yml Environment Variables: user-guide/EnvironmentVariables.md
     - Examples : user-guide/Examples.md
     - cli : user-guide/CLI.md
     - UI Reference : user-guide/UI.md

@@ -1,6 +1,7 @@
 # Templating .ci.yml
 
 ## Environment Variables
+[Environment Variables](EnvironmentVariables.md)
 
 In addition to [Jenkins build
 variables](https://wiki.jenkins-ci.org/display/JENKINS/Building+a+software+project#Buildingasoftwareproject-JenkinsSetEnvironmentVariables),
