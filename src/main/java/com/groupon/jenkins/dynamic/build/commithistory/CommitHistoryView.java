@@ -66,7 +66,7 @@ public class CommitHistoryView implements RunAction2 {
     }
 
     public Map<String, List<GHCommitStatus>> getCommitStatuses() throws IOException {
-        GHRepository githubRepository = build.getGithubRepository();
+        GHRepository githubRepository = build.getParent().getGithubRepository();
         List<GHCommitStatus> commitStatuses = githubRepository.getCommit(build.getSha()).listStatuses().asList();
         Map<String,List<GHCommitStatus>> groupedStatuses = new HashMap<String, List<GHCommitStatus>>();
         for(GHCommitStatus status : commitStatuses){

@@ -26,8 +26,11 @@ package com.groupon.jenkins.github;
 import com.google.common.io.CharStreams;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.dynamic.build.YamlJobConfiguration;
+import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import hudson.Extension;
+import hudson.model.Descriptor;
 import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
@@ -40,6 +43,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.lang.StringUtils;
@@ -82,6 +86,7 @@ public class GithubWebhook implements UnprotectedRootAction {
         for (final DynamicProject job : makeDynamicProjectRepo().getJobsFor(payload.getProjectUrl())) {
 
             if (payload.needsBuild(job.shouldBuildTags())) {
+                applyJobConfiguration(payload,job);
                 LOGGER.info("starting job" + job.getName());
                 queue.execute(new Runnable() {
                     @Override
@@ -92,6 +97,21 @@ public class GithubWebhook implements UnprotectedRootAction {
             }
         }
     }
+
+    private void applyJobConfiguration(Payload payload, DynamicProject job) {
+        for(GithubLogEntry logEntry: payload.getLogEntries()){
+            if(logEntry.getAffectedPaths().contains(YamlJobConfiguration.CI_CONFIG_YML)){
+                try {
+                    new YamlJobConfiguration().apply(job);
+                } catch (IOException e) {
+                    LOGGER.log(Level.ALL,e.getMessage(), e);
+                } catch (Descriptor.FormException e) {
+                    LOGGER.log(Level.ALL,e.getMessage(), e);
+                }
+            }
+        }
+    }
+
     private List<ParameterValue> getParametersValues(Job job, String branch) {
         ParametersDefinitionProperty paramDefProp = (ParametersDefinitionProperty) job.getProperty(ParametersDefinitionProperty.class);
         ArrayList<ParameterValue> defValues = new ArrayList<ParameterValue>();
