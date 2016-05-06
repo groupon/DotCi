@@ -1,5 +1,5 @@
 run: 
- ci: failk
+ ci: fail
 
 notifications:
  - hipchat: Surya-Test
