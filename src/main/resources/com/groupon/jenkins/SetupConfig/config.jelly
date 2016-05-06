@@ -29,11 +29,11 @@ THE SOFTWARE.
                      <f:entry title="MongoDB Host">
                         <f:textbox name="dotci.dbHost" value="${instance.dbHost}"/>
                     </f:entry>
-                    
+
                      <f:entry title="MongoDB Port">
                         <f:textbox name="dotci.dbPort" value="${instance.dbPort}"/>
                     </f:entry>
-                    
+
                      <f:entry title="Db Name">
                         <f:textbox name="dotci.dbName" value="${instance.dbName}"/>
                     </f:entry>
@@ -41,7 +41,7 @@ THE SOFTWARE.
                      <f:entry title="Assigned label for newly created jobs (leave it empty if there is no label restriction)">
                         <f:textbox name="dotci.label" value="${instance.label}"/>
                     </f:entry>
-                    
+
                      <f:entry title="Email Address (This is used as from address for failure/recovery emails)">
                         <f:textbox name="dotci.fromEmailAddress" value="${instance.fromEmailAddress}"/>
                     </f:entry>
@@ -77,6 +77,14 @@ THE SOFTWARE.
                     <f:entry title="Github callback url">
                        <f:textbox name="dotci.githubCallbackUrl" value="${instance.githubCallbackUrl}"/>
                     </f:entry>
+
+        <f:entry title="This Jenkins instance receives webhook?">
+            <f:checkbox name="dotci.master" checked="${instance.master}"/>
+        </f:entry>
+
+        <f:entry title="This Jenkins instance processes payloads?">
+            <f:checkbox name="dotci.agent" checked="${instance.agent}"/>
+        </f:entry>
 
     </f:section>
 </j:jelly>

@@ -32,6 +32,7 @@ import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
 import com.groupon.jenkins.github.services.GithubDeployKeyRepository;
+import com.groupon.jenkins.github.services.GithubHookShotRepository;
 import hudson.Extension;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
@@ -58,6 +59,9 @@ public class SetupConfig extends GlobalConfiguration {
     private transient Injector injector;
 
     private String githubCallbackUrl;
+    private boolean master;
+    private boolean agent;
+
     public static SetupConfig get() {
         return GlobalConfiguration.all().get(SetupConfig.class);
     }
@@ -242,5 +246,26 @@ public class SetupConfig extends GlobalConfiguration {
 
     public GithubDeployKeyRepository getGithubDeployKeyRepository() {
         return getInjector().getInstance(GithubDeployKeyRepository.class);
+    }
+
+    public boolean isMaster() {
+        return master;
+    }
+
+    public void setMaster(boolean master) {
+        this.master = master;
+    }
+
+    public GithubHookShotRepository getGithubHookShotRepository() {
+        return getInjector().getInstance(GithubHookShotRepository.class);
+
+    }
+
+    public boolean isAgent() {
+        return agent;
+    }
+
+    public void setAgent(boolean agent) {
+        this.agent = agent;
     }
 }
