@@ -7,18 +7,19 @@ import hudson.model.*;
 import hudson.tasks.*;
 import jenkins.tasks.*;
 import org.apache.commons.beanutils.*;
+import org.jenkinsci.plugins.workflow.structs.DescribableHelper;
 
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 
 public class GenericSimpleBuildStepPlugin extends DotCiPluginAdapter {
-    private Descriptor<?> pluginDescriptor;
+    private Descriptor<? extends  SimpleBuildStep> pluginDescriptor;
     private Object options;
 
     public GenericSimpleBuildStepPlugin(Descriptor<?> pluginDescriptor, Object options) {
         super("");
-        this.pluginDescriptor = pluginDescriptor;
+        this.pluginDescriptor = (Descriptor<? extends SimpleBuildStep>) pluginDescriptor;
         this.options = options;
     }
 
@@ -36,20 +37,10 @@ public class GenericSimpleBuildStepPlugin extends DotCiPluginAdapter {
         return true;
     }
 
-    private SimpleBuildStep getPlugin(){
-
+    private SimpleBuildStep getPlugin() {
         try {
-            SimpleBuildStep plugin = (SimpleBuildStep) pluginDescriptor.clazz.newInstance();
-            Map<String,Object> pluginOptions = (Map<String, Object>) options;
-           for(String method: pluginOptions.keySet()) {
-               BeanUtils.setProperty(plugin,method,pluginOptions.get(method));
-           }
-            return plugin;
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
+            return DescribableHelper.instantiate(pluginDescriptor.clazz, (Map<String, ?>) options);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
