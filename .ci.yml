@@ -1,4 +1,4 @@
 run: 
  ci: failx
-notifications:
- - hipchat: Surya-Test
+plugins: 
+ - ArtifactArchiver
