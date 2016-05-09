@@ -45,6 +45,7 @@ public class GitHubPullRequestCause extends GithubCause {
     @Override
     public Map<String, String> getEnvVars() {
         Map vars = super.getEnvVars();
+        putIfNotNull(vars, "DOTCI_PULL_REQUEST_LABEL", getLabel());
         putIfNotNull(vars, "DOTCI_PULL_REQUEST_TARGET_BRANCH", getTargetBranch());
         putIfNotNull(vars, "DOTCI_PULL_REQUEST_SOURCE_BRANCH", getSourceBranch());
         return vars;
@@ -58,6 +59,10 @@ public class GitHubPullRequestCause extends GithubCause {
     @Override
     public String getName() {
         return "GITHUB_PULL_REQUEST";
+    }
+
+    public String getLabel() {
+        return label;
     }
 
     public String getTargetBranch() {

@@ -13,9 +13,9 @@ The __Authorization callback URL__ needs to be `http://<YOUR-JENKINS-URL>/dotci/
 
 # Configure Master
 
-1. Goto `Manage Jenkins` > `Configure Plugins` and install `DotCi`
+1. Go to `Manage Jenkins` > `Configure Plugins` and install `DotCi`
    plugin.
-2. Goto `Manage Jenkins` > `Configure System` and fill out required information under DotCi Configuration:
+2. Go to `Manage Jenkins` > `Configure System` and fill out required information under DotCi Configuration:
 
    ![dotci setup](screenshots/dotci-plugin-configuration.png)
 

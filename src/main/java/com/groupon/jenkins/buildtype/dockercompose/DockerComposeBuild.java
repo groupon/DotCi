@@ -98,8 +98,11 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
     }
 
     private Result runCommands(ShellCommands commands, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
+        if (commands == null) {
+            return Result.SUCCESS;
+        }
         ShellScriptRunner shellScriptRunner = new ShellScriptRunner(buildExecutionContext, listener);
-            return shellScriptRunner.runScript(commands);
+        return shellScriptRunner.runScript(commands);
     }
 
     private String getDotCiYml(DynamicBuild build) throws IOException, InterruptedException {
@@ -141,19 +144,11 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
     }
 
     private Result runAfterCommands(BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
-        String afterCommand = buildConfiguration.getAfterRunCommandIfPresent();
-        if (afterCommand != null) {
-            return runCommands(new ShellCommands(afterCommand), buildExecutionContext, listener);
-        }
-        return Result.SUCCESS;
+        return runCommands(buildConfiguration.getAfterRunCommandsIfPresent(), buildExecutionContext, listener);
     }
 
     private Result runBeforeCommands(final BuildExecutionContext buildExecutionContext, final BuildListener listener) throws IOException, InterruptedException {
-        String beforeCommand = buildConfiguration.getBeforeRunCommandIfPresent();
-        if (beforeCommand != null) {
-            return runCommands(new ShellCommands(beforeCommand), buildExecutionContext, listener);
-        }
-        return Result.SUCCESS;
+        return runCommands(buildConfiguration.getBeforeRunCommandsIfPresent(), buildExecutionContext, listener);
     }
 
     private Result runPlugins(DynamicBuild dynamicBuild, List<DotCiPluginAdapter> plugins, BuildListener listener, Launcher launcher) {

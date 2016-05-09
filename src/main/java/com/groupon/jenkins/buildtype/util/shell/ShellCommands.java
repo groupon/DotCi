@@ -133,4 +133,8 @@ public class ShellCommands {
         }
         return combinedShellCommands;
     }
+
+    public int size() {
+        return commands.size();
+    }
 }
