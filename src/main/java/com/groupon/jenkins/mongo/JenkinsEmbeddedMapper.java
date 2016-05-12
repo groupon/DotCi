@@ -65,6 +65,24 @@ class JenkinsEmbeddedMapper implements CustomMapper {
 
         awkwardMapper = new MapKeyValueMapper();
     }
+    private Class getClass(final DBObject dbObj) {
+        // see if there is a className value
+        final String className = (String) dbObj.get(Mapper.CLASS_NAME_FIELDNAME);
+        Class c = null;
+        if (className != null) {
+            // try to Class.forName(className) as defined in the dbObject first,
+            // otherwise return the entityClass
+            try {
+                c = Class.forName(className, true, getClassLoaderForClass(className, dbObj));
+            } catch (ClassNotFoundException e) {
+                //Ignore if notfound
+            }
+        }
+        return c;
+    }
+    protected ClassLoader getClassLoaderForClass(final String clazz, final DBObject object) {
+        return Thread.currentThread().getContextClassLoader();
+    }
 
     @Override
     public void toDBObject(Object entity, MappedField mf, DBObject dbObject, Map<Object, DBObject> involvedObjects, Mapper mapper) {
@@ -265,7 +283,11 @@ class JenkinsEmbeddedMapper implements CustomMapper {
                         newEntity = mapper.getConverters().decode(o.getClass(), o, mf);
                     } else {
                         if (o instanceof DBObject) {
-                            newEntity = readMapOrCollectionOrEntity((DBObject) o, mf, cache, mapper);
+                             if( getClass((DBObject) o)!= null && mapper.getConverters().hasSimpleValueConverter(getClass((DBObject) o))){
+                                newEntity = mapper.getConverters().decode(getClass((DBObject) o), o, mf);
+                            }else{
+                                 newEntity = readMapOrCollectionOrEntity((DBObject) o, mf, cache, mapper);
+                             }
                         } else {
                             throw new MappingException("Embedded element isn't a DBObject! How can it be that is a " + o.getClass());
                         }
