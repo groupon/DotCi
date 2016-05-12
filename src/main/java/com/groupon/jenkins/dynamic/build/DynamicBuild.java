@@ -66,7 +66,9 @@ import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
@@ -323,7 +325,11 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     }
 
     public void addCause(Cause manualCause) {
-        this.getAction(CauseAction.class).getCauses().add(manualCause);
+        List<Cause> exisitingCauses = this.getAction(CauseAction.class).getCauses();
+        ArrayList<Cause> causes = new ArrayList<Cause>();
+        causes.add(manualCause);
+        causes.addAll(exisitingCauses);
+        this.replaceAction(new CauseAction(causes));
     }
 
     /*
