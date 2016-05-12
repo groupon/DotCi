@@ -1,5 +1,3 @@
 run: 
- ci: failx
-plugins: 
- - ArtifactArchiver:
-     artifacts: meow.txt
+ ci: echo meow
+
