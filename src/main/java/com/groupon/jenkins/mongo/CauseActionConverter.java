@@ -23,11 +23,17 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.mongo;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.BasicDBObjectBuilder;
+import com.mongodb.DBObject;
 import hudson.model.CauseAction;
-import hudson.model.Result;
 import org.mongodb.morphia.converters.SimpleValueConverter;
 import org.mongodb.morphia.converters.TypeConverter;
 import org.mongodb.morphia.mapping.MappedField;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CauseActionConverter extends TypeConverter implements SimpleValueConverter {
 
@@ -39,14 +45,24 @@ public class CauseActionConverter extends TypeConverter implements SimpleValueCo
     public CauseAction decode(Class targetClass, Object fromDBObject, MappedField optionalExtraInfo) {
         if(fromDBObject == null) return null;
 
-        String resultName = (String) fromDBObject;
-        return new CauseAction();
+        List causes = new ArrayList();
+        List rawList = (List) ((BasicDBObject) fromDBObject).get("causes");
+        for(Object obj : rawList) {
+            DBObject dbObj = (DBObject) obj;
+            causes.add(getMapper().fromDBObject(optionalExtraInfo.getSubClass(), dbObj, getMapper().createEntityCache()));
+        }
+        return new CauseAction(causes);
     }
 
     @Override
     public Object encode(Object value, MappedField optionalExtraInfo) {
         if(value == null) return null;
+        CauseAction action = (CauseAction) value;
+        List core = new BasicDBList();
 
-        return null;
+        for(Object obj : action.getCauses()) {
+            core.add(getMapper().toDBObject(obj));
+        }
+        return BasicDBObjectBuilder.start("causes",core).add("className",CauseAction.class.getName()).get();
     }
 }
