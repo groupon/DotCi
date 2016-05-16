@@ -25,13 +25,14 @@ package com.groupon.jenkins.dynamic.build;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
-import com.groupon.jenkins.*;
+import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.execution.BuildEnvironment;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
-import com.groupon.jenkins.dynamic.build.repository.*;
+import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
+import com.groupon.jenkins.github.Payload;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import hudson.EnvVars;
 import hudson.Functions;
@@ -42,19 +43,16 @@ import hudson.model.Build;
 import hudson.model.BuildListener;
 import hudson.model.Cause;
 import hudson.model.CauseAction;
+import hudson.model.Descriptor;
 import hudson.model.Executor;
 import hudson.model.Result;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStep;
 import hudson.util.HttpResponses;
 import hudson.util.VersionNumber;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.Map;
 import jenkins.model.Jenkins;
-import org.apache.commons.lang.*;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.stapler.HttpResponse;
@@ -65,6 +63,13 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
 import org.mongodb.morphia.annotations.Property;
 
 import javax.servlet.ServletException;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 
@@ -170,9 +175,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         return Iterables.getOnlyElement(getSubProjects(Arrays.asList(subBuildCombination)));
     }
 
-    public GithubRepositoryService getGithubRepositoryService() {
-        return new GithubRepositoryService(getGithubRepoUrl());
-    }
+
 
     public void setAxisList(AxisList axisList) {
         this.axisList = axisList;
@@ -187,9 +190,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     public Map<String,Object> getEnvironmentWithChangeSet(TaskListener listener) throws IOException, InterruptedException {
         return model.getEnvironmentWithChangeSet(listener);
     }
-    public GHRepository getGithubRepository() {
-        return getGithubRepositoryService().getGithubRepository();
-    }
+
 
     public boolean isPullRequest() {
         return StringUtils.isNotEmpty( getCause().getPullRequestNumber());
@@ -217,9 +218,9 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
             }
         }
 
-
         @Override
-        protected Result doRun(BuildListener listener) throws Exception, hudson.model.Run.RunnerAbortedException {
+        protected Result doRun(BuildListener listener) throws Exception{
+
             BuildEnvironment buildEnvironment = new BuildEnvironment(DynamicBuild.this, launcher, listener);
             try {
                 if (!buildEnvironment.initialize()) {
@@ -324,7 +325,11 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     }
 
     public void addCause(Cause manualCause) {
-        this.getAction(CauseAction.class).getCauses().add(manualCause);
+        List<Cause> exisitingCauses = this.getAction(CauseAction.class).getCauses();
+        ArrayList<Cause> causes = new ArrayList<Cause>();
+        causes.add(manualCause);
+        causes.addAll(exisitingCauses);
+        this.replaceAction(new CauseAction(causes));
     }
 
     /*

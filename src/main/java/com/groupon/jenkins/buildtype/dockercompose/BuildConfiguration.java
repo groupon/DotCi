@@ -107,6 +107,7 @@ public class BuildConfiguration {
         if (isParallelized()) {
             Set commandKeys =  ((Map) config.get("run")).keySet();
             axisList = new AxisList(new Axis("script", new ArrayList<String>(commandKeys)));
+            axisList.add(new Axis("meow","meowexecution"));
         }
         return axisList;
     }
