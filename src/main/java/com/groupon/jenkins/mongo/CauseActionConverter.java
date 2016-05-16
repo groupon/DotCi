@@ -36,32 +36,33 @@ import java.util.List;
 
 public class CauseActionConverter extends TypeConverter implements SimpleValueConverter {
 
-    public CauseActionConverter(){
+    public CauseActionConverter() {
         super(CauseAction.class);
     }
 
     @Override
     public CauseAction decode(Class targetClass, Object fromDBObject, MappedField optionalExtraInfo) {
-        if(fromDBObject == null) return null;
+        if (fromDBObject == null) return null;
 
         List causes = new ArrayList();
         List rawList = (List) ((DBObject) fromDBObject).get("causes");
-        for(Object obj : rawList) {
+        for (Object obj : rawList) {
             DBObject dbObj = (DBObject) obj;
-            causes.add(getMapper().fromDBObject(optionalExtraInfo.getSubClass(), dbObj, getMapper().createEntityCache()));
+            Object cause = getMapper().fromDBObject(optionalExtraInfo.getSubClass(), dbObj, getMapper().createEntityCache());
+            causes.add(cause);
         }
         return new CauseAction(causes);
     }
 
     @Override
     public Object encode(Object value, MappedField optionalExtraInfo) {
-        if(value == null) return null;
+        if (value == null) return null;
         CauseAction action = (CauseAction) value;
-        List core = new BasicDBList();
+        List causes = new BasicDBList();
 
-        for(Object obj : action.getCauses()) {
-            core.add(getMapper().toDBObject(obj));
+        for (Object obj : action.getCauses()) {
+            causes.add(getMapper().toDBObject(obj));
         }
-        return BasicDBObjectBuilder.start("causes",core).add("className",CauseAction.class.getName()).get();
+        return BasicDBObjectBuilder.start("causes", causes).add("className", CauseAction.class.getName()).get();
     }
 }
