@@ -92,6 +92,7 @@ public class JenkinsMapper extends Mapper {
         getConverters().addConverter(new CombinationConverter());
         getConverters().addConverter(new AxisListConverter());
         getConverters().addConverter(new ResultConverter());
+        getConverters().addConverter(new CauseActionConverter());
         getConverters().addConverter(new PermissionsConverter());
 
         //Register special class converter to use Jenkins class loader
