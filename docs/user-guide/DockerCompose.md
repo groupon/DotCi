@@ -1,5 +1,7 @@
 This build type uses [docker-compose](https://docs.docker.com/compose/) to execute the build.
 
+Make sure that you choose `build type` *Docker compose build* and that you set the `Label Expression` to *Docker* when you create your DotCi job in Jenkins
+
 ## `.ci.yml` Sections
 
 ### `docker-compose-file` (Optional)
