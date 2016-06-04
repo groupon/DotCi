@@ -69,7 +69,7 @@ public class BuildConfiguration {
         appendCommands("before", shellCommands); //deprecated
         appendCommands("before_each", shellCommands);
 
-        shellCommands.add(String.format("docker-compose -f %s pull",fileName));
+        shellCommands.add(String.format("docker-compose -f %s build --pull",fileName));
         if (config.get("run") != null) {
             Map runConfig = (Map) config.get("run");
             String dockerComposeRunCommand = getDockerComposeRunCommand(dockerComposeContainerName, fileName, runConfig);
