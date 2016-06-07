@@ -1,3 +1,5 @@
 run: 
- ci: echo meow
- ci1: echo purr
+ ci: echo meow > meow.txt
+ ci1: echo purr > purr.txt
+plugins:
+  artifacts: 'meow.txt'
