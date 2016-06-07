@@ -1,2 +1,10 @@
 run: 
- ci:
+  ci:
+ 
+<% if (DOTCI_BRANCH == 'master') { %> 
+plugins:
+  - downstream_job:
+      on_result: SUCCESS
+      Trunk/grid-services:
+        BRANCH: 'master'
+<% } %>
