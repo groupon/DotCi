@@ -1,4 +1,5 @@
-run:  echo meow > meow.txt
+run: 
+ ci: echo meow > meow.txt
 
 plugins:
   - artifacts: 'meow.txt'
