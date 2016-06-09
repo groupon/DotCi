@@ -1,5 +1,4 @@
-run: 
- ci: echo meow > meow.txt
- ci1: sleep 5000
+run:  echo meow > meow.txt
+
 plugins:
   - artifacts: 'meow.txt'
