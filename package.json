@@ -68,7 +68,7 @@
   },
   "scripts": {
     "build": "npm install && npm run package && npm run vulcanize",
-    "package": "$(npm bin)/webpack --release=true  --colors --progress",
+    "package": "webpack --release=true  --colors --progress",
     "lint": "eslint src/main/jsx/**/*",
     "watch": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.config.dev.js --colors --progress --hot --inline  --port  3000",
     "test": "$(npm bin)/karma start",
