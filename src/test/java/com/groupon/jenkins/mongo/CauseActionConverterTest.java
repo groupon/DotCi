@@ -1,6 +1,7 @@
 package com.groupon.jenkins.mongo;
 
 import com.groupon.jenkins.dynamic.build.cause.ManualBuildCause;
+import com.groupon.jenkins.dynamic.build.cause.NullBuildCause;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
@@ -30,7 +31,7 @@ public class CauseActionConverterTest {
         DBObject causes = new BasicDBObjectBuilder().add("causes", Arrays.asList(cause1DbObject)).get();
 
         Mapper mapper = Mockito.mock(Mapper.class);
-        Cause.UserIdCause cause1 = new Cause.UserIdCause();
+        Cause cause1 = new NullBuildCause();
         when(mapper.fromDBObject(null,cause1DbObject,null)).thenReturn(cause1);
 
         CauseActionConverter converter = new CauseActionConverter();
@@ -50,7 +51,7 @@ public class CauseActionConverterTest {
     }
     @Test
     public void should_convert_cause_action_to_old_format() throws Exception {
-        Cause.UserIdCause cause1 = new Cause.UserIdCause();
+        Cause cause1 = new NullBuildCause();
         Mapper mapper = Mockito.mock(Mapper.class);
         when(mapper.toDBObject(cause1)).thenReturn(new BasicDBObject("cause1","cause1"));
 
