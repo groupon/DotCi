@@ -34,11 +34,19 @@ import java.io.IOException;
 public class SubBuildExecutionAction extends InvisibleAction {
     private transient SubBuildRunner subBuildRunner;
 
-    public SubBuildExecutionAction(SubBuildRunner subBuildRunner) {
+    public SubBuildScheduler.SubBuildFinishListener getSubBuildFinishListener() {
+        return subBuildFinishListener;
+    }
+
+    private transient SubBuildScheduler.SubBuildFinishListener subBuildFinishListener;
+
+    public SubBuildExecutionAction(SubBuildRunner subBuildRunner, SubBuildScheduler.SubBuildFinishListener subBuildFinishListener) {
         this.subBuildRunner = subBuildRunner;
+        this.subBuildFinishListener = subBuildFinishListener;
     }
 
     public Result run(Combination combination, BuildExecutionContext dynamicSubBuildExecution, BuildListener listener) throws IOException, InterruptedException {
-        return subBuildRunner.runSubBuild(combination,dynamicSubBuildExecution,listener);
+        Result runResult = subBuildRunner.runSubBuild(combination,dynamicSubBuildExecution,listener);
+        return  runResult;
     }
 }
