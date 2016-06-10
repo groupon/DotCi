@@ -71,7 +71,7 @@ THE SOFTWARE.
         </pluginRepository>
     </pluginRepositories>
     <properties>
-        <jenkins.version>2.3</jenkins.version>
+        <jenkins.version>1.655</jenkins.version>
         <workflow.version>1.11</workflow.version>
         <checkstyle.version>2.9.1</checkstyle.version>
         <cobertura.version>2.5.2</cobertura.version>

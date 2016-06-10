@@ -133,7 +133,9 @@ public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSub
             try{
                 exportDeployKeysIfPrivateRepo(listener, launcher);
                 SubBuildExecutionAction subBuildExecutionAction = getAction(SubBuildExecutionAction.class);
-                return subBuildExecutionAction.run(DynamicSubBuild.this.getCombination(), this, listener) ;
+                Result runResult = subBuildExecutionAction.run(DynamicSubBuild.this.getCombination(), this, listener);;
+                subBuildExecutionAction.getSubBuildFinishListener().runFinished(DynamicSubBuild.this);
+                return  runResult;
             }finally {
                 deleteDeployKeys(listener, launcher);
             }
