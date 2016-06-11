@@ -283,8 +283,9 @@ class JenkinsEmbeddedMapper implements CustomMapper {
                         newEntity = mapper.getConverters().decode(o.getClass(), o, mf);
                     } else {
                         if (o instanceof DBObject) {
-                             if( getClass((DBObject) o)!= null && mapper.getConverters().hasSimpleValueConverter(getClass((DBObject) o))){
-                                newEntity = mapper.getConverters().decode(getClass((DBObject) o), o, mf);
+                            Class clazz = getClass((DBObject) o);
+                             if( clazz!= null && mapper.getConverters().hasSimpleValueConverter(clazz)){
+                                newEntity = mapper.getConverters().decode(clazz, o, mf);
                             }else{
                                  newEntity = readMapOrCollectionOrEntity((DBObject) o, mf, cache, mapper);
                              }
