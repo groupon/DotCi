@@ -27,6 +27,7 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.thoughtworks.xstream.converters.reflection.SerializationMethodInvoker;
+import hudson.model.CauseAction;
 import hudson.security.Permission;
 import hudson.util.CopyOnWriteList;
 import org.bson.types.ObjectId;
@@ -68,17 +69,16 @@ class JenkinsEmbeddedMapper implements CustomMapper {
     private Class getClass(final DBObject dbObj) {
         // see if there is a className value
         final String className = (String) dbObj.get(Mapper.CLASS_NAME_FIELDNAME);
-        Class c = null;
-        if (className != null) {
+        if (className != null && className.equals(CauseAction.class.getName())) {
             // try to Class.forName(className) as defined in the dbObject first,
             // otherwise return the entityClass
             try {
-                c = Class.forName(className, true, getClassLoaderForClass(className, dbObj));
+                return Class.forName(className, true, getClassLoaderForClass(className, dbObj));
             } catch (ClassNotFoundException e) {
                 //Ignore if notfound
             }
         }
-        return c;
+        return null;
     }
     protected ClassLoader getClassLoaderForClass(final String clazz, final DBObject object) {
         return Thread.currentThread().getContextClassLoader();
