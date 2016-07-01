@@ -36,9 +36,9 @@ notifications:
     - room2
 #or pass in extra options
   - hipchat: 
-    room: test
-    notify_on:  FAILURE_AND_RECOVERY| ALL
-    message: optional message
+      room: test
+      notify_on: FAILURE_AND_RECOVERY | ALL
+      message: optional message
 ```
 
 
