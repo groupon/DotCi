@@ -64,7 +64,7 @@ public class BuildConfiguration {
         ShellCommands shellCommands = new ShellCommands();
         shellCommands.add(BuildConfiguration.getCheckoutCommands(dotCiEnvVars));
 
-        shellCommands.add(String.format("trap \"docker-compose -f %s kill; docker-compose -f %s rm -v --force; exit\" PIPE QUIT INT HUP EXIT TERM",fileName,fileName));
+        shellCommands.add(String.format("trap \"docker-compose -f %s kill; docker-compose -f %s rm --all --force; exit\" PIPE QUIT INT HUP EXIT TERM",fileName,fileName));
 
         appendCommands("before", shellCommands); //deprecated
         appendCommands("before_each", shellCommands);
