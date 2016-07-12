@@ -75,7 +75,7 @@ class BranchHistoryWidgetModel<T extends DbBackedBuild> {
         return Iterables.filter(builds, new Predicate<T>() {
             @Override
             public boolean apply(T build) {
-                return !build.isSkipped();
+                return !build.isSkipped() && !build.isPhantom();
             }
         });
     }

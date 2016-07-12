@@ -96,7 +96,7 @@ public class BuildHistory extends ApiModel {
         return Iterables.filter(builds, new Predicate<DynamicBuild>() {
             @Override
             public boolean apply(DynamicBuild build) {
-                return !build.isSkipped();
+                return !build.isSkipped() && !build.isPhantom();
             }
         });
     }

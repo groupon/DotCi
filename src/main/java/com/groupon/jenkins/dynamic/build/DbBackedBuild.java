@@ -302,6 +302,11 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
         return getAction(SkippedBuildAction.class) != null;
     }
 
+    public boolean isPhantom(){
+        String state = getState();
+        return ("NOT_STARTED".equals(state) || "BUILDING".equals(state)) && getExecutor() == null;
+    }
+
     @Override
     public String getWhyKeepLog() {
         return null;
