@@ -95,11 +95,6 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     @SuppressWarnings("unchecked")
     @Override
     public void run() {
-        try {
-            this.model.run();
-        } catch (IOException e) {
-            throw  new RuntimeException(e);
-        }
         execute(new DynamicRunExecution());
     }
 
@@ -199,6 +194,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     }
 
     protected class DynamicRunExecution extends Build.BuildExecution implements BuildExecutionContext {
+
         @Override
         public boolean performStep(BuildStep execution, BuildListener listener) throws IOException, InterruptedException {
             return perform(execution, listener);
@@ -225,6 +221,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         protected Result doRun(BuildListener listener) throws Exception, hudson.model.Run.RunnerAbortedException {
             BuildEnvironment buildEnvironment = new BuildEnvironment(DynamicBuild.this, launcher, listener);
             try {
+                DynamicBuild.this.model.run();
                 if (!buildEnvironment.initialize()) {
                     return Result.FAILURE;
                 }
