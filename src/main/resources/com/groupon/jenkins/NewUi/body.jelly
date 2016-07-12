@@ -25,8 +25,6 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
   <div id="nav" drawer="true" >
   </div>
-  <paper-header-panel class="main" main="true" mode="waterfall">
-    <st:include page="/com/groupon/jenkins/NewUi/header/header.jelly" />
+    <!--<st:include page="/com/groupon/jenkins/NewUi/header/header.jelly" />-->
     <div id="content"></div>
-  </paper-header-panel>
 </j:jelly>

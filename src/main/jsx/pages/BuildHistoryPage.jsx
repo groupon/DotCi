@@ -31,8 +31,6 @@ export default React.createClass({
         return(<span>
           <ProgressBar visible={dirty} />
           {buildHistoryTable}
-          <div className="align-center" >
-          </div>
         </span>);
   }
 });

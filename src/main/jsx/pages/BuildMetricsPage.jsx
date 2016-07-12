@@ -23,10 +23,8 @@ export default React.createClass({
         <LineChart  title={metric.title} chart={metric.chart}/><hr/>
       </span>);
       return <div className="align-center build-metrics">
-        <span className="action-bar">
-          {buildFilters}
-          {countSlider}
-        </span>
+        {buildFilters}
+        {countSlider}
         <div className="charts align-center">{charts}</div>
       </div>;
   }

@@ -7,7 +7,7 @@ import Build from './models/Build.js';
 import bindBuildHistoryActions from './client/BuildHistoryPageActions.js';
 import bindBuildMetricsActions from './client/BuildMetricsPageActions.js';
 import bindBuildActions from './client/BuildPageActions.js';
-require('./app.css');
+// require('./app.css');
 require('./polyfills.js');
 //wiring
 const begin = function (){
@@ -69,4 +69,4 @@ function getRootPath(){
   return window.location.pathname.split(jobPath)[0] +jobPath;
 }
 
-window.addEventListener('WebComponentsReady', begin);
+window.onload = begin

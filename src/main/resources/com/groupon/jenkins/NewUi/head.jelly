@@ -47,7 +47,7 @@
         <j:if test='${developmentMode}'>
             <script src="http://localhost:3000/assets/${pageName}.js"/>
             <link rel="stylesheet" type="text/css" href="http://localhost:3000/assets/${pageName}.css"/>
-            <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports.html"/>
+            <!--<link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports.html"/>-->
         </j:if>
         <j:if test='${!developmentMode}'>
             <script src="${resURL}/plugin/DotCi/js/${pageName}.js"/>

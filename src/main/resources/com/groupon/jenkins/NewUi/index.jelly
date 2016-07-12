@@ -28,9 +28,7 @@
     <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
         <st:include page="/com/groupon/jenkins/NewUi/head.jelly" />
         <body>
-            <paper-drawer-panel id="drawerPanel" >
                 <st:include page="/com/groupon/jenkins/NewUi/body.jelly" />
-            </paper-drawer-panel>
         </body>
     </j:jelly>
 </html>

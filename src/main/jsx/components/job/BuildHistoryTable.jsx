@@ -25,7 +25,6 @@
 import React from 'react';
 import BuildRow from './BuildRow.jsx';
 import FilterBar from './../FilterBar.jsx';
-import GroupedBuildsView from './GroupedBuildsView.jsx';
 import LinearBuildsView from './LinearBuildsView.jsx';
 import ToggleButton from './../lib/ToggleButton.jsx';
 import RangeSlider from './../lib/RangeSlider.jsx';
@@ -37,12 +36,8 @@ export default React.createClass({
   render(){
     return(
       <div>
-        <span className="buildHistory-bar" >
-          {this.props.buildFilters}
-          {this.props.countSlider}
-          <ToggleButton checked={this.props.grouped} tooltip="Pipeline View" onClick={this._onPipelineViewChange}></ToggleButton>
-        </span>
-        {this.props.grouped? <GroupedBuildsView builds={this.props.builds} /> : <LinearBuildsView builds={this.props.builds} />}
+        {this.props.buildFilters}
+        <LinearBuildsView builds={this.props.builds} />
       </div>
     );
   },
