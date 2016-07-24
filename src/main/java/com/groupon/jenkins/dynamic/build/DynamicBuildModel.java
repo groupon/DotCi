@@ -91,11 +91,15 @@ public class DynamicBuildModel {
     }
 
     public void deleteBuild() throws IOException {
+        deleteSubBuilds();
+        build.delete();
+    }
+
+    public void deleteSubBuilds() throws IOException {
         List<DynamicSubBuild> runs = getExactRuns();
         for (DynamicSubBuild run : runs) {
             run.delete();
         }
-        build.delete();
     }
 
     private List<DynamicSubBuild> getExactRuns() {

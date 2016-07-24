@@ -196,13 +196,6 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
         return getParent().getAssignedLabel();
     }
 
-    @Override
-    public LogRotator getLogRotator() {
-        LogRotator lr = getParent().getLogRotator();
-        int artifactDaysToKeep = lr != null ? lr.getArtifactDaysToKeep() : -1;
-        int artifactNumToKeep = lr != null ? lr.getArtifactNumToKeep() : -1;
-        return new LinkedLogRotator(artifactDaysToKeep, artifactNumToKeep);
-    }
 
     @Override
     public SCM getScm() {

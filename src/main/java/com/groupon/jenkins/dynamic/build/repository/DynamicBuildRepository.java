@@ -338,5 +338,18 @@ public class DynamicBuildRepository extends MongoRepository {
         }
     }
 
+    public  <T extends DbBackedBuild> Iterable<T>  getBuilds(DbBackedProject project, int offset) {
+        Query<DbBackedBuild> query = getQuery(project).order("-number")
+            .offset(offset);
+
+
+        List<DbBackedBuild> builds = query.asList();
+
+        for (DbBackedBuild build : builds) {
+            associateProject(project, build);
+        }
+
+        return (Iterable<T>) query.asList();
+    }
 }
 

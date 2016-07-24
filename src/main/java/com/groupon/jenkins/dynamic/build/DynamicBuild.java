@@ -130,6 +130,12 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     }
 
     @Override
+    public void delete() throws IOException {
+        model.deleteSubBuilds();
+        super.delete();
+    }
+
+    @Override
     public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
         try {
             Build item = getRun(Combination.fromString(token));
