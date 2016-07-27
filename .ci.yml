@@ -1,6 +1,3 @@
-run: 
- ci: echo meow > meow.txt
- ci1: echo meow > meow1.txt
+build:
+ run:  echo meow > meow.txt
 
-plugins:
-  - artifacts: 'meow.txt'
