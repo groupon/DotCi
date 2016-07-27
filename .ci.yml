@@ -1,3 +1,5 @@
 build:
  run:  echo meow > meow.txt
+environment: 
+  language: java
 
