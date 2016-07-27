@@ -3,5 +3,3 @@ build:
 environment: 
   language: java
 
-plugins:
- - review_line_comments
