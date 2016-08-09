@@ -27,6 +27,7 @@ import com.groupon.jenkins.git.GitBranch;
 import com.groupon.jenkins.github.Payload;
 import hudson.model.Cause;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -97,10 +98,14 @@ public abstract class BuildCause extends Cause {
         }
         public CommitInfo(GHCommit commit, GitBranch branch){
             this.sha = commit.getSHA1();
-            this.message = commit.getCommitShortInfo().getMessage();
-            this.committerName = commit.getCommitShortInfo().getCommitter().getName();
-            this.committerEmail= commit.getCommitShortInfo().getCommitter().getEmail();
-            this.commitUrl = commit.getOwner().getHtmlUrl()+"/commit/"+sha;
+            try {
+                this.message = commit.getCommitShortInfo().getMessage();
+                this.committerName = commit.getCommitShortInfo().getCommitter().getName();
+                this.committerEmail= commit.getCommitShortInfo().getCommitter().getEmail();
+                this.commitUrl = commit.getOwner().getHtmlUrl()+"/commit/"+sha;
+            } catch (IOException e) {
+               throw  new RuntimeException(e);
+            }
             this.branch = branch.toString();
             this.avatarUrl = null;
         }
