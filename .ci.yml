@@ -1,6 +1,4 @@
 build:
- run:  echo meow > meow.txt
+ run:  echo meow 
 environment: 
   language: java
-plugins:
- - review_line_comments
