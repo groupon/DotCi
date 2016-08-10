@@ -39,9 +39,9 @@ import static hudson.model.Result.SUCCESS;
 import static hudson.model.Result.UNSTABLE;
 
 @Extension
-public class CommitStatusUpdateListener extends RunListener<DynamicBuild> {
+public class CommitStatusUpdateRunListener extends RunListener<DynamicBuild> {
 
-    private static final Logger LOGGER = Logger.getLogger(CommitStatusUpdateListener.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CommitStatusUpdateRunListener.class.getName());
 
     @Override
     public void onStarted(DynamicBuild build, TaskListener listener) {
