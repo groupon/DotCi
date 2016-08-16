@@ -23,8 +23,6 @@
  */
 package com.groupon.jenkins.dynamic.build;
 
-import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.DynamicSubProject;
 import hudson.Extension;
 import hudson.model.Job;
 import hudson.model.JobProperty;
