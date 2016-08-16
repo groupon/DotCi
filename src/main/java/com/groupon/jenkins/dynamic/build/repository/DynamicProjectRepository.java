@@ -154,7 +154,7 @@ public class DynamicProjectRepository extends MongoRepository {
             project.addProperty(new BuildTypeProperty(SetupConfig.get().getDefaultBuildType()));
             project.addProperty(new DynamicProjectBranchTabsProperty("master"));
             project.addProperty(new RebuildSettings(true,false));
-            project.addProperty(new JobUiProperty(true));
+            project.addProperty(new JobUiProperty(SetupConfig.get().isDefaultToNewUi()));
             project.save();
             folder.addItem(project);
             folder.save();

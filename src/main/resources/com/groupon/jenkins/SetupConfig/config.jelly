@@ -29,11 +29,11 @@ THE SOFTWARE.
                      <f:entry title="MongoDB Host">
                         <f:textbox name="dotci.dbHost" value="${instance.dbHost}"/>
                     </f:entry>
-                    
+
                      <f:entry title="MongoDB Port">
                         <f:textbox name="dotci.dbPort" value="${instance.dbPort}"/>
                     </f:entry>
-                    
+
                      <f:entry title="Db Name">
                         <f:textbox name="dotci.dbName" value="${instance.dbName}"/>
                     </f:entry>
@@ -41,7 +41,7 @@ THE SOFTWARE.
                      <f:entry title="Assigned label for newly created jobs (leave it empty if there is no label restriction)">
                         <f:textbox name="dotci.label" value="${instance.label}"/>
                     </f:entry>
-                    
+
                      <f:entry title="Email Address (This is used as from address for failure/recovery emails)">
                         <f:textbox name="dotci.fromEmailAddress" value="${instance.fromEmailAddress}"/>
                     </f:entry>
@@ -53,6 +53,10 @@ THE SOFTWARE.
                         </j:forEach>
                       </select>
                     </f:entry>
+
+                   <f:entry title="Default to New UI">
+                      <f:checkbox name="dotci.defaultToNewUi" checked="${instance.defaultToNewUi}"/>
+                  </f:entry>
 
                     <f:entry title="Github Web Url">
                       <f:textbox name="dotci.githubWebUrl" value="${instance.githubWebUrl}"/>

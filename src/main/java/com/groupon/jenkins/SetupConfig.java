@@ -49,6 +49,7 @@ public class SetupConfig extends GlobalConfiguration {
     private String defaultBuildType;
 
     private boolean privateRepoSupport;
+    private boolean defaultToNewUi;
     private String githubApiUrl;
     private String githubWebUrl;
     private String githubClientID;
@@ -216,6 +217,13 @@ public class SetupConfig extends GlobalConfiguration {
 
     public GithubAccessTokenRepository getGithubAccessTokenRepository() {
         return getInjector().getInstance(GithubAccessTokenRepository.class);
+    }
+    public boolean isDefaultToNewUi() {
+        return defaultToNewUi;
+    }
+
+    public void setDefaultToNewUi(boolean defaultToNewUi) {
+        this.defaultToNewUi = defaultToNewUi;
     }
 
     private transient Object injectorLock = new Object();
