@@ -20,7 +20,7 @@ public class ToggleNewUIAction extends TransientActionFactory<DynamicProject> im
 
     @Override
     public String getDisplayName() {
-        return "Use New UI (Beta)";
+        return "New UI (Beta)";
     }
 
     @Override
