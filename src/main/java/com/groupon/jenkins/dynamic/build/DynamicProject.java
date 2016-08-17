@@ -173,30 +173,34 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     @Override
     protected HistoryWidget createHistoryWidget() {
         return new BranchHistoryWidget(
-                this,
-                HISTORY_ADAPTER,
-                SetupConfig.get().getDynamicBuildRepository(),
-                getCurrentBranch()
+            this,
+            HISTORY_ADAPTER,
+            SetupConfig.get().getDynamicBuildRepository(),
+            getCurrentBranch()
         );
     }
 
-        @Override
+    @Override
     public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
-        if(useNewUi(token,req)){
-            try {
+        try {
+            if(useNewUi(token,req)){
                 rsp.forward(this,"newUi",req);
                 return null;
-            } catch (ServletException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
+            if ("toggleNewUI".equals(token)) {
+                toggleNewUI();
+                rsp.forwardToPreviousPage(req);
+                return null;
+            }
+        } catch (ServletException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         if ("sha".equals(token)) {
             String sha = req.getParameter("value");
             return dynamicBuildRepository.getBuildBySha(this, sha);
         }
-
 
         Object permalink = super.getDynamic(token, req, rsp);
         if (permalink == null) {
@@ -209,12 +213,12 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
 
     private boolean useNewUi(String token, StaplerRequest req) {
         return isNewUi() &&
-                (StringUtils.startsWith(token,"dotCI") || //job pages
-                 (NumberUtils.isNumber(token) &&(StringUtils.isEmpty(req.getRestOfPath()) || StringUtils.contains(req.getRestOfPath(), "dotCI")))); // buildpages
+            (StringUtils.startsWith(token,"dotCI") || //job pages
+                (NumberUtils.isNumber(token) &&(StringUtils.isEmpty(req.getRestOfPath()) || StringUtils.contains(req.getRestOfPath(), "dotCI")))); // buildpages
     }
 
     public String getJobUrl(){
-       return "job/"+ getParent().getName() +"/job/" + getName();
+        return "job/"+ getParent().getName() +"/job/" + getName();
     }
 
     public boolean isNewUi() {
@@ -336,6 +340,17 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         DynamicProjectBranchTabsProperty branchTabsProperty = getProperty(DynamicProjectBranchTabsProperty.class);
         branchTabsProperty.removeBranch(tabRegex);
         save();
+    }
+    public void toggleNewUI() {
+        JobUiProperty jobUiProperty = this.getProperty(JobUiProperty.class);
+        if(jobUiProperty != null){
+            jobUiProperty.toggle();
+            try {
+                save();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @Exported
