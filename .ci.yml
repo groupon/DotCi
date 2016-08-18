@@ -1,5 +1,5 @@
 build:
- run:  echo meow 
+ run:  fail
 environment: 
   language: java
 plugins: 
