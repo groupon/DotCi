@@ -2,5 +2,5 @@ build:
  run:  fail
 environment: 
   language: java
-plugins: 
+notifications: 
   - hipchat: 'Surya-Test'
