@@ -3,4 +3,4 @@ build:
 environment: 
   language: java
 notifications: 
-  - hipchat: 'RAPT'
+  - hipchat: 'Release-Engineering'
