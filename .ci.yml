@@ -3,4 +3,4 @@ build:
 environment: 
   language: java
 notifications: 
-  - hipchat: 'Release Engineering'
+  - hipchat: 'Surya-Test'
