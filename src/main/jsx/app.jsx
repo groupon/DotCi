@@ -17,17 +17,17 @@ const begin = function (){
     rootPath = rootPath.substring(0,rootPath.length-1)
   }
   page.base(rootPath);
-  page('/','/dotCIbuildHistory');
+  page('/dotCIbuildHistory','/');
 
   const buildHistory = new Job();
   bindBuildHistoryActions(buildHistory);
 
-  page.exit('/dotCIbuildHistory',(ctx,next)=> {
+  page.exit('/',(ctx,next)=> {
     buildHistory.exit();
     next();
   });
 
-  page('/dotCIbuildHistory', function () {
+  page('/', function () {
     buildHistory.enter();
     buildHistory.actions.QueryChange(buildHistory.query);
   });

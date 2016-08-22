@@ -190,6 +190,7 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
             if ("toggleNewUI".equals(token)) {
                 toggleNewUI();
                 rsp.forwardToPreviousPage(req);
+                return null;
             }
         } catch (ServletException e) {
             throw new RuntimeException(e);
