@@ -357,7 +357,7 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
 
     private  void authenticate() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Jenkins.getInstance().getSecurityRealm().createSecurityComponents().manager.authenticate(authentication);
+        Jenkins.getInstance().getSecurityRealm().getSecurityComponents().manager.authenticate(authentication);
     }
     public void addItem(DynamicProject project) {
         items.put(project.getName(), project);
