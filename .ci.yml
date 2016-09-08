@@ -1,6 +1,5 @@
 build:
- run:  fail
+ run:  echo meow
 environment: 
   language: java
-notifications: 
-  - hipchat: 'Surya-Test'
+
