@@ -1,5 +1,5 @@
 build:
- run:  echo meow
+ run:  echo DOTCI_CHANGE_SET
 environment: 
   language: java
 
