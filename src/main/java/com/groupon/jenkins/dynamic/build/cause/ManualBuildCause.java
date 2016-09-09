@@ -25,7 +25,13 @@ package com.groupon.jenkins.dynamic.build.cause;
 
 import com.google.common.base.Objects;
 import com.groupon.jenkins.git.GitBranch;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.stapler.export.Exported;
 
@@ -36,14 +42,23 @@ public class ManualBuildCause extends BuildCause {
     private String parentSha;
     private final String sha;
     private final CommitInfo commitInfo;
+    private final List<GithubLogEntry> changeLogEntries;
 
-    public ManualBuildCause(GitBranch branch, GHCommit commit, String parentSha,String user) {
+    public ManualBuildCause(GitBranch branch, GHCommit commit, String parentSha,String user) throws IOException {
         this.branch = branch;
         this.parentSha = parentSha;
         this.sha = commit.getSHA1();
         this.user = user;
         this.commitInfo = new CommitInfo(commit,branch);
+        this.changeLogEntries = getChangeLogEntriescommit(commit);
     }
+
+    private List<GithubLogEntry> getChangeLogEntriescommit(GHCommit commit) throws IOException {
+        List<GithubLogEntry> logEntries = new ArrayList<>();
+        logEntries .add(new GithubLogEntry(commit));
+        return logEntries;
+    }
+
 
     @Override
     @Exported(visibility = 3)
@@ -106,6 +121,7 @@ public class ManualBuildCause extends BuildCause {
 
     @Override
     public Iterable<GithubLogEntry> getChangeLogEntries() {
-        return Collections.emptyList();
+        //null check here for backward compat with builds that were built without this field.
+        return changeLogEntries == null? new ArrayList<>():changeLogEntries;
     }
 }

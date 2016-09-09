@@ -26,9 +26,14 @@ package com.groupon.jenkins.dynamic.build.cause;
 import hudson.model.User;
 import hudson.scm.ChangeLogSet;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.kohsuke.github.GHCommit;
 import org.kohsuke.stapler.export.Exported;
 
 public class GithubLogEntry extends ChangeLogSet.Entry {
@@ -36,7 +41,7 @@ public class GithubLogEntry extends ChangeLogSet.Entry {
     private final String message;
     private final String githubUrl;
     private final String commitId;
-    private List<String> affectedPaths;
+    private final List<String> affectedPaths;
 
     public GithubLogEntry(String message, String githubUrl, String commitId, List<String> affectedPaths) {
         this.message = message;
@@ -44,6 +49,15 @@ public class GithubLogEntry extends ChangeLogSet.Entry {
         this.commitId = commitId;
         this.affectedPaths = affectedPaths;
     }
+
+    public GithubLogEntry(GHCommit commit) throws IOException {
+        this.message = commit.getCommitShortInfo().getMessage();
+        this.githubUrl = commit.getHtmlUrl().toExternalForm();
+        this.commitId = commit.getSHA1();
+        this.affectedPaths = commit.getFiles().stream().map(file -> file.getFileName()).collect(Collectors.toList());
+
+    }
+
 
     @Override
     @Exported
