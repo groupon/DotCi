@@ -1,7 +1,7 @@
 <% changed_files = build.githubRepository.getPullRequest(DOTCI_PULL_REQUEST.toInteger()).listFiles().collect { it.filename } %>
 build:
  <% if (DOTCI_PULL_REQUEST && changed_files.contains(".ci.yml")) { %>
- run:  echo  $build.class
+ run:  echo  $build
  <%} else {%>
  run:  echo purr 
  <%}%>
