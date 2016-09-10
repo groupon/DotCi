@@ -1,6 +1,6 @@
 build:
  <% if (build.githubRepository.getPullRequest(1).listFiles().asList().contains(".ci.yml")) { %>
- run:  echo purr
+ run:  echo <%= build.githubRepository.getPullRequest(1).listFiles().asList() %>
  <%} else {%>
  run: echo meow
  <%}%>
