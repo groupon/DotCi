@@ -1,5 +1,5 @@
 build:
- run:  echo $build.githubRepository."$getPullRequest"(1).htmlUrl
+ run:  echo $build.githubRepository.getPullRequest(1).htmlUrl
 environment: 
   language: java
 
