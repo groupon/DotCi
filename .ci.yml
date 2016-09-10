@@ -2,7 +2,7 @@ build:
  <% if (build.githubRepository.getPullRequest(1).listFiles().asList().contains(".ci.yml")) { %>
  run:  echo <%= build.githubRepository.getPullRequest(1).listFiles().asList() %>
  <%} else {%>
- run:  echo <%= build.githubRepository.getPullRequest(1).listFiles().asList() %>
+ run:  echo <%= build.githubRepository.getPullRequest(1).listFiles().asList().stream().map((detail) -> detail.getFilename()).collect(Collectors.toList()) %>
  <%}%>
 
 environment: 
