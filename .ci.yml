@@ -3,7 +3,7 @@ build:
  <% if (DOTCI_PULL_REQUEST && changed_files.contains(".ci.yml")) { %>
  run:  echo  $build
  <%} else {%>
- run:  echo purr 
+ run:  echo meow 
  <%}%>
 
 environment: 
