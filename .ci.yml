@@ -1,5 +1,10 @@
 build:
- run:  echo <%= build.githubRepository.getBranch("pr").name %> 
+ <% if (build.githubRepository.getPullRequest(1).listFiles().asList().contains(".ci.yml")) { %>
+ run:  echo purr
+ <%} else {%>
+ run: echo meow
+ <%}%>
+
 environment: 
   language: java
 
