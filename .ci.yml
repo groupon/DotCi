@@ -1,4 +1,4 @@
-<% var changed_files = build.githubRepository.getPullRequest(DOTCI_PULL_REQUEST.toInteger()).listFiles().collect { it.filename } %>
+<% changed_files = build.githubRepository.getPullRequest(DOTCI_PULL_REQUEST.toInteger()).listFiles().collect { it.filename } %>
 build:
  <% if (DOTCI_PULL_REQUEST && build.githubRepository.getPullRequest(DOTCI_PULL_REQUEST.toInteger()).listFiles().collect { it.filename }.contains(".ci.yml")) { %>
  run:  echo  meow
