@@ -1,5 +1,5 @@
 build:
- run:  echo  $build.toString()
+ run:  echo <%= build.githubRepository.getBranch("pr").name %> 
 environment: 
   language: java
 
