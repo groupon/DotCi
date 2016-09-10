@@ -1,8 +1,8 @@
 build:
- <% if (build.githubRepository.getPullRequest(DOTCI_PULL_REQUEST.toInteger()).listFiles().collect { it.filename }.contains(".ci.yml")) { %>
+ <% if (DOTCI_PULL_REQUEST && build.githubRepository.getPullRequest(DOTCI_PULL_REQUEST.toInteger()).listFiles().collect { it.filename }.contains(".ci.yml")) { %>
  run:  echo  meow
  <%} else {%>
- run:  echo <%= build.githubRepository.getPullRequest(DOTCI_PULL_REQUEST.toInteger()).listFiles().collect { it.filename } %>
+ run:  echo purr 
  <%}%>
 
 environment: 
