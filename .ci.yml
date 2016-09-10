@@ -1,6 +1,6 @@
 import static java.util.Calendar.*;
 build:
- run:  echo $build.githubRepository.getBranch("pr")
+ run:  echo ${build.githubRepository.getBranch("pr")}
 environment: 
   language: java
 
