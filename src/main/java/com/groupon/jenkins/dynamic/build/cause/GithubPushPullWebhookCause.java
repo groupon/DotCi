@@ -24,21 +24,23 @@ THE SOFTWARE.
 package com.groupon.jenkins.dynamic.build.cause;
 
 import com.groupon.jenkins.git.GitBranch;
-import com.groupon.jenkins.github.Payload;
+import com.groupon.jenkins.github.PushAndPullRequestPayload;
+import com.groupon.jenkins.github.WebhookPayload;
+
 import java.util.List;
 
-public abstract class GithubCause extends BuildCause {
+public abstract class GithubPushPullWebhookCause extends BuildCause {
     private final String sha;
     private final String parentSha;
     private final String pullRequestNumber;
     private final String pusher;
     @SuppressWarnings("unused")
-    private transient Payload payload; // For backward compatibility
+    private transient WebhookPayload payload; // For backward compatibility
     private final GitBranch branch;
     private final List<GithubLogEntry> logEntries;
     private CommitInfo commitInfo;
 
-    public GithubCause(Payload payload, String sha) {
+    public GithubPushPullWebhookCause(PushAndPullRequestPayload payload, String sha) {
         this.pusher = payload.getPusher();
         this.pullRequestNumber = payload.isPullRequest() ? payload.getPullRequestNumber() : null;
         this.sha = sha;

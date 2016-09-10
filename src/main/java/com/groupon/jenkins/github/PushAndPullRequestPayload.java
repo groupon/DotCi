@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.github;
 
+import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.cause.GitHubPullRequestCause;
 import com.groupon.jenkins.dynamic.build.cause.GitHubPushCause;
 import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
@@ -33,11 +34,11 @@ import java.util.Map;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-public class Payload {
+public class PushAndPullRequestPayload extends WebhookPayload {
 
     private final JSONObject payloadJson;
 
-    public Payload(String payload) {
+    public PushAndPullRequestPayload (String payload) {
         this.payloadJson = JSONObject.fromObject(payload);
     }
 
@@ -45,7 +46,7 @@ public class Payload {
         return payloadJson.containsKey("pull_request");
     }
 
-    public Cause getCause() {
+    public BuildCause getCause() {
         if (isPullRequest()) {
             JSONObject pullRequest = getPullRequest();
             final String label = pullRequest.getJSONObject("head").getString("label");

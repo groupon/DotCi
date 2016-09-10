@@ -32,7 +32,7 @@ import org.junit.Test;
 
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.cause.GitHubPushCause;
-import com.groupon.jenkins.dynamic.build.cause.GithubCause;
+import com.groupon.jenkins.dynamic.build.cause.GithubPushPullWebhookCause;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -54,7 +54,7 @@ public class PusherEmailNotifierTest {
     @Test
     public void should_attempt_sending_an_email_only_if_github_push() {
         PusherEmailNotifier pusherEmailNotifier = new PusherEmailNotifier();
-        when(build.getCause(GithubCause.class)).thenReturn(null);
+        when(build.getCause(GithubPushPullWebhookCause.class)).thenReturn(null);
         assertFalse(pusherEmailNotifier.needsEmail(build, listener));
     }
 

@@ -67,16 +67,16 @@ public class GithubWebhook implements UnprotectedRootAction {
         if (StringUtils.isEmpty(payload)) {
             throw new IllegalArgumentException("Not intended to be browsed interactively (must specify payload parameter)");
         }
-        processGitHubPayload(payload);
+        processGitHubPayload(req.getHeader("X-GitHub-Event"), payload);
     }
 
     protected String getRequestPayload(StaplerRequest req) throws IOException {
         return CharStreams.toString(req.getReader());
     }
 
-    public void processGitHubPayload(String payloadData) {
+    public void processGitHubPayload(String eventType, String payloadData) {
         SecurityContextHolder.getContext().setAuthentication(ACL.SYSTEM);
-        final Payload payload = makePayload(payloadData);
+        final WebhookPayload payload = WebhookPayload.get(eventType,payloadData);
         LOGGER.info("Received POST by " + payload.getPusher());
         LOGGER.info("Received kicking off build for " + payload.getProjectUrl());
         for (final DynamicProject job : makeDynamicProjectRepo().getJobsFor(payload.getProjectUrl())) {
@@ -114,9 +114,7 @@ public class GithubWebhook implements UnprotectedRootAction {
         return SetupConfig.get().getDynamicProjectRepository();
     }
 
-    protected Payload makePayload(String payloadData) {
-        return new Payload(payloadData);
-    }
+
 
     @Override
     public String getIconFileName() {

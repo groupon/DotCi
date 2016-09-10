@@ -24,7 +24,7 @@ THE SOFTWARE.
 package com.groupon.jenkins.github;
 
 import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.cause.GithubCause;
+import com.groupon.jenkins.dynamic.build.cause.GithubPushPullWebhookCause;
 import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersAction;
@@ -76,7 +76,7 @@ public class GithubWebhookTest {
 
         kickOffBuildTrigger(request, project);
 
-        verify(project).scheduleBuild(eq(0), any(GithubCause.class), any(ParametersAction.class));
+        verify(project).scheduleBuild(eq(0), any(GithubPushPullWebhookCause.class), any(ParametersAction.class));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class GithubWebhookTest {
 
         kickOffBuildTrigger(request, project);
 
-        verify(project).scheduleBuild(eq(0), any(GithubCause.class), any(ParametersAction.class));
+        verify(project).scheduleBuild(eq(0), any(GithubPushPullWebhookCause.class), any(ParametersAction.class));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class GithubWebhookTest {
         kickOffBuildTrigger(request, project);
 
         ArgumentCaptor<ParametersAction> parametersCaptor = ArgumentCaptor.forClass(ParametersAction.class);
-        verify(project).scheduleBuild(eq(0), any(GithubCause.class), parametersCaptor.capture());
+        verify(project).scheduleBuild(eq(0), any(GithubPushPullWebhookCause.class), parametersCaptor.capture());
 
         ParametersAction parametersAction = parametersCaptor.getValue();
         Assert.assertTrue(parametersAction.getParameter("PARAM") instanceof  StringParameterValue);

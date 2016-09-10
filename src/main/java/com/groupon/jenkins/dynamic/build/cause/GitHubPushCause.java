@@ -23,14 +23,17 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.cause;
 
-import com.groupon.jenkins.github.Payload;
+import com.groupon.jenkins.github.PushAndPullRequestPayload;
 
-public class GitHubPushCause extends GithubCause {
+import java.util.HashMap;
+import java.util.Map;
+
+public class GitHubPushCause extends GithubPushPullWebhookCause {
 
     private final String pushedBy;
     private final String pusherEmailAddress;
 
-    public GitHubPushCause(Payload payload, String sha, String pusher, String pusherEmailAddress) {
+    public GitHubPushCause(PushAndPullRequestPayload payload, String sha, String pusher, String pusherEmailAddress) {
         super(payload, sha);
         this.pushedBy = pusher;
         this.pusherEmailAddress = pusherEmailAddress;

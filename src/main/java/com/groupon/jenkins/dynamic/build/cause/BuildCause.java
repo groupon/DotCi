@@ -24,19 +24,18 @@ THE SOFTWARE.
 package com.groupon.jenkins.dynamic.build.cause;
 
 import com.groupon.jenkins.git.GitBranch;
-import com.groupon.jenkins.github.Payload;
+import com.groupon.jenkins.github.WebhookPayload;
 import hudson.model.Cause;
-
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public abstract class BuildCause extends Cause {
@@ -52,6 +51,7 @@ public abstract class BuildCause extends Cause {
     public abstract String getPullRequestNumber();
 
     public abstract CommitInfo getCommitInfo();
+    public  Map<String, String> getCauseEnvVars(){return new HashMap<>();}
 
     @Exported
     public abstract String getName();
@@ -61,6 +61,7 @@ public abstract class BuildCause extends Cause {
         putIfNotNull(vars, "DOTCI_SHA", getSha());
         putIfNotNull(vars, "DOTCI_PUSHER", getPusher());
         putIfNotNull(vars, "DOTCI_PULL_REQUEST", getPullRequestNumber());
+        vars.putAll(getCauseEnvVars());
         return vars;
     }
 
@@ -118,7 +119,7 @@ public abstract class BuildCause extends Cause {
             this.sha = branch;
         }
 
-        public CommitInfo(Payload payload) {
+        public CommitInfo(WebhookPayload payload) {
             this.sha = payload.getSha();
             this.message = payload.getCommitMessage();
             this.committerName = payload.getCommitterName();
