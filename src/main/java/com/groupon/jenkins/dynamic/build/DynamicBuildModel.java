@@ -135,6 +135,7 @@ public class DynamicBuildModel {
         HashMap<String, Object> environmentWithChangeSet = new HashMap<String, Object>();
         environmentWithChangeSet.putAll(build.getEnvironment(listener));
         environmentWithChangeSet.put("DOTCI_CHANGE_SET",getChangeSet());
+        environmentWithChangeSet.put("build",build);
         return environmentWithChangeSet;
     }
 
