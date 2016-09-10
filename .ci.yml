@@ -1,5 +1,5 @@
 build:
- run:  echo $DOTCI_CHANGE_SET
+ run:  echo $build.githubRepository.getPullRequest(1).htmlUrl
 environment: 
   language: java
 
