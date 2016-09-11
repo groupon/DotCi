@@ -81,7 +81,7 @@ public class GithubWebhook implements UnprotectedRootAction {
         for (final DynamicProject job : makeDynamicProjectRepo().getJobsFor(payload.getProjectUrl())) {
 
             if (payload.needsBuild(job)) {
-                LOGGER.info("starting job" + job.getName());
+                LOGGER.info("starting job " + job.getFullDisplayName());
                 this.queue.execute(() -> job.scheduleBuild(0, payload.getCause(), new NoDuplicatesParameterAction(getParametersValues(job, payload.getBranch()))));
             }
         }

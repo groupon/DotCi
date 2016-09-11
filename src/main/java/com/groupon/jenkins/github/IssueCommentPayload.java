@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.cause.IssueCommentBuildCause;
+import com.groupon.jenkins.git.GitBranch;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import org.kohsuke.github.GHIssue;
 import org.kohsuke.github.GHIssueComment;
@@ -57,7 +58,7 @@ public class IssueCommentPayload implements WebhookPayload {
 
     @Override
     public String getBranch() {
-        return this.issue.isPullRequest() ? this.issue.getNumber() + "" : this.repository.getDefaultBranch();
+        return this.issue.isPullRequest() ? GitBranch.PULL_REQUEST_PREFIX + this.issue.getNumber() : this.repository.getDefaultBranch();
     }
 
     public String getSha() {

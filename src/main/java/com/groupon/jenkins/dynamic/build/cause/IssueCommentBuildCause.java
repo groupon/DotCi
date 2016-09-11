@@ -41,7 +41,7 @@ public class IssueCommentBuildCause extends BuildCause {
 
     @Override
     public String getPullRequestNumber() {
-        return null;
+        return this.pullRequestNumber;
     }
 
     @Override
