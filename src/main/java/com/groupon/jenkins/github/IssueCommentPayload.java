@@ -8,6 +8,7 @@ import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.cause.IssueCommentBuildCause;
 import com.groupon.jenkins.git.GitBranch;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.github.GHIssue;
 import org.kohsuke.github.GHIssueComment;
 import org.kohsuke.github.GHRepository;
@@ -74,7 +75,7 @@ public class IssueCommentPayload implements WebhookPayload {
     }
 
     public String getDescription() {
-        return this.comment.getBody();
+        return StringUtils.abbreviate(this.comment.getBody(), 40);
     }
 
     public String getPullRequestNumber() {
