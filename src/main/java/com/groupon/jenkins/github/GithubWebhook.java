@@ -82,12 +82,7 @@ public class GithubWebhook implements UnprotectedRootAction {
 
             if (payload.needsBuild(job)) {
                 LOGGER.info("starting job" + job.getName());
-                this.queue.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        job.scheduleBuild(0, payload.getCause(), new NoDuplicatesParameterAction(getParametersValues(job, payload.getBranch())));
-                    }
-                });
+                this.queue.execute(() -> job.scheduleBuild(0, payload.getCause(), new NoDuplicatesParameterAction(getParametersValues(job, payload.getBranch()))));
             }
         }
     }
