@@ -75,4 +75,8 @@ public class IssueCommentPayload implements WebhookPayload {
     public String getDescription() {
         return this.comment.getBody();
     }
+
+    public String getPullRequestNumber() {
+        return this.issue.isPullRequest() ? this.issue.getNumber() + "" : null;
+    }
 }

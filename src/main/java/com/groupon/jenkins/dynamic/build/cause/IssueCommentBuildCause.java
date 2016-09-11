@@ -12,12 +12,14 @@ public class IssueCommentBuildCause extends BuildCause {
     private final String pusher;
     private final String shortDescription;
     private final CommitInfo commitInfo;
+    private final String pullRequestNumber;
 
     public IssueCommentBuildCause(final IssueCommentPayload issueCommentPayload) {
         this.sha = issueCommentPayload.getSha();
         this.pusher = issueCommentPayload.getPusher();
         this.branch = new GitBranch(issueCommentPayload.getBranch());
         this.shortDescription = issueCommentPayload.getDescription();
+        this.pullRequestNumber = issueCommentPayload.getPullRequestNumber();
         this.commitInfo = new CommitInfo(issueCommentPayload.getDescription(), issueCommentPayload.getPusher(), issueCommentPayload.getBranch());
 
     }
