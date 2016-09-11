@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
+import com.groupon.jenkins.dynamic.build.cause.IssueCommentBuildCause;
+import com.groupon.jenkins.github.services.GithubRepositoryService;
 import org.kohsuke.github.GHIssue;
 import org.kohsuke.github.GHIssueComment;
 import org.kohsuke.github.GHRepository;
@@ -50,11 +52,27 @@ public class IssueCommentPayload implements WebhookPayload {
 
     @Override
     public BuildCause getCause() {
-        return null;
+        return new IssueCommentBuildCause(this);
     }
 
     @Override
     public String getBranch() {
-        return "master";
+        return this.repository.getDefaultBranch();
+    }
+
+    public String getSha() {
+        try {
+            return new GithubRepositoryService(getProjectUrl()).getHeadCommitForBranch(getBranch()).getSHA1();
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getPusher() {
+        return this.sender.getLogin();
+    }
+
+    public String getDescription() {
+        return this.comment.getBody();
     }
 }
