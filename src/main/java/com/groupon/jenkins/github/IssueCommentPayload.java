@@ -57,7 +57,7 @@ public class IssueCommentPayload implements WebhookPayload {
 
     @Override
     public String getBranch() {
-        return this.repository.getDefaultBranch();
+        return this.issue.isPullRequest() ? this.issue.getNumber() + "" : this.repository.getDefaultBranch();
     }
 
     public String getSha() {
