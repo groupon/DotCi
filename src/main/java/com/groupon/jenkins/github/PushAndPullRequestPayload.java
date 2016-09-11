@@ -23,38 +23,40 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.github;
 
+import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.cause.GitHubPullRequestCause;
 import com.groupon.jenkins.dynamic.build.cause.GitHubPushCause;
 import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
-import hudson.model.Cause;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-public class PushAndPullRequestPayload extends WebhookPayload {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class PushAndPullRequestPayload implements WebhookPayload {
+
 
     private final JSONObject payloadJson;
 
-    public PushAndPullRequestPayload (String payload) {
+    public PushAndPullRequestPayload(final String payload) {
         this.payloadJson = JSONObject.fromObject(payload);
     }
 
     public boolean isPullRequest() {
-        return payloadJson.containsKey("pull_request");
+        return this.payloadJson.containsKey("pull_request");
     }
 
     public BuildCause getCause() {
         if (isPullRequest()) {
-            JSONObject pullRequest = getPullRequest();
+            final JSONObject pullRequest = getPullRequest();
             final String label = pullRequest.getJSONObject("head").getString("label");
-            String number = pullRequest.getString("number");
+            final String number = pullRequest.getString("number");
             return new GitHubPullRequestCause(this, getSha(), label, number, getPullRequestSourceBranch(), getPullRequestTargetBranch());
         } else {
-            final String pusherName = payloadJson.getJSONObject("pusher").getString("name");
-            final String email = payloadJson.getJSONObject("pusher").getString("email");
+            final String pusherName = this.payloadJson.getJSONObject("pusher").getString("name");
+            final String email = this.payloadJson.getJSONObject("pusher").getString("email");
             return new GitHubPushCause(this, getSha(), pusherName, email);
         }
     }
@@ -63,33 +65,33 @@ public class PushAndPullRequestPayload extends WebhookPayload {
         if (isPullRequest()) {
             return getPullRequest().getJSONObject("head").getString("sha");
         }
-        return payloadJson.getJSONObject("head_commit").getString("id");
+        return this.payloadJson.getJSONObject("head_commit").getString("id");
     }
 
     private JSONObject getPullRequest() {
-        return payloadJson.getJSONObject("pull_request");
+        return this.payloadJson.getJSONObject("pull_request");
     }
 
     public String getBranch() {
         if (isPullRequest()) {
             return "Pull Request: " + getPullRequestNumber();
         }
-        return payloadJson.getString("ref").replaceAll("refs/", "").replaceAll("heads/", "");
+        return this.payloadJson.getString("ref").replaceAll("refs/", "").replaceAll("heads/", "");
     }
 
-    public boolean needsBuild(boolean shouldBuildTags) {
-        if (payloadJson.has("ref") && payloadJson.getString("ref").startsWith("refs/tags/")) {
-            return shouldBuildTags;
+    public boolean needsBuild(final DynamicProject project) {
+        if (this.payloadJson.has("ref") && this.payloadJson.getString("ref").startsWith("refs/tags/")) {
+            return project.shouldBuildTags();
         }
         if (isPullRequest()) {
             return shouldBuildPullRequest();
         }
-        return !payloadJson.getBoolean("deleted");
+        return !this.payloadJson.getBoolean("deleted");
     }
 
     private boolean shouldBuildPullRequest() {
         return !isPullRequestClosed() &&
-                shouldBuildPullRequestBasedOnAction();
+            shouldBuildPullRequestBasedOnAction();
     }
 
     //only build for webhook actions of "opened", "reopened", or "synchronize"
@@ -103,15 +105,15 @@ public class PushAndPullRequestPayload extends WebhookPayload {
     }
 
     private boolean isOpenedAction() {
-        return isPullRequest() && "opened".equals(payloadJson.getString("action"));
+        return isPullRequest() && "opened".equals(this.payloadJson.getString("action"));
     }
 
     private boolean isReOpenedAction() {
-        return isPullRequest() && "reopened".equals(payloadJson.getString("action"));
+        return isPullRequest() && "reopened".equals(this.payloadJson.getString("action"));
     }
 
     private boolean isSynchronizeAction() {
-        return isPullRequest() && "synchronize".equals(payloadJson.getString("action"));
+        return isPullRequest() && "synchronize".equals(this.payloadJson.getString("action"));
     }
 
     public String getPullRequestSourceBranch() {
@@ -141,76 +143,77 @@ public class PushAndPullRequestPayload extends WebhookPayload {
 
     public String getPusher() {
         if (isPullRequest()) {
-            return payloadJson.getJSONObject("sender").getString("login");
+            return this.payloadJson.getJSONObject("sender").getString("login");
         }
-        return payloadJson.getJSONObject("pusher").getString("name");
+        return this.payloadJson.getJSONObject("pusher").getString("name");
     }
 
     public String getDiffUrl() {
         if (isPullRequest()) {
             return getPullRequest().getString("html_url");
         } else {
-            return payloadJson.getString("compare");
+            return this.payloadJson.getString("compare");
         }
     }
 
     public String getProjectUrl() {
-        if(isPullRequest()){
+        if (isPullRequest()) {
             return getPullRequest().getJSONObject("base").getJSONObject("repo").getString("html_url");
         }
-        return  payloadJson.getJSONObject("repository").getString("url");
+        return this.payloadJson.getJSONObject("repository").getString("url");
     }
 
     public List<GithubLogEntry> getLogEntries() {
-        List<GithubLogEntry> logEntries = new ArrayList<GithubLogEntry>();
+        final List<GithubLogEntry> logEntries = new ArrayList<>();
         if (!isPullRequest()) {
-            JSONArray commits = payloadJson.getJSONArray("commits");
-            for (Object commit : commits) {
+            final JSONArray commits = this.payloadJson.getJSONArray("commits");
+            for (final Object commit : commits) {
                 logEntries.add(convertToLogEntry((Map<String, Object>) commit));
             }
         }
         return logEntries;
     }
 
-    private GithubLogEntry convertToLogEntry(Map<String, Object> commit) {
-        List<String> affectedPaths = new ArrayList<String>();
+    private GithubLogEntry convertToLogEntry(final Map<String, Object> commit) {
+        final List<String> affectedPaths = new ArrayList<>();
         affectedPaths.addAll((java.util.Collection<? extends String>) commit.get("added"));
         affectedPaths.addAll((java.util.Collection<? extends String>) commit.get("modified"));
         affectedPaths.addAll((java.util.Collection<? extends String>) commit.get("removed"));
-        return new GithubLogEntry(commit.get("message").toString(), commit.get("url").toString(), commit.get("id").toString(),affectedPaths);
+        return new GithubLogEntry(commit.get("message").toString(), commit.get("url").toString(), commit.get("id").toString(), affectedPaths);
     }
 
     public String getCommitterName() {
-        if(isPullRequest()){
-            return  payloadJson.getJSONObject("sender").getString("login");
+        if (isPullRequest()) {
+            return this.payloadJson.getJSONObject("sender").getString("login");
         }
-        return  payloadJson.getJSONObject("head_commit").getJSONObject("committer").getString("name");
+        return this.payloadJson.getJSONObject("head_commit").getJSONObject("committer").getString("name");
     }
 
     public String getCommitterEmail() {
-        if(isPullRequest()){
+        if (isPullRequest()) {
             return null;
         }
-        return  payloadJson.getJSONObject("head_commit").getJSONObject("committer").getString("email");
+        return this.payloadJson.getJSONObject("head_commit").getJSONObject("committer").getString("email");
     }
+
     public String getAvatarUrl() {
-        if(isPullRequest()){
-            return  payloadJson.getJSONObject("sender").getString("avatar_url");
+        if (isPullRequest()) {
+            return this.payloadJson.getJSONObject("sender").getString("avatar_url");
         }
         return null;
     }
 
     public String getCommitMessage() {
-        if(isPullRequest()){
-            return  payloadJson.getJSONObject("pull_request").getString("title");
+        if (isPullRequest()) {
+            return this.payloadJson.getJSONObject("pull_request").getString("title");
         }
-        return  payloadJson.getJSONObject("head_commit").getString("message");
+        return this.payloadJson.getJSONObject("head_commit").getString("message");
     }
 
     public String getParentSha() {
-        if(isPullRequest()) {
-            return payloadJson.getJSONObject("pull_request").getJSONObject("base").getString("sha");
+        if (isPullRequest()) {
+            return this.payloadJson.getJSONObject("pull_request").getJSONObject("base").getString("sha");
         }
-        return payloadJson.getString("before");
+        return this.payloadJson.getString("before");
     }
 }

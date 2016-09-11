@@ -1,36 +1,30 @@
 package com.groupon.jenkins.github;
 
+import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
-import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
+import org.kohsuke.github.GHEvent;
 
-import java.util.List;
+public interface WebhookPayload {
 
-public abstract  class WebhookPayload {
-    public abstract String getSha();
 
-    public abstract String getCommitMessage();
-
-    public abstract String getCommitterName();
-
-    public abstract List<GithubLogEntry> getLogEntries();
-
-    public abstract String getCommitterEmail();
-
-    public abstract String getAvatarUrl();
-
-    public abstract String getDiffUrl();
-
-    public abstract String getBranch();
-
-    public static WebhookPayload get(String eventType, String payloadData) {
-        return  new PushAndPullRequestPayload(payloadData);
+    static WebhookPayload get(final String eventType, final String payloadData) {
+        switch (GHEvent.valueOf(eventType.toUpperCase())) {
+            case PULL_REQUEST:
+                return new PushAndPullRequestPayload(payloadData);
+            case PUSH:
+                return new PushAndPullRequestPayload(payloadData);
+            case ISSUE_COMMENT:
+                return IssueCommentPayload.get(payloadData);
+            default:
+                throw new RuntimeException("Event type: " + eventType + " not supported");
+        }
     }
 
-    public abstract String getPusher();
+    String getProjectUrl();
 
-    public abstract String getProjectUrl();
+    boolean needsBuild(DynamicProject project);
 
-    public abstract boolean needsBuild(boolean b);
+    BuildCause getCause();
 
-    public abstract BuildCause getCause();
+    String getBranch();
 }

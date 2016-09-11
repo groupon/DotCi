@@ -24,7 +24,7 @@ THE SOFTWARE.
 package com.groupon.jenkins.dynamic.build.cause;
 
 import com.groupon.jenkins.git.GitBranch;
-import com.groupon.jenkins.github.WebhookPayload;
+import com.groupon.jenkins.github.PushAndPullRequestPayload;
 import hudson.model.Cause;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
@@ -42,6 +42,12 @@ public abstract class BuildCause extends Cause {
 
     public static final BuildCause NULL_BUILD_CAUSE = new NullBuildCause();
 
+    protected static void putIfNotNull(final Map<String, String> vars, final String key, final String value) {
+        if (value != null) {
+            vars.put(key, value);
+        }
+    }
+
     public abstract String getSha();
 
     public abstract String getParentSha();
@@ -51,24 +57,21 @@ public abstract class BuildCause extends Cause {
     public abstract String getPullRequestNumber();
 
     public abstract CommitInfo getCommitInfo();
-    public  Map<String, String> getCauseEnvVars(){return new HashMap<>();}
+
+    public Map<String, String> getCauseEnvVars() {
+        return new HashMap<>();
+    }
 
     @Exported
     public abstract String getName();
 
     public Map<String, String> getEnvVars() {
-        Map<String, String> vars = new HashMap<String, String>();
+        final Map<String, String> vars = new HashMap<>();
         putIfNotNull(vars, "DOTCI_SHA", getSha());
         putIfNotNull(vars, "DOTCI_PUSHER", getPusher());
         putIfNotNull(vars, "DOTCI_PULL_REQUEST", getPullRequestNumber());
         vars.putAll(getCauseEnvVars());
         return vars;
-    }
-
-    protected static void putIfNotNull(Map<String, String> vars, String key, String value) {
-        if (value != null) {
-            vars.put(key, value);
-        }
     }
 
     public abstract GitBranch getBranch();
@@ -77,41 +80,42 @@ public abstract class BuildCause extends Cause {
 
 
     @ExportedBean(defaultVisibility = 99)
-    public static class CommitInfo{
-        public static CommitInfo NULL_INFO =  new CommitInfo();
+    public static class CommitInfo {
+        public static CommitInfo NULL_INFO = new CommitInfo();
         private final String avatarUrl;
-        private  String committerEmail;
-        private String message;
-        private String committerName;
-        private String branch;
+        private final String message;
+        private final String committerName;
+        private final String branch;
         private final String sha;
+        private String committerEmail;
         private String commitUrl;
 
         //for backward compat
-        private CommitInfo(){
+        private CommitInfo() {
             this.committerEmail = "unknown@unknown.com";
             this.message = "unknown";
-            this.committerName="unknown";
-            this.commitUrl="http://unknown.com";
-            this.branch="unknown.com";
+            this.committerName = "unknown";
+            this.commitUrl = "http://unknown.com";
+            this.branch = "unknown.com";
             this.avatarUrl = null;
             this.sha = "unknown";
         }
-        public CommitInfo(GHCommit commit, GitBranch branch){
+
+        public CommitInfo(final GHCommit commit, final GitBranch branch) {
             this.sha = commit.getSHA1();
             try {
                 this.message = commit.getCommitShortInfo().getMessage();
                 this.committerName = commit.getCommitShortInfo().getCommitter().getName();
-                this.committerEmail= commit.getCommitShortInfo().getCommitter().getEmail();
-                this.commitUrl = commit.getOwner().getHtmlUrl()+"/commit/"+sha;
-            } catch (IOException e) {
-               throw  new RuntimeException(e);
+                this.committerEmail = commit.getCommitShortInfo().getCommitter().getEmail();
+                this.commitUrl = commit.getOwner().getHtmlUrl() + "/commit/" + this.sha;
+            } catch (final IOException e) {
+                throw new RuntimeException(e);
             }
             this.branch = branch.toString();
             this.avatarUrl = null;
         }
 
-        public CommitInfo( String message, String committerName, String branch) {
+        public CommitInfo(final String message, final String committerName, final String branch) {
             this.message = message;
             this.committerName = committerName;
             this.avatarUrl = null;
@@ -119,7 +123,7 @@ public abstract class BuildCause extends Cause {
             this.sha = branch;
         }
 
-        public CommitInfo(WebhookPayload payload) {
+        public CommitInfo(final PushAndPullRequestPayload payload) {
             this.sha = payload.getSha();
             this.message = payload.getCommitMessage();
             this.committerName = payload.getCommitterName();
@@ -131,37 +135,38 @@ public abstract class BuildCause extends Cause {
 
         @Exported
         public String getCommitUrl() {
-            return commitUrl;
+            return this.commitUrl;
         }
 
         @Exported
-        public String getShortSha(){
-            return sha.length()<9?sha:sha.substring(0,7);
+        public String getShortSha() {
+            return this.sha.length() < 9 ? this.sha : this.sha.substring(0, 7);
         }
 
         @Exported
-        public String getMessage(){
-            return StringUtils.abbreviate(message, 50);
+        public String getMessage() {
+            return StringUtils.abbreviate(this.message, 50);
         }
 
         @Exported
-        public  String getCommitterName(){
-            return committerName;
+        public String getCommitterName() {
+            return this.committerName;
         }
 
         @Exported
         public String getBranch() {
-            return branch;
+            return this.branch;
         }
+
         @Exported
-        public String getAvatarUrl(){
-            if(avatarUrl == null){
-                if(committerEmail ==null) return null;
-                byte[] md5 = DigestUtils.md5(committerEmail);
-                String emailDigest = new BigInteger(1, md5).toString(16);
-                return "https://secure.gravatar.com/avatar/"+emailDigest+".png?";
+        public String getAvatarUrl() {
+            if (this.avatarUrl == null) {
+                if (this.committerEmail == null) return null;
+                final byte[] md5 = DigestUtils.md5(this.committerEmail);
+                final String emailDigest = new BigInteger(1, md5).toString(16);
+                return "https://secure.gravatar.com/avatar/" + emailDigest + ".png?";
             }
-            return avatarUrl;
+            return this.avatarUrl;
         }
     }
 
