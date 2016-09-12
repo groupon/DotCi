@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Extension
@@ -76,13 +77,19 @@ public class GithubWebhook implements UnprotectedRootAction {
 
     public void processGitHubPayload(final String eventType, final String payloadData) {
         SecurityContextHolder.getContext().setAuthentication(ACL.SYSTEM);
-        final WebhookPayload payload = WebhookPayload.get(eventType, payloadData);
+        final WebhookPayload payload = makePayload(eventType, payloadData);
         LOGGER.info("Received kicking off build for " + payload.getProjectUrl());
         for (final DynamicProject job : makeDynamicProjectRepo().getJobsFor(payload.getProjectUrl())) {
 
             if (payload.needsBuild(job)) {
-                LOGGER.info("starting job " + job.getFullDisplayName());
-                this.queue.execute(() -> job.scheduleBuild(0, payload.getCause(), new NoDuplicatesParameterAction(getParametersValues(job, payload.getBranch()))));
+                LOGGER.info("starting job " + job.getName());
+                this.queue.execute(() -> {
+                    try {
+                        job.scheduleBuild(0, payload.getCause(), new NoDuplicatesParameterAction(getParametersValues(job, payload.getBranch())));
+                    } catch (final Exception e) {
+                        LOGGER.log(Level.INFO, "Error scheduling build for " + payload.getProjectUrl(), e);
+                    }
+                });
             }
         }
     }
@@ -120,4 +127,7 @@ public class GithubWebhook implements UnprotectedRootAction {
         return null;
     }
 
+    public WebhookPayload makePayload(final String eventType, final String payloadData) {
+        return WebhookPayload.get(eventType, payloadData);
+    }
 }

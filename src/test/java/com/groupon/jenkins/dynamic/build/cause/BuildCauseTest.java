@@ -25,12 +25,9 @@ package com.groupon.jenkins.dynamic.build.cause;
 
 import org.junit.Test;
 
-import com.groupon.jenkins.dynamic.build.cause.BuildCause;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -39,7 +36,7 @@ public class BuildCauseTest {
 
     @Test
     public void should_export_env_vars() {
-        BuildCause cause = mock(BuildCause.class);
+        final BuildCause cause = mock(BuildCause.class);
         doCallRealMethod().when(cause).getEnvVars();
 
         doReturn("sha1234").when(cause).getSha();
@@ -53,8 +50,9 @@ public class BuildCauseTest {
 
     @Test
     public void should_export_pr_env_vars() {
-        GitHubPullRequestCause cause = mock(GitHubPullRequestCause.class);
+        final GitHubPullRequestCause cause = mock(GitHubPullRequestCause.class);
         doCallRealMethod().when(cause).getEnvVars();
+        doCallRealMethod().when(cause).getCauseEnvVars();
 
         doReturn("feature").when(cause).getSourceBranch();
         doReturn("master").when(cause).getTargetBranch();
@@ -66,7 +64,7 @@ public class BuildCauseTest {
 
     @Test
     public void should_export_not_export_null_env_vars() {
-        BuildCause cause = mock(BuildCause.class);
+        final BuildCause cause = mock(BuildCause.class);
         doCallRealMethod().when(cause).getEnvVars();
 
         doReturn(null).when(cause).getPullRequestNumber();

@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.dynamic.build;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
 import com.groupon.jenkins.dynamic.build.cause.UnknownBuildCause;
@@ -41,47 +41,56 @@ import org.mockito.ArgumentCaptor;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import static com.groupon.jenkins.testhelpers.DynamicBuildFactory.newBuild;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class DynamicBuildModelTest {
 
     @Test
-    public void should_add_manual_build_cause_before_run_if_build_is_manually_kicked_off() throws IOException {
-        DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().manualStart("surya", "master").get();
-        GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
-        when(githubRepositoryService.getHeadCommitForBranch("master")).thenReturn(getGHCommit());
-        DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
-        model.run();
-        //verify(dynamicBuild).addCause(new ManualBuildCause(new GitBranch("master"), "masterSha", "surya"));
-    }
-
-    @Test
     public void should_add_commit_history_view_to_build() throws IOException {
-        DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().manualStart("surya", "master").get();
-        GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
+        final DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().manualStart("surya", "master").get();
+        final GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
         when(githubRepositoryService.getHeadCommitForBranch("master")).thenReturn(getGHCommit());
-        DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
+        final DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
         model.run();
         verify(dynamicBuild).addAction(any(CommitHistoryView.class));
     }
 
     private GHCommit getGHCommit() {
-        return new GHCommit(){
+        return new GHCommit() {
+            @Override
+            public List<File> getFiles() throws IOException {
+                return new ArrayList<>();
+            }
+
+            @Override
+            public URL getHtmlUrl() {
+                try {
+                    return new URL("http://example.com");
+                } catch (final MalformedURLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
             @Override
             public GHRepository getOwner() {
-                return new GHRepository(){
+                return new GHRepository() {
                     @Override
                     public java.net.URL getHtmlUrl() {
                         try {
-                            return new URL( "http://example.com");
-                        } catch (MalformedURLException e) {
+                            return new URL("http://example.com");
+                        } catch (final MalformedURLException e) {
                             throw new RuntimeException(e);
                         }
                     }
@@ -90,7 +99,7 @@ public class DynamicBuildModelTest {
 
             @Override
             public ShortInfo getCommitShortInfo() {
-                return new ShortInfo(){
+                return new ShortInfo() {
                     @Override
                     public GitUser getCommitter() {
                         return new GitUser();
@@ -104,10 +113,10 @@ public class DynamicBuildModelTest {
 
     @Test
     public void should_delete_sub_build_when_build_is_deleted() throws IOException {
-        DynamicSubBuild subBuild = mock(DynamicSubBuild.class);
-        DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().withSubBuilds(subBuild).get();
-        GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
-        DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
+        final DynamicSubBuild subBuild = mock(DynamicSubBuild.class);
+        final DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().withSubBuilds(subBuild).get();
+        final GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
+        final DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
 
         model.deleteBuild();
 
@@ -117,41 +126,41 @@ public class DynamicBuildModelTest {
 
     @Test
     public void should_return_null_cause_if_buildcause_has_not_been_initialized() {
-        GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
-        DynamicBuildModel model = new DynamicBuildModel(newBuild().get(), githubRepositoryService);
+        final GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
+        final DynamicBuildModel model = new DynamicBuildModel(newBuild().get(), githubRepositoryService);
         assertEquals(BuildCause.NULL_BUILD_CAUSE, model.getBuildCause());
     }
 
     @Test
     public void should_add_unknown_build_cause_if_build_kickedoff_by_an_upstream_build() throws IOException {
-        DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().get();
+        final DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().get();
         when(dynamicBuild.getCause()).thenReturn(BuildCause.NULL_BUILD_CAUSE);
-        when(dynamicBuild.getEnvVars()).thenReturn(ImmutableMap.of("BRANCH","master"));
+        when(dynamicBuild.getEnvVars()).thenReturn(ImmutableMap.of("BRANCH", "master"));
 
-        GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
+        final GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
         when(githubRepositoryService.getHeadCommitForBranch("master")).thenReturn(getGHCommit());
-        DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
+        final DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
         model.run();
-        ArgumentCaptor<UnknownBuildCause> argument = ArgumentCaptor.forClass(UnknownBuildCause.class);
+        final ArgumentCaptor<UnknownBuildCause> argument = ArgumentCaptor.forClass(UnknownBuildCause.class);
         verify(dynamicBuild).addCause(argument.capture());
-        UnknownBuildCause buildCause = argument.getValue();
+        final UnknownBuildCause buildCause = argument.getValue();
         assertNotNull(buildCause);
     }
 
     @Test
     public void should_add_change_log_to_environment() throws IOException, InterruptedException {
-        DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().get();
-        DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, null);
+        final DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().get();
+        final DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, null);
         when(dynamicBuild.getEnvironment(null)).thenReturn(new EnvVars());
 
-        GithubLogEntry logEntry1 = new GithubLogEntry("message","github_url","commitId", Arrays.asList("Readme.md"));
-        ChangeLogSet githubChangeLog= new GithubChangeLogSet(null,Arrays.asList(logEntry1));
+        final GithubLogEntry logEntry1 = new GithubLogEntry("message", "github_url", "commitId", Arrays.asList("Readme.md"));
+        final ChangeLogSet githubChangeLog = new GithubChangeLogSet(null, Arrays.asList(logEntry1));
 
 
         when(dynamicBuild.getChangeSet()).thenReturn(githubChangeLog);
-        Map<String, Object> environment = model.getEnvironmentWithChangeSet(null);
+        final Map<String, Object> environment = model.getEnvironmentWithChangeSet(null);
         assertTrue(environment.containsKey("DOTCI_CHANGE_SET"));
-        assertTrue(((List<String>)environment.get("DOTCI_CHANGE_SET")).contains("Readme.md"));
+        assertTrue(((List<String>) environment.get("DOTCI_CHANGE_SET")).contains("Readme.md"));
     }
 
 }

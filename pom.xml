@@ -23,13 +23,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
         <version>2.5</version>
-        <relativePath />
+        <relativePath/>
     </parent>
     <groupId>com.groupon.jenkins-ci.plugins</groupId>
     <artifactId>DotCi</artifactId>
@@ -48,14 +50,17 @@ THE SOFTWARE.
             <email>surya.gaddipati@gmail.com</email>
         </developer>
     </developers>
-    <description> Github integration, build management through .ci.yml, environment management though docker. </description>
+    <description>Github integration, build management through .ci.yml,
+        environment management though docker.
+    </description>
     <url>https://wiki.jenkins-ci.org/display/JENKINS/DotCi+Plugin</url>
     <scm>
         <connection>scm:git:ssh://github.com/groupon/DotCi.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/groupon/DotCi.git</developerConnection>
+        <developerConnection>scm:git:ssh://git@github.com/groupon/DotCi.git
+        </developerConnection>
         <url>https://github.com/groupon/DotCi</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <repositories>
         <repository>
@@ -74,8 +79,8 @@ THE SOFTWARE.
         <jenkins.version>1.655</jenkins.version>
         <workflow.version>1.11</workflow.version>
         <powermock.version>1.5.5</powermock.version>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <maven-hpi-plugin.version>1.110</maven-hpi-plugin.version>
         <npm-executable>npm</npm-executable>
     </properties>
@@ -93,6 +98,17 @@ THE SOFTWARE.
         </profile>
     </profiles>
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>animal-sniffer-maven-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -116,7 +132,7 @@ THE SOFTWARE.
                 <configuration>
                     <executable>${npm-executable}</executable>
                     <environmentVariables>
-                      <NODE_ENV>production</NODE_ENV>
+                        <NODE_ENV>production</NODE_ENV>
                     </environmentVariables>
                     <arguments>
                         <argument>run</argument>
@@ -137,7 +153,9 @@ THE SOFTWARE.
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>once</forkMode>
-                    <argLine>-Xms512m -Xmx512m -XX:MaxPermSize=512M -XX:-UseSplitVerifier</argLine>
+                    <argLine>-Xms512m -Xmx512m -XX:MaxPermSize=512M
+                        -XX:-UseSplitVerifier
+                    </argLine>
                 </configuration>
             </plugin>
             <plugin>
