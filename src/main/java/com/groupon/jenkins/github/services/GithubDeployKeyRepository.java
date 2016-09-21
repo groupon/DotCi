@@ -62,7 +62,7 @@ public class GithubDeployKeyRepository extends MongoRepository {
 
     public boolean hasDeployKey(String repoUrl) {
         BasicDBObject query = new BasicDBObject("repo_url", repoUrl);
-        return getCollection().getCount(query) == 1;
+        return getCollection().getCount(query) > 0;
     }
     protected String encrypt(String value) {
         return  encryptionService.encrypt(value);
