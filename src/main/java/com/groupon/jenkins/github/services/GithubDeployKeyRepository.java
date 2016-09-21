@@ -45,9 +45,10 @@ public class GithubDeployKeyRepository extends MongoRepository {
     }
 
 
-    public void put(String url,DeployKeyPair keyPair) throws IOException {
+    public void put(String url, DeployKeyPair keyPair) throws IOException {
+        BasicDBObject query = new BasicDBObject("repo_url", url);
         BasicDBObject doc = new BasicDBObject("public_key", encrypt(keyPair.publicKey)).append("private_key",encrypt(keyPair.privateKey)).append("repo_url", url);
-        getCollection().insert(doc);
+        getCollection().update(query, doc, true, false);
     }
     protected DBCollection getCollection() {
         return getDatastore().getDB().getCollection("deploy_keys");
