@@ -23,19 +23,27 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.repository;
 
-import com.groupon.jenkins.*;
-import com.groupon.jenkins.dynamic.build.*;
-import com.groupon.jenkins.mongo.*;
-import com.groupon.jenkins.util.*;
-import hudson.model.*;
-import hudson.util.*;
-import jenkins.model.*;
-import org.mongodb.morphia.*;
-import org.mongodb.morphia.query.*;
+import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.dynamic.build.CurrentBuildState;
+import com.groupon.jenkins.dynamic.build.DbBackedBuild;
+import com.groupon.jenkins.dynamic.build.DbBackedProject;
+import com.groupon.jenkins.dynamic.build.DbBackedRunList;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.mongo.BuildInfo;
+import com.groupon.jenkins.mongo.MongoRepository;
+import com.groupon.jenkins.mongo.MongoRunMap;
+import com.groupon.jenkins.util.GReflectionUtils;
+import hudson.model.Result;
+import hudson.model.Run;
+import hudson.util.RunList;
+import jenkins.model.Jenkins;
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.query.Query;
 
-import javax.inject.*;
-import java.util.*;
-import java.util.regex.*;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class DynamicBuildRepository extends MongoRepository {
 
@@ -58,8 +66,8 @@ public class DynamicBuildRepository extends MongoRepository {
 
     public <T extends DbBackedBuild> T getFirstBuild(DbBackedProject project) {
         DbBackedBuild build = getDatastore().createQuery(DbBackedBuild.class).disableValidation().
-                limit(1).order("number").
-                get();
+            limit(1).order("number").
+            get();
 
         associateProject(project, build);
 
@@ -80,8 +88,8 @@ public class DynamicBuildRepository extends MongoRepository {
 
     public <T extends DbBackedBuild> T getLastFailedBuild(DbBackedProject project) {
         DbBackedBuild build = getQuery(project).limit(1).order("-number").
-                field("result").equal(Result.FAILURE.toString()).
-                get();
+            field("result").equal(Result.FAILURE.toString()).
+            get();
 
         associateProject(project, build);
 
@@ -90,8 +98,8 @@ public class DynamicBuildRepository extends MongoRepository {
 
     public <T extends DbBackedBuild> T getLastSuccessfulBuild(DbBackedProject project) {
         DbBackedBuild build = getQuery(project).order("-number").
-                field("result").equal(Result.SUCCESS.toString()).
-                get();
+            field("result").equal(Result.SUCCESS.toString()).
+            get();
 
         associateProject(project, build);
 
@@ -100,9 +108,9 @@ public class DynamicBuildRepository extends MongoRepository {
 
     public <T extends DbBackedBuild> T getLastSuccessfulBuild(DbBackedProject project, String branch) {
         DbBackedBuild build = getQuery(project).order("-number").
-                field("result").equal(Result.SUCCESS.toString()).
-                field("actions.causes.branch.branch").equal(branch).
-                get();
+            field("result").equal(Result.SUCCESS.toString()).
+            field("actions.causes.branch.branch").equal(branch).
+            get();
 
         associateProject(project, build);
 
@@ -124,18 +132,18 @@ public class DynamicBuildRepository extends MongoRepository {
 
     public <T extends DbBackedBuild> T getBuild(DbBackedProject<?, ?> project, Integer number) {
         DbBackedBuild build = getQuery(project).
-                field("number").equal(number).
-                get();
+            field("number").equal(number).
+            get();
 
         associateProject(project, build);
 
         return (T) build;
     }
 
-    public <T extends DbBackedBuild> T getBuildBySha(DbBackedProject<?, ?>  project, String sha, Result result) {
+    public <T extends DbBackedBuild> T getBuildBySha(DbBackedProject<?, ?> project, String sha, Result result) {
 
         Query<DbBackedBuild> query = getQuery(project).
-                field("actions.causes.sha").equal(sha);
+            field("actions.causes.sha").equal(sha);
 
         if (result != null) {
             query = query.filter("result", result.toString());
@@ -146,8 +154,9 @@ public class DynamicBuildRepository extends MongoRepository {
 
         return (T) build;
     }
+
     public <T extends DbBackedBuild> T getBuildBySha(DbBackedProject<?, ?> project, String sha) {
-        return getBuildBySha(project,sha,null);
+        return getBuildBySha(project, sha, null);
     }
 
 
@@ -161,8 +170,8 @@ public class DynamicBuildRepository extends MongoRepository {
 
     public <T extends DbBackedBuild> Iterable<T> getBuildGreaterThan(DbBackedProject project, int number, String branch) {
         Query<DbBackedBuild> query = getQuery(project).order("number")
-                .field("number").greaterThan(number)
-                .order("-number");
+            .field("number").greaterThan(number)
+            .order("-number");
 
         if (branch != null) {
             query = query.field("actions.causes.branch.branch").equal(branch);
@@ -179,10 +188,10 @@ public class DynamicBuildRepository extends MongoRepository {
 
     public <T extends DbBackedBuild> Iterable<T> getCurrentUserBuildsGreaterThan(DbBackedProject project, int number) {
         List<DbBackedBuild> builds = getQuery(project)
-                .order("-number")
-                .field("pusher").equal(Jenkins.getAuthentication().getName())
-                .field("number").greaterThan(number)
-                .asList();
+            .order("-number")
+            .field("pusher").equal(Jenkins.getAuthentication().getName())
+            .field("number").greaterThan(number)
+            .asList();
 
         for (DbBackedBuild build : builds) {
             associateProject(project, build);
@@ -226,12 +235,12 @@ public class DynamicBuildRepository extends MongoRepository {
 
     public <T extends DbBackedBuild> Iterable<T> getCurrentUserBuilds(DbBackedProject project, int i, Result result) {
         Query<DbBackedBuild> query = getQuery(project)
-                .limit(i)
-                .order("-number");
+            .limit(i)
+            .order("-number");
 
         query.or(
-                query.criteria("actions.causes.user").equal(Jenkins.getAuthentication().getName()),
-                query.criteria("actions.causes.pusher").equal(Jenkins.getAuthentication().getName())
+            query.criteria("actions.causes.user").equal(Jenkins.getAuthentication().getName()),
+            query.criteria("actions.causes.pusher").equal(Jenkins.getAuthentication().getName())
         );
 
         if (result != null) {
@@ -260,10 +269,10 @@ public class DynamicBuildRepository extends MongoRepository {
         Query<DbBackedBuild> query = getQuery(project);
         if (branch != null) filterExpression(branch, query);
         DbBackedBuild previousBuild = query.
-                limit(1).
-                order("-number").
-                field("state").equal("COMPLETED").field("number").lessThan(build.getNumber()).
-                get();
+            limit(1).
+            order("-number").
+            field("state").equal("COMPLETED").field("number").lessThan(build.getNumber()).
+            get();
 
         associateProject(project, previousBuild);
 
@@ -296,14 +305,14 @@ public class DynamicBuildRepository extends MongoRepository {
 
     private Query<DynamicBuild> getDynamicBuildsForUser(String user, int numberOfBuilds) {
         Query<DynamicBuild> query = getDatastore().createQuery(DynamicBuild.class)
-                .limit(numberOfBuilds)
-                .disableValidation()
-                .order("-timestamp")
-                .field("className").equal("com.groupon.jenkins.dynamic.build.DynamicBuild");
+            .limit(numberOfBuilds)
+            .disableValidation()
+            .order("-timestamp")
+            .field("className").equal("com.groupon.jenkins.dynamic.build.DynamicBuild");
 
         query.or(
-                query.criteria("actions.causes.user").equal(user),
-                query.criteria("actions.causes.pusher").equal(user)
+            query.criteria("actions.causes.user").equal(user),
+            query.criteria("actions.causes.pusher").equal(user)
         );
         return query;
     }
@@ -313,15 +322,15 @@ public class DynamicBuildRepository extends MongoRepository {
         Query<DbBackedBuild> query = getQuery(project);
         filterExpression(branch, query);
         DbBackedBuild build = query
-                .order("-$natural").get();
+            .order("-$natural").get();
         associateProject(project, build);
         return (T) build;
     }
 
     public List<BuildInfo> getBuildHistory(String nodeName) {
         List<DbBackedBuild> builds = getDatastore().createQuery(DbBackedBuild.class)
-                .field("builtOn").equal(nodeName)
-                .asList();
+            .field("builtOn").equal(nodeName)
+            .asList();
 
         List<BuildInfo> buildInfos = new ArrayList<BuildInfo>();
         for (DbBackedBuild build : builds) {
@@ -338,7 +347,7 @@ public class DynamicBuildRepository extends MongoRepository {
         }
     }
 
-    public  <T extends DbBackedBuild> Iterable<T>  getBuilds(DbBackedProject project, int offset) {
+    public <T extends DbBackedBuild> Iterable<T> getBuilds(DbBackedProject project, int offset) {
         Query<DbBackedBuild> query = getQuery(project).order("-number")
             .offset(offset);
 
