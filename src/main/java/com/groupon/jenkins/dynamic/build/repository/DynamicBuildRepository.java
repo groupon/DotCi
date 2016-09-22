@@ -48,24 +48,24 @@ import java.util.regex.Pattern;
 public class DynamicBuildRepository extends MongoRepository {
 
     @Inject
-    public DynamicBuildRepository(Datastore datastore) {
+    public DynamicBuildRepository(final Datastore datastore) {
         super(datastore);
     }
 
-    public void save(DbBackedBuild build) {
+    public void save(final DbBackedBuild build) {
         getDatastore().save(build);
     }
 
-    public <T extends DbBackedBuild> RunList<T> getBuilds(DbBackedProject project) {
+    public <T extends DbBackedBuild> RunList<T> getBuilds(final DbBackedProject project) {
         return new DbBackedRunList(project);
     }
 
-    public <P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> MongoRunMap<P, B> getBuildsAsMap(DbBackedProject project) {
-        return new MongoRunMap<P, B>(project);
+    public <P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> MongoRunMap<P, B> getBuildsAsMap(final DbBackedProject project) {
+        return new MongoRunMap<>(project);
     }
 
-    public <T extends DbBackedBuild> T getFirstBuild(DbBackedProject project) {
-        DbBackedBuild build = getDatastore().createQuery(DbBackedBuild.class).disableValidation().
+    public <T extends DbBackedBuild> T getFirstBuild(final DbBackedProject project) {
+        final DbBackedBuild build = getDatastore().createQuery(DbBackedBuild.class).disableValidation().
             limit(1).order("number").
             get();
 
@@ -74,20 +74,20 @@ public class DynamicBuildRepository extends MongoRepository {
         return (T) build;
     }
 
-    private Query<DbBackedBuild> getQuery(DbBackedProject project) {
+    private Query<DbBackedBuild> getQuery(final DbBackedProject project) {
         return getDatastore().createQuery(DbBackedBuild.class).disableValidation().field("projectId").equal(project.getId());
     }
 
-    public <T extends DbBackedBuild> T getLastBuild(DbBackedProject project) {
-        DbBackedBuild build = getQuery(project).limit(1).order("-number").disableValidation().get();
+    public <T extends DbBackedBuild> T getLastBuild(final DbBackedProject project) {
+        final DbBackedBuild build = getQuery(project).limit(1).order("-number").disableValidation().get();
 
         associateProject(project, build);
 
         return (T) build;
     }
 
-    public <T extends DbBackedBuild> T getLastFailedBuild(DbBackedProject project) {
-        DbBackedBuild build = getQuery(project).limit(1).order("-number").
+    public <T extends DbBackedBuild> T getLastFailedBuild(final DbBackedProject project) {
+        final DbBackedBuild build = getQuery(project).limit(1).order("-number").
             field("result").equal(Result.FAILURE.toString()).
             get();
 
@@ -96,8 +96,8 @@ public class DynamicBuildRepository extends MongoRepository {
         return (T) build;
     }
 
-    public <T extends DbBackedBuild> T getLastSuccessfulBuild(DbBackedProject project) {
-        DbBackedBuild build = getQuery(project).order("-number").
+    public <T extends DbBackedBuild> T getLastSuccessfulBuild(final DbBackedProject project) {
+        final DbBackedBuild build = getQuery(project).order("-number").
             field("result").equal(Result.SUCCESS.toString()).
             get();
 
@@ -106,8 +106,8 @@ public class DynamicBuildRepository extends MongoRepository {
         return (T) build;
     }
 
-    public <T extends DbBackedBuild> T getLastSuccessfulBuild(DbBackedProject project, String branch) {
-        DbBackedBuild build = getQuery(project).order("-number").
+    public <T extends DbBackedBuild> T getLastSuccessfulBuild(final DbBackedProject project, final String branch) {
+        final DbBackedBuild build = getQuery(project).order("-number").
             field("result").equal(Result.SUCCESS.toString()).
             field("actions.causes.branch.branch").equal(branch).
             get();
@@ -118,20 +118,20 @@ public class DynamicBuildRepository extends MongoRepository {
     }
 
 
-    public <T extends DbBackedBuild> Iterable<T> latestBuilds(DbBackedProject project, int count) {
+    public <T extends DbBackedBuild> Iterable<T> latestBuilds(final DbBackedProject project, final int count) {
         return getLast(project, count, null, null);
     }
 
-    public boolean hasBuild(DbBackedProject project, Integer number) {
+    public boolean hasBuild(final DbBackedProject project, final Integer number) {
         return getBuild(project, number) != null;
     }
 
-    public <T extends DbBackedBuild> boolean hasBuild(DbBackedBuild build) {
+    public <T extends DbBackedBuild> boolean hasBuild(final DbBackedBuild build) {
         return this.<T>getBuild((DbBackedProject) build.getProject(), build.getNumber()) != null;
     }
 
-    public <T extends DbBackedBuild> T getBuild(DbBackedProject<?, ?> project, Integer number) {
-        DbBackedBuild build = getQuery(project).
+    public <T extends DbBackedBuild> T getBuild(final DbBackedProject<?, ?> project, final Integer number) {
+        final DbBackedBuild build = getQuery(project).
             field("number").equal(number).
             get();
 
@@ -140,7 +140,7 @@ public class DynamicBuildRepository extends MongoRepository {
         return (T) build;
     }
 
-    public <T extends DbBackedBuild> T getBuildBySha(DbBackedProject<?, ?> project, String sha, Result result) {
+    public <T extends DbBackedBuild> T getBuildBySha(final DbBackedProject<?, ?> project, final String sha, final Result result) {
 
         Query<DbBackedBuild> query = getQuery(project).
             field("actions.causes.sha").equal(sha);
@@ -148,27 +148,27 @@ public class DynamicBuildRepository extends MongoRepository {
         if (result != null) {
             query = query.filter("result", result.toString());
         }
-        DbBackedBuild build = query.get();
+        final DbBackedBuild build = query.get();
 
         associateProject(project, build);
 
         return (T) build;
     }
 
-    public <T extends DbBackedBuild> T getBuildBySha(DbBackedProject<?, ?> project, String sha) {
+    public <T extends DbBackedBuild> T getBuildBySha(final DbBackedProject<?, ?> project, final String sha) {
         return getBuildBySha(project, sha, null);
     }
 
 
-    public boolean hasBuilds(DbBackedProject<?, ?> project) {
+    public boolean hasBuilds(final DbBackedProject<?, ?> project) {
         return getBuildCount(project) > 0;
     }
 
-    public int getBuildCount(DbBackedProject<?, ?> project) {
+    public int getBuildCount(final DbBackedProject<?, ?> project) {
         return (int) getQuery(project).countAll();
     }
 
-    public <T extends DbBackedBuild> Iterable<T> getBuildGreaterThan(DbBackedProject project, int number, String branch) {
+    public <T extends DbBackedBuild> Iterable<T> getBuildGreaterThan(final DbBackedProject project, final int number, final String branch) {
         Query<DbBackedBuild> query = getQuery(project).order("number")
             .field("number").greaterThan(number)
             .order("-number");
@@ -177,30 +177,30 @@ public class DynamicBuildRepository extends MongoRepository {
             query = query.field("actions.causes.branch.branch").equal(branch);
         }
 
-        List<DbBackedBuild> builds = query.asList();
+        final List<DbBackedBuild> builds = query.asList();
 
-        for (DbBackedBuild build : builds) {
+        for (final DbBackedBuild build : builds) {
             associateProject(project, build);
         }
 
         return (Iterable<T>) query.asList();
     }
 
-    public <T extends DbBackedBuild> Iterable<T> getCurrentUserBuildsGreaterThan(DbBackedProject project, int number) {
-        List<DbBackedBuild> builds = getQuery(project)
+    public <T extends DbBackedBuild> Iterable<T> getCurrentUserBuildsGreaterThan(final DbBackedProject project, final int number) {
+        final List<DbBackedBuild> builds = getQuery(project)
             .order("-number")
             .field("pusher").equal(Jenkins.getAuthentication().getName())
             .field("number").greaterThan(number)
             .asList();
 
-        for (DbBackedBuild build : builds) {
+        for (final DbBackedBuild build : builds) {
             associateProject(project, build);
         }
 
         return (Iterable<T>) builds;
     }
 
-    public <T extends DbBackedBuild> Iterable<T> getLast(DbBackedProject project, int i, String branch, Result result) {
+    public <T extends DbBackedBuild> Iterable<T> getLast(final DbBackedProject project, final int i, final String branch, final Result result) {
         Query<DbBackedBuild> query = getQuery(project).limit(i).order("-number");
 
         if (branch != null) {
@@ -210,20 +210,20 @@ public class DynamicBuildRepository extends MongoRepository {
             query = query.filter("result", result.toString());
         }
 
-        List<DbBackedBuild> builds = query.asList();
+        final List<DbBackedBuild> builds = query.asList();
 
-        for (DbBackedBuild build : builds) {
+        for (final DbBackedBuild build : builds) {
             associateProject(project, build);
         }
 
         return (Iterable<T>) builds;
     }
 
-    public <T extends DbBackedBuild> Query<T> filterExpression(String filterExpression, Query<T> query) {
+    public <T extends DbBackedBuild> Query<T> filterExpression(final String filterExpression, Query<T> query) {
         if (filterExpression.contains("=")) {
-            String[] paramExpression = filterExpression.split("=");
-            String paramName = paramExpression[0];
-            String paramValue = paramExpression[1];
+            final String[] paramExpression = filterExpression.split("=");
+            final String paramName = paramExpression[0];
+            final String paramValue = paramExpression[1];
             query = query.filter("actions.parameters.name", paramName);
             query = query.filter("actions.parameters.value", Pattern.compile(paramValue));
         } else {
@@ -233,7 +233,7 @@ public class DynamicBuildRepository extends MongoRepository {
         return query;
     }
 
-    public <T extends DbBackedBuild> Iterable<T> getCurrentUserBuilds(DbBackedProject project, int i, Result result) {
+    public <T extends DbBackedBuild> Iterable<T> getCurrentUserBuilds(final DbBackedProject project, final int i, final Result result) {
         Query<DbBackedBuild> query = getQuery(project)
             .limit(i)
             .order("-number");
@@ -246,29 +246,29 @@ public class DynamicBuildRepository extends MongoRepository {
         if (result != null) {
             query = query.filter("result", result.toString());
         }
-        List<DbBackedBuild> builds = query.asList();
+        final List<DbBackedBuild> builds = query.asList();
 
-        for (DbBackedBuild build : builds) {
+        for (final DbBackedBuild build : builds) {
             associateProject(project, build);
         }
 
         return (Iterable<T>) builds;
     }
 
-    public void delete(DbBackedProject project) {
+    public void delete(final DbBackedProject project) {
         getDatastore().delete(getQuery(project));
     }
 
-    public void deleteBuild(DbBackedBuild build) {
+    public void deleteBuild(final DbBackedBuild build) {
         getDatastore().delete(build);
     }
 
-    public DbBackedBuild getPreviousFinishedBuildOfSameBranch(DbBackedBuild build, String branch) {
-        DbBackedProject project = (DbBackedProject) build.getProject();
+    public DbBackedBuild getPreviousFinishedBuildOfSameBranch(final DbBackedBuild build, final String branch) {
+        final DbBackedProject project = (DbBackedProject) build.getProject();
 
-        Query<DbBackedBuild> query = getQuery(project);
+        final Query<DbBackedBuild> query = getQuery(project);
         if (branch != null) filterExpression(branch, query);
-        DbBackedBuild previousBuild = query.
+        final DbBackedBuild previousBuild = query.
             limit(1).
             order("-number").
             field("state").equal("COMPLETED").field("number").lessThan(build.getNumber()).
@@ -279,8 +279,8 @@ public class DynamicBuildRepository extends MongoRepository {
         return previousBuild;
     }
 
-    public CurrentBuildState getCurrentStateByNumber(DbBackedProject project, int number) {
-        DbBackedBuild build = getQuery(project).field("number").equal(number).get();
+    public CurrentBuildState getCurrentStateByNumber(final DbBackedProject project, final int number) {
+        final DbBackedBuild build = getQuery(project).field("number").equal(number).get();
         if (build == null) {
             return null;
         } else {
@@ -288,23 +288,23 @@ public class DynamicBuildRepository extends MongoRepository {
         }
     }
 
-    public Iterable<DynamicBuild> getLastBuildsForUser(String user, int numberOfBuilds) {
+    public Iterable<DynamicBuild> getLastBuildsForUser(final String user, final int numberOfBuilds) {
 
-        Query<DynamicBuild> query = getDynamicBuildsForUser(user, numberOfBuilds);
+        final Query<DynamicBuild> query = getDynamicBuildsForUser(user, numberOfBuilds);
 
-        List<DynamicBuild> builds = query.asList();
+        final List<DynamicBuild> builds = query.asList();
 
-        DynamicProjectRepository repo = SetupConfig.get().getDynamicProjectRepository();
-        for (DbBackedBuild build : builds) {
-            DbBackedProject project = repo.getProjectById(build.getProjectId());
+        final DynamicProjectRepository repo = SetupConfig.get().getDynamicProjectRepository();
+        for (final DbBackedBuild build : builds) {
+            final DbBackedProject project = repo.getProjectById(build.getProjectId());
             associateProject(project, build);
         }
 
         return builds;
     }
 
-    private Query<DynamicBuild> getDynamicBuildsForUser(String user, int numberOfBuilds) {
-        Query<DynamicBuild> query = getDatastore().createQuery(DynamicBuild.class)
+    private Query<DynamicBuild> getDynamicBuildsForUser(final String user, final int numberOfBuilds) {
+        final Query<DynamicBuild> query = getDatastore().createQuery(DynamicBuild.class)
             .limit(numberOfBuilds)
             .disableValidation()
             .order("-timestamp")
@@ -318,43 +318,43 @@ public class DynamicBuildRepository extends MongoRepository {
     }
 
 
-    public <T extends DbBackedBuild> T getLastBuild(DbBackedProject project, String branch) {
-        Query<DbBackedBuild> query = getQuery(project);
+    public <T extends DbBackedBuild> T getLastBuild(final DbBackedProject project, final String branch) {
+        final Query<DbBackedBuild> query = getQuery(project);
         filterExpression(branch, query);
-        DbBackedBuild build = query
-            .order("-$natural").get();
+        final DbBackedBuild build = query
+            .order("-number").get();
         associateProject(project, build);
         return (T) build;
     }
 
-    public List<BuildInfo> getBuildHistory(String nodeName) {
-        List<DbBackedBuild> builds = getDatastore().createQuery(DbBackedBuild.class)
+    public List<BuildInfo> getBuildHistory(final String nodeName) {
+        final List<DbBackedBuild> builds = getDatastore().createQuery(DbBackedBuild.class)
             .field("builtOn").equal(nodeName)
             .asList();
 
-        List<BuildInfo> buildInfos = new ArrayList<BuildInfo>();
-        for (DbBackedBuild build : builds) {
+        final List<BuildInfo> buildInfos = new ArrayList<>();
+        for (final DbBackedBuild build : builds) {
             buildInfos.add(new BuildInfo(build));
         }
 
         return buildInfos;
     }
 
-    private void associateProject(DbBackedProject project, DbBackedBuild build) {
+    private void associateProject(final DbBackedProject project, final DbBackedBuild build) {
         if (build != null) {
             GReflectionUtils.setField(Run.class, "project", build, project);
             build.postMorphiaLoad();
         }
     }
 
-    public <T extends DbBackedBuild> Iterable<T> getBuilds(DbBackedProject project, int offset) {
-        Query<DbBackedBuild> query = getQuery(project).order("-number")
+    public <T extends DbBackedBuild> Iterable<T> getBuilds(final DbBackedProject project, final int offset) {
+        final Query<DbBackedBuild> query = getQuery(project).order("-number")
             .offset(offset);
 
 
-        List<DbBackedBuild> builds = query.asList();
+        final List<DbBackedBuild> builds = query.asList();
 
-        for (DbBackedBuild build : builds) {
+        for (final DbBackedBuild build : builds) {
             associateProject(project, build);
         }
 
