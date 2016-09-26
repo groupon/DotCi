@@ -38,8 +38,13 @@ import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 import hudson.Extension;
 import hudson.PermalinkList;
 import hudson.matrix.Combination;
-import hudson.model.*;
+import hudson.model.Descriptor;
+import hudson.model.DescriptorVisibilityFilter;
+import hudson.model.Item;
+import hudson.model.ItemGroup;
 import hudson.model.Queue.Task;
+import hudson.model.Saveable;
+import hudson.model.TopLevelItem;
 import hudson.util.CaseInsensitiveComparator;
 import hudson.util.CopyOnWriteMap;
 import hudson.widgets.HistoryWidget;
@@ -49,7 +54,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
-import org.kohsuke.stapler.export.*;
+import org.kohsuke.stapler.export.Exported;
 import org.mongodb.morphia.annotations.PostLoad;
 import org.mongodb.morphia.annotations.PrePersist;
 
@@ -62,46 +67,45 @@ import java.util.Collection;
 import java.util.Map;
 
 public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild> implements TopLevelItem, Saveable, IdentifableItemGroup<DynamicSubProject> {
+    @Extension
+    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
     private transient Map<String, DynamicSubProject> items;
     private String containerName;
 
+    protected DynamicProject(final ItemGroup parent, final String name) {
+        super(parent, name);
+        init();
+    }
+
     @PrePersist
     void saveProjectId() {
-        containerName = (String) getParent().getId();
+        this.containerName = (String) getParent().getId();
     }
 
     @PostLoad
     void loadParent() {
         try {
             // If it didn't load on main Jenkins start, try loading it again.
-            OrganizationContainer container = new OrganizationContainerRepository().getOrganizationContainer(containerName);
-            if(container != null) {
+            final OrganizationContainer container = new OrganizationContainerRepository().getOrganizationContainer(this.containerName);
+            if (container != null) {
                 onLoad(container, getName());
             }
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Unable to load container for project: " + containerName);
+        } catch (final IOException e) {
+            throw new IllegalArgumentException("Unable to load container for project: " + this.containerName);
         }
 
     }
 
-    @Extension
-    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-
-    protected DynamicProject(ItemGroup parent, String name) {
-        super(parent, name);
-        init();
-    }
-
     private void init() {
-        Iterable<DynamicSubProject> projects = SetupConfig.get().getDynamicProjectRepository().getChildren(this);
-        items = new CopyOnWriteMap.Tree<String, DynamicSubProject>(CaseInsensitiveComparator.INSTANCE);
-        for (DynamicSubProject dbBackedProject : projects) {
-            items.put(dbBackedProject.getName(), dbBackedProject);
+        final Iterable<DynamicSubProject> projects = SetupConfig.get().getDynamicProjectRepository().getChildren(this);
+        this.items = new CopyOnWriteMap.Tree<>(CaseInsensitiveComparator.INSTANCE);
+        for (final DynamicSubProject dbBackedProject : projects) {
+            this.items.put(dbBackedProject.getName(), dbBackedProject);
         }
     }
 
     @Override
-    public void onLoad(ItemGroup<? extends Item> parent, String name) throws IOException {
+    public void onLoad(final ItemGroup<? extends Item> parent, final String name) throws IOException {
         super.onLoad(parent, name);
         init();
     }
@@ -112,54 +116,27 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     }
 
     public boolean shouldBuildTags() {
-        return getProperty(BuildTagsProperty.class)!=null && getProperty(BuildTagsProperty.class).isShouldBuildTags();
-    }
-
-    public static final class DescriptorImpl extends AbstractProjectDescriptor {
-        /**
-         * We are hiding the "DotCI" project from "/newJob" page, because we'll
-         * have our own flow for doing this ...
-         */
-        @Extension
-        public static class FilterDotCIProjectTypeFromNewJobPage extends DescriptorVisibilityFilter {
-            @Override
-            public boolean filter(Object context, Descriptor descriptor) {
-                return !(descriptor instanceof DynamicProject.DescriptorImpl);
-            }
-        }
-
-        @Override
-        public String getDisplayName() {
-            return "DotCi Project";
-        }
-
-        @Override
-        public TopLevelItem newInstance(ItemGroup parent, String name) {
-            return new DynamicProject(parent, name);
-        }
-
+        return getProperty(BuildTagsProperty.class) != null && getProperty(BuildTagsProperty.class).isShouldBuildTags();
     }
 
     @Override
     public PermalinkList getPermalinks() {
-        PermalinkList permalinks = super.getPermalinks();
+        final PermalinkList permalinks = super.getPermalinks();
         permalinks.add(new LastSuccessfulMasterPermalink());
         return permalinks;
     }
 
-
-    public Iterable<BuildType> getBuildTypes(){
+    public Iterable<BuildType> getBuildTypes() {
         return SetupConfig.get().getBuildTypes();
     }
 
-    public String getBuildType(){
+    public String getBuildType() {
         return getProperty(BuildTypeProperty.class) == null ? null : getProperty(BuildTypeProperty.class).getBuildType();
     }
 
-
-    public Iterable<String> getBranchTabs(){
-        DynamicProjectBranchTabsProperty branchTabsProperty = getProperty(DynamicProjectBranchTabsProperty.class);
-        return branchTabsProperty ==null? Arrays.asList("master") :branchTabsProperty.getBranches();
+    public Iterable<String> getBranchTabs() {
+        final DynamicProjectBranchTabsProperty branchTabsProperty = getProperty(DynamicProjectBranchTabsProperty.class);
+        return branchTabsProperty == null ? Arrays.asList("master") : branchTabsProperty.getBranches();
     }
 
     @Override
@@ -167,8 +144,6 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     public OrganizationContainer getParent() {
         return (OrganizationContainer) super.getParent();
     }
-
-
 
     @Override
     protected HistoryWidget createHistoryWidget() {
@@ -181,64 +156,64 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     }
 
     @Override
-    public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
+    public Object getDynamic(final String token, final StaplerRequest req, final StaplerResponse rsp) {
         try {
-            if(useNewUi(token,req)){
-                rsp.forward(this,"newUi",req);
+            if (useNewUi(token, req)) {
+                rsp.forward(this, "newUi", req);
                 return null;
             }
-            if ("toggleNewUI".equals(token)) {
-                toggleNewUI();
-                rsp.forwardToPreviousPage(req);
-                return null;
-            }
-        } catch (ServletException e) {
+        } catch (final ServletException e) {
             throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
         if ("sha".equals(token)) {
-            String sha = req.getParameter("value");
-            return dynamicBuildRepository.getBuildBySha(this, sha);
+            final String sha = req.getParameter("value");
+            return this.dynamicBuildRepository.getBuildBySha(this, sha);
         }
 
-        Object permalink = super.getDynamic(token, req, rsp);
+        final Object permalink = super.getDynamic(token, req, rsp);
         if (permalink == null) {
-            DynamicSubProject item = getItem(token);
+            final DynamicSubProject item = getItem(token);
             return item;
         }
 
         return permalink;
     }
 
-    private boolean useNewUi(String token, StaplerRequest req) {
+    private boolean useNewUi(final String token, final StaplerRequest req) {
         return isNewUi() &&
-            (StringUtils.startsWith(token,"dotCI") || //job pages
-                (NumberUtils.isNumber(token) &&(StringUtils.isEmpty(req.getRestOfPath()) || StringUtils.contains(req.getRestOfPath(), "dotCI")))); // buildpages
+            (StringUtils.startsWith(token, "dotCI") || //job pages
+                (NumberUtils.isNumber(token) && (StringUtils.isEmpty(req.getRestOfPath()) || StringUtils.contains(req.getRestOfPath(), "dotCI")))); // buildpages
     }
 
-    public String getJobUrl(){
-        return "job/"+ getParent().getName() +"/job/" + getName();
+    public String getJobUrl() {
+        return "job/" + getParent().getName() + "/job/" + getName();
     }
 
     public boolean isNewUi() {
-        return getProperty(JobUiProperty.class)!=null && getProperty(JobUiProperty.class).isNewUi();
+        return getProperty(JobUiProperty.class) != null && getProperty(JobUiProperty.class).isNewUi();
     }
 
-    protected String getCurrentBranch(){
+    protected String getCurrentBranch() {
         return (String) Stapler.getCurrentRequest().getSession().getAttribute("branchView" + getName());
     }
 
-    public void doBranchBuilds(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        String tab  = req.getRestOfPath().replace("/","");
+    public void doToggleNewUI(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+        toggleNewUI();
+        rsp.forwardToPreviousPage(req);
+    }
+
+    public void doBranchBuilds(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+        final String tab = req.getRestOfPath().replace("/", "");
         handleBranchTabs(tab, req);
         rsp.forwardToPreviousPage(req);
     }
 
-    private void handleBranchTabs(String branch, StaplerRequest req) {
-        if("all".equals(branch)){
+    private void handleBranchTabs(final String branch, final StaplerRequest req) {
+        if ("all".equals(branch)) {
             req.getSession().removeAttribute("branchView" + this.getName());
-        }else{
+        } else {
             req.getSession().setAttribute("branchView" + this.getName(), branch);
         }
     }
@@ -253,43 +228,43 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         return ".";
     }
 
-    private DynamicSubProject createNewSubProject(Combination requestedCombination) {
-        DynamicSubProject project = new DynamicSubProject(this, requestedCombination);
+    private DynamicSubProject createNewSubProject(final Combination requestedCombination) {
+        final DynamicSubProject project = new DynamicSubProject(this, requestedCombination);
         try {
             project.save();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
-        items.put(project.getName(), project);
+        this.items.put(project.getName(), project);
         return project;
     }
 
-    public Iterable<DynamicSubProject> getSubProjects(Iterable<Combination> subBuildCombinations) {
+    public Iterable<DynamicSubProject> getSubProjects(final Iterable<Combination> subBuildCombinations) {
 
         return Iterables.transform(subBuildCombinations, new Function<Combination, DynamicSubProject>() {
 
             @Override
             public DynamicSubProject apply(final Combination requestedCombination) {
-                DynamicSubProject subProject = Iterables.find(getItems(), new Predicate<DynamicSubProject>() {
+                final DynamicSubProject subProject = Iterables.find(getItems(), new Predicate<DynamicSubProject>() {
 
                     @Override
-                    public boolean apply(DynamicSubProject subProject) {
+                    public boolean apply(final DynamicSubProject subProject) {
                         return requestedCombination.equals(subProject.getCombination());
                     }
                 }, null);
-                return subProject == null? DynamicProject.this.createNewSubProject(requestedCombination): subProject;
+                return subProject == null ? DynamicProject.this.createNewSubProject(requestedCombination) : subProject;
             }
 
         });
     }
 
-    public Task getItem(Combination combination) {
+    public Task getItem(final Combination combination) {
         return null;
     }
 
     @Override
-    public DynamicSubProject getItem(String name) {
-        return dynamicProjectRepository.getChild(this, name);
+    public DynamicSubProject getItem(final String name) {
+        return this.dynamicProjectRepository.getChild(this, name);
     }
 
     private File getConfigurationsDir() {
@@ -297,15 +272,15 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     }
 
     @Override
-    public File getRootDirFor(DynamicSubProject child) {
-        File f = new File(getConfigurationsDir(), child.getName());
+    public File getRootDirFor(final DynamicSubProject child) {
+        final File f = new File(getConfigurationsDir(), child.getName());
         f.getParentFile().mkdirs();
         return f;
     }
 
     @Override
     public Collection<DynamicSubProject> getItems() {
-        return items == null ? new ArrayList<DynamicSubProject>() : this.items.values();
+        return this.items == null ? new ArrayList<>() : this.items.values();
     }
 
     public String getGithubRepoUrl() {
@@ -313,12 +288,12 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     }
 
     @Override
-    public void onRenamed(DynamicSubProject item, String oldName, String newName) throws IOException {
+    public void onRenamed(final DynamicSubProject item, final String oldName, final String newName) throws IOException {
         throw new IllegalStateException("Renaming not allowed outside .ci.yml");
     }
 
     @Override
-    public void onDeleted(DynamicSubProject item) throws IOException {
+    public void onDeleted(final DynamicSubProject item) throws IOException {
         throw new IllegalStateException("Cannot delete Sub Project without deleting the parent");
     }
 
@@ -327,27 +302,31 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
         return super.getLastBuild();
     }
 
-    public void doAddBranchTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        String tabRegex = req.getParameter("tabRegex");
-        if(StringUtils.isBlank(tabRegex)) throw new RuntimeException("Branch Regex cannot be exmpty");
-        DynamicProjectBranchTabsProperty branchTabsProperty = getProperty(DynamicProjectBranchTabsProperty.class);
+    public void doAddBranchTab(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+        final String tabRegex = req.getParameter("tabRegex");
+        if (StringUtils.isBlank(tabRegex))
+            throw new RuntimeException("Branch Regex cannot be exmpty");
+        final DynamicProjectBranchTabsProperty branchTabsProperty = getProperty(DynamicProjectBranchTabsProperty.class);
         branchTabsProperty.addBranch(tabRegex);
         save();
     }
-    public void doRemoveBranchTab(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        String tabRegex = req.getParameter("tabRegex");
-        if(StringUtils.isBlank(tabRegex)) throw new RuntimeException("Branch Regex cannot be exmpty");
-        DynamicProjectBranchTabsProperty branchTabsProperty = getProperty(DynamicProjectBranchTabsProperty.class);
+
+    public void doRemoveBranchTab(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+        final String tabRegex = req.getParameter("tabRegex");
+        if (StringUtils.isBlank(tabRegex))
+            throw new RuntimeException("Branch Regex cannot be exmpty");
+        final DynamicProjectBranchTabsProperty branchTabsProperty = getProperty(DynamicProjectBranchTabsProperty.class);
         branchTabsProperty.removeBranch(tabRegex);
         save();
     }
+
     public void toggleNewUI() {
-        JobUiProperty jobUiProperty = this.getProperty(JobUiProperty.class);
-        if(jobUiProperty != null){
+        final JobUiProperty jobUiProperty = this.getProperty(JobUiProperty.class);
+        if (jobUiProperty != null) {
             jobUiProperty.toggle();
             try {
                 save();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -357,26 +336,52 @@ public class DynamicProject extends DbBackedProject<DynamicProject, DynamicBuild
     public DynamicProjectApi getAppData() throws IOException {
         return new DynamicProjectApi(this);
     }
-    public String getColor(){
-        int h = Math.abs(getFullName().hashCode());
-        int r = h % 250;
-        int g = h % 251;
-        int b = h % 252;
-        return String.format("rgb(%s,%s,%s)", r,g,b);
+
+    public String getColor() {
+        final int h = Math.abs(getFullName().hashCode());
+        final int r = h % 250;
+        final int g = h % 251;
+        final int b = h % 252;
+        return String.format("rgb(%s,%s,%s)", r, g, b);
     }
 
     @Override
     public int getNextBuildNumber() {
-        int number = dynamicProjectRepository.getNextBuildNumber(this);
+        final int number = this.dynamicProjectRepository.getNextBuildNumber(this);
         return number;
     }
 
     @Override
     public synchronized int assignBuildNumber() throws IOException {
-        return dynamicProjectRepository.assignNextBuildNumber(this);
+        return this.dynamicProjectRepository.assignNextBuildNumber(this);
     }
 
     @Override
     protected synchronized void saveNextBuildNumber() throws IOException {
+    }
+
+    public static final class DescriptorImpl extends AbstractProjectDescriptor {
+        @Override
+        public String getDisplayName() {
+            return "DotCi Project";
+        }
+
+        @Override
+        public TopLevelItem newInstance(final ItemGroup parent, final String name) {
+            return new DynamicProject(parent, name);
+        }
+
+        /**
+         * We are hiding the "DotCI" project from "/newJob" page, because we'll
+         * have our own flow for doing this ...
+         */
+        @Extension
+        public static class FilterDotCIProjectTypeFromNewJobPage extends DescriptorVisibilityFilter {
+            @Override
+            public boolean filter(final Object context, final Descriptor descriptor) {
+                return !(descriptor instanceof DynamicProject.DescriptorImpl);
+            }
+        }
+
     }
 }
