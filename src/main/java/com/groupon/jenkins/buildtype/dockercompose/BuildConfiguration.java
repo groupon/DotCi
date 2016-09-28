@@ -64,7 +64,7 @@ public class BuildConfiguration {
         ShellCommands shellCommands = new ShellCommands();
         shellCommands.add(BuildConfiguration.getCheckoutCommands(dotCiEnvVars));
 
-        shellCommands.add(String.format("trap \"docker-compose -f %s down; exit\" PIPE QUIT INT HUP EXIT TERM",fileName));
+        shellCommands.add(String.format("docker version; docker-compose version; trap \"docker-compose -f %s down; exit\" PIPE QUIT INT HUP EXIT TERM",fileName));
 
         appendCommands("before", shellCommands); //deprecated
         appendCommands("before_each", shellCommands);
