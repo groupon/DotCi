@@ -124,7 +124,6 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
 
     @Override
     public synchronized void save() throws IOException {
-        LOGGER.info("saving build:" + getName() + ": " + getNumber());
         getDynamicBuildRepository().save(this);
     }
 
