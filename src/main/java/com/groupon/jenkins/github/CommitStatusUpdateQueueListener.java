@@ -17,30 +17,31 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Extension
-public class CommitStatusUpdateQueueListener extends QueueListener{
+public class CommitStatusUpdateQueueListener extends QueueListener {
     private static final Logger LOGGER = Logger.getLogger(CommitStatusUpdateQueueListener.class.getName());
+
     @Override
-    public void onEnterWaiting(Queue.WaitingItem wi) {
-        List<Cause> causes = wi.getCauses();
-        if(causes != null){
-           for(Cause cause: causes){
-              if(cause instanceof BuildCause){
-                  setCommitStatus((BuildCause) cause,(DynamicProject)wi.task);
-                  return;
-              }
-           }
+    public void onEnterWaiting(final Queue.WaitingItem wi) {
+        final List<Cause> causes = wi.getCauses();
+        if (causes != null) {
+            for (final Cause cause : causes) {
+                if (cause instanceof BuildCause && wi.task instanceof DynamicProject) {
+                    setCommitStatus((BuildCause) cause, (DynamicProject) wi.task);
+                    return;
+                }
+            }
         }
     }
 
-    private void setCommitStatus(BuildCause cause, DynamicProject project) {
-        BuildCause buildCause = cause;
-        String sha = buildCause.getSha();
-        if(sha != null){
-            GHRepository githubRepository = getGithubRepository(project);
-            String context = buildCause.getPullRequestNumber() != null ? "DotCi/PR" : "DotCi/push";;
+    private void setCommitStatus(final BuildCause cause, final DynamicProject project) {
+        final BuildCause buildCause = cause;
+        final String sha = buildCause.getSha();
+        if (sha != null) {
+            final GHRepository githubRepository = getGithubRepository(project);
+            final String context = buildCause.getPullRequestNumber() != null ? "DotCi/PR" : "DotCi/push";
             try {
                 githubRepository.createCommitStatus(sha, GHCommitState.PENDING, getJenkinsRootUrl(), "Build in queue.", context);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 LOGGER.log(Level.WARNING, "Failed to Update commit status", e);
             }
         }
@@ -50,7 +51,7 @@ public class CommitStatusUpdateQueueListener extends QueueListener{
         return Jenkins.getInstance().getRootUrl();
     }
 
-    protected GHRepository getGithubRepository(DynamicProject project) {
+    protected GHRepository getGithubRepository(final DynamicProject project) {
         return new GithubRepositoryService(project.getGithubRepoUrl()).getGithubRepository();
     }
 
