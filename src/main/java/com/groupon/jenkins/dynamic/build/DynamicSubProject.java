@@ -23,9 +23,7 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
-import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import hudson.matrix.Combination;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractItem;
 import hudson.model.Action;
 import hudson.model.Cause;
@@ -36,6 +34,7 @@ import hudson.model.Executor;
 import hudson.model.InvisibleAction;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
+import hudson.model.JobProperty;
 import hudson.model.Label;
 import hudson.model.ParametersAction;
 import hudson.model.Queue.NonBlockingTask;
@@ -44,10 +43,14 @@ import hudson.model.SCMedItem;
 import hudson.scm.SCM;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.Builder;
-import hudson.tasks.LogRotator;
 import hudson.util.DescribableList;
 import hudson.widgets.BuildHistoryWidget;
 import hudson.widgets.HistoryWidget;
+import jenkins.model.Jenkins;
+import jenkins.scm.SCMCheckoutStrategy;
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.annotations.PrePersist;
+import org.springframework.util.ReflectionUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -56,36 +59,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jenkins.model.Jenkins;
-import jenkins.scm.SCMCheckoutStrategy;
-
-import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.PostLoad;
-import org.mongodb.morphia.annotations.PrePersist;
-import org.springframework.util.ReflectionUtils;
-
 public class DynamicSubProject extends DbBackedProject<DynamicSubProject, DynamicSubBuild> implements SCMedItem, NonBlockingTask {
-    private ObjectId parentId;
-
-    @PrePersist
-    void saveProjectId() {
-        parentId =  getParent().getId();
-    }
-
     private static final Logger LOGGER = Logger.getLogger(DbBackedProject.class.getName());
-
+    private ObjectId parentId;
     private Combination combination;
 
-    protected DynamicSubProject(DynamicProject parent, String name) {
+    protected DynamicSubProject(final DynamicProject parent, final String name) {
         super(parent, name);
     }
 
-    public DynamicSubProject(DynamicProject parent, Combination combination) {
+    public DynamicSubProject(final DynamicProject parent, final Combination combination) {
         this(parent, combination.toString());
         this.combination = combination;
+    }
+
+    @PrePersist
+    void saveProjectId() {
+        this.parentId = getParent().getId();
     }
 
     @Override
@@ -94,7 +86,7 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
     }
 
     @Override
-    public void setConcurrentBuild(boolean b) throws IOException {
+    public void setConcurrentBuild(final boolean b) throws IOException {
         throw new UnsupportedOperationException("The setting can be only changed at MatrixProject");
     }
 
@@ -144,10 +136,10 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
 
     @Override
     protected DynamicSubBuild newBuild() throws IOException {
-        List<Action> actions = Executor.currentExecutor().getCurrentWorkUnit().context.actions;
+        final List<Action> actions = Executor.currentExecutor().getCurrentWorkUnit().context.actions;
         DynamicBuild parentBuild = getParent().getLastBuild();
         CauseAction causeAction = null;
-        for (Action a : actions) {
+        for (final Action a : actions) {
             if (a instanceof ParentBuildAction) {
                 parentBuild = ((ParentBuildAction) a).getParent();
             }
@@ -157,13 +149,13 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
 
         }
 
-        DynamicSubBuild newBuild = new DynamicSubBuild(this,parentBuild.getCause(),parentBuild.getNumber());
+        final DynamicSubBuild newBuild = new DynamicSubBuild(this, parentBuild.getCause(), parentBuild.getNumber());
         newBuild.save();
         return newBuild;
     }
 
     @Override
-    protected void buildDependencyGraph(DependencyGraph graph) {
+    protected void buildDependencyGraph(final DependencyGraph graph) {
     }
 
     @Override
@@ -202,13 +194,13 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
         return getParent().getScm();
     }
 
-    public boolean scheduleBuild(ParametersAction parameters, Cause c) {
+    public boolean scheduleBuild(final ParametersAction parameters, final Cause c) {
 
         return scheduleBuild(Collections.singletonList(parameters), c);
     }
 
-    public boolean scheduleBuild(List<? extends Action> actions, Cause c) {
-        List<Action> allActions = new ArrayList<Action>();
+    public boolean scheduleBuild(final List<? extends Action> actions, final Cause c) {
+        final List<Action> allActions = new ArrayList<>();
         if (actions != null) {
             allActions.addAll(actions);
         }
@@ -218,45 +210,27 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
         return Jenkins.getInstance().getQueue().schedule(this, getQuietPeriod(), allActions) != null;
     }
 
-    public static class ParentBuildAction extends InvisibleAction implements QueueAction {
-        private transient DynamicBuild parentBuild;
-
-        public ParentBuildAction(DynamicBuild parentBuild) {
-            super();
-            this.parentBuild = parentBuild;
-        }
-
-        @Override
-        public boolean shouldSchedule(List<Action> actions) {
-            return true;
-        }
-
-        public DynamicBuild getParent() {
-            return parentBuild;
-        }
-    }
-
     public Combination getCombination() {
-        return combination;
+        return this.combination;
     }
 
-    public void setCombination(Combination combination) {
+    public void setCombination(final Combination combination) {
         this.combination = combination;
     }
 
     @Override
-    public void onLoad(ItemGroup<? extends Item> parent, String name) throws IOException {
+    public void onLoad(final ItemGroup<? extends Item> parent, final String name) throws IOException {
         try {
-            Field parentField = AbstractItem.class.getDeclaredField("parent");
+            final Field parentField = AbstractItem.class.getDeclaredField("parent");
             parentField.setAccessible(true);
             ReflectionUtils.setField(parentField, this, parent);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException(e);
         }
 
         doSetName(name);
-        if (transientActions == null) {
-            transientActions = new Vector<Action>();
+        if (this.transientActions == null) {
+            this.transientActions = new Vector<>();
         }
         updateTransientActions();
         getBuildersList().setOwner(this);
@@ -266,13 +240,13 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
         initRepos();
     }
 
-    public CurrentBuildState getCurrentStateByNumber(int number) {
-        return dynamicBuildRepository.getCurrentStateByNumber(this, number);
+    public CurrentBuildState getCurrentStateByNumber(final int number) {
+        return this.dynamicBuildRepository.getCurrentStateByNumber(this, number);
     }
 
     @Override
     public int getNextBuildNumber() {
-    return 0;
+        return 0;
     }
 
     @Override
@@ -282,5 +256,28 @@ public class DynamicSubProject extends DbBackedProject<DynamicSubProject, Dynami
 
     @Override
     protected synchronized void saveNextBuildNumber() throws IOException {
+    }
+
+    @Override
+    public <T extends JobProperty> T getProperty(final Class<T> clazz) {
+        return getParent().getProperty(clazz);
+    }
+
+    public static class ParentBuildAction extends InvisibleAction implements QueueAction {
+        private final transient DynamicBuild parentBuild;
+
+        public ParentBuildAction(final DynamicBuild parentBuild) {
+            super();
+            this.parentBuild = parentBuild;
+        }
+
+        @Override
+        public boolean shouldSchedule(final List<Action> actions) {
+            return true;
+        }
+
+        public DynamicBuild getParent() {
+            return this.parentBuild;
+        }
     }
 }
