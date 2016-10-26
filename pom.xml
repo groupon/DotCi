@@ -76,7 +76,7 @@ THE SOFTWARE.
         </pluginRepository>
     </pluginRepositories>
     <properties>
-        <jenkins.version>2.27</jenkins.version>
+        <jenkins.version>2.26</jenkins.version>
         <workflow.version>1.11</workflow.version>
         <powermock.version>1.5.5</powermock.version>
         <maven.compiler.source>1.8</maven.compiler.source>
