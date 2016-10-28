@@ -60,7 +60,7 @@ public class CommitStatusUpdateQueueListenerTest {
 
         final ArrayList<Action> causeActions = new ArrayList<>();
         causeActions.add(new CauseAction(buildCause));
-        final Queue.WaitingItem queueItem = new Queue.WaitingItem(null, null, causeActions);
+        final Queue.WaitingItem queueItem = new Queue.WaitingItem(null, mock(DynamicProject.class), causeActions);
 
 
         when(buildCause.getSha()).thenReturn("sha");
