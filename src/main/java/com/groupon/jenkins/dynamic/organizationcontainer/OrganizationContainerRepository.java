@@ -23,20 +23,20 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.organizationcontainer;
 
+import jenkins.model.Jenkins;
+
 import java.io.IOException;
 import java.util.List;
 
-import jenkins.model.Jenkins;
-
 public class OrganizationContainerRepository {
-    public OrganizationContainer getOrCreateContainer(String viewName) throws IOException {
-        OrganizationContainer existingcontainer = getOrganizationContainer(viewName);
+    public OrganizationContainer getOrCreateContainer(final String viewName) throws IOException {
+        final OrganizationContainer existingcontainer = getOrganizationContainer(viewName);
         return existingcontainer == null ? Jenkins.getInstance().createProject(OrganizationContainer.class, viewName) : existingcontainer;
     }
 
-    public OrganizationContainer getOrganizationContainer(String viewName) {
-        List<OrganizationContainer> containers = Jenkins.getInstance().getItems(OrganizationContainer.class);
-        for (OrganizationContainer container : containers) {
+    public OrganizationContainer getOrganizationContainer(final String viewName) {
+        final List<OrganizationContainer> containers = Jenkins.getInstance().getItems(OrganizationContainer.class);
+        for (final OrganizationContainer container : containers) {
             if (container.getName().equalsIgnoreCase(viewName)) {
                 return container;
             }

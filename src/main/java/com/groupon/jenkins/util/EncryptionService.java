@@ -27,11 +27,11 @@ package com.groupon.jenkins.util;
 import hudson.util.Secret;
 
 public class EncryptionService {
-    public String encrypt(String value) {
-         return Secret.fromString(value).getEncryptedValue();
+    public String encrypt(final String value) {
+        return Secret.fromString(value).getEncryptedValue();
     }
 
-    public String decrypt(String value) {
-       return  Secret.fromString(value).getPlainText();
+    public String decrypt(final String value) {
+        return Secret.fromString(value).getPlainText();
     }
 }

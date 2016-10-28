@@ -36,14 +36,14 @@ public class JobUiProperty extends JobProperty<Job<?, ?>> {
         return newUi;
     }
 
-    private  boolean newUi;
+    private boolean newUi;
 
     public JobUiProperty(boolean newUi) {
         this.newUi = newUi;
     }
 
     public void toggle() {
-       this.newUi = !this.newUi;
+        this.newUi = !this.newUi;
     }
 
 

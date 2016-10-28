@@ -47,10 +47,9 @@ public class DbBackedRunList<P extends DbBackedProject<P, B>, B extends DbBacked
     }
 
 
-
     @Override
     public List subList(int fromIndex, int toIndex) {
-        return Lists.newArrayList( dynamicBuildRepository.getBuilds(project,fromIndex));
+        return Lists.newArrayList(dynamicBuildRepository.getBuilds(project, fromIndex));
     }
 
     @Override

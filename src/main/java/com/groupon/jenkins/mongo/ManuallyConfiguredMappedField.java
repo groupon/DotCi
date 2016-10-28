@@ -31,15 +31,15 @@ import java.lang.reflect.Field;
 /**
  * Hack to address issues in Jenkins mapping
  * These methods are copied directly from Morphia 1.07 so we can get around the method access limits.
- *
+ * <p/>
  * Deprecated because we want to use the original classes.
  */
 @Deprecated
 class ManuallyConfiguredMappedField extends MappedField {
     ManuallyConfiguredMappedField(final Field f, final Class<?> clazz) {
         f.setAccessible(true);
-        field = f;
-        persistedClass = clazz;
+        this.field = f;
+        this.persistedClass = clazz;
     }
 
     public void discover() {

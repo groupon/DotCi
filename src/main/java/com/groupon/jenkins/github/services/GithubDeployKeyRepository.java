@@ -30,45 +30,47 @@ import com.groupon.jenkins.util.EncryptionService;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import java.io.IOException;
 import org.mongodb.morphia.Datastore;
 
 import javax.inject.Inject;
+import java.io.IOException;
 
 public class GithubDeployKeyRepository extends MongoRepository {
-    private EncryptionService encryptionService;
+    private final EncryptionService encryptionService;
 
     @Inject
-    public GithubDeployKeyRepository(Datastore datastore) {
+    public GithubDeployKeyRepository(final Datastore datastore) {
         super(datastore);
         this.encryptionService = new EncryptionService();
     }
 
 
-    public void put(String url, DeployKeyPair keyPair) throws IOException {
-        BasicDBObject query = new BasicDBObject("repo_url", url);
-        BasicDBObject doc = new BasicDBObject("public_key", encrypt(keyPair.publicKey)).append("private_key",encrypt(keyPair.privateKey)).append("repo_url", url);
+    public void put(final String url, final DeployKeyPair keyPair) throws IOException {
+        final BasicDBObject query = new BasicDBObject("repo_url", url);
+        final BasicDBObject doc = new BasicDBObject("public_key", encrypt(keyPair.publicKey)).append("private_key", encrypt(keyPair.privateKey)).append("repo_url", url);
         getCollection().update(query, doc, true, false);
     }
+
     protected DBCollection getCollection() {
         return getDatastore().getDB().getCollection("deploy_keys");
     }
 
-    public DeployKeyPair get(String repoUrl) {
-        BasicDBObject query = new BasicDBObject("repo_url", repoUrl);
-        DBObject keyPair = getCollection().findOne(query);
-        return new DeployKeyPair(decrypt((String)keyPair.get("public_key")),decrypt( (String)keyPair.get("private_key")));
+    public DeployKeyPair get(final String repoUrl) {
+        final BasicDBObject query = new BasicDBObject("repo_url", repoUrl);
+        final DBObject keyPair = getCollection().findOne(query);
+        return new DeployKeyPair(decrypt((String) keyPair.get("public_key")), decrypt((String) keyPair.get("private_key")));
     }
 
-    public boolean hasDeployKey(String repoUrl) {
-        BasicDBObject query = new BasicDBObject("repo_url", repoUrl);
+    public boolean hasDeployKey(final String repoUrl) {
+        final BasicDBObject query = new BasicDBObject("repo_url", repoUrl);
         return getCollection().getCount(query) > 0;
     }
-    protected String encrypt(String value) {
-        return  encryptionService.encrypt(value);
+
+    protected String encrypt(final String value) {
+        return this.encryptionService.encrypt(value);
     }
 
-    private  String decrypt(String value){
-        return encryptionService.decrypt(value);
+    private String decrypt(final String value) {
+        return this.encryptionService.decrypt(value);
     }
 }

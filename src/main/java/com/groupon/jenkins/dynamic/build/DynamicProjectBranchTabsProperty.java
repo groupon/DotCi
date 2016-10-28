@@ -32,34 +32,35 @@ import hudson.Extension;
 import hudson.model.Job;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class DynamicProjectBranchTabsProperty extends JobProperty<Job<?, ?>> {
     //For backward compatability
     private transient ArrayList<String> branches;
 
     private String branchTabs;
+
     public DynamicProjectBranchTabsProperty(String branchTabs) {
         this.branchTabs = branchTabs;
     }
 
     private ArrayList<String> parseBranches() {
         ArrayList<String> parsedBranches = new ArrayList<String>();
-        if(!StringUtils.isEmpty(branchTabs)){
+        if (!StringUtils.isEmpty(branchTabs)) {
             parsedBranches.addAll(trim());
         }
         return parsedBranches;
     }
 
     private List<String> trim() {
-        return Lists.newArrayList( Iterables.transform(Arrays.asList( branchTabs.split("\\n")), new Function<String, String>() {
+        return Lists.newArrayList(Iterables.transform(Arrays.asList(branchTabs.split("\\n")), new Function<String, String>() {
             @Override
             public String apply(@Nullable String input) {
                 return input.trim();
@@ -68,7 +69,7 @@ public class DynamicProjectBranchTabsProperty extends JobProperty<Job<?, ?>> {
     }
 
 
-    public List<String> getBranches(){
+    public List<String> getBranches() {
         return parseBranches();
     }
 
@@ -90,7 +91,7 @@ public class DynamicProjectBranchTabsProperty extends JobProperty<Job<?, ?>> {
     }
 
     private void save(ArrayList<String> branches) {
-        this.branchTabs= Joiner.on("\n").join(branches);
+        this.branchTabs = Joiner.on("\n").join(branches);
     }
 
     @Extension

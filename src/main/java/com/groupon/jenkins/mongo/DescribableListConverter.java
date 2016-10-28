@@ -24,20 +24,15 @@ THE SOFTWARE.
 package com.groupon.jenkins.mongo;
 
 import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import hudson.model.Saveable;
-import hudson.util.CopyOnWriteList;
 import hudson.util.DescribableList;
-import org.mongodb.morphia.converters.DefaultConverters;
 import org.mongodb.morphia.converters.SimpleValueConverter;
 import org.mongodb.morphia.converters.TypeConverter;
 import org.mongodb.morphia.mapping.MappedField;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DescribableListConverter extends TypeConverter implements SimpleValueConverter {
 
@@ -52,7 +47,7 @@ public class DescribableListConverter extends TypeConverter implements SimpleVal
         BasicDBList rawList = (BasicDBList) fromDBObject;
 
         List list = new ArrayList();
-        for(Object obj : rawList) {
+        for (Object obj : rawList) {
             DBObject dbObj = (DBObject) obj;
             list.add(getMapper().fromDBObject(optionalExtraInfo.getSubClass(), dbObj, getMapper().createEntityCache()));
         }
@@ -70,7 +65,7 @@ public class DescribableListConverter extends TypeConverter implements SimpleVal
 
         BasicDBList convertedList = new BasicDBList();
 
-        for(Object obj : describableList.toList()) {
+        for (Object obj : describableList.toList()) {
             convertedList.add(getMapper().toDBObject(obj));
         }
 

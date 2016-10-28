@@ -29,25 +29,27 @@ import com.groupon.jenkins.extensions.DotCiExtension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.BuildListener;
+import org.apache.commons.lang.StringUtils;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import org.apache.commons.lang.StringUtils;
 
-public abstract class DotCiPluginAdapter extends DotCiExtension{
-    protected String pluginInputFiles;
+public abstract class DotCiPluginAdapter extends DotCiExtension {
     private final String name;
+    protected String pluginInputFiles;
     protected Object options;
 
-    protected DotCiPluginAdapter(String name, String pluginInputFiles) {
+    protected DotCiPluginAdapter(final String name, final String pluginInputFiles) {
         this.name = name;
         this.pluginInputFiles = pluginInputFiles;
     }
 
-    protected DotCiPluginAdapter(String name) {
+    protected DotCiPluginAdapter(final String name) {
         this.name = name;
     }
-    public void setOptions(Object options) {
+
+    public void setOptions(final Object options) {
         this.options = options;
     }
 
@@ -57,34 +59,34 @@ public abstract class DotCiPluginAdapter extends DotCiExtension{
 
     public abstract boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener);
 
-    public void runFinished(DynamicSubBuild run, DynamicBuild parent, BuildListener listener) throws IOException {
-        if(StringUtils.isNotEmpty(getPluginInputFiles())){
+    public void runFinished(final DynamicSubBuild run, final DynamicBuild parent, final BuildListener listener) throws IOException {
+        if (StringUtils.isNotEmpty(getPluginInputFiles())) {
             copyFiles(run, parent, getPluginInputFiles(), listener);
         }
     }
 
     public String getPluginInputFiles() {
-        return pluginInputFiles;
+        return this.pluginInputFiles;
     }
 
-    public void copyFiles(DynamicSubBuild run, DynamicBuild parent, String outputFiles, BuildListener listener) throws IOException {
-        String baseWorkSpace;
+    public void copyFiles(final DynamicSubBuild run, final DynamicBuild parent, final String outputFiles, final BuildListener listener) throws IOException {
+        final String baseWorkSpace;
         try {
             listener.getLogger().println("Copying files :" + outputFiles);
-            FilePath workspacePath = run.getWorkspace();
-            FilePath targetPath = parent.getWorkspace();
+            final FilePath workspacePath = run.getWorkspace();
+            final FilePath targetPath = parent.getWorkspace();
             if (workspacePath != null && targetPath != null) {
                 baseWorkSpace = workspacePath.toURI().toString();
-                for (FilePath file : workspacePath.list(outputFiles)) {
-                    String dir = file.toURI().toString().replaceAll(baseWorkSpace, "").replaceAll(file.getName(), "");
-                    FilePath targetChildDir = targetPath.child(dir);
+                for (final FilePath file : workspacePath.list(outputFiles)) {
+                    final String dir = file.toURI().toString().replaceAll(baseWorkSpace, "").replaceAll(file.getName(), "");
+                    final FilePath targetChildDir = targetPath.child(dir);
                     if (!targetChildDir.exists()) {
                         targetChildDir.mkdirs();
                     }
                     file.copyTo(targetChildDir.child(file.getName()));
                 }
             }
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
         }
     }

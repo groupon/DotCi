@@ -24,7 +24,6 @@ THE SOFTWARE.
 package com.groupon.jenkins.util;
 
 import jenkins.model.Jenkins;
-
 import org.acegisecurity.Authentication;
 import org.acegisecurity.context.SecurityContextHolder;
 

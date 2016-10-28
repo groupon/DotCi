@@ -57,6 +57,8 @@ import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.Builder;
 import hudson.tasks.Messages;
+import org.jenkinsci.remoting.RoleChecker;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -64,32 +66,27 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermissions;
-import org.jenkinsci.remoting.RoleChecker;
 
 public class WorkspaceFileExporter extends Builder {
 
-    public  enum Operation{DELETE,CREATE }
+    private final WorkspaceFile workspaceFile;
+    private final Operation operation;
 
-
-    private WorkspaceFile workspaceFile;
-    private Operation operation;
-
-    public WorkspaceFileExporter(WorkspaceFile workspaceFile, Operation operation) {
+    public WorkspaceFileExporter(final WorkspaceFile workspaceFile, final Operation operation) {
         this.workspaceFile = workspaceFile;
         this.operation = operation;
     }
 
-
     @Override
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        return Operation.DELETE.equals(operation)? delete(build): export(build,listener);
+    public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
+        return Operation.DELETE.equals(this.operation) ? delete(build) : export(build, listener);
     }
 
-    private boolean export(AbstractBuild<?,?> build, TaskListener listener) throws InterruptedException, IOException {
-        FilePath ws = getFilePath(build);
+    private boolean export(final AbstractBuild<?, ?> build, final TaskListener listener) throws InterruptedException, IOException {
+        final FilePath ws = getFilePath(build);
         try {
             createFile(ws);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             Util.displayIOException(e, listener);
             e.printStackTrace(listener.fatalError(Messages.CommandInterpreter_UnableToProduceScript()));
             throw e;
@@ -98,16 +95,16 @@ public class WorkspaceFileExporter extends Builder {
 
     }
 
-    private boolean delete(AbstractBuild<?,?> build) throws IOException, InterruptedException {
-        FilePath ws = getFilePath(build);
-        ws.act(new WorkspaceFileDeleterFileCallable(workspaceFile));
+    private boolean delete(final AbstractBuild<?, ?> build) throws IOException, InterruptedException {
+        final FilePath ws = getFilePath(build);
+        ws.act(new WorkspaceFileDeleterFileCallable(this.workspaceFile));
         return true;
     }
 
-    private FilePath getFilePath(AbstractBuild<?, ?> build) {
-        FilePath ws = build.getWorkspace();
+    private FilePath getFilePath(final AbstractBuild<?, ?> build) {
+        final FilePath ws = build.getWorkspace();
         if (ws == null) {
-            Node node = build.getBuiltOn();
+            final Node node = build.getBuiltOn();
             if (node == null) {
                 throw new RuntimeException("no such build node: " + build.getBuiltOnStr());
             }
@@ -116,22 +113,25 @@ public class WorkspaceFileExporter extends Builder {
         return ws;
     }
 
-    private FilePath createFile(FilePath ws) throws IOException, InterruptedException {
-        return new FilePath(ws.getChannel(), ws.act(new WorkspaceFileCreatorFileCallable(workspaceFile)));
+    private FilePath createFile(final FilePath ws) throws IOException, InterruptedException {
+        return new FilePath(ws.getChannel(), ws.act(new WorkspaceFileCreatorFileCallable(this.workspaceFile)));
     }
 
+    public enum Operation {DELETE, CREATE}
 
-    public  static class WorkspaceFile implements Serializable{
+    public static class WorkspaceFile implements Serializable {
         private static final long serialVersionUID = 1L;
         final String contents;
         final String fileName;
         final String permissions;
-        public WorkspaceFile(String fileName, String contents, String permissions) {
+
+        public WorkspaceFile(final String fileName, final String contents, final String permissions) {
             this.contents = contents;
             this.fileName = fileName;
             this.permissions = permissions;
         }
-        public WorkspaceFile(String fileName){
+
+        public WorkspaceFile(final String fileName) {
             this.fileName = fileName;
             this.contents = null;
             this.permissions = null;
@@ -141,41 +141,43 @@ public class WorkspaceFileExporter extends Builder {
 
     private static class WorkspaceFileDeleterFileCallable implements FilePath.FileCallable<String> {
         private static final long serialVersionUID = 1L;
-        private WorkspaceFile workspaceFile;
+        private final WorkspaceFile workspaceFile;
 
-        public WorkspaceFileDeleterFileCallable(WorkspaceFile workspaceFile) {
+        public WorkspaceFileDeleterFileCallable(final WorkspaceFile workspaceFile) {
             this.workspaceFile = workspaceFile;
         }
-        public String invoke(File dir, VirtualChannel channel) throws IOException {
-            File f = new File(dir.getAbsolutePath() + "/" + workspaceFile.fileName);
+
+        public String invoke(final File dir, final VirtualChannel channel) throws IOException {
+            final File f = new File(dir.getAbsolutePath() + "/" + this.workspaceFile.fileName);
             f.delete();
             return f.getAbsolutePath();
         }
 
         @Override
-        public void checkRoles(RoleChecker roleChecker) throws SecurityException {
+        public void checkRoles(final RoleChecker roleChecker) throws SecurityException {
 
         }
     }
+
     private static class WorkspaceFileCreatorFileCallable implements FilePath.FileCallable<String> {
         private static final long serialVersionUID = 1L;
-        private WorkspaceFile workspaceFile;
+        private final WorkspaceFile workspaceFile;
 
-        public WorkspaceFileCreatorFileCallable(WorkspaceFile workspaceFile) {
+        public WorkspaceFileCreatorFileCallable(final WorkspaceFile workspaceFile) {
             this.workspaceFile = workspaceFile;
         }
 
         @Override
-        public String invoke(File dir, VirtualChannel channel) throws IOException {
+        public String invoke(final File dir, final VirtualChannel channel) throws IOException {
             dir.mkdirs();
             File f;
             Writer w = null;
             try {
-                f = new File(dir.getAbsolutePath() + "/" + workspaceFile.fileName);
+                f = new File(dir.getAbsolutePath() + "/" + this.workspaceFile.fileName);
                 f.createNewFile();
                 w = new FileWriter(f);
-                w.write(workspaceFile.contents);
-                Files.setPosixFilePermissions(f.toPath(), PosixFilePermissions.fromString(workspaceFile.permissions));
+                w.write(this.workspaceFile.contents);
+                Files.setPosixFilePermissions(f.toPath(), PosixFilePermissions.fromString(this.workspaceFile.permissions));
             } finally {
                 if (w != null) {
                     w.close();
@@ -185,7 +187,7 @@ public class WorkspaceFileExporter extends Builder {
         }
 
         @Override
-        public void checkRoles(RoleChecker roleChecker) throws SecurityException {
+        public void checkRoles(final RoleChecker roleChecker) throws SecurityException {
 
         }
     }

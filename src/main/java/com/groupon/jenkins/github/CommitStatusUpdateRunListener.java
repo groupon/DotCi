@@ -29,11 +29,12 @@ import hudson.Extension;
 import hudson.model.Result;
 import hudson.model.TaskListener;
 import hudson.model.listeners.RunListener;
+import org.kohsuke.github.GHCommitState;
+import org.kohsuke.github.GHRepository;
+
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.kohsuke.github.GHCommitState;
-import org.kohsuke.github.GHRepository;
 
 import static hudson.model.Result.SUCCESS;
 import static hudson.model.Result.UNSTABLE;
@@ -63,14 +64,14 @@ public class CommitStatusUpdateRunListener extends RunListener<DynamicBuild> {
     }
 
     private String getContext(DynamicBuild build) {
-        return build.isPullRequest()? "DotCi/PR": "DotCi/push";
+        return build.isPullRequest() ? "DotCi/PR" : "DotCi/push";
     }
 
     @Override
     public void onCompleted(DynamicBuild build, TaskListener listener) {
         String sha1 = build.getSha();
         if (sha1 == null) {
-            return ;
+            return;
         }
 
         GHRepository repository = getGithubRepository(build);
@@ -87,11 +88,11 @@ public class CommitStatusUpdateRunListener extends RunListener<DynamicBuild> {
             state = GHCommitState.FAILURE;
             msg = "Failed";
         }
-	    if (build.isSkipped()) {
-		    msg += " - Skipped";
-	    }
+        if (build.isSkipped()) {
+            msg += " - Skipped";
+        }
         try {
-            repository.createCommitStatus(sha1, state, build.getFullUrl(), msg,getContext(build));
+            repository.createCommitStatus(sha1, state, build.getFullUrl(), msg, getContext(build));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

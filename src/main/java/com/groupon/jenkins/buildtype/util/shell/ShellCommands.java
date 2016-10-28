@@ -25,16 +25,16 @@ package com.groupon.jenkins.buildtype.util.shell;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.escape.Escaper;
+import com.google.common.escape.Escapers;
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 import java.util.regex.Pattern;
-
-import com.google.common.escape.Escaper;
-import com.google.common.escape.Escapers;
-import org.apache.commons.lang.StringUtils;
 
 public class ShellCommands {
     private final List<String> commands;
@@ -78,6 +78,7 @@ public class ShellCommands {
     }
 
     public static final Escaper SHELL_ESCAPE;
+
     static {
         final Escapers.Builder builder = Escapers.builder();
         builder.addEscape('\'', "'\"'\"'");
@@ -100,8 +101,8 @@ public class ShellCommands {
     }
 
     public ShellCommands addAll(Stack<String> commands) {
-        while (!commands.empty()){
-           this.commands.add(commands.pop()) ;
+        while (!commands.empty()) {
+            this.commands.add(commands.pop());
         }
         return this;
     }

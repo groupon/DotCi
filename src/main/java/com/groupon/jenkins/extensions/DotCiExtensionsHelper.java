@@ -24,21 +24,23 @@
 
 package com.groupon.jenkins.extensions;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
 import hudson.ExtensionPoint;
+import hudson.model.Describable;
+import hudson.model.Descriptor;
+import hudson.tasks.Builder;
+import hudson.tasks.Publisher;
+import jenkins.model.Jenkins;
+import jenkins.tasks.SimpleBuildStep;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import hudson.model.*;
-import hudson.tasks.*;
-import jenkins.model.Jenkins;
-import jenkins.tasks.*;
 
 public class DotCiExtensionsHelper {
     private Jenkins jenkins;
@@ -46,20 +48,21 @@ public class DotCiExtensionsHelper {
     DotCiExtensionsHelper(Jenkins jenkins) {
         this.jenkins = jenkins;
     }
+
     public DotCiExtensionsHelper() {
         this(Jenkins.getInstance());
     }
 
     public List<DotCiPluginAdapter> createPlugins(List<?> pluginSpecs) {
-        return createPlugins(pluginSpecs,DotCiPluginAdapter.class);
+        return createPlugins(pluginSpecs, DotCiPluginAdapter.class);
     }
 
     public List<PostBuildNotifier> createNotifiers(List<?> notifierSpecs) {
-        return createPlugins(notifierSpecs,PostBuildNotifier.class);
+        return createPlugins(notifierSpecs, PostBuildNotifier.class);
     }
 
     private <T extends DotCiExtension> List<T> createPlugins(List<?> pluginSpecs, Class<T> extensionClass) {
-        if(Iterables.isEmpty(pluginSpecs)){
+        if (Iterables.isEmpty(pluginSpecs)) {
             return Collections.emptyList();
         }
         List<T> plugins = new ArrayList<T>(pluginSpecs.size());
@@ -80,7 +83,7 @@ public class DotCiExtensionsHelper {
     }
 
 
-    public <T extends DotCiExtension>  T create(String pluginName, Object options, Class<T> extensionClass) {
+    public <T extends DotCiExtension> T create(String pluginName, Object options, Class<T> extensionClass) {
         for (T adapter : all(extensionClass)) {
             if (adapter.getName().equals(pluginName)) {
                 try {
@@ -94,9 +97,9 @@ public class DotCiExtensionsHelper {
 
         }
 
-        for(Descriptor<?> pluginDescriptor : getDescriptors()){
-            if(pluginDescriptor.clazz.getSimpleName().equals(pluginName)){
-                return (T) new GenericSimpleBuildStepPlugin(pluginDescriptor,options);
+        for (Descriptor<?> pluginDescriptor : getDescriptors()) {
+            if (pluginDescriptor.clazz.getSimpleName().equals(pluginName)) {
+                return (T) new GenericSimpleBuildStepPlugin(pluginDescriptor, options);
             }
         }
         throw new InvalidBuildConfigurationException("Plugin " + pluginName + " not supported");
@@ -104,11 +107,12 @@ public class DotCiExtensionsHelper {
 
     private ArrayList<Descriptor<?>> getDescriptors() {
         ArrayList<Descriptor<?>> r = new ArrayList<Descriptor<?>>();
-        r.addAll( getClassList(Builder.class));
-        r. addAll( getClassList(Publisher.class));
+        r.addAll(getClassList(Builder.class));
+        r.addAll(getClassList(Publisher.class));
         return r;
     }
-    private <T extends Describable<T>,D extends Descriptor<T>> List<Descriptor<?>> getClassList( Class<T> c) {
+
+    private <T extends Describable<T>, D extends Descriptor<T>> List<Descriptor<?>> getClassList(Class<T> c) {
         ArrayList<Descriptor<?>> r = new ArrayList<Descriptor<?>>();
         if (jenkins == null) {
             return new ArrayList<Descriptor<?>>();
@@ -120,6 +124,7 @@ public class DotCiExtensionsHelper {
         }
         return r;
     }
+
     public <T extends ExtensionPoint> Iterable<T> all(Class<T> extensionClass) {
         return jenkins.getExtensionList(extensionClass);
     }

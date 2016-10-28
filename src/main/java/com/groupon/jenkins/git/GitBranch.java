@@ -27,25 +27,23 @@ import com.google.common.base.Objects;
 import com.groupon.jenkins.ForBackwardCompatiblity;
 
 public class GitBranch {
-    @ForBackwardCompatiblity
-    private transient  final String PULL_REQUEST_PATTERN = null;
-
     public transient static final String PULL_REQUEST_PREFIX = "Pull Request:";
-
+    @ForBackwardCompatiblity
+    private transient final String PULL_REQUEST_PATTERN = null;
     private final String branch;
 
 
-    public GitBranch(String branch) {
+    public GitBranch(final String branch) {
         this.branch = branch;
     }
 
     public int pullRequestNumber() {
-        String number = branch.replace(PULL_REQUEST_PREFIX,"").trim();
+        final String number = this.branch.replace(PULL_REQUEST_PREFIX, "").trim();
         return Integer.parseInt(number);
     }
 
     public boolean isPullRequest() {
-        return branch.startsWith(PULL_REQUEST_PREFIX);
+        return this.branch.startsWith(PULL_REQUEST_PREFIX);
     }
 
     @Override
@@ -55,18 +53,18 @@ public class GitBranch {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(branch);
+        return Objects.hashCode(this.branch);
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        GitBranch other = (GitBranch) obj;
+        final GitBranch other = (GitBranch) obj;
         return Objects.equal(this.branch, other.branch);
     }
 

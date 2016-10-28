@@ -76,12 +76,12 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     @Property(concreteClass = AxisList.class)
     private AxisList axisList;
 
-    public DynamicBuild(DynamicProject project) throws IOException {
+    public DynamicBuild(final DynamicProject project) throws IOException {
         super(project);
         this.model = new DynamicBuildModel(this);
     }
 
-    public DynamicBuild(DynamicProject project, File buildDir) throws IOException {
+    public DynamicBuild(final DynamicProject project, final File buildDir) throws IOException {
         super(project, buildDir);
         this.model = new DynamicBuildModel(this);
     }
@@ -92,20 +92,19 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         this.description = getDescription();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void run() {
         execute(new DynamicRunExecution());
     }
 
     public boolean isNewJenkins() {
-        VersionNumber matrixBreakOutVersion = new VersionNumber("1.560");
+        final VersionNumber matrixBreakOutVersion = new VersionNumber("1.560");
         return Jenkins.getVersion().isNewerThan(matrixBreakOutVersion);
     }
 
     public DynamicBuildLayouter getLayouter() {
 
-        return new DynamicBuildLayouter(axisList, this);
+        return new DynamicBuildLayouter(this.axisList, this);
     }
 
     // This needs to be overriden here to override @RequirePOST annotation,
@@ -116,52 +115,52 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     }
 
     @Override
-    public void restoreFromDb(AbstractProject project, Map<String, Object> input) {
+    public void restoreFromDb(final AbstractProject project, final Map<String, Object> input) {
         super.restoreFromDb(project, input);
         this.model = new DynamicBuildModel(this);
     }
 
     @Override
     @RequirePOST
-    public void doDoDelete(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+    public void doDoDelete(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException {
         checkPermission(DELETE);
-        model.deleteBuild();
+        this.model.deleteBuild();
         rsp.sendRedirect2(req.getContextPath() + '/' + getParent().getUrl());
     }
 
     @Override
     public void delete() throws IOException {
-        model.deleteSubBuilds();
+        this.model.deleteSubBuilds();
         super.delete();
     }
 
     @Override
-    public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
+    public Object getDynamic(final String token, final StaplerRequest req, final StaplerResponse rsp) {
         try {
-            Build item = getRun(Combination.fromString(token));
+            final Build item = getRun(Combination.fromString(token));
             if (item != null) {
                 if (item.getNumber() == this.getNumber()) {
                     return item;
                 } else {
                     // redirect the user to the correct URL
                     String url = Functions.joinPath(item.getUrl(), req.getRestOfPath());
-                    String qs = req.getQueryString();
+                    final String qs = req.getQueryString();
                     if (qs != null) {
                         url += '?' + qs;
                     }
                     throw HttpResponses.redirectViaContextPath(url);
                 }
             }
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             // failed to parse the token as Combination. Must be something else
         }
         return super.getDynamic(token, req, rsp);
     }
 
     @Override
-    public Map<String, String> getDotCiEnvVars(EnvVars jenkinsEnvVars) {
-        Map<String, String> vars = super.getDotCiEnvVars(jenkinsEnvVars);
-        Map<String, String> dotCiEnvVars = model.getDotCiEnvVars();
+    public Map<String, String> getDotCiEnvVars(final EnvVars jenkinsEnvVars) {
+        final Map<String, String> vars = super.getDotCiEnvVars(jenkinsEnvVars);
+        final Map<String, String> dotCiEnvVars = this.model.getDotCiEnvVars();
         vars.putAll(dotCiEnvVars);
         return vars;
     }
@@ -170,7 +169,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         return getConductor().getItems();
     }
 
-    public DynamicSubProject getSubProject(Combination subBuildCombination) {
+    public DynamicSubProject getSubProject(final Combination subBuildCombination) {
         return Iterables.getOnlyElement(getSubProjects(Arrays.asList(subBuildCombination)));
     }
 
@@ -178,91 +177,27 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         return new GithubRepositoryService(getGithubRepoUrl());
     }
 
-    public void setAxisList(AxisList axisList) {
+    public void setAxisList(final AxisList axisList) {
         this.axisList = axisList;
         try {
             save();
-        } catch (IOException e) {
-            throw  new RuntimeException(e);
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
 
-    public Map<String,Object> getEnvironmentWithChangeSet(TaskListener listener) throws IOException, InterruptedException {
-        return model.getEnvironmentWithChangeSet(listener);
+    public Map<String, Object> getEnvironmentWithChangeSet(final TaskListener listener) throws IOException, InterruptedException {
+        return this.model.getEnvironmentWithChangeSet(listener);
     }
+
     public GHRepository getGithubRepository() {
         return getGithubRepositoryService().getGithubRepository();
     }
 
     public boolean isPullRequest() {
-        return StringUtils.isNotEmpty( getCause().getPullRequestNumber());
+        return StringUtils.isNotEmpty(getCause().getPullRequestNumber());
     }
-
-    protected class DynamicRunExecution extends Build.BuildExecution implements BuildExecutionContext {
-
-        @Override
-        public boolean performStep(BuildStep execution, BuildListener listener) throws IOException, InterruptedException {
-            return perform(execution, listener);
-        }
-
-        @Override
-        public void setResult(Result r) {
-            DynamicBuild.this.setResult(r);
-        }
-
-        @Override
-        public Map<String, Object> getBuildEnvironmentVariables() {
-            try {
-                return DynamicBuild.this.getEnvironmentWithChangeSet(getListener());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-
-        @Override
-        protected Result doRun(BuildListener listener) throws Exception, hudson.model.Run.RunnerAbortedException {
-            BuildEnvironment buildEnvironment = new BuildEnvironment(DynamicBuild.this, launcher, listener);
-            try {
-                DynamicBuild.this.model.run();
-                if (!buildEnvironment.initialize()) {
-                    return Result.FAILURE;
-                }
-                exportDeployKeysIfPrivateRepo(listener, launcher);
-                BuildType buildType = BuildType.newBuildType(getParent());
-                Result buildRunResult =   buildType.runBuild(DynamicBuild.this, this, launcher, listener);
-                setResult(buildRunResult);
-                return buildRunResult;
-            } catch (InvalidBuildConfigurationException invalidBuildConfigurationException) {
-                for (String error : invalidBuildConfigurationException.getValidationErrors()) {
-                    listener.error(error);
-                }
-                return Result.FAILURE;
-            }catch (InterruptedException e) {
-                Executor x = Executor.currentExecutor();
-                x.recordCauseOfInterruption(DynamicBuild.this, listener);
-                return x.abortResult();
-            }catch (Exception e) {
-                PrintStream logger = listener.getLogger();
-                logger.println(e.getMessage());
-                logger.println(ExceptionUtils.getStackTrace(e));
-                Executor x = Executor.currentExecutor();
-                x.recordCauseOfInterruption(DynamicBuild.this, listener);
-                x.doStop();
-                return Result.FAILURE;
-            } finally {
-                if (buildEnvironment.tearDownBuildEnvironments(listener)) {
-                    return Result.FAILURE;
-                }
-                deleteDeployKeys(listener, launcher);
-            }
-
-        }
-    }
-
 
     @Override
     @Exported
@@ -275,12 +210,12 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         return this.getParent();
     }
 
-    public Iterable<DynamicSubProject> getSubProjects(Iterable<Combination> mainRunCombinations) {
+    public Iterable<DynamicSubProject> getSubProjects(final Iterable<Combination> mainRunCombinations) {
         return getConductor().getSubProjects(mainRunCombinations);
     }
 
-    public Build getRun(Combination combination) {
-        for (DynamicSubProject subProject : getAllSubProjects()) {
+    public Build getRun(final Combination combination) {
+        for (final DynamicSubProject subProject : getAllSubProjects()) {
             if (subProject.getCombination().equals(combination)) {
                 return getRunForConfiguration(subProject);
             }
@@ -294,15 +229,15 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         return super.getParent();
     }
 
-    private DynamicSubBuild getRunForConfiguration(DynamicSubProject c) {
-        DynamicSubBuild r = c.getBuildByNumber(getNumber());
+    private DynamicSubBuild getRunForConfiguration(final DynamicSubProject c) {
+        final DynamicSubBuild r = c.getBuildByNumber(getNumber());
         return r != null ? r : null;
     }
 
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         if (other instanceof DynamicBuild) {
-            DbBackedBuild<DynamicProject, DynamicBuild> otherBuild = (DbBackedBuild<DynamicProject, DynamicBuild>) other;
+            final DbBackedBuild<DynamicProject, DynamicBuild> otherBuild = (DbBackedBuild<DynamicProject, DynamicBuild>) other;
             if (otherBuild.getName().equals(this.getName()) && otherBuild.getNumber() == this.getNumber()) {
                 return true;
             }
@@ -322,19 +257,23 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 
     @Override
     public BuildCause getCause() {
-        return model.getBuildCause();
+        return this.model.getBuildCause();
     }
 
     public String getGithubRepoUrl() {
         return getProject().getGithubRepoUrl();
     }
 
-    public void addCause(Cause manualCause) {
-        List<Cause> exisitingCauses = this.getAction(CauseAction.class).getCauses();
-        ArrayList<Cause> causes = new ArrayList<Cause>();
+    public void addCause(final Cause manualCause) {
+        final List<Cause> exisitingCauses = this.getAction(CauseAction.class).getCauses();
+        final ArrayList<Cause> causes = new ArrayList<>();
         causes.add(manualCause);
         causes.addAll(exisitingCauses);
         this.replaceAction(new CauseAction(causes));
+    }
+
+    public String getFullUrl() {
+        return this.getAbsoluteUrl();
     }
 
     /*
@@ -342,14 +281,9 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
      * mockable without powermock
      */
 
-    public String getFullUrl() {
-        return this.getAbsoluteUrl();
-    }
-
     public Map<String, String> getDotCiEnvVars() {
-        return model.getDotCiEnvVars();
+        return this.model.getDotCiEnvVars();
     }
-
 
     public void skip() {
         addAction(new SkippedBuildAction());
@@ -357,14 +291,78 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
 
     @Override
     public String getDescription() {
-        String description = super.getDescription();
-        return description == null? getCurrentBranch().toString() : description;
+        final String description = super.getDescription();
+        return description == null ? getCurrentBranch().toString() : description;
     }
 
     @Override
     public DynamicBuild getPreviousBuild() {
-        String parentSha = getCause().getParentSha();
-        DynamicBuildRepository buildRepository = SetupConfig.get().getDynamicBuildRepository();
-        return StringUtils.isEmpty(parentSha) ?  null: (DynamicBuild) buildRepository.getBuildBySha(this.getProject(), parentSha, Result.SUCCESS);
+        final String parentSha = getCause().getParentSha();
+        final DynamicBuildRepository buildRepository = SetupConfig.get().getDynamicBuildRepository();
+        return StringUtils.isEmpty(parentSha) ? null : (DynamicBuild) buildRepository.getBuildBySha(this.getProject(), parentSha, Result.SUCCESS);
+    }
+
+    protected class DynamicRunExecution extends Build.BuildExecution implements BuildExecutionContext {
+
+        @Override
+        public boolean performStep(final BuildStep execution, final BuildListener listener) throws IOException, InterruptedException {
+            return perform(execution, listener);
+        }
+
+        @Override
+        public void setResult(final Result r) {
+            DynamicBuild.this.setResult(r);
+        }
+
+        @Override
+        public Map<String, Object> getBuildEnvironmentVariables() {
+            try {
+                return DynamicBuild.this.getEnvironmentWithChangeSet(getListener());
+            } catch (final IOException e) {
+                throw new RuntimeException(e);
+            } catch (final InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
+        @Override
+        protected Result doRun(final BuildListener listener) throws Exception, hudson.model.Run.RunnerAbortedException {
+            final BuildEnvironment buildEnvironment = new BuildEnvironment(DynamicBuild.this, this.launcher, listener);
+            try {
+                DynamicBuild.this.model.run();
+                if (!buildEnvironment.initialize()) {
+                    return Result.FAILURE;
+                }
+                exportDeployKeysIfPrivateRepo(listener, this.launcher);
+                final BuildType buildType = BuildType.newBuildType(getParent());
+                final Result buildRunResult = buildType.runBuild(DynamicBuild.this, this, this.launcher, listener);
+                setResult(buildRunResult);
+                return buildRunResult;
+            } catch (final InvalidBuildConfigurationException invalidBuildConfigurationException) {
+                for (final String error : invalidBuildConfigurationException.getValidationErrors()) {
+                    listener.error(error);
+                }
+                return Result.FAILURE;
+            } catch (final InterruptedException e) {
+                final Executor x = Executor.currentExecutor();
+                x.recordCauseOfInterruption(DynamicBuild.this, listener);
+                return x.abortResult();
+            } catch (final Exception e) {
+                final PrintStream logger = listener.getLogger();
+                logger.println(e.getMessage());
+                logger.println(ExceptionUtils.getStackTrace(e));
+                final Executor x = Executor.currentExecutor();
+                x.recordCauseOfInterruption(DynamicBuild.this, listener);
+                x.doStop();
+                return Result.FAILURE;
+            } finally {
+                if (buildEnvironment.tearDownBuildEnvironments(listener)) {
+                    return Result.FAILURE;
+                }
+                deleteDeployKeys(listener, this.launcher);
+            }
+
+        }
     }
 }

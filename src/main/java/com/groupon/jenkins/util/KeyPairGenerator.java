@@ -28,23 +28,24 @@ import com.groupon.jenkins.github.DeployKeyPair;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.KeyPair;
+
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 
 public class KeyPairGenerator {
-    public DeployKeyPair generateKeyPair(){
-        JSch jsch = new JSch();
+    public DeployKeyPair generateKeyPair() {
+        final JSch jsch = new JSch();
         try {
-            KeyPair kpair= KeyPair.genKeyPair(jsch, KeyPair.RSA);
-            ByteArrayOutputStream privateKeyStream = new ByteArrayOutputStream();
+            final KeyPair kpair = KeyPair.genKeyPair(jsch, KeyPair.RSA);
+            final ByteArrayOutputStream privateKeyStream = new ByteArrayOutputStream();
             kpair.writePrivateKey(privateKeyStream);
 
-            ByteArrayOutputStream publicKeyStream = new ByteArrayOutputStream();
-            kpair.writePublicKey(publicKeyStream,"");
-            return new DeployKeyPair( new String(publicKeyStream.toByteArray(),"UTF-8"), new String(privateKeyStream.toByteArray(),"UTF-8"));
-        } catch (JSchException e) {
+            final ByteArrayOutputStream publicKeyStream = new ByteArrayOutputStream();
+            kpair.writePublicKey(publicKeyStream, "");
+            return new DeployKeyPair(new String(publicKeyStream.toByteArray(), "UTF-8"), new String(privateKeyStream.toByteArray(), "UTF-8"));
+        } catch (final JSchException e) {
             throw new RuntimeException(e);
-        } catch (UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
 

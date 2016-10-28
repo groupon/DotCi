@@ -23,10 +23,12 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.execution;
 
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.DynamicProject;
 import hudson.Launcher;
+import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Environment;
-import hudson.model.AbstractBuild;
 import hudson.model.ParametersAction;
 import hudson.tasks.BuildWrapper;
 
@@ -34,32 +36,29 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.groupon.jenkins.dynamic.build.DynamicProject;
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-
 public class BuildEnvironment {
 
     private final DynamicBuild build;
     private final Launcher launcher;
     private final BuildListener listener;
 
-    public BuildEnvironment(DynamicBuild build, Launcher launcher, BuildListener listener) {
+    public BuildEnvironment(final DynamicBuild build, final Launcher launcher, final BuildListener listener) {
         this.build = build;
         this.launcher = launcher;
         this.listener = listener;
     }
 
     private List<Environment> getBuildEnvironments() {
-        return build.getEnvironments();
+        return this.build.getEnvironments();
     }
 
-    public boolean setupWrappers(List<BuildWrapper> wrappers) throws IOException, InterruptedException {
-        for (BuildWrapper w : wrappers) {
-            Environment e = w.setUp((AbstractBuild<?, ?>) build, launcher, listener);
+    public boolean setupWrappers(final List<BuildWrapper> wrappers) throws IOException, InterruptedException {
+        for (final BuildWrapper w : wrappers) {
+            final Environment e = w.setUp((AbstractBuild<?, ?>) this.build, this.launcher, this.listener);
             if (e == null) {
                 return false;
             }
-            List<Environment> buildEnvironments = getBuildEnvironments();
+            final List<Environment> buildEnvironments = getBuildEnvironments();
             buildEnvironments.add(e);
         }
 
@@ -67,11 +66,11 @@ public class BuildEnvironment {
 
     }
 
-    public boolean tearDownBuildEnvironments(BuildListener listener) throws IOException, InterruptedException {
+    public boolean tearDownBuildEnvironments(final BuildListener listener) throws IOException, InterruptedException {
         boolean failed = false;
-        List<Environment> buildEnvironments = getBuildEnvironments();
+        final List<Environment> buildEnvironments = getBuildEnvironments();
         for (int i = buildEnvironments.size() - 1; i >= 0; i--) {
-            if (!buildEnvironments.get(i).tearDown(build, listener)) {
+            if (!buildEnvironments.get(i).tearDown(this.build, listener)) {
                 failed = true;
             }
         }
@@ -79,21 +78,21 @@ public class BuildEnvironment {
     }
 
     public boolean initialize() throws IOException, InterruptedException {
-        List<BuildWrapper> wrappers = new ArrayList<BuildWrapper>(getProject().getBuildWrappers().values());
-        ParametersAction parameters = getAction(ParametersAction.class);
+        final List<BuildWrapper> wrappers = new ArrayList<>(getProject().getBuildWrappers().values());
+        final ParametersAction parameters = getAction(ParametersAction.class);
         if (parameters != null) {
-            parameters.createBuildWrappers(build, wrappers);
+            parameters.createBuildWrappers(this.build, wrappers);
         }
         return setupWrappers(wrappers);
 
     }
 
-    private ParametersAction getAction(Class<ParametersAction> clazz) {
-        return build.getAction(clazz);
+    private ParametersAction getAction(final Class<ParametersAction> clazz) {
+        return this.build.getAction(clazz);
     }
 
     private DynamicProject getProject() {
-        return build.getParent();
+        return this.build.getParent();
     }
 
 }

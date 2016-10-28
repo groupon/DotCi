@@ -31,20 +31,20 @@ import org.mongodb.morphia.mapping.MappedField;
 
 public class PermissionsConverter extends TypeConverter implements SimpleValueConverter {
 
-    public PermissionsConverter(){
+    public PermissionsConverter() {
         super(Permission.class);
     }
 
     @Override
     public Object decode(Class targetClass, Object fromDBObject, MappedField optionalExtraInfo) {
-        if(fromDBObject == null) return null;
+        if (fromDBObject == null) return null;
 
         return Permission.fromId((String) fromDBObject);
     }
 
     @Override
     public Object encode(Object value, MappedField optionalExtraInfo) {
-        if(value == null) return null;
+        if (value == null) return null;
 
         return ((Permission) value).getId();
     }

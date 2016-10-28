@@ -24,17 +24,23 @@
 
 package com.groupon.jenkins.dynamic;
 
-import com.google.common.base.*;
-import com.google.common.collect.*;
-import com.groupon.jenkins.dynamic.build.*;
-import com.groupon.jenkins.dynamic.build.api.*;
-import org.kohsuke.stapler.export.*;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimaps;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.api.ProcessedBuild;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
-import java.util.*;
+import java.util.List;
 
 @ExportedBean
 public class RecentBuilds {
     private List<RecentProject> recentProjects;
+
     public RecentBuilds(Iterable<DynamicBuild> builds) {
         this.recentProjects = groupByProject(builds);
     }
@@ -55,15 +61,14 @@ public class RecentBuilds {
         return Lists.newArrayList(groupedRecentProjects);
     }
 
-    @Exported(inline=true)
+    @Exported(inline = true)
     public List<RecentProject> getRecentProjects() {
         return this.recentProjects;
     }
 
 
-
     @ExportedBean
-    public static class RecentProject{
+    public static class RecentProject {
         private String name;
         private Iterable<ProcessedBuild> builds;
 
@@ -77,12 +82,12 @@ public class RecentBuilds {
             });
         }
 
-        @Exported(inline=true)
+        @Exported(inline = true)
         public String getName() {
             return name;
         }
 
-        @Exported(inline=true)
+        @Exported(inline = true)
         public List<ProcessedBuild> getBuilds() {
             return Lists.newArrayList(builds);
         }

@@ -34,17 +34,17 @@ import org.apache.commons.lang.StringUtils;
 import java.util.List;
 
 public class QueuedBuild extends Build {
-    private Queue.Item item;
-    private int number;
+    private final Queue.Item item;
+    private final int number;
 
-    public QueuedBuild(Queue.Item item, int number) {
+    public QueuedBuild(final Queue.Item item, final int number) {
         this.item = item;
         this.number = number;
     }
 
     @Override
     public int getNumber() {
-        return number;
+        return this.number;
     }
 
     @Override
@@ -54,14 +54,14 @@ public class QueuedBuild extends Build {
 
     @Override
     public BuildCause.CommitInfo getCommit() {
-        String[] buildParams = StringUtils.split(item.getParams(), "\n");
+        final String[] buildParams = StringUtils.split(this.item.getParams(), "\n");
         String branch = "";
-        for(String buildParam : buildParams ){
-           if(buildParam.startsWith("BRANCH=")){
-              branch = StringUtils.split(buildParam,"=")[1];
-           }
+        for (final String buildParam : buildParams) {
+            if (buildParam.startsWith("BRANCH=")) {
+                branch = StringUtils.split(buildParam, "=")[1];
+            }
         }
-        return new BuildCause.CommitInfo("Queued: " + item.getWhy(),item.getInQueueForString(), branch);
+        return new BuildCause.CommitInfo("Queued: " + this.item.getWhy(), this.item.getInQueueForString(), branch);
     }
 
 
@@ -77,7 +77,7 @@ public class QueuedBuild extends Build {
 
     @Override
     public String getDurationString() {
-        return "-"  ;
+        return "-";
     }
 
     @Override
@@ -87,25 +87,25 @@ public class QueuedBuild extends Build {
 
     @Override
     public String getCancelUrl() {
-        return "/queue/cancelItem?id="+item.getId();
+        return "/queue/cancelItem?id=" + this.item.getId();
     }
 
     @Override
     public String getUrl() {
-        return item.getUrl();
+        return this.item.getUrl();
     }
 
     @Override
     public String getFullUrl() {
-        return item.getUrl();
+        return this.item.getUrl();
     }
 
     @Override
     public BuildCause getCause() {
-        for (Cause cause: item.getCauses()){
-           if(cause instanceof  BuildCause) {
-               return (BuildCause) cause;
-           }
+        for (final Cause cause : this.item.getCauses()) {
+            if (cause instanceof BuildCause) {
+                return (BuildCause) cause;
+            }
         }
         return BuildCause.NULL_BUILD_CAUSE;
     }
@@ -117,7 +117,7 @@ public class QueuedBuild extends Build {
 
     @Override
     public String getId() {
-        return item.getId()+"";
+        return this.item.getId() + "";
     }
 
 }

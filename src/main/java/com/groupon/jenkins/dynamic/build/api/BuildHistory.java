@@ -37,7 +37,6 @@ import jenkins.model.Jenkins;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,64 +45,66 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class BuildHistory extends ApiModel {
-    private DynamicProject dynamicProject;
+    private final DynamicProject dynamicProject;
 
-    public BuildHistory(DynamicProject dynamicProject) {
+    public BuildHistory(final DynamicProject dynamicProject) {
         this.dynamicProject = dynamicProject;
     }
 
-    public void getDynamic(String branch, StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-        int count = Integer.parseInt(req.getParameter("count"));
-        JsonResponse.render(req, rsp,new BuildHistoryRsp( getBuilds(branch, count)));
+    public void getDynamic(final String branch, final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException {
+        final int count = Integer.parseInt(req.getParameter("count"));
+        JsonResponse.render(req, rsp, new BuildHistoryRsp(getBuilds(branch, count)));
     }
 
-    public Iterable<Build> getBuilds(String branch,int count) {
-        if("All".equalsIgnoreCase(branch)){
-            branch =null;
+    public Iterable<Build> getBuilds(String branch, final int count) {
+        if ("All".equalsIgnoreCase(branch)) {
+            branch = null;
         }
-        Iterable<DynamicBuild> builds = isMyBuilds(branch) ? getDynamicBuildRepository().<DynamicBuild>getCurrentUserBuilds(dynamicProject, count,null) : getDynamicBuildRepository().<DynamicBuild>getLast(dynamicProject, count, branch,null);
+        final Iterable<DynamicBuild> builds = isMyBuilds(branch) ? getDynamicBuildRepository().<DynamicBuild>getCurrentUserBuilds(this.dynamicProject, count, null) : getDynamicBuildRepository().<DynamicBuild>getLast(this.dynamicProject, count, branch, null);
         return Iterables.concat(getQueuedBuilds(), toUiBuilds(filterSkipped(builds)));
     }
-    private boolean isMyBuilds(String branch) {
+
+    private boolean isMyBuilds(final String branch) {
         return "Mine".equalsIgnoreCase(branch);
     }
 
     private Iterable<QueuedBuild> getQueuedBuilds() {
-        int nextBuildNumber = dynamicProject.getNextBuildNumber();
-        List<QueuedBuild> queuedBuilds = new ArrayList<QueuedBuild>();
-        for(Queue.Item item: getQueuedItems()) {
+        int nextBuildNumber = this.dynamicProject.getNextBuildNumber();
+        final List<QueuedBuild> queuedBuilds = new ArrayList<>();
+        for (final Queue.Item item : getQueuedItems()) {
             queuedBuilds.add(new QueuedBuild(item, nextBuildNumber++));
         }
         Collections.reverse(queuedBuilds);
         return queuedBuilds;
     }
 
-    private Iterable<Build> toUiBuilds(Iterable<DynamicBuild> builds) {
+    private Iterable<Build> toUiBuilds(final Iterable<DynamicBuild> builds) {
         return Iterables.transform(builds, new Function<DynamicBuild, Build>() {
             @Override
-            public Build apply(DynamicBuild input) {
+            public Build apply(final DynamicBuild input) {
                 return new ProcessedBuild(input);
             }
         });
     }
 
-    private DynamicBuildRepository getDynamicBuildRepository(){
+    private DynamicBuildRepository getDynamicBuildRepository() {
         return SetupConfig.get().getDynamicBuildRepository();
     }
 
 
-    private Iterable<DynamicBuild> filterSkipped(Iterable<DynamicBuild> builds) {
+    private Iterable<DynamicBuild> filterSkipped(final Iterable<DynamicBuild> builds) {
         return Iterables.filter(builds, new Predicate<DynamicBuild>() {
             @Override
-            public boolean apply(DynamicBuild build) {
+            public boolean apply(final DynamicBuild build) {
                 return !build.isSkipped() && !build.isPhantom();
             }
         });
     }
+
     public List<Queue.Item> getQueuedItems() {
-        LinkedList<Queue.Item> list = new LinkedList<Queue.Item>();
-        for (Queue.Item item : Jenkins.getInstance().getQueue().getApproximateItemsQuickly()) {
-            if (item.task == dynamicProject) {
+        final LinkedList<Queue.Item> list = new LinkedList<>();
+        for (final Queue.Item item : Jenkins.getInstance().getQueue().getApproximateItemsQuickly()) {
+            if (item.task == this.dynamicProject) {
                 list.addFirst(item);
             }
         }

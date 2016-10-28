@@ -32,13 +32,14 @@ import org.kohsuke.stapler.StaplerResponse;
 import javax.servlet.ServletException;
 import java.io.IOException;
 
-public class ApiModel implements ModelObject{
+public class ApiModel implements ModelObject {
 
     @Override
     public String getDisplayName() {
         return "api";
     }
-    public void doIndex(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+
+    public void doIndex(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException {
         JsonResponse.render(req, rsp, this);
     }
 

@@ -45,7 +45,7 @@ public class GitHubPullRequestCause extends GithubPushPullWebhookCause {
 
     @Override
     public Map<String, String> getCauseEnvVars() {
-        Map vars = new HashMap<>() ;
+        Map vars = new HashMap<>();
         putIfNotNull(vars, "DOTCI_PULL_REQUEST_LABEL", getLabel());
         putIfNotNull(vars, "DOTCI_PULL_REQUEST_TARGET_BRANCH", getTargetBranch());
         putIfNotNull(vars, "DOTCI_PULL_REQUEST_SOURCE_BRANCH", getSourceBranch());

@@ -1,10 +1,10 @@
 package com.groupon.jenkins.dynamic.build.api.metrics.charts;
 
-import com.google.common.collect.ImmutableMap;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import java.util.List;
+
 @ExportedBean(defaultVisibility = 100)
 public class LineChart extends Chart {
     private List<String> labels;
@@ -34,23 +34,21 @@ public class LineChart extends Chart {
     private String xLabel;
     private String yLabel;
 
-    public LineChart(List<String> labels, List<DataSet> dataSets,String xLabel, String yLabel){
+    public LineChart(List<String> labels, List<DataSet> dataSets, String xLabel, String yLabel) {
         this.labels = labels;
         this.dataSets = dataSets;
         this.xLabel = xLabel;
         this.yLabel = yLabel;
     }
+
     @Override
     public ChartType getType() {
         return ChartType.LINE;
     }
 
 
-
-
-
     @ExportedBean
-    public static class DataSet{
+    public static class DataSet {
         private String label;
 
         @Exported(inline = true)
@@ -95,12 +93,12 @@ public class LineChart extends Chart {
 
         private String fillColor;
         private String strokeColor;
-        private  String pointColor;
-        private  String pointStrokeColor;
+        private String pointColor;
+        private String pointStrokeColor;
 
 
-        private  String pointHighlightFill;
-        private  String pointHighlightStroke;
+        private String pointHighlightFill;
+        private String pointHighlightStroke;
         private List<Long> data;
 
         public DataSet(String label, String fillColor, String strokeColor, String pointColor, String pointStrokeColor, String pointHighlightFill, String pointHighlightStroke, List<Long> data) {
@@ -113,11 +111,13 @@ public class LineChart extends Chart {
             this.pointHighlightStroke = pointHighlightStroke;
             this.data = data;
         }
-        public DataSet(String label,List<Long> data){
-            this(label, data,ChartColor.DARK_GREY);
+
+        public DataSet(String label, List<Long> data) {
+            this(label, data, ChartColor.DARK_GREY);
         }
-        public DataSet(String label,List<Long> data,ChartColor color){
-           this(label,color.fillColor,color.strokeColor, color.pointColor, color.pointStrokeColor, color.pointHighlightFill, color.pointHighlightStroke, data);
+
+        public DataSet(String label, List<Long> data, ChartColor color) {
+            this(label, color.fillColor, color.strokeColor, color.pointColor, color.pointStrokeColor, color.pointHighlightFill, color.pointHighlightStroke, data);
         }
 
     }

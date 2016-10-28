@@ -26,11 +26,6 @@ package com.groupon.jenkins.buildsetup;
 
 import com.groupon.jenkins.SetupConfig;
 import hudson.ExtensionPoint;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.List;
 import jenkins.model.Jenkins;
 import org.apache.commons.jelly.JellyContext;
 import org.apache.commons.jelly.JellyException;
@@ -40,40 +35,53 @@ import org.kohsuke.github.GHUser;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.stapler.StaplerRequest;
 
-public abstract class GithubRepoAction implements ExtensionPoint  {
-    public static List<GithubRepoAction> getGithubRepoActions(){
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URL;
+import java.util.List;
+
+public abstract class GithubRepoAction implements ExtensionPoint {
+    public static List<GithubRepoAction> getGithubRepoActions() {
         return Jenkins.getInstance().getExtensionList(GithubRepoAction.class);
     }
+
     public String getHtml(ProjectConfigInfo projectConfigInfo) throws IOException, ClassNotFoundException, JellyException {
         String name = getClass().getName().replace('.', '/').replace('$', '/') + "/" + "index.jelly";
         URL actionTemplate = getClass().getClassLoader().getResource(name);
         JellyContext context = new JellyContext();
-        context.setVariable("p",projectConfigInfo);
-        context.setVariable("it",this);
+        context.setVariable("p", projectConfigInfo);
+        context.setVariable("it", this);
         OutputStream outputStream = new ByteArrayOutputStream();
-        XMLOutput output = XMLOutput.createXMLOutput(outputStream );
-        context.runScript( actionTemplate, output );
+        XMLOutput output = XMLOutput.createXMLOutput(outputStream);
+        context.runScript(actionTemplate, output);
         output.flush();
-        return "<p>"+outputStream.toString()+ " </p>" ;
+        return "<p>" + outputStream.toString() + " </p>";
     }
-    public  String getName(){
-          return getClass().getSimpleName();
+
+    public String getName() {
+        return getClass().getSimpleName();
     }
+
     protected GHRepository getGithubRepository(StaplerRequest request) throws IOException {
         String repoName = request.getParameter("fullName");
 
         GitHub github = getGitHub(request);
         return github.getRepository(repoName);
     }
+
     protected GitHub getGitHub(StaplerRequest request) throws IOException {
         return GitHub.connectUsingOAuth(getSetupConfig().getGithubApiUrl(), getAccessToken(request));
     }
+
     protected SetupConfig getSetupConfig() {
         return SetupConfig.get();
     }
+
     protected String getAccessToken(StaplerRequest request) {
         return (String) request.getSession().getAttribute("access_token");
     }
+
     protected String getCurrentUserLogin(StaplerRequest request) throws IOException {
         GHUser self = GitHub.connectUsingOAuth(getSetupConfig().getGithubApiUrl(), getAccessToken(request)).getMyself();
         return self.getLogin();

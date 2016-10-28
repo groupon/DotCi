@@ -35,12 +35,12 @@ public class BuildHistoryRsp {
 
     private final ArrayList<Build> builds;
 
-    public BuildHistoryRsp(Iterable<Build> builds) {
-         this.builds = Lists.newArrayList(builds);
+    public BuildHistoryRsp(final Iterable<Build> builds) {
+        this.builds = Lists.newArrayList(builds);
     }
 
     @Exported
     public ArrayList<Build> getBuilds() {
-        return builds;
+        return this.builds;
     }
 }

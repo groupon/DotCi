@@ -36,33 +36,33 @@ public class OrganizationGravatarIcon extends AbstractStatusIcon implements Desc
 
     private final transient String orgName;
 
-    public OrganizationGravatarIcon(String orgName) {
+    public OrganizationGravatarIcon(final String orgName) {
         this.orgName = orgName;
 
     }
 
-    public String getImageOf(String size) {
+    public String getImageOf(final String size) {
         return Stapler.getCurrentRequest().getContextPath() + Hudson.RESOURCE_PATH + "/images/" + size + "/folder.png";
     }
 
     public String getDescription() {
-        return orgName;
-    }
-
-    @Extension(ordinal = 100)
-    public static class DescriptorImpl extends Descriptor<OrganizationGravatarIcon> {
-        @Override
-        public String getDisplayName() {
-            return "Default Icon";
-        }
-
-        public static DescriptorExtensionList<OrganizationGravatarIcon, DescriptorImpl> all() {
-            return Hudson.getInstance().<OrganizationGravatarIcon, DescriptorImpl> getDescriptorList(OrganizationGravatarIcon.class);
-        }
+        return this.orgName;
     }
 
     public Descriptor<OrganizationGravatarIcon> getDescriptor() {
         return Hudson.getInstance().getDescriptorOrDie(getClass());
+    }
+
+    @Extension(ordinal = 100)
+    public static class DescriptorImpl extends Descriptor<OrganizationGravatarIcon> {
+        public static DescriptorExtensionList<OrganizationGravatarIcon, DescriptorImpl> all() {
+            return Hudson.getInstance().<OrganizationGravatarIcon, DescriptorImpl>getDescriptorList(OrganizationGravatarIcon.class);
+        }
+
+        @Override
+        public String getDisplayName() {
+            return "Default Icon";
+        }
     }
 
 }

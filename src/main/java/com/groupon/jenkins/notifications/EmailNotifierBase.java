@@ -23,14 +23,9 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.notifications;
 
+import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import hudson.model.BuildListener;
-
-import java.net.ConnectException;
-import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.mail.Address;
 import javax.mail.Message;
@@ -41,9 +36,12 @@ import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
-import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import java.net.ConnectException;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.groupon.jenkins.util.LogUtils.debug;
 
@@ -86,10 +84,10 @@ public abstract class EmailNotifierBase extends PostBuildNotifier {
                         break;
                     } catch (SendFailedException e) {
                         //@formatter:off
-                        if (e.getNextException() != null 
-                            && ((e.getNextException() instanceof SocketException) 
+                        if (e.getNextException() != null
+                            && ((e.getNextException() instanceof SocketException)
                             || (e.getNextException() instanceof ConnectException))) {
-                        //@formatter:on
+                            //@formatter:on
                             listener.getLogger().println("Socket error sending email, retrying once more in 10 seconds...");
                             Thread.sleep(10000);
                         } else {

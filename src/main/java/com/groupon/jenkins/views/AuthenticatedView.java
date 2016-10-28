@@ -23,40 +23,37 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.views;
 
+import com.groupon.jenkins.util.AuthenticationMixin;
 import hudson.model.ItemGroup;
+import hudson.model.Job;
 import hudson.model.ModifiableItemGroup;
 import hudson.model.TopLevelItem;
-import hudson.model.Job;
 import hudson.model.View;
+import org.kohsuke.stapler.StaplerProxy;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
+import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.servlet.ServletException;
-
-import org.kohsuke.stapler.StaplerProxy;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-
-import com.groupon.jenkins.util.AuthenticationMixin;
-
 public abstract class AuthenticatedView extends View implements StaplerProxy {
 
-    protected AuthenticatedView(String name) {
+    protected AuthenticatedView(final String name) {
         super(name);
     }
 
     @Override
-    public boolean contains(TopLevelItem item) {
+    public boolean contains(final TopLevelItem item) {
         return item.hasPermission(Job.CONFIGURE);
     }
 
     @Override
-    public TopLevelItem doCreateItem(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-        ItemGroup<? extends TopLevelItem> ig = getOwnerItemGroup();
+    public TopLevelItem doCreateItem(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException {
+        final ItemGroup<? extends TopLevelItem> ig = getOwnerItemGroup();
         if (ig instanceof ModifiableItemGroup) {
             return ((ModifiableItemGroup<? extends TopLevelItem>) ig).doCreateItem(req, rsp);
         }
@@ -65,8 +62,8 @@ public abstract class AuthenticatedView extends View implements StaplerProxy {
 
     @Override
     public Collection<TopLevelItem> getItems() {
-        List<TopLevelItem> items = new LinkedList<TopLevelItem>();
-        for (TopLevelItem item : getOwnerItemGroup().getItems()) {
+        final List<TopLevelItem> items = new LinkedList<>();
+        for (final TopLevelItem item : getOwnerItemGroup().getItems()) {
             if (item.hasPermission(Job.CONFIGURE)) {
                 items.add(item);
             }

@@ -46,23 +46,23 @@ public class DotCiUpstreamTriggerCause extends BuildCause {
     private GitBranch branch;
 
     public DotCiUpstreamTriggerCause(DynamicBuild sourceBuild, DynamicProject targetJob, Map<String, String> jobOptions) {
-        branch=  new GitBranch(jobOptions.get("BRANCH"));
-        GHCommit commit ;
-        if(jobOptions.containsKey("SHA")){
-            commit =getCommitFromSha(targetJob,jobOptions.get("SHA"));
-        }else {
+        branch = new GitBranch(jobOptions.get("BRANCH"));
+        GHCommit commit;
+        if (jobOptions.containsKey("SHA")) {
+            commit = getCommitFromSha(targetJob, jobOptions.get("SHA"));
+        } else {
             commit = getHeadCommitForBranch(targetJob, branch.toString());
         }
-        this.pusher =  sourceBuild.getCause().getPusher();
-        this.description ="Started by upstream job  " + sourceBuild.getParent().getFullDisplayName() +".: " + sourceBuild.getNumber() ;
+        this.pusher = sourceBuild.getCause().getPusher();
+        this.description = "Started by upstream job  " + sourceBuild.getParent().getFullDisplayName() + ".: " + sourceBuild.getNumber();
         this.sha = commit.getSHA1();
-        this.parentSha = commit.getParentSHA1s().size()>0 ? commit.getParentSHA1s().get(0):null;
-        this.commitInfo = new CommitInfo(commit,branch);
+        this.parentSha = commit.getParentSHA1s().size() > 0 ? commit.getParentSHA1s().get(0) : null;
+        this.commitInfo = new CommitInfo(commit, branch);
     }
 
     @Override
     public String getSha() {
-     return sha;
+        return sha;
     }
 
     @Override
@@ -80,7 +80,7 @@ public class DotCiUpstreamTriggerCause extends BuildCause {
 
     @Override
     public String getPusher() {
-      return pusher;
+        return pusher;
     }
 
     @Override
@@ -118,6 +118,6 @@ public class DotCiUpstreamTriggerCause extends BuildCause {
 
     @Override
     public String getShortDescription() {
-        return this.description ; 
+        return this.description;
     }
 }

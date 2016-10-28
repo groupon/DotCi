@@ -71,7 +71,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class OrganizationContainer extends AbstractItem implements IdentifableItemGroup<DynamicProject>, ViewGroup, TopLevelItem, StaplerOverridable, StaplerFallback, StaplerProxy {
     private ObjectId id;
-    private transient Map<String, DynamicProject> items = new CopyOnWriteMap.Tree<String, DynamicProject>(CaseInsensitiveComparator.INSTANCE);
+    private transient Map<String, DynamicProject> items = new CopyOnWriteMap.Tree<>(CaseInsensitiveComparator.INSTANCE);
     private transient ItemGroupMixIn mixin;
 
     private CopyOnWriteArrayList<View> views;
@@ -82,61 +82,61 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
     private transient ViewGroupMixIn viewGroupMixIn;
     private transient OrganizationGravatarIcon icon;
 
-    public OrganizationContainer(ItemGroup parent, String name) {
+    public OrganizationContainer(final ItemGroup parent, final String name) {
         super(parent, name);
         init(name);
-        if(id == null) {
-            id = new ObjectId();
+        if (this.id == null) {
+            this.id = new ObjectId();
         }
     }
 
-    private void init(String name) {
-        if (icon == null) {
-            icon = new OrganizationGravatarIcon(name);
+    private void init(final String name) {
+        if (this.icon == null) {
+            this.icon = new OrganizationGravatarIcon(name);
         }
-        mixin = new MixInImpl(this);
-        if (views == null) {
-            views = new CopyOnWriteArrayList<View>();
+        this.mixin = new MixInImpl(this);
+        if (this.views == null) {
+            this.views = new CopyOnWriteArrayList<>();
         }
-        if (views.size() == 0) {
-            AllListView lv = new AllListView(this);
-            views.add(lv);
+        if (this.views.size() == 0) {
+            final AllListView lv = new AllListView(this);
+            this.views.add(lv);
         }
-        if (viewsTabBar == null) {
-            viewsTabBar = new DefaultViewsTabBar();
+        if (this.viewsTabBar == null) {
+            this.viewsTabBar = new DefaultViewsTabBar();
         }
-        if (primaryView == null) {
-            primaryView = views.get(0).getViewName();
+        if (this.primaryView == null) {
+            this.primaryView = this.views.get(0).getViewName();
         }
-        mixin = new MixInImpl(this);
-        viewGroupMixIn = new ViewGroupMixIn(this) {
+        this.mixin = new MixInImpl(this);
+        this.viewGroupMixIn = new ViewGroupMixIn(this) {
             @Override
             protected List<View> views() {
-                return views;
+                return OrganizationContainer.this.views;
             }
 
             @Override
             protected String primaryView() {
-                return primaryView;
+                return OrganizationContainer.this.primaryView;
             }
 
             @Override
-            protected void primaryView(String name) {
-                primaryView = name;
+            protected void primaryView(final String name) {
+                OrganizationContainer.this.primaryView = name;
             }
         };
-        items = new CopyOnWriteMap.Tree<String, DynamicProject>(CaseInsensitiveComparator.INSTANCE);
-        items = getJobsForThisContainer();
+        this.items = new CopyOnWriteMap.Tree<>(CaseInsensitiveComparator.INSTANCE);
+        this.items = getJobsForThisContainer();
     }
 
     private Tree<String, DynamicProject> getJobsForThisContainer() {
-        Iterable<DynamicProject> projects = SetupConfig.get().getDynamicProjectRepository().getProjectsForOrg(this);
-        Tree<String, DynamicProject> itemMap = new CopyOnWriteMap.Tree<String, DynamicProject>(CaseInsensitiveComparator.INSTANCE);
-        for (DynamicProject dbBackedProject : projects) {
+        final Iterable<DynamicProject> projects = SetupConfig.get().getDynamicProjectRepository().getProjectsForOrg(this);
+        final Tree<String, DynamicProject> itemMap = new CopyOnWriteMap.Tree<>(CaseInsensitiveComparator.INSTANCE);
+        for (final DynamicProject dbBackedProject : projects) {
             itemMap.put(dbBackedProject.getName(), dbBackedProject);
             try {
                 dbBackedProject.onLoad(this, dbBackedProject.getName());
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -145,16 +145,16 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
     }
 
     public synchronized void reloadItems() {
-        items = getJobsForThisContainer();
+        this.items = getJobsForThisContainer();
     }
 
     @Override
-    public void onLoad(ItemGroup<? extends Item> parent, String name) throws IOException {
+    public void onLoad(final ItemGroup<? extends Item> parent, final String name) throws IOException {
         super.onLoad(parent, name);
         init(name);
     }
 
-    public DynamicProject doCreateItem(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+    public DynamicProject doCreateItem(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException {
         throw new UnsupportedOperationException();
     }
 
@@ -169,16 +169,16 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
     }
 
     @Override
-    public DynamicProject getItem(String name) {
-        return items.get(name);
+    public DynamicProject getItem(final String name) {
+        return this.items.get(name);
     }
 
     @Override
-    public File getRootDirFor(DynamicProject child) {
+    public File getRootDirFor(final DynamicProject child) {
         return getRootDirFor(child.getName());
     }
 
-    private File getRootDirFor(String name) {
+    private File getRootDirFor(final String name) {
         return new File(getJobsDir(), name);
     }
 
@@ -187,14 +187,14 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
     }
 
     @Override
-    public void onRenamed(DynamicProject item, String oldName, String newName) throws IOException {
+    public void onRenamed(final DynamicProject item, final String oldName, final String newName) throws IOException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void onDeleted(DynamicProject item) throws IOException {
+    public void onDeleted(final DynamicProject item) throws IOException {
         SetupConfig.get().getDynamicProjectRepository().delete(item);
-        items.remove(item.getName());
+        this.items.remove(item.getName());
     }
 
     @Override
@@ -212,122 +212,80 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
         return (DescriptorImpl) Hudson.getInstance().getDescriptorOrDie(getClass());
     }
 
-    @Extension
-    public static class DescriptorImpl extends TopLevelItemDescriptor {
-
-        @Override
-        public String getDisplayName() {
-            return "Org";
-        }
-
-        @Override
-        public TopLevelItem newInstance(ItemGroup parent, String name) {
-            return new OrganizationContainer(parent, name);
-        }
-
-        @Extension
-        /**
-         * Cannot create this view Manually
-         */
-        public static class FilterOrganizationContainerProjectTypeFromNewJobPage extends DescriptorVisibilityFilter {
-            @Override
-            public boolean filter(Object context, Descriptor descriptor) {
-                return !(descriptor instanceof OrganizationContainer.DescriptorImpl);
-            }
-        }
-
-    }
-
-    public DynamicProject createProject(Class<DynamicProject> type, String projectName) throws IOException {
+    public DynamicProject createProject(final Class<DynamicProject> type, final String projectName) throws IOException {
         return type.cast(createProject((TopLevelItemDescriptor) Hudson.getInstance().getDescriptor(type), projectName));
     }
 
-    public TopLevelItem createProject(TopLevelItemDescriptor type, String name) throws IOException {
+    public TopLevelItem createProject(final TopLevelItemDescriptor type, final String name) throws IOException {
         return createProject(type, name, true);
     }
 
-    public TopLevelItem createProject(TopLevelItemDescriptor type, String name, boolean notify) throws IOException {
-        return mixin.createProject(type, name, notify);
+    public TopLevelItem createProject(final TopLevelItemDescriptor type, final String name, final boolean notify) throws IOException {
+        return this.mixin.createProject(type, name, notify);
     }
 
     public OrganizationGravatarIcon getIcon() {
-        return icon;
+        return this.icon;
     }
 
-    public void setIcon(OrganizationGravatarIcon icon) {
+    public void setIcon(final OrganizationGravatarIcon icon) {
         this.icon = icon;
     }
 
     public OrganizationGravatarIcon getIconColor() {
-        return icon;
+        return this.icon;
     }
 
-    private class MixInImpl extends ItemGroupMixIn {
-        private MixInImpl(OrganizationContainer parent) {
-            super(parent, parent);
-        }
-
-        @Override
-        protected void add(TopLevelItem item) {
-            items.put(item.getName(), (DynamicProject) item);
-        }
-
-        @Override
-        protected File getRootDirFor(String name) {
-            return OrganizationContainer.this.getRootDirFor(name);
-        }
-    }
-
-    public <T extends TopLevelItem> T copy(T src, String name) throws IOException {
+    public <T extends TopLevelItem> T copy(final T src, final String name) throws IOException {
         throw new UnsupportedOperationException();
     }
 
-    public TopLevelItem createProjectFromXML(String name, InputStream xml) throws IOException {
-        return mixin.createProjectFromXML(name, xml);
+    public TopLevelItem createProjectFromXML(final String name, final InputStream xml) throws IOException {
+        return this.mixin.createProjectFromXML(name, xml);
     }
 
     @Override
     public Collection<? extends Job> getAllJobs() {
-        Set<Job> jobs = new HashSet<Job>();
-        for (Item i : getItems()) {
+        final Set<Job> jobs = new HashSet<>();
+        for (final Item i : getItems()) {
             jobs.addAll(i.getAllJobs());
         }
         return jobs;
     }
 
     @Override
-    public boolean canDelete(View view) {
+    public boolean canDelete(final View view) {
         return false;
     }
 
     @Override
-    public void deleteView(View view) throws IOException {
+    public void deleteView(final View view) throws IOException {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public Collection<View> getViews() {
-        return viewGroupMixIn.getViews();
+        return this.viewGroupMixIn.getViews();
     }
 
     @Override
-    public View getView(String name) {
-        return viewGroupMixIn.getView(name);
+    public View getView(final String name) {
+        return this.viewGroupMixIn.getView(name);
     }
 
     @Override
     public View getPrimaryView() {
-        return viewGroupMixIn.getPrimaryView();
+        return this.viewGroupMixIn.getPrimaryView();
     }
 
     @Override
-    public void onViewRenamed(View view, String oldName, String newName) {
+    public void onViewRenamed(final View view, final String oldName, final String newName) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public ViewsTabBar getViewsTabBar() {
-        return viewsTabBar;
+        return this.viewsTabBar;
     }
 
     @Override
@@ -342,30 +300,73 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
 
     @Override
     public Object getTarget() {
-        StaplerRequest currentRequest = Stapler.getCurrentRequest();
+        final StaplerRequest currentRequest = Stapler.getCurrentRequest();
         //@formatter:off
         if (!currentRequest.getRequestURI().matches(".*(api/(json|xml)).*")
             && !currentRequest.getRequestURI().contains("buildWithParameters")
             && !currentRequest.getRequestURI().contains("logTail")
             && !currentRequest.getRequestURI().contains("artifact")) {
-        //@formatter:on
+            //@formatter:on
             authenticate();
         }
 
         return this;
     }
 
-    private  void authenticate() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    private void authenticate() {
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Jenkins.getInstance().getSecurityRealm().getSecurityComponents().manager.authenticate(authentication);
     }
-    public void addItem(DynamicProject project) {
-        items.put(project.getName(), project);
+
+    public void addItem(final DynamicProject project) {
+        this.items.put(project.getName(), project);
     }
 
     @Override
     public Object getId() {
         return getName();
+    }
+
+    @Extension
+    public static class DescriptorImpl extends TopLevelItemDescriptor {
+
+        @Override
+        public String getDisplayName() {
+            return "Org";
+        }
+
+        @Override
+        public TopLevelItem newInstance(final ItemGroup parent, final String name) {
+            return new OrganizationContainer(parent, name);
+        }
+
+        @Extension
+        /**
+         * Cannot create this view Manually
+         */
+        public static class FilterOrganizationContainerProjectTypeFromNewJobPage extends DescriptorVisibilityFilter {
+            @Override
+            public boolean filter(final Object context, final Descriptor descriptor) {
+                return !(descriptor instanceof OrganizationContainer.DescriptorImpl);
+            }
+        }
+
+    }
+
+    private class MixInImpl extends ItemGroupMixIn {
+        private MixInImpl(final OrganizationContainer parent) {
+            super(parent, parent);
+        }
+
+        @Override
+        protected void add(final TopLevelItem item) {
+            OrganizationContainer.this.items.put(item.getName(), (DynamicProject) item);
+        }
+
+        @Override
+        protected File getRootDirFor(final String name) {
+            return OrganizationContainer.this.getRootDirFor(name);
+        }
     }
 
 }

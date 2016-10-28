@@ -24,12 +24,12 @@
 
 package com.groupon.jenkins.github;
 
-public  class DeployKeyPair{
-        public String publicKey;
-        public String privateKey;
+public class DeployKeyPair {
+    public String publicKey;
+    public String privateKey;
 
-        public DeployKeyPair(String publicKey, String privateKey) {
-            this.publicKey = publicKey;
-            this.privateKey = privateKey;
-        }
+    public DeployKeyPair(final String publicKey, final String privateKey) {
+        this.publicKey = publicKey;
+        this.privateKey = privateKey;
     }
+}

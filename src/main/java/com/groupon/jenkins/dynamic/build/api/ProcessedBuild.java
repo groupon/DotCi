@@ -43,22 +43,24 @@ import java.util.List;
 import java.util.Map;
 
 public class ProcessedBuild extends Build {
-    private DynamicBuild build;
+    private final DynamicBuild build;
 
-    public ProcessedBuild(DynamicBuild build){
+    public ProcessedBuild(final DynamicBuild build) {
         this.build = build;
     }
 
     @Override
-    public int getNumber(){
-        return build.getNumber();
+    public int getNumber() {
+        return this.build.getNumber();
     }
+
     @Override
-    public String getResult(){
-      return getResult(build);
+    public String getResult() {
+        return getResult(this.build);
     }
-    private String getResult(Run run){
-        if(isBuildInProgress(run)){
+
+    private String getResult(final Run run) {
+        if (isBuildInProgress(run)) {
             return "IN_PROGRESS";
         }
         return run.getResult().toString();
@@ -66,112 +68,112 @@ public class ProcessedBuild extends Build {
 
     @Override
     public BuildCause.CommitInfo getCommit() {
-        BuildCause.CommitInfo commitInfo = build.getCause().getCommitInfo();
-        if(commitInfo == null){
-           return BuildCause.CommitInfo.NULL_INFO;
+        final BuildCause.CommitInfo commitInfo = this.build.getCause().getCommitInfo();
+        if (commitInfo == null) {
+            return BuildCause.CommitInfo.NULL_INFO;
         }
         return commitInfo;
     }
 
 
     @Override
-    public String getDisplayTime(){
-        return  build.getDisplayTime();
+    public String getDisplayTime() {
+        return this.build.getDisplayTime();
     }
 
     @Override
     public long getDuration() {
-        return getBuildDuration(build);
+        return getBuildDuration(this.build);
     }
 
-    private long getBuildDuration(Run build) {
-        return  build.isBuilding()?System.currentTimeMillis()-build.getStartTimeInMillis():   build.getDuration();
+    private long getBuildDuration(final Run build) {
+        return build.isBuilding() ? System.currentTimeMillis() - build.getStartTimeInMillis() : build.getDuration();
     }
 
     @Override
     public String getDurationString() {
-        return build.getDurationString();
+        return this.build.getDurationString();
     }
 
     @Override
     public boolean isCancelable() {
-        return build.isBuilding();
+        return this.build.isBuilding();
     }
 
     @Override
     public String getCancelUrl() {
-        return build.getUrl() + "/stop";
+        return this.build.getUrl() + "/stop";
     }
 
     @Override
     public String getUrl() {
-        return build.getUrl();
+        return this.build.getUrl();
     }
 
     @Override
     public String getFullUrl() {
-        return build.getFullUrl();
+        return this.build.getFullUrl();
     }
 
     @Override
     public BuildCause getCause() {
-        return build.getCause();
+        return this.build.getCause();
     }
 
     @Override
     public List<ParameterValue> getParameters() {
-        if(build.getAction(ParametersAction.class)!=null){
-            return build.getAction(ParametersAction.class).getParameters();
+        if (this.build.getAction(ParametersAction.class) != null) {
+            return this.build.getAction(ParametersAction.class).getParameters();
         }
         return Lists.newArrayList();
     }
 
     @Override
     public String getId() {
-        return build.getProjectId() + build.getId();
+        return this.build.getProjectId() + this.build.getId();
     }
 
 
     @Exported
-    public Iterable<Map> getAxisList(){
+    public Iterable<Map> getAxisList() {
 
-        Iterable<Combination> layoutList = build.getLayouter().list();
-        Iterable<Map> subBuildInfo = Iterables.transform(layoutList, new Function<Combination, Map>() {
+        final Iterable<Combination> layoutList = this.build.getLayouter().list();
+        final Iterable<Map> subBuildInfo = Iterables.transform(layoutList, new Function<Combination, Map>() {
             @Override
-            public Map apply(@Nullable Combination combination) {
-                HashMap subBuild = new HashMap();
+            public Map apply(@Nullable final Combination combination) {
+                final HashMap subBuild = new HashMap();
                 subBuild.putAll(combination);
-                hudson.model.Build run = build.getRun(combination);
+                final hudson.model.Build run = ProcessedBuild.this.build.getRun(combination);
                 subBuild.putAll(getSubBuildInfo((DbBackedBuild) run));
                 return subBuild;
             }
         });
 
-        ArrayList<Map> subBuilds = Iterables.size(layoutList)> 1? Lists.newArrayList(subBuildInfo): new ArrayList<Map>();
-        subBuilds.add(getMainBuildInfo(build));
+        final ArrayList<Map> subBuilds = Iterables.size(layoutList) > 1 ? Lists.newArrayList(subBuildInfo) : new ArrayList<>();
+        subBuilds.add(getMainBuildInfo(this.build));
         return subBuilds;
     }
 
-    private Map getMainBuildInfo(DynamicBuild build) {
-        HashMap<String, Object> buildInfo = new HashMap<String, Object>();
-        buildInfo.put("script","main");
+    private Map getMainBuildInfo(final DynamicBuild build) {
+        final HashMap<String, Object> buildInfo = new HashMap<>();
+        buildInfo.put("script", "main");
         buildInfo.putAll(getSubBuildInfo(build));
         return buildInfo;
     }
 
-    private Map getSubBuildInfo(DbBackedBuild run){
-        HashMap<String, Object> subBuild = new HashMap<String, Object>();
+    private Map getSubBuildInfo(final DbBackedBuild run) {
+        final HashMap<String, Object> subBuild = new HashMap<>();
         subBuild.put("result", getResult(run));
         if (run != null) {
             subBuild.put("url", run.getUrl());
-            subBuild.put("duration",getBuildDuration(run));
+            subBuild.put("duration", getBuildDuration(run));
         } else {
-            subBuild.put("url", build.getUrl());
+            subBuild.put("url", this.build.getUrl());
         }
         return subBuild;
     }
 
-    private  boolean isBuildInProgress(Run run){
-       return run ==null || run.isBuilding() ;
+    private boolean isBuildInProgress(final Run run) {
+        return run == null || run.isBuilding();
     }
 }

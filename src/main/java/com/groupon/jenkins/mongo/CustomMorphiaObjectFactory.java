@@ -25,15 +25,14 @@ THE SOFTWARE.
 package com.groupon.jenkins.mongo;
 
 import com.mongodb.DBObject;
-import jenkins.model.Jenkins;
+import org.mongodb.morphia.mapping.DefaultCreator;
 import org.mongodb.morphia.mapping.MappingException;
-
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
-import java.lang.reflect.Constructor;
-import java.util.*;
 
-import org.mongodb.morphia.mapping.DefaultCreator;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Credit Johan Haleby
@@ -41,42 +40,42 @@ import org.mongodb.morphia.mapping.DefaultCreator;
  */
 
 public class CustomMorphiaObjectFactory extends DefaultCreator {
-    private ClassLoader classloader;
-    private Objenesis objenesis;
+    private final ClassLoader classloader;
+    private final Objenesis objenesis;
 
-    public CustomMorphiaObjectFactory(ClassLoader classloader){
-        objenesis = new ObjenesisStd();
+    public CustomMorphiaObjectFactory(final ClassLoader classloader) {
+        this.objenesis = new ObjenesisStd();
         this.classloader = classloader;
     }
 
     @Override
-    public Object createInstance(Class clazz) {
+    public Object createInstance(final Class clazz) {
         try {
             final Constructor constructor = getNoArgsConstructor(clazz);
-            if(constructor != null) {
+            if (constructor != null) {
                 return constructor.newInstance();
             }
             try {
-                return clazz == List.class? new ArrayList(): objenesis.newInstance(clazz);
-            } catch (Exception e) {
+                return clazz == List.class ? new ArrayList() : this.objenesis.newInstance(clazz);
+            } catch (final Exception e) {
                 throw new MappingException("Failed to instantiate " + clazz.getName(), e);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Failed to instantiate " + clazz.getName(), e);
         }
     }
 
     @Override
     protected ClassLoader getClassLoaderForClass(final String clazz, final DBObject object) {
-        return classloader;
+        return this.classloader;
     }
 
     private Constructor getNoArgsConstructor(final Class ctorType) {
         try {
-            Constructor ctor = ctorType.getDeclaredConstructor();
+            final Constructor ctor = ctorType.getDeclaredConstructor();
             ctor.setAccessible(true);
             return ctor;
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             return null;
         }
     }

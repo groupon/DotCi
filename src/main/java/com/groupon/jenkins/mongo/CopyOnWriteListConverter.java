@@ -26,14 +26,11 @@ package com.groupon.jenkins.mongo;
 import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
 import hudson.util.CopyOnWriteList;
-import org.mongodb.morphia.converters.DefaultConverters;
 import org.mongodb.morphia.converters.SimpleValueConverter;
 import org.mongodb.morphia.converters.TypeConverter;
 import org.mongodb.morphia.mapping.MappedField;
-import org.mongodb.morphia.mapping.Mapper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class CopyOnWriteListConverter extends TypeConverter implements SimpleValueConverter {
@@ -49,7 +46,7 @@ public class CopyOnWriteListConverter extends TypeConverter implements SimpleVal
         BasicDBList rawList = (BasicDBList) fromDBObject;
 
         List core = new ArrayList();
-        for(Object obj : rawList) {
+        for (Object obj : rawList) {
             DBObject dbObj = (DBObject) obj;
             core.add(getMapper().fromDBObject(optionalExtraInfo.getSubClass(), dbObj, getMapper().createEntityCache()));
         }
@@ -64,7 +61,7 @@ public class CopyOnWriteListConverter extends TypeConverter implements SimpleVal
         CopyOnWriteList copyOnWriteList = (CopyOnWriteList) value;
         List core = new BasicDBList();
 
-        for(Object obj : copyOnWriteList) {
+        for (Object obj : copyOnWriteList) {
             core.add(getMapper().toDBObject(obj));
         }
 

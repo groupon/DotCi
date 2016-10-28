@@ -23,13 +23,14 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.github.services;
 
+import org.kohsuke.github.GHMyself;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GitHub;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.kohsuke.github.GHMyself;
-import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GitHub;
 
 public class GithubCurrentUserService {
 

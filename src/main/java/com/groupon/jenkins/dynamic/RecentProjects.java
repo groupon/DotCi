@@ -24,11 +24,8 @@
 
 package com.groupon.jenkins.dynamic;
 
-import com.google.common.base.*;
-import com.google.common.collect.*;
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.api.*;
 import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.util.JsonResponse;
 import hudson.Extension;
@@ -41,7 +38,7 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 @Extension
-public class RecentProjects implements RootAction{
+public class RecentProjects implements RootAction {
     @Override
     public String getIconFileName() {
         return null;
@@ -60,8 +57,9 @@ public class RecentProjects implements RootAction{
     public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
         Iterable<DynamicBuild> builds = getDynamicBuildRepository().getLastBuildsForUser(getCurrentUser(), 20);
 
-        JsonResponse.render(req,rsp,new RecentBuilds(builds));
+        JsonResponse.render(req, rsp, new RecentBuilds(builds));
     }
+
     private DynamicBuildRepository getDynamicBuildRepository() {
         return SetupConfig.get().getDynamicBuildRepository();
     }

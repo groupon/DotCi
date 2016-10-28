@@ -25,37 +25,34 @@ package com.groupon.jenkins.dynamic.build.cause;
 
 import com.google.common.base.Objects;
 import com.groupon.jenkins.git.GitBranch;
+import org.kohsuke.github.GHCommit;
+import org.kohsuke.stapler.export.Exported;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-
-import org.kohsuke.github.GHCommit;
-import org.kohsuke.stapler.export.Exported;
 
 public class ManualBuildCause extends BuildCause {
 
     private final String user;
     private final GitBranch branch;
-    private String parentSha;
+    private final String parentSha;
     private final String sha;
     private final CommitInfo commitInfo;
     private final List<GithubLogEntry> changeLogEntries;
 
-    public ManualBuildCause(GitBranch branch, GHCommit commit, String parentSha,String user) throws IOException {
+    public ManualBuildCause(final GitBranch branch, final GHCommit commit, final String parentSha, final String user) throws IOException {
         this.branch = branch;
         this.parentSha = parentSha;
         this.sha = commit.getSHA1();
         this.user = user;
-        this.commitInfo = new CommitInfo(commit,branch);
+        this.commitInfo = new CommitInfo(commit, branch);
         this.changeLogEntries = getChangeLogEntriescommit(commit);
     }
 
-    private List<GithubLogEntry> getChangeLogEntriescommit(GHCommit commit) throws IOException {
-        List<GithubLogEntry> logEntries = new ArrayList<>();
-        logEntries .add(new GithubLogEntry(commit));
+    private List<GithubLogEntry> getChangeLogEntriescommit(final GHCommit commit) throws IOException {
+        final List<GithubLogEntry> logEntries = new ArrayList<>();
+        logEntries.add(new GithubLogEntry(commit));
         return logEntries;
     }
 
@@ -63,33 +60,33 @@ public class ManualBuildCause extends BuildCause {
     @Override
     @Exported(visibility = 3)
     public String getShortDescription() {
-        return "Started by: " + user;
+        return "Started by: " + this.user;
     }
 
     @Override
     public String getSha() {
-        return sha;
+        return this.sha;
     }
 
     @Override
     public String getParentSha() {
-        return parentSha;
+        return this.parentSha;
     }
 
 
     @Override
     public String getPusher() {
-        return user;
+        return this.user;
     }
 
     @Override
     public String getPullRequestNumber() {
-        return branch.isPullRequest() ? branch.pullRequestNumber() + "" : null;
+        return this.branch.isPullRequest() ? this.branch.pullRequestNumber() + "" : null;
     }
 
     @Override
     public CommitInfo getCommitInfo() {
-        return commitInfo;
+        return this.commitInfo;
     }
 
     @Override
@@ -99,11 +96,11 @@ public class ManualBuildCause extends BuildCause {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(branch, sha, user);
+        return Objects.hashCode(this.branch, this.sha, this.user);
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -116,12 +113,12 @@ public class ManualBuildCause extends BuildCause {
 
     @Override
     public GitBranch getBranch() {
-        return branch;
+        return this.branch;
     }
 
     @Override
     public Iterable<GithubLogEntry> getChangeLogEntries() {
         //null check here for backward compat with builds that were built without this field.
-        return changeLogEntries == null? new ArrayList<>():changeLogEntries;
+        return this.changeLogEntries == null ? new ArrayList<>() : this.changeLogEntries;
     }
 }

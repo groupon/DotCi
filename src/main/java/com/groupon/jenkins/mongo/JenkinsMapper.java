@@ -46,7 +46,7 @@ public class JenkinsMapper extends Mapper {
         this(Jenkins.getInstance().getPluginManager().uberClassLoader);
     }
 
-    public JenkinsMapper(ClassLoader classLoader) {
+    public JenkinsMapper(final ClassLoader classLoader) {
         super();
         this.classLoader = classLoader;
         setOptions(new JenkinsMongoOptions());
@@ -54,7 +54,7 @@ public class JenkinsMapper extends Mapper {
         getOptions().setStoreEmpties(true);
         getOptions().setObjectFactory(new CustomMorphiaObjectFactory(getClassLoader()));
 
-        serializationMethodInvoker = new SerializationMethodInvoker();
+        this.serializationMethodInvoker = new SerializationMethodInvoker();
 
         includeSpecialConverters();
         includedSpecialMappedClasses();
@@ -62,12 +62,12 @@ public class JenkinsMapper extends Mapper {
 
     @Override
     public DBObject toDBObject(final Object entity) {
-        return toDBObject(entity, new LinkedHashMap<Object, DBObject>());
+        return toDBObject(entity, new LinkedHashMap<>());
     }
 
     @Override
     public DBObject toDBObject(final Object entity, final Map<Object, DBObject> involvedObjects) {
-        if( ! (entity instanceof CopyOnWriteList || involvedObjects.containsKey(entity) )) {
+        if (!(entity instanceof CopyOnWriteList || involvedObjects.containsKey(entity))) {
             involvedObjects.put(entity, null);
         }
 
@@ -76,8 +76,8 @@ public class JenkinsMapper extends Mapper {
 
     @Override
     public Object fromDBObject(final Class entityClass, final DBObject dbObject, final EntityCache cache) {
-        Object object = super.fromDBObject(entityClass, dbObject, cache);
-        return serializationMethodInvoker.callReadResolve(object);
+        final Object object = super.fromDBObject(entityClass, dbObject, cache);
+        return this.serializationMethodInvoker.callReadResolve(object);
     }
 
     /**
@@ -102,7 +102,7 @@ public class JenkinsMapper extends Mapper {
     }
 
     final protected ClassLoader getClassLoader() {
-        return classLoader;
+        return this.classLoader;
     }
 }
 
@@ -111,7 +111,7 @@ class JenkinsMongoOptions extends MapperOptions {
 
     @Override
     public CustomMapper getDefaultMapper() {
-        return jenkinsEmbeddedMapper;
+        return this.jenkinsEmbeddedMapper;
     }
 }
 

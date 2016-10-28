@@ -41,13 +41,13 @@ import org.kohsuke.stapler.StaplerRequest;
 
 @Extension
 public class SetupConfig extends GlobalConfiguration {
+    private final transient Object injectorLock = new Object();
     private String dbHost;
     private int dbPort;
     private String dbName;
     private String label;
     private String fromEmailAddress;
     private String defaultBuildType;
-
     private boolean privateRepoSupport;
     private boolean defaultToNewUi;
     private String githubApiUrl;
@@ -57,93 +57,87 @@ public class SetupConfig extends GlobalConfiguration {
     private String deployKey;
     private AbstractModule guiceModule;
     private transient Injector injector;
-
     private String githubCallbackUrl;
-    public static SetupConfig get() {
-        return GlobalConfiguration.all().get(SetupConfig.class);
-    }
 
     public SetupConfig() {
         load();
     }
 
+    public static SetupConfig get() {
+        return GlobalConfiguration.all().get(SetupConfig.class);
+    }
+
     @Override
-    public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
+    public boolean configure(final StaplerRequest req, final JSONObject json) throws FormException {
         req.bindJSON(this, json);
         save();
         return true;
     }
 
-    public Iterable<BuildType> getBuildTypes(){
+    public Iterable<BuildType> getBuildTypes() {
         return BuildType.all();
     }
+
     public String getDbName() {
-        if (StringUtils.isEmpty(dbName)) {
+        if (StringUtils.isEmpty(this.dbName)) {
             return "dotci";
         }
-        return dbName;
+        return this.dbName;
     }
 
-
-    public void setDbName(String dbName) {
+    public void setDbName(final String dbName) {
         this.dbName = dbName;
     }
 
     public String getDbHost() {
-        if (StringUtils.isEmpty(dbHost)) {
+        if (StringUtils.isEmpty(this.dbHost)) {
             return "localhost";
         }
-        return dbHost;
+        return this.dbHost;
     }
 
-    public void setDbHost(String dbHost) {
+    public void setDbHost(final String dbHost) {
         this.dbHost = dbHost;
     }
 
     public int getDbPort() {
-        if (dbPort == 0) {
+        if (this.dbPort == 0) {
             return 27017;
         }
-        return dbPort;
+        return this.dbPort;
     }
 
-    public void setDbPort(int dbPort) {
+    public void setDbPort(final int dbPort) {
         this.dbPort = dbPort;
-    }
-
-
-
-    public void setGithubApiUrl(String githubApiUrl) {
-        this.githubApiUrl = githubApiUrl;
     }
 
     public String getLabel() {
         return StringUtils.trimToEmpty(this.label);
     }
 
+    public void setLabel(final String label) {
+        this.label = label;
+    }
+
     public String getGithubCallbackUrl() {
-        if (StringUtils.isEmpty(githubCallbackUrl)) {
+        if (StringUtils.isEmpty(this.githubCallbackUrl)) {
             return Jenkins.getInstance().getRootUrl() + "githook/";
         }
         return this.githubCallbackUrl;
     }
 
-    public void setGithubCallbackUrl(String githubCallbackUrl) {
+    public void setGithubCallbackUrl(final String githubCallbackUrl) {
         this.githubCallbackUrl = githubCallbackUrl;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
     public String getFromEmailAddress() {
-        if (StringUtils.isEmpty(fromEmailAddress)) {
+        if (StringUtils.isEmpty(this.fromEmailAddress)) {
             return "ci@example.com";
         }
-        return fromEmailAddress;
+        return this.fromEmailAddress;
     }
 
-    public void setFromEmailAddress(String fromEmailAddress) {
+    public void setFromEmailAddress(final String fromEmailAddress) {
         this.fromEmailAddress = fromEmailAddress;
     }
 
@@ -154,56 +148,60 @@ public class SetupConfig extends GlobalConfiguration {
 
 
     public String getDefaultBuildType() {
-        if (StringUtils.isEmpty(defaultBuildType)) {
-            DockerComposeBuild type = new DockerComposeBuild();
+        if (StringUtils.isEmpty(this.defaultBuildType)) {
+            final DockerComposeBuild type = new DockerComposeBuild();
             return type.getId();
         }
-        return defaultBuildType;
+        return this.defaultBuildType;
     }
 
-    public void setDefaultBuildType(String defaultBuildType) {
+    public void setDefaultBuildType(final String defaultBuildType) {
         this.defaultBuildType = defaultBuildType;
     }
 
-    public void setPrivateRepoSupport(boolean privateRepoSupport) {
-        this.privateRepoSupport = privateRepoSupport;
-    }
     public boolean getPrivateRepoSupport() {
-        return privateRepoSupport;
+        return this.privateRepoSupport;
+    }
+
+    public void setPrivateRepoSupport(final boolean privateRepoSupport) {
+        this.privateRepoSupport = privateRepoSupport;
     }
 
     public String getGithubApiUrl() {
-        if (StringUtils.isEmpty(githubApiUrl)) {
+        if (StringUtils.isEmpty(this.githubApiUrl)) {
             return "https://api.github.com/";
         }
-        return githubApiUrl;
+        return this.githubApiUrl;
+    }
+
+    public void setGithubApiUrl(final String githubApiUrl) {
+        this.githubApiUrl = githubApiUrl;
     }
 
     public String getGithubWebUrl() {
-        if (StringUtils.isEmpty(githubWebUrl)) {
+        if (StringUtils.isEmpty(this.githubWebUrl)) {
             return "https://github.com/";
         }
-        return githubWebUrl;
+        return this.githubWebUrl;
     }
 
-    public void setGithubWebUrl(String githubWebUrl) {
+    public void setGithubWebUrl(final String githubWebUrl) {
         this.githubWebUrl = githubWebUrl;
     }
 
-
     public String getGithubClientID() {
-        return githubClientID;
+        return this.githubClientID;
     }
 
-    public void setGithubClientID(String githubClientID) {
+    public void setGithubClientID(final String githubClientID) {
         this.githubClientID = githubClientID;
     }
 
     public String getGithubClientSecret() {
-        return githubClientSecret;
+        return this.githubClientSecret;
     }
 
-    public void setGithubClientSecret(String githubClientSecret) {
+    public void setGithubClientSecret(final String githubClientSecret) {
         this.githubClientSecret = githubClientSecret;
     }
 
@@ -218,34 +216,33 @@ public class SetupConfig extends GlobalConfiguration {
     public GithubAccessTokenRepository getGithubAccessTokenRepository() {
         return getInjector().getInstance(GithubAccessTokenRepository.class);
     }
+
     public boolean isDefaultToNewUi() {
-        return defaultToNewUi;
+        return this.defaultToNewUi;
     }
 
-    public void setDefaultToNewUi(boolean defaultToNewUi) {
+    public void setDefaultToNewUi(final boolean defaultToNewUi) {
         this.defaultToNewUi = defaultToNewUi;
     }
 
-    private transient Object injectorLock = new Object();
-
     public Injector getInjector() {
-        if(injector == null) {
-            synchronized (injectorLock) {
-                if(injector == null) { // make sure we got the lock in time
-                    injector = Guice.createInjector(getGuiceModule());
+        if (this.injector == null) {
+            synchronized (this.injectorLock) {
+                if (this.injector == null) { // make sure we got the lock in time
+                    this.injector = Guice.createInjector(getGuiceModule());
                 }
             }
         }
 
-        return injector;
+        return this.injector;
     }
 
 
     private AbstractModule getGuiceModule() {
-        if(guiceModule == null) {
+        if (this.guiceModule == null) {
             return new DotCiModule();
         }
-        return guiceModule;
+        return this.guiceModule;
     }
 
     public GithubDeployKeyRepository getGithubDeployKeyRepository() {

@@ -27,8 +27,9 @@ package com.groupon.jenkins.dynamic.build.execution;
 import hudson.matrix.Combination;
 import hudson.model.BuildListener;
 import hudson.model.Result;
+
 import java.io.IOException;
 
 public interface SubBuildRunner {
-    public Result runSubBuild(Combination combination, BuildExecutionContext dynamicSubBuildExecution, BuildListener listener)throws IOException, InterruptedException;
+    public Result runSubBuild(Combination combination, BuildExecutionContext dynamicSubBuildExecution, BuildListener listener) throws IOException, InterruptedException;
 }

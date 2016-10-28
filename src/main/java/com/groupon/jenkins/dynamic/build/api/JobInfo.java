@@ -27,62 +27,67 @@ package com.groupon.jenkins.dynamic.build.api;
 import com.google.common.collect.Lists;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DynamicProjectBranchTabsProperty;
-import com.groupon.jenkins.dynamic.build.api.metrics.BuildTimeMetric;
 import com.groupon.jenkins.dynamic.build.api.metrics.JobMetric;
-import org.kohsuke.stapler.*;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-import  static com.google.common.collect.ImmutableMap.of;
+import static com.google.common.collect.ImmutableMap.of;
 
 @ExportedBean
-public class JobInfo extends  ApiModel{
+public class JobInfo extends ApiModel {
 
-    private DynamicProject dynamicProject;
+    private final DynamicProject dynamicProject;
 
-    public JobInfo(DynamicProject dynamicProject) {
+    public JobInfo(final DynamicProject dynamicProject) {
         this.dynamicProject = dynamicProject;
     }
 
     @Exported
-    public String getFullName(){
-        return dynamicProject.getFullName();
+    public String getFullName() {
+        return this.dynamicProject.getFullName();
     }
+
     @Exported
-    public String getGithubUrl(){
-        return dynamicProject.getGithubRepoUrl();
+    public String getGithubUrl() {
+        return this.dynamicProject.getGithubRepoUrl();
     }
+
     @Exported
-    public Map getPermissions(){
-        return of("configure", dynamicProject.hasPermission(DynamicProject.CONFIGURE),
-                "build", dynamicProject.hasPermission(DynamicProject.BUILD)) ;
+    public Map getPermissions() {
+        return of("configure", this.dynamicProject.hasPermission(DynamicProject.CONFIGURE),
+            "build", this.dynamicProject.hasPermission(DynamicProject.BUILD));
     }
+
     @Exported
-    public Iterable<String> getBuildHistoryTabs(){
-        DynamicProjectBranchTabsProperty tabsProperty =dynamicProject.getProperty(DynamicProjectBranchTabsProperty.class);
-        List<String> tabs = tabsProperty == null ? new ArrayList<String>() : tabsProperty.getBranches();
-        ArrayList<String> configuredTabs = new ArrayList<String>();
-        if(!tabs.contains("Mine")) configuredTabs.add("Mine");
-        if(!tabs.contains("All")) configuredTabs.add("All");
+    public Iterable<String> getBuildHistoryTabs() {
+        final DynamicProjectBranchTabsProperty tabsProperty = this.dynamicProject.getProperty(DynamicProjectBranchTabsProperty.class);
+        final List<String> tabs = tabsProperty == null ? new ArrayList<>() : tabsProperty.getBranches();
+        final ArrayList<String> configuredTabs = new ArrayList<>();
+        if (!tabs.contains("Mine")) configuredTabs.add("Mine");
+        if (!tabs.contains("All")) configuredTabs.add("All");
         configuredTabs.addAll(tabs);
         return configuredTabs;
     }
+
     @Exported
-    public List<Build> getBuilds(){
-        StaplerRequest req= Stapler.getCurrent().getCurrentRequest();
-        String branchTab = req.getParameter("branchTab");
-        String buildCount = req.getParameter("count");
-        return Lists.newArrayList(new BuildHistory(dynamicProject).getBuilds(branchTab,Integer.parseInt(buildCount)));
+    public List<Build> getBuilds() {
+        final StaplerRequest req = Stapler.getCurrent().getCurrentRequest();
+        final String branchTab = req.getParameter("branchTab");
+        final String buildCount = req.getParameter("count");
+        return Lists.newArrayList(new BuildHistory(this.dynamicProject).getBuilds(branchTab, Integer.parseInt(buildCount)));
     }
+
     @Exported
-    public List<JobMetric> getMetrics(){
-        StaplerRequest req= Stapler.getCurrent().getCurrentRequest();
-        String branchTab = req.getParameter("branchTab");
-        String buildCount = req.getParameter("count");
-      return  JobMetric.getApplicableJobMetrics(dynamicProject,branchTab,Integer.parseInt(buildCount));
+    public List<JobMetric> getMetrics() {
+        final StaplerRequest req = Stapler.getCurrent().getCurrentRequest();
+        final String branchTab = req.getParameter("branchTab");
+        final String buildCount = req.getParameter("count");
+        return JobMetric.getApplicableJobMetrics(this.dynamicProject, branchTab, Integer.parseInt(buildCount));
     }
 }

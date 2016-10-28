@@ -1,20 +1,18 @@
 package com.groupon.jenkins.extensions;
 
-import com.groupon.jenkins.buildtype.plugins.*;
-import com.groupon.jenkins.dynamic.build.*;
-import hudson.*;
-import hudson.model.*;
-import hudson.tasks.*;
-import jenkins.tasks.*;
-import org.apache.commons.beanutils.*;
+import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import hudson.Launcher;
+import hudson.model.BuildListener;
+import hudson.model.Descriptor;
+import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.plugins.workflow.structs.DescribableHelper;
 
-import java.io.*;
-import java.lang.reflect.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Map;
 
 public class GenericSimpleBuildStepPlugin extends DotCiPluginAdapter {
-    private Descriptor<? extends  SimpleBuildStep> pluginDescriptor;
+    private Descriptor<? extends SimpleBuildStep> pluginDescriptor;
     private Object options;
 
     public GenericSimpleBuildStepPlugin(Descriptor<?> pluginDescriptor, Object options) {
@@ -28,7 +26,7 @@ public class GenericSimpleBuildStepPlugin extends DotCiPluginAdapter {
     public boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener) {
         SimpleBuildStep plugin = getPlugin();
         try {
-            plugin.perform(dynamicBuild,launcher,listener);
+            plugin.perform(dynamicBuild, launcher, listener);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {

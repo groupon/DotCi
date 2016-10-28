@@ -45,7 +45,7 @@ public class AxisListConverter extends TypeConverter implements SimpleValueConve
         BasicDBList rawList = (BasicDBList) fromDBObject;
 
         AxisList axisList = new AxisList();
-        for(Object obj : rawList) {
+        for (Object obj : rawList) {
             DBObject dbObj = (DBObject) obj;
             axisList.add((Axis) getMapper().fromDBObject(optionalExtraInfo.getSubClass(), dbObj, getMapper().createEntityCache()));
         }
@@ -61,7 +61,7 @@ public class AxisListConverter extends TypeConverter implements SimpleValueConve
 
         BasicDBList convertedList = new BasicDBList();
 
-        for(Axis axis : axisList) {
+        for (Axis axis : axisList) {
             convertedList.add(getMapper().toDBObject(axis));
         }
 

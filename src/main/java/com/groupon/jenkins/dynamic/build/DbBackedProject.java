@@ -23,14 +23,33 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
+import com.google.common.base.Objects;
 import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
+import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.util.GReflectionUtils;
+import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 import com.mongodb.DBObject;
-import hudson.model.*;
+import hudson.model.AbstractItem;
+import hudson.model.HealthReport;
+import hudson.model.ItemGroup;
+import hudson.model.Project;
+import hudson.model.Queue;
 import hudson.model.Queue.Item;
+import hudson.model.TaskListener;
 import hudson.scm.PollingResult;
 import hudson.search.QuickSilver;
 import hudson.util.RunList;
+import jenkins.model.Jenkins;
+import org.apache.commons.lang.StringUtils;
+import org.bson.types.ObjectId;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.export.Exported;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.PostLoad;
+import org.mongodb.morphia.annotations.PrePersist;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,29 +57,20 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.logging.Logger;
 
-import jenkins.model.Jenkins;
-
-import org.apache.commons.lang.StringUtils;
-import org.bson.types.ObjectId;
-import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.export.Exported;
-
-import com.google.common.base.Objects;
-import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
-import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
-import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
-import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.Id;
-import org.mongodb.morphia.annotations.PostLoad;
-import org.mongodb.morphia.annotations.PrePersist;
-import org.mongodb.morphia.mapping.Mapper;
-
 @Entity("job")
 public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> extends Project<P, B> {
 
+    private static final Logger LOGGER = Logger.getLogger(DbBackedProject.class.getName());
+    protected transient DynamicProjectRepository dynamicProjectRepository;
+    protected transient DynamicBuildRepository dynamicBuildRepository;
     @Id
     private ObjectId id;
+
+    public DbBackedProject(final ItemGroup parent, final String name) {
+        super(parent, name);
+        this.id = new ObjectId();
+        initRepos();
+    }
 
     @PrePersist
     private void saveName(final DBObject dbObj) {
@@ -72,19 +82,8 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
         GReflectionUtils.setField(AbstractItem.class, "name", this, dbObj.get("name"));
     }
 
-    protected transient DynamicProjectRepository dynamicProjectRepository;
-    protected transient DynamicBuildRepository dynamicBuildRepository;
-
-    private static final Logger LOGGER = Logger.getLogger(DbBackedProject.class.getName());
-
-    public DbBackedProject(ItemGroup parent, String name) {
-        super(parent, name);
-        id = new ObjectId();
-        initRepos();
-    }
-
     @Override
-    public void onLoad(ItemGroup<? extends hudson.model.Item> parent, String name) throws IOException {
+    public void onLoad(final ItemGroup<? extends hudson.model.Item> parent, final String name) throws IOException {
         initRepos();
         super.onLoad(parent, name);
     }
@@ -103,12 +102,12 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
     @Override
     @Exported(name = "healthReport")
     public List<HealthReport> getBuildHealthReports() {
-        return new ArrayList<HealthReport>();
+        return new ArrayList<>();
     }
 
     @Override
     public synchronized void save() throws IOException {
-        this.id = dynamicProjectRepository.saveOrUpdate(this);
+        this.id = this.dynamicProjectRepository.saveOrUpdate(this);
     }
 
     public IdentifableItemGroup getIdentifableParent() {
@@ -116,7 +115,7 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
     }
 
     @Override
-    public PollingResult poll(TaskListener listener) {
+    public PollingResult poll(final TaskListener listener) {
         return PollingResult.NO_CHANGES;
     }
 
@@ -129,79 +128,80 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
 
     @Override
     protected synchronized B newBuild() throws IOException {
-        B build = super.newBuild();
+        final B build = super.newBuild();
         build.save();
         return build;
     }
 
     @Override
-    public B getBuild(String id) {
+    public B getBuild(final String id) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public B getBuildByNumber(int n) {
-        return dynamicBuildRepository.<B> getBuild(this, n);
+    public B getBuildByNumber(final int n) {
+        return this.dynamicBuildRepository.<B>getBuild(this, n);
     }
 
     @Override
     @Exported
     @QuickSilver
     public B getLastSuccessfulBuild() {
-        return dynamicBuildRepository.<B> getLastSuccessfulBuild(this);
+        return this.dynamicBuildRepository.<B>getLastSuccessfulBuild(this);
     }
 
     @Override
     @Exported
     @QuickSilver
     public B getLastFailedBuild() {
-        return dynamicBuildRepository.<B> getLastFailedBuild(this);
+        return this.dynamicBuildRepository.<B>getLastFailedBuild(this);
     }
 
     @Override
     @Exported(name = "allBuilds", visibility = -2)
     @WithBridgeMethods(List.class)
     public RunList<B> getBuilds() {
-        return dynamicBuildRepository.<B> getBuilds(this);
+        return this.dynamicBuildRepository.<B>getBuilds(this);
     }
 
     @Override
     public SortedMap<Integer, B> getBuildsAsMap() {
-        return dynamicBuildRepository.<P, B> getBuildsAsMap(this);
+        return this.dynamicBuildRepository.<P, B>getBuildsAsMap(this);
     }
 
     @Override
     public B getFirstBuild() {
-        return dynamicBuildRepository.<B> getFirstBuild(this);
+        return this.dynamicBuildRepository.<B>getFirstBuild(this);
     }
 
     public B getLastBuildAnyBranch() {
-        return dynamicBuildRepository.<B> getLastBuild(this);
-    }
-    @Override
-    public B getLastBuild() {
-        String branch = "master";
-        StaplerRequest currentRequest = Stapler.getCurrentRequest();
-        if (currentRequest != null && StringUtils.isNotEmpty(currentRequest.getParameter("branch"))) {
-            branch = currentRequest.getParameter("branch");
-        }
-        return dynamicBuildRepository.<B> getLastBuild(this,branch);
+        return this.dynamicBuildRepository.<B>getLastBuild(this);
     }
 
     @Override
-    public B getNearestBuild(int n) {
+    public B getLastBuild() {
+        String branch = "master";
+        final StaplerRequest currentRequest = Stapler.getCurrentRequest();
+        if (currentRequest != null && StringUtils.isNotEmpty(currentRequest.getParameter("branch"))) {
+            branch = currentRequest.getParameter("branch");
+        }
+        return this.dynamicBuildRepository.<B>getLastBuild(this, branch);
+    }
+
+    @Override
+    public B getNearestBuild(final int n) {
         return null;
     }
 
     @Override
-    public B getNearestOldBuild(int n) {
+    public B getNearestOldBuild(final int n) {
         return null;
     }
 
     @Override
     public synchronized Item getQueueItem() {
-        Queue queue = Jenkins.getInstance().getQueue();
-        Item[] items = queue.getItems();
+        final Queue queue = Jenkins.getInstance().getQueue();
+        final Item[] items = queue.getItems();
         for (int i = 0; i < items.length; i++) {
             if (items[i].task != null && items[i].task.equals(this)) {
                 return items[i];
@@ -211,11 +211,11 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        DbBackedProject other = (DbBackedProject) obj;
+        final DbBackedProject other = (DbBackedProject) obj;
         return Objects.equal(getFullName(), other.getFullName());
     }
 
@@ -225,8 +225,8 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
     }
 
     @Override
-    public void removeRun(B run) {
-        dynamicBuildRepository.deleteBuild(run);
+    public void removeRun(final B run) {
+        this.dynamicBuildRepository.deleteBuild(run);
     }
 
     public String getOrgName() {
@@ -234,10 +234,10 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
     }
 
     public ObjectId getId() {
-        return id;
+        return this.id;
     }
 
-    public void setId(ObjectId id) {
+    public void setId(final ObjectId id) {
         this.id = id;
     }
 
@@ -245,6 +245,7 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
         //Default to master for now; TODO: make this configurable
         return "master";
     }
+
     @Override
     public long getEstimatedDuration() {
         return -1;

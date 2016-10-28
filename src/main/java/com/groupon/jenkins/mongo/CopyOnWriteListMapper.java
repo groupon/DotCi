@@ -33,7 +33,6 @@ import org.mongodb.morphia.mapping.Mapper;
 import org.mongodb.morphia.mapping.cache.EntityCache;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +45,7 @@ class CopyOnWriteListMapper implements CustomMapper {
 
         mf.getSubType();
 
-        for(Object obj : copyOnWriteList) {
+        for (Object obj : copyOnWriteList) {
             core.add(mapper.toDBObject(obj, involvedObjects));
         }
 
@@ -57,10 +56,11 @@ class CopyOnWriteListMapper implements CustomMapper {
     public void fromDBObject(DBObject dbObject, MappedField mf, Object entity, EntityCache cache, Mapper mapper) {
         BasicDBList cowlist = (BasicDBList) dbObject.get(mf.getNameToStore());
 
-        if(cowlist == null) throw new IllegalArgumentException("Improperly formatted DBObject for CopyOnWriteList");
+        if (cowlist == null)
+            throw new IllegalArgumentException("Improperly formatted DBObject for CopyOnWriteList");
 
         List core = new ArrayList();
-        for(Object obj : cowlist) {
+        for (Object obj : cowlist) {
             DBObject listEntryDbObj = (DBObject) obj;
 
             // Hack until we can coax MappedField to understand what CopyOnWriteList is. Eliminate as soon as possible.

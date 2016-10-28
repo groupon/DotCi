@@ -45,7 +45,6 @@ import hudson.model.BuildListener;
 import hudson.model.Result;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -59,54 +58,54 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
     }
 
     @Override
-    public Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+    public Result runBuild(final DynamicBuild build, final BuildExecutionContext buildExecutionContext, final Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
         build.save();
-        Map<String,Object> buildEnvironment = build.getEnvironmentWithChangeSet(listener);
+        final Map<String, Object> buildEnvironment = build.getEnvironmentWithChangeSet(listener);
         Result result = doCheckout(buildEnvironment, buildExecutionContext, listener);
         if (!Result.SUCCESS.equals(result)) {
             return result;
         }
-        Map config = new GroovyYamlTemplateProcessor(getDotCiYml(build), buildEnvironment).getConfig();
+        final Map config = new GroovyYamlTemplateProcessor(getDotCiYml(build), buildEnvironment).getConfig();
         this.buildConfiguration = new BuildConfiguration(config);
-        if(buildConfiguration.isSkipped()){
+        if (this.buildConfiguration.isSkipped()) {
             build.skip();
             return Result.SUCCESS;
         }
         result = runBeforeCommands(buildExecutionContext, listener);
         if (Result.SUCCESS.equals(result)) {
-            build.setAxisList(buildConfiguration.getAxisList());
-            if(buildConfiguration.isParallelized()){
-                result = runParallelBuild(build, buildExecutionContext, buildConfiguration, listener);
-            }else{
-                result = runSubBuild(new Combination(ImmutableMap.of("script", buildConfiguration.getOnlyRun())), buildExecutionContext, listener);
+            build.setAxisList(this.buildConfiguration.getAxisList());
+            if (this.buildConfiguration.isParallelized()) {
+                result = runParallelBuild(build, buildExecutionContext, this.buildConfiguration, listener);
+            } else {
+                result = runSubBuild(new Combination(ImmutableMap.of("script", this.buildConfiguration.getOnlyRun())), buildExecutionContext, listener);
             }
         }
-        Result pluginResult = runPlugins(build, buildConfiguration.getPlugins(), listener, launcher);
-        Result notifierResult = runNotifiers(build, buildConfiguration.getNotifiers(), listener);
+        final Result pluginResult = runPlugins(build, this.buildConfiguration.getPlugins(), listener, launcher);
+        final Result notifierResult = runNotifiers(build, this.buildConfiguration.getNotifiers(), listener);
         return result.combine(pluginResult).combine(notifierResult);
     }
 
     @Override
-    public Result runSubBuild(Combination combination, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
-        ShellCommands commands = buildConfiguration.getCommands(combination, buildExecutionContext.getBuildEnvironmentVariables());
+    public Result runSubBuild(final Combination combination, final BuildExecutionContext buildExecutionContext, final BuildListener listener) throws IOException, InterruptedException {
+        final ShellCommands commands = this.buildConfiguration.getCommands(combination, buildExecutionContext.getBuildEnvironmentVariables());
         return runCommands(commands, buildExecutionContext, listener);
     }
 
-    private Result doCheckout(Map<String,Object> buildEnvironment, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
-        ShellCommands commands = BuildConfiguration.getCheckoutCommands(buildEnvironment);
+    private Result doCheckout(final Map<String, Object> buildEnvironment, final BuildExecutionContext buildExecutionContext, final BuildListener listener) throws IOException, InterruptedException {
+        final ShellCommands commands = BuildConfiguration.getCheckoutCommands(buildEnvironment);
         return runCommands(commands, buildExecutionContext, listener);
     }
 
-    private Result runCommands(ShellCommands commands, BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
+    private Result runCommands(final ShellCommands commands, final BuildExecutionContext buildExecutionContext, final BuildListener listener) throws IOException, InterruptedException {
         if (commands == null) {
             return Result.SUCCESS;
         }
-        ShellScriptRunner shellScriptRunner = new ShellScriptRunner(buildExecutionContext, listener);
+        final ShellScriptRunner shellScriptRunner = new ShellScriptRunner(buildExecutionContext, listener);
         return shellScriptRunner.runScript(commands);
     }
 
-    private String getDotCiYml(DynamicBuild build) throws IOException, InterruptedException {
-        FilePath fp = new FilePath(build.getWorkspace(), ".ci.yml");
+    private String getDotCiYml(final DynamicBuild build) throws IOException, InterruptedException {
+        final FilePath fp = new FilePath(build.getWorkspace(), ".ci.yml");
         if (!fp.exists()) {
             throw new InvalidBuildConfigurationException("No .ci.yml found.");
         }
@@ -114,22 +113,22 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
         return fp.readToString();
     }
 
-    private Result runParallelBuild(final DynamicBuild dynamicBuild, final  BuildExecutionContext buildExecutionContext, final BuildConfiguration buildConfiguration, final BuildListener listener) throws IOException, InterruptedException {
+    private Result runParallelBuild(final DynamicBuild dynamicBuild, final BuildExecutionContext buildExecutionContext, final BuildConfiguration buildConfiguration, final BuildListener listener) throws IOException, InterruptedException {
 
-        SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, this, new SubBuildScheduler.SubBuildFinishListener() {
+        final SubBuildScheduler subBuildScheduler = new SubBuildScheduler(dynamicBuild, this, new SubBuildScheduler.SubBuildFinishListener() {
             @Override
-            public void runFinished(DynamicSubBuild subBuild) throws IOException {
-                for (DotCiPluginAdapter plugin : buildConfiguration.getPlugins()) {
+            public void runFinished(final DynamicSubBuild subBuild) throws IOException {
+                for (final DotCiPluginAdapter plugin : buildConfiguration.getPlugins()) {
                     plugin.runFinished(subBuild, dynamicBuild, listener);
                 }
             }
         });
 
         try {
-            Iterable<Combination> axisList = buildConfiguration.getAxisList().list();
+            final Iterable<Combination> axisList = buildConfiguration.getAxisList().list();
             Result runResult = subBuildScheduler.runSubBuilds(axisList, listener);
-            if(runResult.equals(Result.SUCCESS)){
-                Result afterRunResult = runAfterCommands(buildExecutionContext,listener);
+            if (runResult.equals(Result.SUCCESS)) {
+                final Result afterRunResult = runAfterCommands(buildExecutionContext, listener);
                 runResult = runResult.combine(afterRunResult);
             }
             dynamicBuild.setResult(runResult);
@@ -137,33 +136,34 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
         } finally {
             try {
                 subBuildScheduler.cancelSubBuilds(listener.getLogger());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // There is nothing much we can do at this point
             }
         }
     }
 
-    private Result runAfterCommands(BuildExecutionContext buildExecutionContext, BuildListener listener) throws IOException, InterruptedException {
-        return runCommands(buildConfiguration.getAfterRunCommandsIfPresent(), buildExecutionContext, listener);
+    private Result runAfterCommands(final BuildExecutionContext buildExecutionContext, final BuildListener listener) throws IOException, InterruptedException {
+        return runCommands(this.buildConfiguration.getAfterRunCommandsIfPresent(), buildExecutionContext, listener);
     }
 
     private Result runBeforeCommands(final BuildExecutionContext buildExecutionContext, final BuildListener listener) throws IOException, InterruptedException {
-        return runCommands(buildConfiguration.getBeforeRunCommandsIfPresent(), buildExecutionContext, listener);
+        return runCommands(this.buildConfiguration.getBeforeRunCommandsIfPresent(), buildExecutionContext, listener);
     }
 
-    private Result runPlugins(DynamicBuild dynamicBuild, List<DotCiPluginAdapter> plugins, BuildListener listener, Launcher launcher) {
-        boolean result = true ;
-        for(DotCiPluginAdapter plugin : plugins){
-           result = result & plugin.perform(dynamicBuild, launcher, listener);
+    private Result runPlugins(final DynamicBuild dynamicBuild, final List<DotCiPluginAdapter> plugins, final BuildListener listener, final Launcher launcher) {
+        boolean result = true;
+        for (final DotCiPluginAdapter plugin : plugins) {
+            result = result & plugin.perform(dynamicBuild, launcher, listener);
         }
-        return result? Result.SUCCESS: Result.FAILURE;
+        return result ? Result.SUCCESS : Result.FAILURE;
     }
-    private Result runNotifiers(DynamicBuild build, List<PostBuildNotifier> notifiers, BuildListener listener) {
-        boolean result = true ;
-        for (PostBuildNotifier notifier : notifiers) {
+
+    private Result runNotifiers(final DynamicBuild build, final List<PostBuildNotifier> notifiers, final BuildListener listener) {
+        boolean result = true;
+        for (final PostBuildNotifier notifier : notifiers) {
             result = result & notifier.perform(build, listener);
         }
-        return result? Result.SUCCESS: Result.FAILURE;
+        return result ? Result.SUCCESS : Result.FAILURE;
     }
 
 }

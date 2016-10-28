@@ -25,9 +25,6 @@ package com.groupon.jenkins.dynamic.build.cause;
 
 import com.groupon.jenkins.github.PushAndPullRequestPayload;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class GitHubPushCause extends GithubPushPullWebhookCause {
 
     private final String pushedBy;

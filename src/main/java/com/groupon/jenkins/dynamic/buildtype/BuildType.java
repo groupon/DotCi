@@ -32,20 +32,20 @@ import hudson.ExtensionPoint;
 import hudson.Launcher;
 import hudson.model.BuildListener;
 import hudson.model.Result;
-import java.io.IOException;
-
 import jenkins.model.Jenkins;
 
-public abstract class BuildType implements ExtensionPoint{
-    public static BuildType newBuildType(DynamicProject project) {
-        String requestedBuildType = getBuildType(project);
-        for(BuildType buildType: all()){
-            if(buildType.getId().equals(requestedBuildType)){
+import java.io.IOException;
+
+public abstract class BuildType implements ExtensionPoint {
+    public static BuildType newBuildType(final DynamicProject project) {
+        final String requestedBuildType = getBuildType(project);
+        for (final BuildType buildType : all()) {
+            if (buildType.getId().equals(requestedBuildType)) {
                 try {
                     return buildType.getClass().newInstance();
-                } catch (InstantiationException e) {
-                   throw new RuntimeException(e);
-                } catch (IllegalAccessException e) {
+                } catch (final InstantiationException e) {
+                    throw new RuntimeException(e);
+                } catch (final IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -53,12 +53,12 @@ public abstract class BuildType implements ExtensionPoint{
         throw new IllegalStateException("Build Type not found for the build");
     }
 
-    public static boolean isProjectOfBuildType(DynamicProject project, Class<? extends BuildType> clazz) {
-        String projectBuildType = getBuildType(project);
+    public static boolean isProjectOfBuildType(final DynamicProject project, final Class<? extends BuildType> clazz) {
+        final String projectBuildType = getBuildType(project);
         return clazz.getName().equals(projectBuildType);
     }
 
-    private static String getBuildType(DynamicProject project) {
+    private static String getBuildType(final DynamicProject project) {
         return project.getBuildType() == null ? SetupConfig.get().getDefaultBuildType() : project.getBuildType();
     }
 
@@ -68,11 +68,11 @@ public abstract class BuildType implements ExtensionPoint{
 
     public abstract String getDescription();
 
-    public String getId(){
-       return getClass().getName();
+    public String getId() {
+        return getClass().getName();
     }
 
 
-    public abstract Result runBuild(DynamicBuild build, BuildExecutionContext  buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
+    public abstract Result runBuild(DynamicBuild build, BuildExecutionContext buildExecutionContext, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
 
 }

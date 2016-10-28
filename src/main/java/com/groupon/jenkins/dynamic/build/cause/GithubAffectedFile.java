@@ -23,8 +23,8 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build.cause;
 
-import hudson.scm.EditType;
 import hudson.scm.ChangeLogSet.AffectedFile;
+import hudson.scm.EditType;
 
 public class GithubAffectedFile implements AffectedFile {
 

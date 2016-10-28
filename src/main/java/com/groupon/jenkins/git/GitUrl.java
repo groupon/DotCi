@@ -34,8 +34,8 @@ public class GitUrl {
     private final String name;
     private final String domain;
 
-    public GitUrl(String url) {
-        Matcher matcher = GITHUB_HTTP_URL.matcher(url);
+    public GitUrl(final String url) {
+        final Matcher matcher = GITHUB_HTTP_URL.matcher(url);
         if (matcher.matches()) {
             this.orgName = matcher.group(2);
             this.name = matcher.group(3);
@@ -43,12 +43,12 @@ public class GitUrl {
             this.url = "git@" + this.domain + ":" + this.orgName + "/" + this.name + ".git";
         } else {
             this.url = url;
-            Matcher sshMatcher = GITHUB_SSH_URL.matcher(url);
-            if(sshMatcher.matches()){
+            final Matcher sshMatcher = GITHUB_SSH_URL.matcher(url);
+            if (sshMatcher.matches()) {
                 this.orgName = sshMatcher.group(2);
                 this.name = sshMatcher.group(3);
                 this.domain = sshMatcher.group(1);
-            }else{
+            } else {
                 throw new IllegalArgumentException("Invalid git url " + url);
             }
 
@@ -56,27 +56,27 @@ public class GitUrl {
     }
 
     public String getFullRepoName() {
-        return orgName + "/" + name;
+        return this.orgName + "/" + this.name;
     }
 
     public String getUrl() {
-        return url;
+        return this.url;
     }
 
-    public String getGitUrl(){
-       return String.format("git@%s:%s/%s.git",domain,orgName,name);
+    public String getGitUrl() {
+        return String.format("git@%s:%s/%s.git", this.domain, this.orgName, this.name);
     }
 
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public String getHttpsUrl() {
-        return String.format("https://%s/%s/%s",domain,orgName,name);
+        return String.format("https://%s/%s/%s", this.domain, this.orgName, this.name);
     }
 
-    public String applyTemplate(String template) {
-        return template.replace("<DOMAIN>",domain).replace("<ORG>",orgName).replace("<REPO>",name);
+    public String applyTemplate(final String template) {
+        return template.replace("<DOMAIN>", this.domain).replace("<ORG>", this.orgName).replace("<REPO>", this.name);
     }
 }

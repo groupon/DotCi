@@ -54,7 +54,7 @@ public class BuildTagsProperty extends JobProperty<Job<?, ?>> {
 
         @Override
         public boolean isApplicable(Class<? extends Job> jobType) {
-            return DynamicProject.class.equals(jobType) ;
+            return DynamicProject.class.equals(jobType);
         }
 
         @Override

@@ -24,8 +24,9 @@ THE SOFTWARE.
 package com.groupon.jenkins.dynamic.build.cause;
 
 import com.groupon.jenkins.git.GitBranch;
-import java.util.ArrayList;
 import org.kohsuke.stapler.export.Exported;
+
+import java.util.ArrayList;
 
 
 public class NullBuildCause extends BuildCause {

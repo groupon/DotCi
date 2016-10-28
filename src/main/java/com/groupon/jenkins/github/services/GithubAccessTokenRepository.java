@@ -28,60 +28,60 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import hudson.util.Secret;
-import java.io.IOException;
 import org.mongodb.morphia.Datastore;
 
 import javax.inject.Inject;
+import java.io.IOException;
 
 public class GithubAccessTokenRepository extends MongoRepository {
 
     public static final String COLLECTION_NAME = "github_tokens";
 
     @Inject
-    public GithubAccessTokenRepository(Datastore datastore) {
+    public GithubAccessTokenRepository(final Datastore datastore) {
         super(datastore);
     }
 
-    public String getAccessToken(String repourl) {
-        DBObject token = getToken(repourl);
+    public String getAccessToken(final String repourl) {
+        final DBObject token = getToken(repourl);
         return Secret.fromString(token.get("access_token").toString()).getPlainText();
     }
 
-    public String getAssociatedLogin(String repoUrl) {
-        DBObject token = getToken(repoUrl);
+    public String getAssociatedLogin(final String repoUrl) {
+        final DBObject token = getToken(repoUrl);
         return token.get("user").toString();
     }
 
-    private DBObject getToken(String repourl) {
-        BasicDBObject query = new BasicDBObject("repo_url", repourl);
+    private DBObject getToken(final String repourl) {
+        final BasicDBObject query = new BasicDBObject("repo_url", repourl);
         return getCollection().findOne(query);
     }
 
-      public void put(String url,String accessToken, String user) throws IOException {
-        DBObject token = getToken(url);
+    public void put(final String url, final String accessToken, final String user) throws IOException {
+        final DBObject token = getToken(url);
 
-        String encryptedToken = getEncryptedValue(accessToken);
+        final String encryptedToken = getEncryptedValue(accessToken);
 
         if (token != null) {
             getCollection().remove(token);
         }
 
-            BasicDBObject doc = new BasicDBObject("user", user).append("access_token", encryptedToken).append("repo_url", url);
-            getCollection().insert(doc);
-      }
+        final BasicDBObject doc = new BasicDBObject("user", user).append("access_token", encryptedToken).append("repo_url", url);
+        getCollection().insert(doc);
+    }
 
-    private String getEncryptedValue(String accessToken) {
+    private String getEncryptedValue(final String accessToken) {
         return Secret.fromString(accessToken).getEncryptedValue();
     }
 
 
-    public void updateAccessToken(String username, String accessToken) {
-        BasicDBObject query = new BasicDBObject("user", username);
-        BasicDBObject update = new BasicDBObject("$set", new BasicDBObject("access_token", getEncryptedValue(accessToken)));
-        getCollection().update(query,update,false,true);
+    public void updateAccessToken(final String username, final String accessToken) {
+        final BasicDBObject query = new BasicDBObject("user", username);
+        final BasicDBObject update = new BasicDBObject("$set", new BasicDBObject("access_token", getEncryptedValue(accessToken)));
+        getCollection().update(query, update, false, true);
     }
 
-    public boolean isConfigured(String url) {
+    public boolean isConfigured(final String url) {
         return getToken(url) != null;
     }
 

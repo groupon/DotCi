@@ -29,9 +29,6 @@ import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.buildsetup.GithubReposController;
 import hudson.Extension;
 import hudson.model.RootAction;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
 import jenkins.model.Jenkins;
 import org.jfree.util.Log;
 import org.kohsuke.github.GHUser;
@@ -42,28 +39,32 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import javax.servlet.ServletException;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+
 @Extension
-public class GithubOauthLoginAction implements RootAction{
+public class GithubOauthLoginAction implements RootAction {
     private HttpPoster httpPoster;
 
-    public GithubOauthLoginAction(){
-      this(new HttpPoster());
+    public GithubOauthLoginAction() {
+        this(new HttpPoster());
     }
 
-    public GithubOauthLoginAction(HttpPoster httpPoster ){
+    public GithubOauthLoginAction(HttpPoster httpPoster) {
         this.httpPoster = httpPoster;
     }
 
     public void doIndex(StaplerRequest request, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        rsp.sendRedirect2( getSetupConfig().getGithubWebUrl()+ "/login/oauth/authorize?client_id="
-                + getSetupConfig().getGithubClientID() + "&scope="+getScopes());
+        rsp.sendRedirect2(getSetupConfig().getGithubWebUrl() + "/login/oauth/authorize?client_id="
+            + getSetupConfig().getGithubClientID() + "&scope=" + getScopes());
     }
 
     protected String getScopes() {
         if (getSetupConfig().hasPrivateRepoSupport()) {
-            return Joiner.on(",").join( Arrays.asList("repo", "user:email"));
+            return Joiner.on(",").join(Arrays.asList("repo", "user:email"));
         }
-        return Joiner.on(",").join( Arrays.asList("public_repo", "repo:status", "user:email", "read:org", "write:repo_hook"));
+        return Joiner.on(",").join(Arrays.asList("public_repo", "repo:status", "user:email", "read:org", "write:repo_hook"));
     }
 
 
@@ -71,7 +72,7 @@ public class GithubOauthLoginAction implements RootAction{
         return SetupConfig.get();
     }
 
-    public HttpResponse doFinishLogin(StaplerRequest request,StaplerResponse rsp) throws IOException {
+    public HttpResponse doFinishLogin(StaplerRequest request, StaplerResponse rsp) throws IOException {
 
         String code = request.getParameter("code");
 
@@ -84,16 +85,16 @@ public class GithubOauthLoginAction implements RootAction{
 
         String accessToken = extractToken(content);
         updateOfflineAccessTokenForUser(accessToken);
-        request.getSession().setAttribute("access_token",accessToken);
+        request.getSession().setAttribute("access_token", accessToken);
 
         String newProjectSetupUrl = getJenkinsRootUrl() + "/" + GithubReposController.URL;
         return HttpResponses.redirectTo(newProjectSetupUrl);
     }
 
     protected void updateOfflineAccessTokenForUser(String accessToken) throws IOException {
-            GHUser self = GitHub.connectUsingOAuth(getSetupConfig().getGithubApiUrl(),accessToken).getMyself();
-            String login = self.getLogin();
-            getSetupConfig().getGithubAccessTokenRepository().updateAccessToken(login,accessToken);
+        GHUser self = GitHub.connectUsingOAuth(getSetupConfig().getGithubApiUrl(), accessToken).getMyself();
+        String login = self.getLogin();
+        getSetupConfig().getGithubAccessTokenRepository().updateAccessToken(login, accessToken);
     }
 
     String getJenkinsRootUrl() {
@@ -102,8 +103,8 @@ public class GithubOauthLoginAction implements RootAction{
 
     String postForAccessToken(String code) throws IOException {
         SetupConfig setupConfig = getSetupConfig();
-        return httpPoster.post(setupConfig.getGithubWebUrl()+"/login/oauth/access_token?" + "client_id=" + setupConfig.getGithubClientID() + "&"
-                + "client_secret=" + setupConfig.getGithubClientSecret() + "&" + "code=" + code,new HashMap());
+        return httpPoster.post(setupConfig.getGithubWebUrl() + "/login/oauth/access_token?" + "client_id=" + setupConfig.getGithubClientID() + "&"
+            + "client_secret=" + setupConfig.getGithubClientSecret() + "&" + "code=" + code, new HashMap());
     }
 
 

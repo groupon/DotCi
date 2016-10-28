@@ -30,23 +30,25 @@ import hudson.model.BuildListener;
 import hudson.model.Executor;
 import hudson.model.Result;
 import hudson.tasks.Shell;
+
 import java.io.IOException;
 
 public class ShellScriptRunner {
     private BuildExecutionContext buildExecutionContext;
     private BuildListener listener;
 
-    public ShellScriptRunner(BuildExecutionContext buildExecutionContext, BuildListener listener){
+    public ShellScriptRunner(BuildExecutionContext buildExecutionContext, BuildListener listener) {
         this.buildExecutionContext = buildExecutionContext;
         this.listener = listener;
 
     }
+
     public Result runScript(ShellCommands commands) throws IOException, InterruptedException {
         Result r = Result.FAILURE;
         //Todo: use VitualChannel to figure out OS
         String shellInterpreter = Functions.isWindows() ? "sh" : "/bin/bash";
         try {
-            Shell execution = new Shell("#!"+shellInterpreter+ " -le \n" + commands.toShellScript());
+            Shell execution = new Shell("#!" + shellInterpreter + " -le \n" + commands.toShellScript());
             if (buildExecutionContext.performStep(execution, listener)) {
                 r = Result.SUCCESS;
             }

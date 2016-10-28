@@ -28,8 +28,6 @@ import hudson.model.Job;
 import hudson.model.PermalinkProjectAction.Permalink;
 import hudson.model.Run;
 
-import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
-
 public class LastSuccessfulMasterPermalink extends Permalink {
 
     @Override

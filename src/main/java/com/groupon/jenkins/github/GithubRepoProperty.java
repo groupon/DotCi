@@ -23,27 +23,25 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.github;
 
-import hudson.Extension;
-import hudson.model.JobProperty;
-import hudson.model.JobPropertyDescriptor;
-import hudson.model.Job;
-import net.sf.json.JSONObject;
-
-import org.kohsuke.stapler.StaplerRequest;
-
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.DynamicSubProject;
+import hudson.Extension;
+import hudson.model.Job;
+import hudson.model.JobProperty;
+import hudson.model.JobPropertyDescriptor;
+import net.sf.json.JSONObject;
+import org.kohsuke.stapler.StaplerRequest;
 
 public class GithubRepoProperty extends JobProperty<Job<?, ?>> {
 
     private final String repoUrl;
 
-    public GithubRepoProperty(String repoUrl) {
+    public GithubRepoProperty(final String repoUrl) {
         this.repoUrl = repoUrl;
     }
 
     public String getRepoUrl() {
-        return repoUrl;
+        return this.repoUrl;
     }
 
     @Extension
@@ -55,12 +53,12 @@ public class GithubRepoProperty extends JobProperty<Job<?, ?>> {
         }
 
         @Override
-        public boolean isApplicable(Class<? extends Job> jobType) {
+        public boolean isApplicable(final Class<? extends Job> jobType) {
             return DynamicProject.class.equals(jobType) || DynamicSubProject.class.equals(jobType);
         }
 
         @Override
-        public GithubRepoProperty newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+        public GithubRepoProperty newInstance(final StaplerRequest req, final JSONObject formData) throws FormException {
             return new GithubRepoProperty(formData.getString("repoUrl"));
         }
     }

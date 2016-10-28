@@ -38,11 +38,12 @@ public class GithubBranchParameterDefinition extends StringParameterDefinition {
     private String githubRepoUrl;
 
     @DataBoundConstructor
-    public GithubBranchParameterDefinition(String name, String defaultValue, String description,String githubRepoUrl) {
+    public GithubBranchParameterDefinition(String name, String defaultValue, String description, String githubRepoUrl) {
         super(name, defaultValue, description);
         this.githubRepoUrl = githubRepoUrl;
     }
-    public GithubBranchParameterDefinition(String name, String defaultValue, String githubRepoUrl){
+
+    public GithubBranchParameterDefinition(String name, String defaultValue, String githubRepoUrl) {
         super(name, defaultValue);
         this.githubRepoUrl = githubRepoUrl;
     }
@@ -62,8 +63,8 @@ public class GithubBranchParameterDefinition extends StringParameterDefinition {
 
     }
 
-    public  Iterable<String> getBranches() throws IOException {
-        ArrayList<String> branches  = new ArrayList<String>();
+    public Iterable<String> getBranches() throws IOException {
+        ArrayList<String> branches = new ArrayList<String>();
         GHRepository githubRepo = getGhRepository();
         branches.addAll(githubRepo.getBranches().keySet());
         branches.add("Pull Request: ");

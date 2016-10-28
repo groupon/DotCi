@@ -23,53 +23,50 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.organizationcontainer;
 
+import hudson.model.Descriptor.FormException;
 import hudson.model.Item;
 import hudson.model.TopLevelItem;
-import hudson.model.Descriptor.FormException;
 import hudson.model.View;
-
-import java.io.IOException;
-import java.util.Collection;
-
-import javax.servlet.ServletException;
-
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.util.Collection;
 
 public class AllListView extends View {
 
     private final OrganizationContainer organizationContainer;
 
-    public AllListView(OrganizationContainer organizationContainer) {
+    public AllListView(final OrganizationContainer organizationContainer) {
         super("All", organizationContainer);
         this.organizationContainer = organizationContainer;
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     @Exported(name = "jobs")
     public Collection getItems() {
-        return organizationContainer.getItems();
+        return this.organizationContainer.getItems();
     }
 
     @Override
-    public boolean contains(TopLevelItem item) {
+    public boolean contains(final TopLevelItem item) {
         return true;
     }
 
     @Override
-    public void onJobRenamed(Item item, String oldName, String newName) {
+    public void onJobRenamed(final Item item, final String oldName, final String newName) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    protected void submit(StaplerRequest req) throws IOException, ServletException, FormException {
+    protected void submit(final StaplerRequest req) throws IOException, ServletException, FormException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Item doCreateItem(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+    public Item doCreateItem(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException {
         throw new UnsupportedOperationException();
     }
 

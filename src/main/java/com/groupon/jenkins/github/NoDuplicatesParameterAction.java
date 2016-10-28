@@ -26,12 +26,13 @@ package com.groupon.jenkins.github;
 import hudson.model.Action;
 import hudson.model.ParameterValue;
 import hudson.model.ParametersAction;
+
 import java.util.List;
 
 /**
  * Prevents jenkins from assuming 2 builds in queue are dups if they are for the
  * same branch
- * 
+ *
  * @author sgaddipati
  */
 public class NoDuplicatesParameterAction extends ParametersAction {

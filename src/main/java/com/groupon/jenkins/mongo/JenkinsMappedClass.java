@@ -44,7 +44,7 @@ class JenkinsMappedClass extends MappedClass {
      * @param clazz
      * @param mapper
      */
-    public JenkinsMappedClass(Class<?> clazz, Mapper mapper) {
+    public JenkinsMappedClass(final Class<?> clazz, final Mapper mapper) {
         super(clazz, mapper);
     }
 
@@ -59,9 +59,9 @@ class JenkinsMappedClass extends MappedClass {
             field.setAccessible(true);
             final int fieldMods = field.getModifiers();
             if (field.isAnnotationPresent(Transient.class)
-                    || field.isSynthetic() && (fieldMods & Modifier.TRANSIENT) == Modifier.TRANSIENT
-                    || getMapper().getOptions().isActLikeSerializer() && ((fieldMods & Modifier.TRANSIENT) == Modifier.TRANSIENT)
-                    || getMapper().getOptions().isIgnoreFinals() && ((fieldMods & Modifier.FINAL) == Modifier.FINAL)) {
+                || field.isSynthetic() && (fieldMods & Modifier.TRANSIENT) == Modifier.TRANSIENT
+                || getMapper().getOptions().isActLikeSerializer() && ((fieldMods & Modifier.TRANSIENT) == Modifier.TRANSIENT)
+                || getMapper().getOptions().isIgnoreFinals() && ((fieldMods & Modifier.FINAL) == Modifier.FINAL)) {
                 // ignore these
             } else {
                 getPersistenceFields().add(mapField(field));
@@ -71,7 +71,7 @@ class JenkinsMappedClass extends MappedClass {
     }
 
     protected MappedField mapField(final Field field) {
-        ManuallyConfiguredMappedField mf = new ManuallyConfiguredMappedField(field, getClazz());
+        final ManuallyConfiguredMappedField mf = new ManuallyConfiguredMappedField(field, getClazz());
         mf.discover();
 
         return mf;
@@ -85,25 +85,25 @@ class CopyOnWriteListMappedClass extends JenkinsMappedClass {
      *
      * @param mapper
      */
-    public CopyOnWriteListMappedClass(Mapper mapper) {
+    public CopyOnWriteListMappedClass(final Mapper mapper) {
         super(CopyOnWriteList.class, mapper);
     }
 
     @Override
     protected MappedField mapField(final Field field) {
-        if("core".equals(field.getName())) {
-            ManuallyConfiguredMappedField mf = new ManuallyConfiguredMappedField(field, getClazz()) {
+        if ("core".equals(field.getName())) {
+            final ManuallyConfiguredMappedField mf = new ManuallyConfiguredMappedField(field, getClazz()) {
                 @Override
                 public void discover() {
-                    realType = field.getType();
-                    isMap = false;
-                    isSet = false;
-                    isSingleValue = false;
-                    isArray = realType.isArray();
-                    isCollection = Collection.class.isAssignableFrom(realType);
-                    constructor = null;
-                    isMongoType = false;
-                    subType = realType.getComponentType();
+                    this.realType = this.field.getType();
+                    this.isMap = false;
+                    this.isSet = false;
+                    this.isSingleValue = false;
+                    this.isArray = this.realType.isArray();
+                    this.isCollection = Collection.class.isAssignableFrom(this.realType);
+                    this.constructor = null;
+                    this.isMongoType = false;
+                    this.subType = this.realType.getComponentType();
                 }
             };
 

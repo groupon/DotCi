@@ -26,19 +26,20 @@ package com.groupon.jenkins.dynamic.build.commithistory;
 
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import hudson.model.Run;
+import jenkins.model.RunAction2;
+import org.kohsuke.github.GHCommitStatus;
+import org.kohsuke.github.GHRepository;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import jenkins.model.RunAction2;
-import org.kohsuke.github.GHCommitStatus;
-import org.kohsuke.github.GHRepository;
 
 public class CommitHistoryView implements RunAction2 {
 
-    private transient  DynamicBuild build;
+    private transient DynamicBuild build;
 
     @Override
     public String getIconFileName() {
@@ -56,27 +57,27 @@ public class CommitHistoryView implements RunAction2 {
     }
 
     @Override
-    public void onAttached(Run<?, ?> r) {
+    public void onAttached(final Run<?, ?> r) {
         this.build = (DynamicBuild) r;
     }
 
     @Override
-    public void onLoad(Run<?, ?> r) {
+    public void onLoad(final Run<?, ?> r) {
         this.build = (DynamicBuild) r;
     }
 
     public Map<String, List<GHCommitStatus>> getCommitStatuses() throws IOException {
-        GHRepository githubRepository = build.getGithubRepository();
-        List<GHCommitStatus> commitStatuses = githubRepository.getCommit(build.getSha()).listStatuses().asList();
-        Map<String,List<GHCommitStatus>> groupedStatuses = new HashMap<String, List<GHCommitStatus>>();
-        for(GHCommitStatus status : commitStatuses){
-            String context = status.getContext();
-            if(groupedStatuses.get(context) == null){
-                groupedStatuses.put(context, new ArrayList<GHCommitStatus>());
+        final GHRepository githubRepository = this.build.getGithubRepository();
+        final List<GHCommitStatus> commitStatuses = githubRepository.getCommit(this.build.getSha()).listStatuses().asList();
+        final Map<String, List<GHCommitStatus>> groupedStatuses = new HashMap<>();
+        for (final GHCommitStatus status : commitStatuses) {
+            final String context = status.getContext();
+            if (groupedStatuses.get(context) == null) {
+                groupedStatuses.put(context, new ArrayList<>());
             }
             groupedStatuses.get(context).add(status);
         }
-        groupedStatuses.put("- Latest Status -", Arrays.asList(githubRepository.getLastCommitStatus(build.getSha())));
+        groupedStatuses.put("- Latest Status -", Arrays.asList(githubRepository.getLastCommitStatus(this.build.getSha())));
         return groupedStatuses;
     }
 }

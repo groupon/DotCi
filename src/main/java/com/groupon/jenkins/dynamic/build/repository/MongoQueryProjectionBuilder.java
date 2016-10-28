@@ -33,26 +33,30 @@ public class MongoQueryProjectionBuilder {
     private boolean noId;
 
     public MongoQueryProjectionBuilder(String[] fields) {
-       this.includes = fields;
+        this.includes = fields;
         this.fields = new HashMap();
     }
-    public static MongoQueryProjectionBuilder projection(String ... fields){
-       return new MongoQueryProjectionBuilder(fields);
+
+    public static MongoQueryProjectionBuilder projection(String... fields) {
+        return new MongoQueryProjectionBuilder(fields);
     }
-    public MongoQueryProjectionBuilder noId(){
-       this.noId = true;
+
+    public MongoQueryProjectionBuilder noId() {
+        this.noId = true;
         return this;
     }
-    public MongoQueryProjectionBuilder field(String key, String value){
-        fields.put(key,value);
+
+    public MongoQueryProjectionBuilder field(String key, String value) {
+        fields.put(key, value);
         return this;
     }
-    public Map get(){
-        for(String field : includes){
-           fields.put(field,1);
+
+    public Map get() {
+        for (String field : includes) {
+            fields.put(field, 1);
         }
-        if(noId){
-            fields.put("_id",0);
+        if (noId) {
+            fields.put("_id", 0);
         }
         return fields;
     }

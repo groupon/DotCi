@@ -30,7 +30,6 @@ import hudson.model.ParameterValue;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import java.io.IOException;
 import java.util.List;
 
 
@@ -39,6 +38,7 @@ public abstract class Build {
 
     @Exported
     public abstract int getNumber();
+
     @Exported
     public abstract String getResult();
 
@@ -49,13 +49,16 @@ public abstract class Build {
 
     @Exported
     public abstract String getDisplayTime();
+
     @Exported
     public abstract long getDuration();
+
     @Exported
     public abstract String getDurationString();
 
     @Exported
     public abstract boolean isCancelable();
+
     @Exported
     public abstract String getCancelUrl();
 

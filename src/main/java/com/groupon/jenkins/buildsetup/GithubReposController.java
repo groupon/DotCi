@@ -30,12 +30,6 @@ import com.groupon.jenkins.util.GithubOauthLoginAction;
 import hudson.Extension;
 import hudson.model.RootAction;
 import hudson.util.ReflectionUtils;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
@@ -45,9 +39,15 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import javax.servlet.ServletException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 @Extension
-public class GithubReposController implements RootAction,StaplerProxy {
+public class GithubReposController implements RootAction, StaplerProxy {
 
     public static final String URL = "mygithubprojects";
 
@@ -87,14 +87,14 @@ public class GithubReposController implements RootAction,StaplerProxy {
 
     public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException, InvocationTargetException, IllegalAccessException {
         String[] tokens = req.getRestOfPath().split("/");
-        String leadToken = tokens.length > 0? tokens[1]: null;
+        String leadToken = tokens.length > 0 ? tokens[1] : null;
         GithubRepoAction repoAction = getRepoAction(leadToken);
-        if(repoAction != null){
+        if (repoAction != null) {
             String methodToken = tokens.length > 1 ? tokens[2] : "index";
             String methodName = "do" + StringUtils.capitalize(methodToken);
             Method method = ReflectionUtils.getPublicMethodNamed(repoAction.getClass(), methodName);
-            method.invoke(repoAction,req,rsp);
-        }else{
+            method.invoke(repoAction, req, rsp);
+        } else {
             String orgToken = req.getRestOfPath().replace("/", "");
             req.getSession().setAttribute("setupOrg" + this.getCurrentGithubLogin(), orgToken);
             rsp.forwardToPreviousPage(req);
@@ -102,8 +102,8 @@ public class GithubReposController implements RootAction,StaplerProxy {
     }
 
     private GithubRepoAction getRepoAction(String leadToken) {
-        for(GithubRepoAction repoAction : getRepoActions()){
-           if(repoAction.getName().equals(leadToken)) return repoAction;
+        for (GithubRepoAction repoAction : getRepoActions()) {
+            if (repoAction.getName().equals(leadToken)) return repoAction;
         }
         return null;
     }
@@ -116,14 +116,16 @@ public class GithubReposController implements RootAction,StaplerProxy {
         String currentOrg = (String) Stapler.getCurrentRequest().getSession().getAttribute("setupOrg" + getCurrentGithubLogin());
         return StringUtils.isEmpty(currentOrg) ? Iterables.get(getOrgs(), 0) : currentOrg;
     }
+
     public int getSelectedOrgIndex() throws IOException {
         Iterable<String> orgs = getOrgs();
-        for(int i=0 ; i < Iterables.size(orgs); i++){
-           if(Iterables.get(orgs,i).equals(getCurrentOrg())) return i;
+        for (int i = 0; i < Iterables.size(orgs); i++) {
+            if (Iterables.get(orgs, i).equals(getCurrentOrg())) return i;
         }
         return 0;
     }
-    public Iterable<GithubRepoAction> getRepoActions(){
+
+    public Iterable<GithubRepoAction> getRepoActions() {
         return GithubRepoAction.getGithubRepoActions();
     }
 
@@ -136,7 +138,6 @@ public class GithubReposController implements RootAction,StaplerProxy {
     }
 
 
-
     private String getAccessToken(StaplerRequest request) {
         return (String) request.getSession().getAttribute("access_token");
     }
@@ -145,7 +146,8 @@ public class GithubReposController implements RootAction,StaplerProxy {
     @Override
     public Object getTarget() {
         StaplerRequest currentRequest = Stapler.getCurrentRequest();
-        if(getAccessToken(currentRequest) == null) return new GithubOauthLoginAction();
-        return  this;
+        if (getAccessToken(currentRequest) == null)
+            return new GithubOauthLoginAction();
+        return this;
     }
 }

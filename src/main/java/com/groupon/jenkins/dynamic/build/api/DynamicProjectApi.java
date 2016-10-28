@@ -25,32 +25,32 @@
 package com.groupon.jenkins.dynamic.build.api;
 
 import com.groupon.jenkins.dynamic.build.DynamicProject;
-import org.kohsuke.stapler.export.*;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
 @ExportedBean
 public class DynamicProjectApi extends ApiModel {
-    private DynamicProject dynamicProject;
+    private final DynamicProject dynamicProject;
 
-    public DynamicProjectApi(DynamicProject dynamicProject) {
+    public DynamicProjectApi(final DynamicProject dynamicProject) {
         this.dynamicProject = dynamicProject;
     }
 
 
     @Exported
-    public JobInfo getInfo(){
-       return new JobInfo(dynamicProject) ;
+    public JobInfo getInfo() {
+        return new JobInfo(this.dynamicProject);
     }
 
-    public BuildHistory getBuildHistory(){
-      return new BuildHistory(dynamicProject);
+    public BuildHistory getBuildHistory() {
+        return new BuildHistory(this.dynamicProject);
     }
 
 
     @Exported
-   public BuildApi getBuild(){
-      return new BuildApi(dynamicProject);
-   }
-
+    public BuildApi getBuild() {
+        return new BuildApi(this.dynamicProject);
+    }
 
 
 }

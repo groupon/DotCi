@@ -24,15 +24,17 @@
 
 package com.groupon.jenkins.util;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
-import org.apache.commons.io.IOUtils;
 
 public class ResourceUtils {
     public static String readResource(Class<?> resourceClass, String resourceName) {
-        return readFile(resourceClass,getTemplateFile(resourceClass,resourceName));
+        return readFile(resourceClass, getTemplateFile(resourceClass, resourceName));
     }
-    private static String getTemplateFile(Class<?> resourceClass, String resourceName ) {
+
+    private static String getTemplateFile(Class<?> resourceClass, String resourceName) {
         while (resourceClass != Object.class && resourceClass != null) {
             String name = resourceClass.getName().replace('.', '/').replace('$', '/') + "/" + resourceName;
             if (resourceClass.getClassLoader().getResource(name) != null)
@@ -41,7 +43,8 @@ public class ResourceUtils {
         }
         return null;
     }
-    private  static String readFile(Class<?> resourceClass, String ymlResource) {
+
+    private static String readFile(Class<?> resourceClass, String ymlResource) {
         InputStream base = null;
         try {
             base = resourceClass.getResourceAsStream(ymlResource);

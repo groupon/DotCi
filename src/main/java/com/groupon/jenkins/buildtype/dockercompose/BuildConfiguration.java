@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import static java.lang.String.format;
 
 public class BuildConfiguration {
@@ -64,16 +65,16 @@ public class BuildConfiguration {
         ShellCommands shellCommands = new ShellCommands();
         shellCommands.add(BuildConfiguration.getCheckoutCommands(dotCiEnvVars));
 
-        shellCommands.add(String.format("trap \"docker-compose -f %s down; exit\" PIPE QUIT INT HUP EXIT TERM",fileName));
+        shellCommands.add(String.format("trap \"docker-compose -f %s down; exit\" PIPE QUIT INT HUP EXIT TERM", fileName));
 
         appendCommands("before", shellCommands); //deprecated
         appendCommands("before_each", shellCommands);
 
-        shellCommands.add(String.format("docker-compose -f %s pull",fileName));
+        shellCommands.add(String.format("docker-compose -f %s pull", fileName));
         if (config.get("run") != null) {
             Map runConfig = (Map) config.get("run");
             String dockerComposeRunCommand = getDockerComposeRunCommand(dockerComposeContainerName, fileName, runConfig);
-            shellCommands.add(format("export COMPOSE_CMD='%s'",dockerComposeRunCommand));
+            shellCommands.add(format("export COMPOSE_CMD='%s'", dockerComposeRunCommand));
             shellCommands.add(" set +e && hash unbuffer >/dev/null 2>&1 ;  if [ $? = 0 ]; then set -e && unbuffer $COMPOSE_CMD ;else set -e && $COMPOSE_CMD ;fi");
         }
         extractWorkingDirIntoWorkSpace(dockerComposeContainerName, projectName, shellCommands);
@@ -87,11 +88,10 @@ public class BuildConfiguration {
 
     private String getDockerComposeRunCommand(String dockerComposeContainerName, String fileName, Map runConfig) {
         Object dockerComposeCommand = runConfig.get(dockerComposeContainerName);
-        if (dockerComposeCommand != null ) {
+        if (dockerComposeCommand != null) {
             return String.format("docker-compose -f %s run -T %s %s", fileName, dockerComposeContainerName, dockerComposeCommand);
-        }
-        else {
-            return String.format("docker-compose -f %s run %s ",fileName, dockerComposeContainerName);
+        } else {
+            return String.format("docker-compose -f %s run %s ", fileName, dockerComposeContainerName);
         }
     }
 
@@ -103,9 +103,9 @@ public class BuildConfiguration {
 
     public AxisList getAxisList() {
         String dockerComposeContainerName = getOnlyRun();
-        AxisList  axisList = new AxisList(new Axis("script",dockerComposeContainerName));
+        AxisList axisList = new AxisList(new Axis("script", dockerComposeContainerName));
         if (isParallelized()) {
-            Set commandKeys =  ((Map) config.get("run")).keySet();
+            Set commandKeys = ((Map) config.get("run")).keySet();
             axisList = new AxisList(new Axis("script", new ArrayList<String>(commandKeys)));
         }
         return axisList;
@@ -118,12 +118,12 @@ public class BuildConfiguration {
     }
 
     public boolean isParallelized() {
-        return ((Map) config.get("run")).size() > 1 ;
+        return ((Map) config.get("run")).size() > 1;
     }
 
     public ShellCommands getCopyWorkDirIntoWorkspaceCommands(String run, String projectName) {
         ShellCommands copyCommands = new ShellCommands();
-        copyCommands.add(String.format("if docker inspect %s_%s_1 &>/dev/null ; then containerName=%s_%s_1 ; else containerName=%s_%s_run_1 ; fi ; export containerName",projectName,run,projectName,run,projectName,run));
+        copyCommands.add(String.format("if docker inspect %s_%s_1 &>/dev/null ; then containerName=%s_%s_1 ; else containerName=%s_%s_run_1 ; fi ; export containerName", projectName, run, projectName, run, projectName, run));
         copyCommands.add("export workingDir=`docker inspect -f '{{ .Config.WorkingDir }}' $containerName | sed -e 's|^/||g'`");
         copyCommands.add("stripComponents=0 ; if [ ! \"x\" == \"x$workingDir\" ]; then set +e ; (( stripComponents+=1 )) ; set -e ; fi ; export stripComponents");
         copyCommands.add("numOfSlashes=`grep -o \"/\" <<< \"$workingDir\" | wc -l` ; set +e ; (( stripComponents+=numOfSlashes )) ; set -e ; export stripComponents");
@@ -132,16 +132,17 @@ public class BuildConfiguration {
     }
 
     public List<DotCiPluginAdapter> getPlugins() {
-        List plugins = config.get("plugins") !=null? (List) config.get("plugins") :Collections.emptyList();
-        return new DotCiExtensionsHelper().createPlugins(plugins) ;
+        List plugins = config.get("plugins") != null ? (List) config.get("plugins") : Collections.emptyList();
+        return new DotCiExtensionsHelper().createPlugins(plugins);
     }
+
     public List<PostBuildNotifier> getNotifiers() {
-        List notifiers = config.get("notifications") !=null? (List) config.get("notifications") :Collections.emptyList();
-        return new DotCiExtensionsHelper().createNotifiers(notifiers) ;
+        List notifiers = config.get("notifications") != null ? (List) config.get("notifications") : Collections.emptyList();
+        return new DotCiExtensionsHelper().createNotifiers(notifiers);
     }
 
     public String getDockerComposeFileName() {
-        return config.get("docker-compose-file") !=null ? (String) config.get("docker-compose-file") : "docker-compose.yml";
+        return config.get("docker-compose-file") != null ? (String) config.get("docker-compose-file") : "docker-compose.yml";
     }
 
     public static ShellCommands getCheckoutCommands(Map<String, Object> dotCiEnvVars) {
@@ -152,22 +153,22 @@ public class BuildConfiguration {
         ShellCommands shellCommands = new ShellCommands();
         shellCommands.add("chmod -R u+w . ; find . ! -path \"./deploykey_rsa.pub\" ! -path \"./deploykey_rsa\" -delete");
         shellCommands.add("git init");
-        shellCommands.add(format("git remote add origin %s",gitUrl));
+        shellCommands.add(format("git remote add origin %s", gitUrl));
 
-        if(dotCiEnvVars.get("DOTCI_PULL_REQUEST") != null){
-            if(isPrivateRepo){
+        if (dotCiEnvVars.get("DOTCI_PULL_REQUEST") != null) {
+            if (isPrivateRepo) {
 
-                shellCommands.add(format("ssh-agent bash -c \"ssh-add -D && ssh-add \\%s/deploykey_rsa && git fetch origin '+refs/pull/%s/merge:' \"",dotCiEnvVars.get("WORKSPACE"), dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
-            }else {
+                shellCommands.add(format("ssh-agent bash -c \"ssh-add -D && ssh-add \\%s/deploykey_rsa && git fetch origin '+refs/pull/%s/merge:' \"", dotCiEnvVars.get("WORKSPACE"), dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
+            } else {
                 shellCommands.add(format("git fetch origin \"+refs/pull/%s/merge:\"", dotCiEnvVars.get("DOTCI_PULL_REQUEST")));
             }
             shellCommands.add("git reset --hard FETCH_HEAD");
-        }else {
-            if(isPrivateRepo){
+        } else {
+            if (isPrivateRepo) {
 
-                shellCommands.add(format("ssh-agent bash -c \"ssh-add -D && ssh-add \\%s/deploykey_rsa && git fetch origin %s \"",dotCiEnvVars.get("WORKSPACE"), dotCiEnvVars.get("DOTCI_BRANCH")));
-            }else{
-                shellCommands.add(format("git fetch origin %s",dotCiEnvVars.get("DOTCI_BRANCH")));
+                shellCommands.add(format("ssh-agent bash -c \"ssh-add -D && ssh-add \\%s/deploykey_rsa && git fetch origin %s \"", dotCiEnvVars.get("WORKSPACE"), dotCiEnvVars.get("DOTCI_BRANCH")));
+            } else {
+                shellCommands.add(format("git fetch origin %s", dotCiEnvVars.get("DOTCI_BRANCH")));
             }
             shellCommands.add(format("git reset --hard  %s", dotCiEnvVars.get("SHA")));
         }

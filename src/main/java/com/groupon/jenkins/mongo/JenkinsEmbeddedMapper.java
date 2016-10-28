@@ -66,6 +66,7 @@ class JenkinsEmbeddedMapper implements CustomMapper {
 
         awkwardMapper = new MapKeyValueMapper();
     }
+
     private Class getClass(final DBObject dbObj) {
         // see if there is a className value
         final String className = (String) dbObj.get(Mapper.CLASS_NAME_FIELDNAME);
@@ -80,6 +81,7 @@ class JenkinsEmbeddedMapper implements CustomMapper {
         }
         return null;
     }
+
     protected ClassLoader getClassLoaderForClass(final String clazz, final DBObject object) {
         return Thread.currentThread().getContextClassLoader();
     }
@@ -87,22 +89,22 @@ class JenkinsEmbeddedMapper implements CustomMapper {
     @Override
     public void toDBObject(Object entity, MappedField mf, DBObject dbObject, Map<Object, DBObject> involvedObjects, Mapper mapper) {
         Object fieldValue = mf.getFieldValue(entity);
-        if(fieldValue == null) return; // nothing to do
+        if (fieldValue == null) return; // nothing to do
 
 
-        if(mapper.getConverters().hasSimpleValueConverter(mf) || mapper.getConverters().hasSimpleValueConverter(fieldValue)) {
+        if (mapper.getConverters().hasSimpleValueConverter(mf) || mapper.getConverters().hasSimpleValueConverter(fieldValue)) {
             mapper.getOptions().getValueMapper().toDBObject(entity, mf, dbObject, involvedObjects, mapper);
-        } else if(customMappers.containsKey(fieldValue.getClass())) {
+        } else if (customMappers.containsKey(fieldValue.getClass())) {
             customMappers.get(fieldValue.getClass()).toDBObject(entity, mf, dbObject, involvedObjects, mapper);
         } else if (isAwkwardMap(mf)) {
             awkwardMapper.toDBObject(entity, mf, dbObject, involvedObjects, mapper);
         } else {
             // Genericly handle an object for serialization
 
-            if(involvedObjects.containsKey(fieldValue)) { // already once serialized
+            if (involvedObjects.containsKey(fieldValue)) { // already once serialized
                 DBObject cachedStub = involvedObjects.get(fieldValue);
 
-                if(cachedStub == null) {  // visited, but not yet serialized, usually from mapper.toDBObject(...)
+                if (cachedStub == null) {  // visited, but not yet serialized, usually from mapper.toDBObject(...)
                     DBObject newStub = createStub(mapper, fieldValue, mapper.getId(fieldValue));
                     involvedObjects.put(fieldValue, newStub);
                     cachedStub = newStub;
@@ -127,8 +129,8 @@ class JenkinsEmbeddedMapper implements CustomMapper {
 
     private boolean isFullySerializedObject(DBObject cachedStub, Mapper mapper) {
         return cachedStub.keySet().size() > 2
-                && cachedStub.containsField(mapper.ID_KEY)
-                && cachedStub.containsField(mapper.CLASS_NAME_FIELDNAME);
+            && cachedStub.containsField(mapper.ID_KEY)
+            && cachedStub.containsField(mapper.CLASS_NAME_FIELDNAME);
     }
 
     private boolean isAwkwardMap(MappedField mf) {
@@ -136,7 +138,7 @@ class JenkinsEmbeddedMapper implements CustomMapper {
     }
 
     private DBObject createStub(Mapper mapper, Object fieldValue, Object id) {
-        if(id == null) {
+        if (id == null) {
             id = new ObjectId();
         }
 
@@ -147,13 +149,14 @@ class JenkinsEmbeddedMapper implements CustomMapper {
     }
 
     private Key extractKey(Mapper mapper, MappedField mf, DBObject dbObject) {
-        if(mapper == null || mf == null || dbObject == null ||  (dbObject instanceof BasicDBList)) return null;
+        if (mapper == null || mf == null || dbObject == null || (dbObject instanceof BasicDBList))
+            return null;
 
         ObjectId objectId = (ObjectId) dbObject.get(mapper.ID_KEY);
         //HACKY GET RID OF SOON
         Object obj = mapper.getOptions().getObjectFactory().createInstance(mapper, mf, dbObject);
 
-        if(objectId == null || obj == null) return null;
+        if (objectId == null || obj == null) return null;
 
         return new Key(obj.getClass(), objectId);
     }
@@ -162,10 +165,10 @@ class JenkinsEmbeddedMapper implements CustomMapper {
     public void fromDBObject(DBObject dbObject, MappedField mf, Object entity, EntityCache cache, Mapper mapper) {
 
         Key key = extractKey(mapper, mf, (DBObject) dbObject.get(mf.getNameToStore()));
-        if(key != null && cache.getEntity(key) != null) {
+        if (key != null && cache.getEntity(key) != null) {
             Object object = cache.getEntity(key);
             mf.setFieldValue(entity, object);
-        } else if(customMappers.containsKey(mf.getType())) {
+        } else if (customMappers.containsKey(mf.getType())) {
             customMappers.get(mf.getType()).fromDBObject(dbObject, mf, entity, cache, mapper);
         } else if (isAwkwardMap(mf)) {
             awkwardMapper.fromDBObject(dbObject, mf, entity, cache, mapper);
@@ -199,9 +202,9 @@ class JenkinsEmbeddedMapper implements CustomMapper {
                 //run converters
                 if (val != null) {
                     if (mapper.getConverters().hasSimpleValueConverter(mf) || mapper.getConverters()
-                            .hasSimpleValueConverter(mf.getSubClass())) {
+                        .hasSimpleValueConverter(mf.getSubClass())) {
                         newEntity = mapper.getConverters().decode(mf.getSubClass(), val, mf);
-                    } else if(mapper.getConverters().hasSimpleValueConverter(val.getClass())) { // added this condition to handle incorrectly mapped primitives.
+                    } else if (mapper.getConverters().hasSimpleValueConverter(val.getClass())) { // added this condition to handle incorrectly mapped primitives.
                         newEntity = mapper.getConverters().decode(val.getClass(), val, mf);
                     } else {
                         if (val instanceof DBObject) {
@@ -257,7 +260,7 @@ class JenkinsEmbeddedMapper implements CustomMapper {
                                 final Mapper mapper) {
         // multiple documents in a List
         final Collection values = mf.isSet() ? mapper.getOptions().getObjectFactory().createSet(mf)
-                : mapper.getOptions().getObjectFactory().createList(mf);
+            : mapper.getOptions().getObjectFactory().createList(mf);
 
         final Object dbVal = mf.getDbObjectValue(dbObject);
         if (dbVal != null) {
@@ -277,18 +280,18 @@ class JenkinsEmbeddedMapper implements CustomMapper {
                 if (o != null) {
                     //run converters
                     if (mapper.getConverters().hasSimpleValueConverter(mf) || mapper.getConverters()
-                            .hasSimpleValueConverter(mf.getSubClass())) {
+                        .hasSimpleValueConverter(mf.getSubClass())) {
                         newEntity = mapper.getConverters().decode(mf.getSubClass(), o, mf);
-                    } else if(mapper.getConverters().hasSimpleValueConverter(o.getClass())) {// added this condition to handle incorrectly mapped primitives.
+                    } else if (mapper.getConverters().hasSimpleValueConverter(o.getClass())) {// added this condition to handle incorrectly mapped primitives.
                         newEntity = mapper.getConverters().decode(o.getClass(), o, mf);
                     } else {
                         if (o instanceof DBObject) {
                             Class clazz = getClass((DBObject) o);
-                             if( clazz!= null && mapper.getConverters().hasSimpleValueConverter(clazz)){
+                            if (clazz != null && mapper.getConverters().hasSimpleValueConverter(clazz)) {
                                 newEntity = mapper.getConverters().decode(clazz, o, mf);
-                            }else{
-                                 newEntity = readMapOrCollectionOrEntity((DBObject) o, mf, cache, mapper);
-                             }
+                            } else {
+                                newEntity = readMapOrCollectionOrEntity((DBObject) o, mf, cache, mapper);
+                            }
                         } else {
                             throw new MappingException("Embedded element isn't a DBObject! How can it be that is a " + o.getClass());
                         }

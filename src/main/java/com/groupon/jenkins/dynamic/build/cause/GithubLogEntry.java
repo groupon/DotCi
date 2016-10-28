@@ -25,16 +25,13 @@ package com.groupon.jenkins.dynamic.build.cause;
 
 import hudson.model.User;
 import hudson.scm.ChangeLogSet;
+import org.kohsuke.github.GHCommit;
+import org.kohsuke.stapler.export.Exported;
 
 import java.io.IOException;
 import java.util.Collection;
-
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import org.kohsuke.github.GHCommit;
-import org.kohsuke.stapler.export.Exported;
 
 public class GithubLogEntry extends ChangeLogSet.Entry {
 
@@ -43,14 +40,14 @@ public class GithubLogEntry extends ChangeLogSet.Entry {
     private final String commitId;
     private final List<String> affectedPaths;
 
-    public GithubLogEntry(String message, String githubUrl, String commitId, List<String> affectedPaths) {
+    public GithubLogEntry(final String message, final String githubUrl, final String commitId, final List<String> affectedPaths) {
         this.message = message;
         this.githubUrl = githubUrl;
         this.commitId = commitId;
         this.affectedPaths = affectedPaths;
     }
 
-    public GithubLogEntry(GHCommit commit) throws IOException {
+    public GithubLogEntry(final GHCommit commit) throws IOException {
         this.message = commit.getCommitShortInfo().getMessage();
         this.githubUrl = commit.getHtmlUrl().toExternalForm();
         this.commitId = commit.getSHA1();
@@ -74,16 +71,16 @@ public class GithubLogEntry extends ChangeLogSet.Entry {
     @Override
     @Exported
     public Collection<String> getAffectedPaths() {
-        return affectedPaths;
+        return this.affectedPaths;
     }
 
     public String getGithubUrl() {
-        return githubUrl;
+        return this.githubUrl;
     }
 
     @Override
     public String getCommitId() {
-        return commitId;
+        return this.commitId;
     }
 
 }

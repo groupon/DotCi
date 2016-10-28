@@ -28,11 +28,11 @@ import hudson.matrix.Combination;
 import hudson.matrix.Layouter;
 
 public class DynamicBuildLayouter extends Layouter<DynamicRunPtr> {
-    private  AxisList axisList;
-    private  DynamicBuild dynamicBuild;
+    private AxisList axisList;
+    private DynamicBuild dynamicBuild;
 
     public DynamicBuildLayouter(AxisList axisList, DynamicBuild dynamicBuild) {
-        super(axisList == null? new AxisList():axisList);
+        super(axisList == null ? new AxisList() : axisList);
         this.axisList = axisList;
         this.dynamicBuild = dynamicBuild;
     }
@@ -44,6 +44,6 @@ public class DynamicBuildLayouter extends Layouter<DynamicRunPtr> {
 
 
     public Iterable<Combination> list() {
-        return axisList ==null? new AxisList().list(): axisList.list() ;
+        return axisList == null ? new AxisList().list() : axisList.list();
     }
 }

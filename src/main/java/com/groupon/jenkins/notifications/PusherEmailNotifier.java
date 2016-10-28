@@ -23,16 +23,14 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.notifications;
 
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.cause.GitHubPushCause;
 import hudson.Extension;
 import hudson.model.BuildListener;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.cause.GitHubPushCause;
 
 @Extension
 public class PusherEmailNotifier extends EmailNotifierBase {

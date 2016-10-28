@@ -26,13 +26,11 @@ package com.groupon.jenkins.buildsetup;
 
 import com.groupon.jenkins.github.services.GithubRepositoryService;
 import hudson.Extension;
-import java.io.IOException;
-import org.kohsuke.github.GHUser;
-import org.kohsuke.github.GitHub;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import javax.servlet.ServletException;
+import java.io.IOException;
 
 @Extension
 public class RefreshHookRepoAction extends GithubRepoAction {

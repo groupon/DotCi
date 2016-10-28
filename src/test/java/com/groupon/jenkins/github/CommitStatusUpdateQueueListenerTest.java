@@ -23,26 +23,18 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.github;
 
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
-import com.groupon.jenkins.dynamic.build.cause.ManualBuildCause;
-import com.groupon.jenkins.git.GitBranch;
-import com.groupon.jenkins.testhelpers.BuildListenerFactory;
 import hudson.model.Action;
 import hudson.model.CauseAction;
 import hudson.model.Queue;
-import org.junit.Before;
 import org.junit.Test;
 import org.kohsuke.github.GHCommitState;
 import org.kohsuke.github.GHRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 
-import static com.groupon.jenkins.testhelpers.DynamicBuildFactory.newBuild;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -52,32 +44,31 @@ public class CommitStatusUpdateQueueListenerTest {
     @Test
     public void should_set_building_status_on_queue_enter() throws IOException {
         final GHRepository githubRepository = mock(GHRepository.class);
-        CommitStatusUpdateQueueListener commitStatusUpdateQueueListener = new CommitStatusUpdateQueueListener() {
+        final CommitStatusUpdateQueueListener commitStatusUpdateQueueListener = new CommitStatusUpdateQueueListener() {
             @Override
-            protected GHRepository getGithubRepository(DynamicProject project) {
+            protected GHRepository getGithubRepository(final DynamicProject project) {
                 return githubRepository;
             }
 
             @Override
             protected String getJenkinsRootUrl() {
-                return "jenkins.root.url" ;
+                return "jenkins.root.url";
             }
         };
 
-        BuildCause buildCause = mock(BuildCause.class);
+        final BuildCause buildCause = mock(BuildCause.class);
 
-        ArrayList<Action> causeActions = new ArrayList<Action>();
+        final ArrayList<Action> causeActions = new ArrayList<>();
         causeActions.add(new CauseAction(buildCause));
-        Queue.WaitingItem queueItem = new Queue.WaitingItem(null,null, causeActions);
+        final Queue.WaitingItem queueItem = new Queue.WaitingItem(null, null, causeActions);
 
 
         when(buildCause.getSha()).thenReturn("sha");
 
         commitStatusUpdateQueueListener.onEnterWaiting(queueItem);
 
-        verify(githubRepository).createCommitStatus("sha", GHCommitState.PENDING, "jenkins.root.url", "Build in queue.","DotCi/push");
+        verify(githubRepository).createCommitStatus("sha", GHCommitState.PENDING, "jenkins.root.url", "Build in queue.", "DotCi/push");
     }
-
 
 
 }

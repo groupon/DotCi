@@ -23,35 +23,31 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.mybuildsview;
 
-import com.google.common.base.*;
-import com.google.common.collect.*;
-import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import com.groupon.jenkins.dynamic.build.api.*;
-import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.views.AuthenticatedView;
 import hudson.Extension;
-import hudson.model.*;
+import hudson.model.Computer;
 import hudson.model.Descriptor.FormException;
+import hudson.model.Item;
+import hudson.model.ItemGroup;
+import hudson.model.Job;
+import hudson.model.ModifiableItemGroup;
+import hudson.model.TopLevelItem;
+import hudson.model.ViewDescriptor;
 import hudson.util.RunList;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+
+import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import jenkins.model.Jenkins;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-import org.kohsuke.stapler.export.*;
-
-import javax.annotation.*;
-import javax.servlet.ServletException;
 
 public class MyBuildsView extends AuthenticatedView {
     @DataBoundConstructor
-    public MyBuildsView(String name) {
+    public MyBuildsView(final String name) {
         super(name);
     }
 
@@ -66,13 +62,13 @@ public class MyBuildsView extends AuthenticatedView {
     }
 
     @Override
-    public boolean contains(TopLevelItem item) {
+    public boolean contains(final TopLevelItem item) {
         return item.hasPermission(Job.CONFIGURE);
     }
 
     @Override
-    public TopLevelItem doCreateItem(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-        ItemGroup<? extends TopLevelItem> ig = getOwnerItemGroup();
+    public TopLevelItem doCreateItem(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException {
+        final ItemGroup<? extends TopLevelItem> ig = getOwnerItemGroup();
         if (ig instanceof ModifiableItemGroup) {
             return ((ModifiableItemGroup<? extends TopLevelItem>) ig).doCreateItem(req, rsp);
         }
@@ -81,8 +77,8 @@ public class MyBuildsView extends AuthenticatedView {
 
     @Override
     public Collection<TopLevelItem> getItems() {
-        List<TopLevelItem> items = new LinkedList<TopLevelItem>();
-        for (TopLevelItem item : getOwnerItemGroup().getItems()) {
+        final List<TopLevelItem> items = new LinkedList<>();
+        for (final TopLevelItem item : getOwnerItemGroup().getItems()) {
             if (item.hasPermission(Job.CONFIGURE)) {
                 items.add(item);
             }
@@ -95,6 +91,21 @@ public class MyBuildsView extends AuthenticatedView {
         return ""; // there's no configuration page
     }
 
+    @Override
+    public void onJobRenamed(final Item item, final String oldName, final String newName) {
+        // noop
+    }
+
+    @Override
+    protected void submit(final StaplerRequest req) throws IOException, ServletException, FormException {
+        // noop
+    }
+
+    @Override
+    public boolean isEditable() {
+        return false;
+    }
+
     @Extension
     public static final class DescriptorImpl extends ViewDescriptor {
 
@@ -102,20 +113,5 @@ public class MyBuildsView extends AuthenticatedView {
         public String getDisplayName() {
             return "DotCi - LoggedIn User Builds View";
         }
-    }
-
-    @Override
-    public void onJobRenamed(Item item, String oldName, String newName) {
-        // noop
-    }
-
-    @Override
-    protected void submit(StaplerRequest req) throws IOException, ServletException, FormException {
-        // noop
-    }
-
-    @Override
-    public boolean isEditable() {
-        return false;
     }
 }

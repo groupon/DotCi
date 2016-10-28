@@ -38,19 +38,19 @@ import hudson.model.Result;
 import hudson.slaves.WorkspaceList;
 import hudson.slaves.WorkspaceList.Lease;
 import hudson.tasks.BuildStep;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
 import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSubBuild> {
 
     private final BuildCause cause;
 
-    public DynamicSubBuild(DynamicSubProject project, Cause cause, int number) throws IOException {
+    public DynamicSubBuild(final DynamicSubProject project, final Cause cause, final int number) throws IOException {
         super(project);
         this.cause = (BuildCause) cause;
         this.number = number;
@@ -68,19 +68,19 @@ public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSub
         super.onStartBuilding();
         try {
             save();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException();
         }
     }
 
     @Override
     public String getUpUrl() {
-        StaplerRequest req = Stapler.getCurrentRequest();
+        final StaplerRequest req = Stapler.getCurrentRequest();
         if (req != null) {
-            List<Ancestor> ancs = req.getAncestors();
+            final List<Ancestor> ancs = req.getAncestors();
             for (int i = 1; i < ancs.size(); i++) {
                 if (ancs.get(i).getObject() == this) {
-                    Object parentObj = ancs.get(i - 1).getObject();
+                    final Object parentObj = ancs.get(i - 1).getObject();
                     if (parentObj instanceof DynamicBuild || parentObj instanceof DynamicSubProject) {
                         return ancs.get(i - 1).getUrl() + '/';
                     }
@@ -99,76 +99,13 @@ public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSub
         return getParentBuild();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void run() {
         execute(new DynamicSubBuildExecution());
     }
 
-    protected class DynamicSubBuildExecution extends BuildExecution implements BuildExecutionContext {
-        protected Lease getParentWorkspaceLease(Node n, WorkspaceList wsl) throws InterruptedException, IOException {
-            DynamicProject mp = getParent().getParent();
-
-            String customWorkspace = mp.getCustomWorkspace();
-            if (customWorkspace != null) {
-                // we allow custom workspaces to be concurrently used between
-                // jobs.
-                return Lease.createDummyLease(n.getRootPath().child(getEnvironment(listener).expand(customWorkspace)));
-            }
-            return wsl.allocate(n.getWorkspaceFor(mp), getParentBuild());
-        }
-
-        @Override
-        protected Lease decideWorkspace(Node n, WorkspaceList wsl) throws InterruptedException, IOException {
-            Lease baseLease = getParentWorkspaceLease(n, wsl);
-            FilePath baseDir = baseLease.path;
-            EnvVars env = getEnvironment(listener);
-            env.putAll(getBuildVariables());
-            String childWs = getParent().getName();
-            return Lease.createLinkedDummyLease(baseDir.child(env.expand(childWs)), baseLease);
-        }
-
-        @Override
-        protected Result doRun(BuildListener listener) throws Exception {
-            try{
-                exportDeployKeysIfPrivateRepo(listener, launcher);
-                SubBuildExecutionAction subBuildExecutionAction = getAction(SubBuildExecutionAction.class);
-                Result runResult = subBuildExecutionAction.run(DynamicSubBuild.this.getCombination(), this, listener);;
-                subBuildExecutionAction.getSubBuildFinishListener().runFinished(DynamicSubBuild.this);
-                return  runResult;
-            }finally {
-                deleteDeployKeys(listener, launcher);
-            }
-
-        }
-
-
-        @Override
-        public boolean performStep(BuildStep buildStep, BuildListener listener) throws InterruptedException, IOException {
-            return perform(buildStep, listener);
-        }
-
-        @Override
-        public void setResult(Result r) {
-            DynamicSubBuild.this.setResult(r);
-        }
-
-        @Override
-        public Map<String, Object> getBuildEnvironmentVariables() {
-            try{
-                EnvVars envVars = DynamicSubBuild.this.getJenkinsEnvVariables(getListener());
-                Map<String, Object> buildVariables = DynamicSubBuild.this.getParentBuild().getEnvironmentWithChangeSet(getListener());
-                buildVariables.putAll(envVars);
-                return buildVariables;
-            }catch (Exception e){
-                throw new RuntimeException(e);
-            }
-        }
-
-    }
-
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         if (other instanceof DynamicSubBuild) {
             return Objects.equal(getBuildId(), ((DynamicSubBuild) other).getBuildId());
         }
@@ -186,7 +123,7 @@ public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSub
 
     @Override
     public BuildCause getCause() {
-        return cause;
+        return this.cause;
     }
 
     @Override
@@ -197,6 +134,68 @@ public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSub
     @Override
     public String getSha() {
         return getParentBuild().getSha();
+    }
+
+    protected class DynamicSubBuildExecution extends BuildExecution implements BuildExecutionContext {
+        protected Lease getParentWorkspaceLease(final Node n, final WorkspaceList wsl) throws InterruptedException, IOException {
+            final DynamicProject mp = getParent().getParent();
+
+            final String customWorkspace = mp.getCustomWorkspace();
+            if (customWorkspace != null) {
+                // we allow custom workspaces to be concurrently used between
+                // jobs.
+                return Lease.createDummyLease(n.getRootPath().child(getEnvironment(this.listener).expand(customWorkspace)));
+            }
+            return wsl.allocate(n.getWorkspaceFor(mp), getParentBuild());
+        }
+
+        @Override
+        protected Lease decideWorkspace(final Node n, final WorkspaceList wsl) throws InterruptedException, IOException {
+            final Lease baseLease = getParentWorkspaceLease(n, wsl);
+            final FilePath baseDir = baseLease.path;
+            final EnvVars env = getEnvironment(this.listener);
+            env.putAll(getBuildVariables());
+            final String childWs = getParent().getName();
+            return Lease.createLinkedDummyLease(baseDir.child(env.expand(childWs)), baseLease);
+        }
+
+        @Override
+        protected Result doRun(final BuildListener listener) throws Exception {
+            try {
+                exportDeployKeysIfPrivateRepo(listener, this.launcher);
+                final SubBuildExecutionAction subBuildExecutionAction = getAction(SubBuildExecutionAction.class);
+                final Result runResult = subBuildExecutionAction.run(DynamicSubBuild.this.getCombination(), this, listener);
+                subBuildExecutionAction.getSubBuildFinishListener().runFinished(DynamicSubBuild.this);
+                return runResult;
+            } finally {
+                deleteDeployKeys(listener, this.launcher);
+            }
+
+        }
+
+
+        @Override
+        public boolean performStep(final BuildStep buildStep, final BuildListener listener) throws InterruptedException, IOException {
+            return perform(buildStep, listener);
+        }
+
+        @Override
+        public void setResult(final Result r) {
+            DynamicSubBuild.this.setResult(r);
+        }
+
+        @Override
+        public Map<String, Object> getBuildEnvironmentVariables() {
+            try {
+                final EnvVars envVars = DynamicSubBuild.this.getJenkinsEnvVariables(getListener());
+                final Map<String, Object> buildVariables = DynamicSubBuild.this.getParentBuild().getEnvironmentWithChangeSet(getListener());
+                buildVariables.putAll(envVars);
+                return buildVariables;
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
     }
 
 }

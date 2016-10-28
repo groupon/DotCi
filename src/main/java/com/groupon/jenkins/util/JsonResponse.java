@@ -24,20 +24,15 @@
 
 package com.groupon.jenkins.util;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import net.sf.json.JSONSerializer;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Flavor;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import java.io.IOException;
 
 public class JsonResponse {
-    public static void  render(StaplerRequest req, StaplerResponse rsp, Object output) throws IOException, ServletException {
-        rsp.serveExposedBean(req,output,Flavor.JSON);
+    public static void render(StaplerRequest req, StaplerResponse rsp, Object output) throws IOException, ServletException {
+        rsp.serveExposedBean(req, output, Flavor.JSON);
     }
 }

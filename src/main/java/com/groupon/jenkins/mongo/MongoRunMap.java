@@ -23,25 +23,25 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.mongo;
 
+import com.google.common.collect.Lists;
+import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.dynamic.build.DbBackedBuild;
+import com.groupon.jenkins.dynamic.build.DbBackedProject;
+import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
-import com.google.common.collect.Lists;
-import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.dynamic.build.DbBackedProject;
-import com.groupon.jenkins.dynamic.build.DbBackedBuild;
-import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
-
 public class MongoRunMap<P extends DbBackedProject<P, B>, B extends DbBackedBuild<P, B>> implements SortedMap<Integer, B> {
 
     private final DbBackedProject<P, B> project;
-    private Collection<B> values;
     private final DynamicBuildRepository dynamicBuildRepository;
+    private Collection<B> values;
 
-    public MongoRunMap(DbBackedProject<P, B> project) {
+    public MongoRunMap(final DbBackedProject<P, B> project) {
         this.project = project;
         this.dynamicBuildRepository = SetupConfig.get().getDynamicBuildRepository();
     }
@@ -52,56 +52,56 @@ public class MongoRunMap<P extends DbBackedProject<P, B>, B extends DbBackedBuil
     }
 
     @Override
-    public boolean containsKey(Object key) {
+    public boolean containsKey(final Object key) {
         if (!(key instanceof Integer)) {
-            return dynamicBuildRepository.hasBuild(project, (Integer) key);
+            return this.dynamicBuildRepository.hasBuild(this.project, (Integer) key);
         }
         return false;
     }
 
     @Override
-    public boolean containsValue(Object value) {
+    public boolean containsValue(final Object value) {
         if (!(value instanceof DbBackedBuild)) {
-            return dynamicBuildRepository.hasBuild((DbBackedBuild) value);
+            return this.dynamicBuildRepository.hasBuild((DbBackedBuild) value);
         }
         return false;
     }
 
     @Override
-    public B get(Object key) {
-        return dynamicBuildRepository.<B> getBuild(project, (Integer) key);
+    public B get(final Object key) {
+        return this.dynamicBuildRepository.<B>getBuild(this.project, (Integer) key);
     }
 
     @Override
     public boolean isEmpty() {
-        return dynamicBuildRepository.hasBuilds(project);
+        return this.dynamicBuildRepository.hasBuilds(this.project);
     }
 
     @Override
-    public B put(Integer key, B value) {
+    public B put(final Integer key, final B value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void putAll(Map<? extends Integer, ? extends B> m) {
+    public void putAll(final Map<? extends Integer, ? extends B> m) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public B remove(Object key) {
+    public B remove(final Object key) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public int size() {
-        return dynamicBuildRepository.getBuildCount(project);
+        return this.dynamicBuildRepository.getBuildCount(this.project);
     }
 
     @Override
     public Comparator<? super Integer> comparator() {
         return new Comparator<Integer>() {
             @Override
-            public int compare(Integer o1, Integer o2) {
+            public int compare(final Integer o1, final Integer o2) {
                 return o1.compareTo(o2);
             }
         };
@@ -118,7 +118,7 @@ public class MongoRunMap<P extends DbBackedProject<P, B>, B extends DbBackedBuil
     }
 
     @Override
-    public SortedMap<Integer, B> headMap(Integer toKey) {
+    public SortedMap<Integer, B> headMap(final Integer toKey) {
         throw new UnsupportedOperationException();
     }
 
@@ -133,21 +133,21 @@ public class MongoRunMap<P extends DbBackedProject<P, B>, B extends DbBackedBuil
     }
 
     @Override
-    public SortedMap<Integer, B> subMap(Integer fromKey, Integer toKey) {
+    public SortedMap<Integer, B> subMap(final Integer fromKey, final Integer toKey) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public SortedMap<Integer, B> tailMap(Integer fromKey) {
+    public SortedMap<Integer, B> tailMap(final Integer fromKey) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public Collection<B> values() {
-        if (values == null) {
-            values = Lists.newArrayList(SetupConfig.get().getDynamicBuildRepository().<B> latestBuilds(project, 20));
+        if (this.values == null) {
+            this.values = Lists.newArrayList(SetupConfig.get().getDynamicBuildRepository().<B>latestBuilds(this.project, 20));
         }
-        return values;
+        return this.values;
     }
 
 }

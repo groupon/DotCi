@@ -27,7 +27,7 @@ package com.groupon.jenkins.extensions;
 import hudson.ExtensionPoint;
 
 public abstract class DotCiExtension implements ExtensionPoint {
-    public abstract String  getName() ;
+    public abstract String getName();
 
-    public abstract void setOptions(Object options) ;
+    public abstract void setOptions(Object options);
 }

@@ -76,7 +76,6 @@ public abstract class PostBuildNotifier extends DotCiExtension {
     }
 
 
-
     public void setOptions(Object options) {
         this.options = options;
     }

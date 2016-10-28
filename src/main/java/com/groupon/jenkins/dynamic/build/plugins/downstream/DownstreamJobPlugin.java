@@ -33,10 +33,18 @@ import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.github.NoDuplicatesParameterAction;
 import hudson.Extension;
 import hudson.Launcher;
-import hudson.model.*;
+import hudson.model.BuildListener;
+import hudson.model.Cause;
+import hudson.model.ParameterValue;
+import hudson.model.ParametersAction;
+import hudson.model.StringParameterValue;
 import jenkins.model.Jenkins;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Extension
 public class DownstreamJobPlugin extends DotCiPluginAdapter {
@@ -49,16 +57,16 @@ public class DownstreamJobPlugin extends DotCiPluginAdapter {
 
     @Override
     public boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener) {
-        if(!(options instanceof Map)){
-            throw new InvalidBuildConfigurationException("Invalid format specified for " + getName()+" . Expecting a Map.") ;
+        if (!(options instanceof Map)) {
+            throw new InvalidBuildConfigurationException("Invalid format specified for " + getName() + " . Expecting a Map.");
         }
-        Map<String,Object> jobOptions = (Map<String,Object>) options;
-        if(shouldKickOffJob(dynamicBuild,jobOptions)){
+        Map<String, Object> jobOptions = (Map<String, Object>) options;
+        if (shouldKickOffJob(dynamicBuild, jobOptions)) {
             String jobName = getJobName(jobOptions);
             DynamicProject job = findJob(jobName);
-            Map<String,String> jobParams = new HashMap<String, String>((Map<String, String>) jobOptions.get(jobName));
-            jobParams.put("SOURCE_BUILD",getSourceBuildNumber(dynamicBuild));
-            listener.getLogger().println("Lauching dowstream job :" +job.getFullName());
+            Map<String, String> jobParams = new HashMap<String, String>((Map<String, String>) jobOptions.get(jobName));
+            jobParams.put("SOURCE_BUILD", getSourceBuildNumber(dynamicBuild));
+            listener.getLogger().println("Lauching dowstream job :" + job.getFullName());
             return job.scheduleBuild(0, getCause(dynamicBuild, job, jobOptions.get(jobName)), getParamsAction(jobParams));
         }
         return true;
@@ -70,30 +78,30 @@ public class DownstreamJobPlugin extends DotCiPluginAdapter {
         return Iterables.getOnlyElement(keySet);
     }
 
-    private boolean shouldKickOffJob(DynamicBuild dynamicBuild, Map<String, Object> jobOptions){
-        if(jobOptions.keySet().contains(ON_RESULT_KEY)){
-            String onResult = jobOptions.get(ON_RESULT_KEY).toString().toUpperCase() ;
+    private boolean shouldKickOffJob(DynamicBuild dynamicBuild, Map<String, Object> jobOptions) {
+        if (jobOptions.keySet().contains(ON_RESULT_KEY)) {
+            String onResult = jobOptions.get(ON_RESULT_KEY).toString().toUpperCase();
             return dynamicBuild.getResult().toString().equals(onResult);
         }
         return true;
     }
 
     private String getSourceBuildNumber(DynamicBuild dynamicBuild) {
-        if(dynamicBuild.getCause() instanceof  DotCiUpstreamTriggerCause){
+        if (dynamicBuild.getCause() instanceof DotCiUpstreamTriggerCause) {
             List<ParameterValue> params = dynamicBuild.getAction(ParametersAction.class).getParameters();
-            for(ParameterValue param : params){
-                if(param.getName().equals("SOURCE_BUILD")){
+            for (ParameterValue param : params) {
+                if (param.getName().equals("SOURCE_BUILD")) {
                     return (String) param.getValue();
                 }
             }
         }
-        return "" +dynamicBuild.getNumber();
+        return "" + dynamicBuild.getNumber();
     }
 
-    private NoDuplicatesParameterAction getParamsAction(Map<String,String> jobParams) {
+    private NoDuplicatesParameterAction getParamsAction(Map<String, String> jobParams) {
         List<ParameterValue> params = new ArrayList<ParameterValue>();
-        for(Map.Entry<String, String> entry : jobParams.entrySet()){
-            params.add(new StringParameterValue(entry.getKey(),entry.getValue()));
+        for (Map.Entry<String, String> entry : jobParams.entrySet()) {
+            params.add(new StringParameterValue(entry.getKey(), entry.getValue()));
         }
 
         return new NoDuplicatesParameterAction(params);

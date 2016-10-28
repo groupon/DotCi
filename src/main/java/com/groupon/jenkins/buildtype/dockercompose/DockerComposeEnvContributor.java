@@ -24,12 +24,15 @@ THE SOFTWARE.
 
 package com.groupon.jenkins.buildtype.dockercompose;
 
-import com.groupon.jenkins.dynamic.build.*;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
-import com.groupon.jenkins.git.GitUrl;
 import hudson.EnvVars;
 import hudson.Extension;
-import hudson.model.*;
+import hudson.model.EnvironmentContributor;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -42,9 +45,9 @@ public class DockerComposeEnvContributor extends EnvironmentContributor {
 
     @Override
     public void buildEnvironmentFor(Run run, EnvVars envs, TaskListener listener) throws IOException, InterruptedException {
-        if(isDockerComposeBuild(run)) {
+        if (isDockerComposeBuild(run)) {
             String composeProjectName = String.format("%s%s", run.getParent().getFullName(), run.getNumber())
-                    .replaceAll("[^A-Za-z0-9]", "").toLowerCase();
+                .replaceAll("[^A-Za-z0-9]", "").toLowerCase();
             LOGGER.fine("Setting COMPOSE_PROJECT_NAME=" + composeProjectName);
             envs.put(COMPOSE_PROJECT_NAME, composeProjectName);
         }

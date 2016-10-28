@@ -30,13 +30,13 @@ import org.mongodb.morphia.mapping.MappedField;
 
 public class ResultConverter extends TypeConverter implements SimpleValueConverter {
 
-    public ResultConverter(){
+    public ResultConverter() {
         super(Result.class);
     }
 
     @Override
     public Object decode(Class targetClass, Object fromDBObject, MappedField optionalExtraInfo) {
-        if(fromDBObject == null) return null;
+        if (fromDBObject == null) return null;
 
         String resultName = (String) fromDBObject;
         return Result.fromString(resultName);
@@ -44,7 +44,7 @@ public class ResultConverter extends TypeConverter implements SimpleValueConvert
 
     @Override
     public Object encode(Object value, MappedField optionalExtraInfo) {
-        if(value == null) return null;
+        if (value == null) return null;
 
         return value.toString();
     }

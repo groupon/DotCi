@@ -23,16 +23,14 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.buildsetup;
 
-import java.io.IOException;
-
 import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
+import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
+import com.groupon.jenkins.github.services.GithubRepositoryService;
 import jenkins.model.Jenkins;
-
 import org.kohsuke.github.GHRepository;
 
-import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
-import com.groupon.jenkins.github.services.GithubRepositoryService;
-import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
+import java.io.IOException;
 
 public class ProjectConfigInfo {
 

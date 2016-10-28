@@ -23,12 +23,11 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.notifications;
 
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import hudson.Extension;
 
 import java.util.Arrays;
 import java.util.List;
-
-import com.groupon.jenkins.dynamic.build.DynamicBuild;
 
 @Extension
 public class PostBuildEmailNotifier extends EmailNotifierBase {

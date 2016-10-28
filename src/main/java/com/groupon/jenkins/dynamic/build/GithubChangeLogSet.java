@@ -23,13 +23,12 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.dynamic.build;
 
+import com.google.common.collect.Iterables;
+import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
 import hudson.model.AbstractBuild;
 import hudson.scm.ChangeLogSet;
 
 import java.util.Iterator;
-
-import com.google.common.collect.Iterables;
-import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
 
 public class GithubChangeLogSet extends ChangeLogSet<GithubLogEntry> {
 

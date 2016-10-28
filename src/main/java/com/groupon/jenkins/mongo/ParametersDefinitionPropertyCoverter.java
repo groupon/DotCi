@@ -48,9 +48,9 @@ public class ParametersDefinitionPropertyCoverter extends TypeConverter implemen
         List<ParameterDefinition> parameterDefinitions = new ArrayList<ParameterDefinition>();
 
         // TODO parsing checks
-        for(DBObject dbObject : list) {
+        for (DBObject dbObject : list) {
             ParameterDefinition definition = (ParameterDefinition) getMapper()
-                    .fromDBObject(ParameterDefinition.class, dbObject, getMapper().createEntityCache());
+                .fromDBObject(ParameterDefinition.class, dbObject, getMapper().createEntityCache());
 
             parameterDefinitions.add(definition);
         }
@@ -65,7 +65,7 @@ public class ParametersDefinitionPropertyCoverter extends TypeConverter implemen
         ParametersDefinitionProperty parametersDefinitionProperty = (ParametersDefinitionProperty) value;
 
         BasicDBList parameters = new BasicDBList();
-        for(ParameterDefinition definition : parametersDefinitionProperty.getParameterDefinitions()) {
+        for (ParameterDefinition definition : parametersDefinitionProperty.getParameterDefinitions()) {
             parameters.add(getMapper().toDBObject(definition));
         }
 

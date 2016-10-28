@@ -24,33 +24,34 @@ THE SOFTWARE.
 package com.groupon.jenkins.dynamic.build.cause;
 
 import com.groupon.jenkins.git.GitBranch;
-import java.util.Collections;
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.stapler.export.Exported;
+
+import java.util.Collections;
 
 
 public class UnknownBuildCause extends BuildCause {
 
     private final String sha;
     private final GitBranch branch;
-    private String parentSha;
+    private final String parentSha;
     private final CommitInfo commitInfo;
 
-    public UnknownBuildCause(GitBranch branch, GHCommit commit, String parentSha) {
+    public UnknownBuildCause(final GitBranch branch, final GHCommit commit, final String parentSha) {
         this.branch = branch;
         this.parentSha = parentSha;
         this.sha = commit.getSHA1();
-        this.commitInfo = new CommitInfo(commit,branch);
+        this.commitInfo = new CommitInfo(commit, branch);
     }
 
     @Override
     public String getSha() {
-        return sha;
+        return this.sha;
     }
 
     @Override
     public String getParentSha() {
-        return parentSha;
+        return this.parentSha;
     }
 
     @Override
@@ -60,12 +61,12 @@ public class UnknownBuildCause extends BuildCause {
 
     @Override
     public String getPullRequestNumber() {
-        return branch.isPullRequest() ? branch.pullRequestNumber() + "" : null;
+        return this.branch.isPullRequest() ? this.branch.pullRequestNumber() + "" : null;
     }
 
     @Override
     public CommitInfo getCommitInfo() {
-        return commitInfo;
+        return this.commitInfo;
     }
 
     @Override
@@ -75,7 +76,7 @@ public class UnknownBuildCause extends BuildCause {
 
     @Override
     public GitBranch getBranch() {
-        return branch;
+        return this.branch;
     }
 
     @Override

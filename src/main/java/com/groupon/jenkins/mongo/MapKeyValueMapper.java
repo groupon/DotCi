@@ -50,27 +50,27 @@ class MapKeyValueMapper implements CustomMapper {
     public static final String VALUE = "value";
 
     @Override
-    public void toDBObject(Object entity, MappedField mf, DBObject dbObject, Map<Object, DBObject> involvedObjects, Mapper mapper) {
+    public void toDBObject(final Object entity, final MappedField mf, final DBObject dbObject, final Map<Object, DBObject> involvedObjects, final Mapper mapper) {
         final String name = mf.getNameToStore();
 
-        Map<?, ?> awkwardMap = (Map<?, ?>) mf.getFieldValue(entity);
-        List out = new ArrayList();
+        final Map<?, ?> awkwardMap = (Map<?, ?>) mf.getFieldValue(entity);
+        final List out = new ArrayList();
 
-        for(final Map.Entry entry : awkwardMap.entrySet()) {
-            DBObject mappedEntry = new BasicDBObject();
+        for (final Map.Entry entry : awkwardMap.entrySet()) {
+            final DBObject mappedEntry = new BasicDBObject();
 
             try {
-                Field key = entry.getClass().getDeclaredField(KEY);
-                EntryMappedField keyField = new EntryMappedField(key, entry.getClass(), mf);
+                final Field key = entry.getClass().getDeclaredField(KEY);
+                final EntryMappedField keyField = new EntryMappedField(key, entry.getClass(), mf);
 
-                Field value = entry.getClass().getDeclaredField(VALUE);
-                EntryMappedField  valueField = new EntryMappedField(value, entry.getClass(), mf);
+                final Field value = entry.getClass().getDeclaredField(VALUE);
+                final EntryMappedField valueField = new EntryMappedField(value, entry.getClass(), mf);
 
                 mapper.getOptions().getDefaultMapper().toDBObject(entry, keyField, mappedEntry, involvedObjects, mapper);
                 mapper.getOptions().getDefaultMapper().toDBObject(entry, valueField, mappedEntry, involvedObjects, mapper);
 
                 out.add(mappedEntry);
-            } catch (NoSuchFieldException e) {
+            } catch (final NoSuchFieldException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -79,28 +79,28 @@ class MapKeyValueMapper implements CustomMapper {
     }
 
     @Override
-    public void fromDBObject(DBObject dbObject, MappedField mf, Object entity, EntityCache cache, Mapper mapper) {
-        BasicDBList entriesList = (BasicDBList) dbObject.get(mf.getNameToStore());
+    public void fromDBObject(final DBObject dbObject, final MappedField mf, final Object entity, final EntityCache cache, final Mapper mapper) {
+        final BasicDBList entriesList = (BasicDBList) dbObject.get(mf.getNameToStore());
 
         final Map map = mapper.getOptions().getObjectFactory().createMap(mf);
 
-        for(Object obj : entriesList) {
-            DBObject listEntryDbObj = (DBObject) obj;
+        for (final Object obj : entriesList) {
+            final DBObject listEntryDbObj = (DBObject) obj;
             //Map.Entry entry = (Map.Entry) mapper.getOptions().getObjectFactory().createInstance(Map.Entry.class);
-            Pair entry = new Pair();
+            final Pair entry = new Pair();
             try {
-                Field key = entry.getClass().getDeclaredField(KEY);
-                EntryMappedField keyField = new EntryMappedField(key, entry.getClass(), mf);
+                final Field key = entry.getClass().getDeclaredField(KEY);
+                final EntryMappedField keyField = new EntryMappedField(key, entry.getClass(), mf);
 
-                Field value = entry.getClass().getDeclaredField(VALUE);
-                EntryMappedField valueField = new EntryMappedField(value, entry.getClass(), mf);
+                final Field value = entry.getClass().getDeclaredField(VALUE);
+                final EntryMappedField valueField = new EntryMappedField(value, entry.getClass(), mf);
 
                 mapper.getOptions().getEmbeddedMapper().fromDBObject(listEntryDbObj, keyField, entry, cache, mapper);
                 mapper.getOptions().getEmbeddedMapper().fromDBObject(listEntryDbObj, valueField, entry, cache, mapper);
 
                 map.put(entry.getKey(), entry.getValue());
 
-            } catch (NoSuchFieldException e) {
+            } catch (final NoSuchFieldException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -116,54 +116,55 @@ class MapKeyValueMapper implements CustomMapper {
 class Pair {
     private Object key;
     private Object value;
+
     Pair() {
 
     }
 
     public Object getKey() {
-        return key;
+        return this.key;
     }
 
     public Object getValue() {
-        return value;
+        return this.value;
     }
 }
 
 class EntryMappedField extends ManuallyConfiguredMappedField {
-    EntryMappedField(Field field, Class<?> clazz, MappedField mappedField) {
+    EntryMappedField(final Field field, final Class<?> clazz, final MappedField mappedField) {
         super(field, clazz);
         super.discover();
-        if(MapKeyValueMapper.KEY.equals(field.getName())) {
-            realType = mappedField.getMapKeyClass();
-            subType = realType.getComponentType();
-        } else if(MapKeyValueMapper.VALUE.equals(field.getName())) {
-            realType = mappedField.getSubClass();
-            subType = mappedField.getSubType() instanceof ParameterizedType ? ((ParameterizedType) mappedField.getSubType()).getActualTypeArguments()[0] : null;
+        if (MapKeyValueMapper.KEY.equals(field.getName())) {
+            this.realType = mappedField.getMapKeyClass();
+            this.subType = this.realType.getComponentType();
+        } else if (MapKeyValueMapper.VALUE.equals(field.getName())) {
+            this.realType = mappedField.getSubClass();
+            this.subType = mappedField.getSubType() instanceof ParameterizedType ? ((ParameterizedType) mappedField.getSubType()).getActualTypeArguments()[0] : null;
         } else {
             throw new RuntimeException("Entry field is neither key nor entry");
         }
 
-        if (realType.isArray()
-                || Collection.class.isAssignableFrom(realType)
-                || Map.class.isAssignableFrom(realType)) {
+        if (this.realType.isArray()
+            || Collection.class.isAssignableFrom(this.realType)
+            || Map.class.isAssignableFrom(this.realType)) {
 
-            isSingleValue = false;
+            this.isSingleValue = false;
 
-            isMap = Map.class.isAssignableFrom(realType);
-            isSet = Set.class.isAssignableFrom(realType);
+            this.isMap = Map.class.isAssignableFrom(this.realType);
+            this.isSet = Set.class.isAssignableFrom(this.realType);
             //for debugging
-            isCollection = Collection.class.isAssignableFrom(realType);
-            isArray = realType.isArray();
+            this.isCollection = Collection.class.isAssignableFrom(this.realType);
+            this.isArray = this.realType.isArray();
 
-            if (isMap) {
-                mapKeyType = ReflectionUtils.getParameterizedType(field, 0);
+            if (this.isMap) {
+                this.mapKeyType = ReflectionUtils.getParameterizedType(field, 0);
             }
         }
         try {
-            constructor = realType.getDeclaredConstructor();
-            constructor.setAccessible(true);
-        } catch (NoSuchMethodException e) {
-            constructor = null;
+            this.constructor = this.realType.getDeclaredConstructor();
+            this.constructor.setAccessible(true);
+        } catch (final NoSuchMethodException e) {
+            this.constructor = null;
         }
     }
 

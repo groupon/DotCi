@@ -1,12 +1,15 @@
 package com.groupon.jenkins.dynamic.build.plugins.artifacts;
 
-import com.groupon.jenkins.buildtype.plugins.*;
-import com.groupon.jenkins.dynamic.build.*;
-import hudson.*;
-import hudson.model.*;
-import hudson.tasks.*;
+import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
+import hudson.Extension;
+import hudson.Launcher;
+import hudson.model.AbstractBuild;
+import hudson.model.BuildListener;
+import hudson.tasks.ArtifactArchiver;
 
-import java.io.*;
+import java.io.IOException;
 
 @Extension
 public class ArtifactsPluginAdapter extends DotCiPluginAdapter {
@@ -17,18 +20,18 @@ public class ArtifactsPluginAdapter extends DotCiPluginAdapter {
 
     @Override
     public String getPluginInputFiles() {
-        return (String) options;
+        return (String) this.options;
     }
 
     @Override
-    public boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener) {
-        ArtifactArchiver archiver = new ArtifactArchiver((String) options, null, true);
+    public boolean perform(final DynamicBuild dynamicBuild, final Launcher launcher, final BuildListener listener) {
+        final ArtifactArchiver archiver = new ArtifactArchiver((String) this.options, null, true);
         try {
             return archiver.perform((AbstractBuild) dynamicBuild, launcher, listener);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
             e.printStackTrace(listener.getLogger());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             Thread.currentThread().interrupt();
             e.printStackTrace(listener.getLogger());
         }
@@ -36,7 +39,7 @@ public class ArtifactsPluginAdapter extends DotCiPluginAdapter {
     }
 
     @Override
-    public void runFinished(DynamicSubBuild run, DynamicBuild parent, BuildListener listener) throws IOException {
-        copyFiles(run, parent, (String) options, listener);
+    public void runFinished(final DynamicSubBuild run, final DynamicBuild parent, final BuildListener listener) throws IOException {
+        copyFiles(run, parent, (String) this.options, listener);
     }
 }

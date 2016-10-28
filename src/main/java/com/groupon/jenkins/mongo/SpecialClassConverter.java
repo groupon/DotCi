@@ -28,8 +28,9 @@ import org.mongodb.morphia.converters.TypeConverter;
 import org.mongodb.morphia.mapping.MappedField;
 import org.mongodb.morphia.mapping.MappingException;
 
-public class SpecialClassConverter  extends TypeConverter implements SimpleValueConverter {
+public class SpecialClassConverter extends TypeConverter implements SimpleValueConverter {
     final private ClassLoader classLoader;
+
     public SpecialClassConverter(final ClassLoader classLoader) {
         super(Class.class);
         this.classLoader = classLoader;

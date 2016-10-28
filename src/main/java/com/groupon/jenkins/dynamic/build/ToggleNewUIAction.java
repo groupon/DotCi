@@ -2,10 +2,8 @@ package com.groupon.jenkins.dynamic.build;
 
 import hudson.Extension;
 import hudson.model.Action;
-import hudson.model.Hudson;
 import hudson.model.ProminentProjectAction;
 import jenkins.model.TransientActionFactory;
-import org.kohsuke.stapler.Stapler;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -15,7 +13,7 @@ import java.util.Collection;
 public class ToggleNewUIAction extends TransientActionFactory<DynamicProject> implements ProminentProjectAction {
     @Override
     public String getIconFileName() {
-        return "document.png" ;
+        return "document.png";
     }
 
     @Override
@@ -36,7 +34,7 @@ public class ToggleNewUIAction extends TransientActionFactory<DynamicProject> im
     @Nonnull
     @Override
     public Collection<? extends Action> createFor(@Nonnull DynamicProject target) {
-        return Arrays.asList( new ToggleNewUIAction());
+        return Arrays.asList(new ToggleNewUIAction());
     }
 
 

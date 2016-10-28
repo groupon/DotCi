@@ -53,15 +53,15 @@ import com.groupon.jenkins.dynamic.build.repository.DynamicBuildRepository;
 import com.groupon.jenkins.util.GReflectionUtils;
 import hudson.widgets.BuildHistoryWidget;
 import hudson.widgets.HistoryWidget;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import org.kohsuke.stapler.Header;
 import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import javax.servlet.ServletException;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
@@ -72,14 +72,14 @@ public class BranchHistoryWidget<T extends DbBackedBuild> extends BuildHistoryWi
     private final String branch;
     private final BranchHistoryWidgetModel<T> model;
 
-    public BranchHistoryWidget(DynamicProject owner,  Adapter<? super T> adapter, DynamicBuildRepository dynamicBuildRepository, String branch) {
-        super(owner, new MongoRunList<T>(new BranchHistoryWidgetModel<T>(owner, dynamicBuildRepository, branch)), adapter);
-        this.model = new BranchHistoryWidgetModel<T>(owner, dynamicBuildRepository, branch);
+    public BranchHistoryWidget(final DynamicProject owner, final Adapter<? super T> adapter, final DynamicBuildRepository dynamicBuildRepository, final String branch) {
+        super(owner, new MongoRunList<>(new BranchHistoryWidgetModel<>(owner, dynamicBuildRepository, branch)), adapter);
+        this.model = new BranchHistoryWidgetModel<>(owner, dynamicBuildRepository, branch);
         this.branch = branch;
     }
 
     @Override
-    public void doAjax(StaplerRequest req, StaplerResponse rsp, @Header("n") String n) throws IOException, ServletException {
+    public void doAjax(final StaplerRequest req, final StaplerResponse rsp, @Header("n") final String n) throws IOException, ServletException {
 
         if (n == null) {
             throw HttpResponses.error(SC_BAD_REQUEST, new IllegalArgumentException("Missing the 'n' HTTP header"));
@@ -87,17 +87,17 @@ public class BranchHistoryWidget<T extends DbBackedBuild> extends BuildHistoryWi
 
         rsp.setContentType("text/html;charset=UTF-8");
 
-        List<T> items = new LinkedList<T>();
+        final List<T> items = new LinkedList<>();
 
         String nn = null;
 
         // TODO refactor getBuildsAfter and database query to be getBuildsAfterAndEqual
-        Iterable<T> builds =  model.getBuildsAfter(Integer.parseInt(n) - 1);
-        for (T t : builds) {
-            if (adapter.compare(t, n) >= 0) {
+        final Iterable<T> builds = this.model.getBuildsAfter(Integer.parseInt(n) - 1);
+        for (final T t : builds) {
+            if (this.adapter.compare(t, n) >= 0) {
                 items.add(t);
-                if (adapter.isBuilding(t)) {
-                    nn = adapter.getKey(t);
+                if (this.adapter.isBuilding(t)) {
+                    nn = this.adapter.getKey(t);
                 }
             } else {
                 break;
@@ -108,11 +108,11 @@ public class BranchHistoryWidget<T extends DbBackedBuild> extends BuildHistoryWi
             if (items.isEmpty()) {
                 nn = n;
             } else {
-                nn = adapter.getNextKey(adapter.getKey(items.get(0)));
+                nn = this.adapter.getNextKey(this.adapter.getKey(items.get(0)));
             }
         }
 
-        baseList = items;
+        this.baseList = items;
         GReflectionUtils.setField(HistoryWidget.class, "firstTransientBuildKey", this, nn);
 
         rsp.setHeader("n", nn);
@@ -122,11 +122,11 @@ public class BranchHistoryWidget<T extends DbBackedBuild> extends BuildHistoryWi
 
     @Override
     public String getNextBuildNumberToFetch() {
-        return model.getNextBuildToFetch(this.baseList, adapter).getBuildNumber(adapter);
+        return this.model.getNextBuildToFetch(this.baseList, this.adapter).getBuildNumber(this.adapter);
     }
 
     public Object getBranch() {
-        return branch;
+        return this.branch;
     }
 
 }

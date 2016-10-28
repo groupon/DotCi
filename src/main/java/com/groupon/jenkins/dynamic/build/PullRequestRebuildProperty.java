@@ -23,10 +23,12 @@
  */
 package com.groupon.jenkins.dynamic.build;
 
-import hudson.*;
-import hudson.model.*;
-import net.sf.json.*;
-import org.kohsuke.stapler.*;
+import hudson.Extension;
+import hudson.model.Job;
+import hudson.model.JobProperty;
+import hudson.model.JobPropertyDescriptor;
+import net.sf.json.JSONObject;
+import org.kohsuke.stapler.StaplerRequest;
 
 @Deprecated
 public class PullRequestRebuildProperty extends JobProperty<Job<?, ?>> {

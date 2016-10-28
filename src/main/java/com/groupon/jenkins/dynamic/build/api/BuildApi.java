@@ -25,7 +25,6 @@
 package com.groupon.jenkins.dynamic.build.api;
 
 import com.groupon.jenkins.SetupConfig;
-import com.groupon.jenkins.dynamic.build.DbBackedBuild;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import com.groupon.jenkins.util.JsonResponse;
@@ -34,17 +33,17 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.io.Writer;
 
 public class BuildApi {
-    private DynamicProject dynamicProject;
+    private final DynamicProject dynamicProject;
 
-    public BuildApi(DynamicProject dynamicProject) {
+    public BuildApi(final DynamicProject dynamicProject) {
 
         this.dynamicProject = dynamicProject;
     }
-    public void getDynamic(String buildNumber, StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-        DynamicBuild build = SetupConfig.get().getDynamicBuildRepository().getBuild(dynamicProject, Integer.parseInt(buildNumber));
-        JsonResponse.render(req,rsp,new ProcessedBuild(build));
+
+    public void getDynamic(final String buildNumber, final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException {
+        final DynamicBuild build = SetupConfig.get().getDynamicBuildRepository().getBuild(this.dynamicProject, Integer.parseInt(buildNumber));
+        JsonResponse.render(req, rsp, new ProcessedBuild(build));
     }
 }

@@ -28,19 +28,21 @@ import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
 import hudson.Extension;
 import hudson.model.TopLevelItem;
-import java.io.IOException;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
+import java.io.IOException;
+
 @Extension
 public class NewDotCiJobRepoAction extends GithubRepoAction {
     public void doCreateProject(StaplerRequest request, StaplerResponse response) throws IOException {
-        DynamicProject project = SetupConfig.get().getDynamicProjectRepository().createNewProject(getGithubRepository(request),getAccessToken(request), getCurrentUserLogin(request));
+        DynamicProject project = SetupConfig.get().getDynamicProjectRepository().createNewProject(getGithubRepository(request), getAccessToken(request), getCurrentUserLogin(request));
         response.sendRedirect2(redirectAfterCreateItem(request, project));
     }
+
     protected String redirectAfterCreateItem(StaplerRequest req, TopLevelItem result) throws IOException {
-        return Jenkins.getInstance().getRootUrl()  + result.getUrl();
+        return Jenkins.getInstance().getRootUrl() + result.getUrl();
     }
 
 }

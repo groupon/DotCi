@@ -24,29 +24,28 @@
 
 package com.groupon.jenkins.dynamic.build.execution;
 
-import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import hudson.matrix.Combination;
 import hudson.model.BuildListener;
 import hudson.model.InvisibleAction;
 import hudson.model.Result;
+
 import java.io.IOException;
 
 public class SubBuildExecutionAction extends InvisibleAction {
-    private transient SubBuildRunner subBuildRunner;
+    private final transient SubBuildRunner subBuildRunner;
+    private final transient SubBuildScheduler.SubBuildFinishListener subBuildFinishListener;
 
-    public SubBuildScheduler.SubBuildFinishListener getSubBuildFinishListener() {
-        return subBuildFinishListener;
-    }
-
-    private transient SubBuildScheduler.SubBuildFinishListener subBuildFinishListener;
-
-    public SubBuildExecutionAction(SubBuildRunner subBuildRunner, SubBuildScheduler.SubBuildFinishListener subBuildFinishListener) {
+    public SubBuildExecutionAction(final SubBuildRunner subBuildRunner, final SubBuildScheduler.SubBuildFinishListener subBuildFinishListener) {
         this.subBuildRunner = subBuildRunner;
         this.subBuildFinishListener = subBuildFinishListener;
     }
 
-    public Result run(Combination combination, BuildExecutionContext dynamicSubBuildExecution, BuildListener listener) throws IOException, InterruptedException {
-        Result runResult = subBuildRunner.runSubBuild(combination,dynamicSubBuildExecution,listener);
-        return  runResult;
+    public SubBuildScheduler.SubBuildFinishListener getSubBuildFinishListener() {
+        return this.subBuildFinishListener;
+    }
+
+    public Result run(final Combination combination, final BuildExecutionContext dynamicSubBuildExecution, final BuildListener listener) throws IOException, InterruptedException {
+        final Result runResult = this.subBuildRunner.runSubBuild(combination, dynamicSubBuildExecution, listener);
+        return runResult;
     }
 }

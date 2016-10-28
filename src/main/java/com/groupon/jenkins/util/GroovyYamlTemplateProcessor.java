@@ -25,16 +25,17 @@ package com.groupon.jenkins.util;
 
 import com.google.common.collect.ForwardingMap;
 import groovy.text.GStringTemplateEngine;
+import org.yaml.snakeyaml.Yaml;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.yaml.snakeyaml.Yaml;
 
 public class GroovyYamlTemplateProcessor {
 
     private final String config;
     private final Map envVars;
 
-    public GroovyYamlTemplateProcessor(String config, Map<String,Object> envVars) {
+    public GroovyYamlTemplateProcessor(String config, Map<String, Object> envVars) {
         this.config = config;
         this.envVars = new HashMap(envVars);
         this.envVars.remove("PATH");
@@ -68,8 +69,8 @@ public class GroovyYamlTemplateProcessor {
         @Override
         public Object get(Object key) {
             Object value = super.get(key);
-            if(value == null){
-              return ((String)key).startsWith("DOTCI")? null : "$" + key;
+            if (value == null) {
+                return ((String) key).startsWith("DOTCI") ? null : "$" + key;
             }
             return value;
         }

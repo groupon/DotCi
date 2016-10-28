@@ -28,52 +28,50 @@ import hudson.matrix.Axis;
 import hudson.matrix.Combination;
 import hudson.model.Build;
 import hudson.model.Queue;
+import jenkins.model.Jenkins;
+import org.kohsuke.stapler.Stapler;
 
 import java.util.List;
-
-import jenkins.model.Jenkins;
-
-import org.kohsuke.stapler.Stapler;
 
 public final class DynamicRunPtr {
     private final Combination combination;
     private transient final DynamicBuild dynamicBuild;
 
-    DynamicRunPtr(Combination c, DynamicBuild dynamicBuild) {
+    DynamicRunPtr(final Combination c, final DynamicBuild dynamicBuild) {
         this.combination = c;
         this.dynamicBuild = dynamicBuild;
     }
 
-    public String toName(List<Axis> axisList) {
-        return combination.toString(axisList);
+    public String toName(final List<Axis> axisList) {
+        return this.combination.toString(axisList);
     }
 
     public Build getRun() {
-        return dynamicBuild.getRun(combination);
+        return this.dynamicBuild.getRun(this.combination);
     }
 
     public String getNearestRunUrl() {
-        @SuppressWarnings("rawtypes")
+        final
         Build r = getRun();
         if (r == null) {
             return null;
         }
-        if (dynamicBuild.getNumber() == r.getNumber()) {
+        if (this.dynamicBuild.getNumber() == r.getNumber()) {
             return getShortUrl() + "/console";
         }
         return Stapler.getCurrentRequest().getContextPath() + '/' + r.getUrl();
     }
 
     public String getShortUrl() {
-        return Util.rawEncode(combination.toString());
+        return Util.rawEncode(this.combination.toString());
     }
 
     public String getTooltip() {
-        Build r = getRun();
+        final Build r = getRun();
         if (r != null) {
             return r.getIconColor().getDescription();
         }
-        Queue.Item item = Jenkins.getInstance().getQueue().getItem(dynamicBuild.getParent().getItem(combination));
+        final Queue.Item item = Jenkins.getInstance().getQueue().getItem(this.dynamicBuild.getParent().getItem(this.combination));
         if (item != null) {
             return item.getWhy();
         }
