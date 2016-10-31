@@ -111,8 +111,14 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     // which seems like a bug in the version were are using.
     @Override
     public synchronized HttpResponse doStop() throws IOException, ServletException {
+        BuildStopListener.all().forEach(buildStopListener -> buildStopListener.onStop(DynamicBuild.this));
         return super.doStop();
     }
+
+    public synchronized void abort() {
+        getExecutor().doStop();
+    }
+
 
     @Override
     public void restoreFromDb(final AbstractProject project, final Map<String, Object> input) {

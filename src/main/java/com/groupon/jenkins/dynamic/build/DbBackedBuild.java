@@ -237,7 +237,7 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
                 }
             }
         }
-        return null;
+        return new NullExecutor(this.getStartTimeInMillis());
     }
 
     private boolean isCurrent(final Executor executor) {
