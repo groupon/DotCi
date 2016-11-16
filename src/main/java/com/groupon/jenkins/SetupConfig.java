@@ -32,12 +32,17 @@ import com.groupon.jenkins.dynamic.build.repository.DynamicProjectRepository;
 import com.groupon.jenkins.dynamic.buildtype.BuildType;
 import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
 import com.groupon.jenkins.github.services.GithubDeployKeyRepository;
+import com.mongodb.ServerAddress;
 import hudson.Extension;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
+
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Extension
 public class SetupConfig extends GlobalConfiguration {
@@ -61,6 +66,10 @@ public class SetupConfig extends GlobalConfiguration {
 
     public SetupConfig() {
         load();
+    }
+
+    // For tests only
+    protected SetupConfig(final String nnul) {
     }
 
     public static SetupConfig get() {
@@ -247,5 +256,15 @@ public class SetupConfig extends GlobalConfiguration {
 
     public GithubDeployKeyRepository getGithubDeployKeyRepository() {
         return getInjector().getInstance(GithubDeployKeyRepository.class);
+    }
+
+    public List<ServerAddress> getMongoServerAddresses() throws UnknownHostException {
+        final List<ServerAddress> serverAddresses = new ArrayList<>();
+        for (final String dbHost : getDbHost().split(",")) {
+            final String[] hostPort = dbHost.split(":");
+            final int port = hostPort.length == 1 ? getDbPort() : Integer.parseInt(hostPort[1]);
+            serverAddresses.add(new ServerAddress(hostPort[0], port));
+        }
+        return serverAddresses;
     }
 }

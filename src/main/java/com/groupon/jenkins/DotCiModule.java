@@ -46,7 +46,7 @@ public class DotCiModule extends AbstractModule {
         Mongo mongo = null;
 
         try {
-            mongo = new MongoClient(SetupConfig.get().getDbHost(), SetupConfig.get().getDbPort());
+            mongo = new MongoClient(SetupConfig.get().getMongoServerAddresses());
         } catch (final UnknownHostException e) {
             addError(e);
         }
