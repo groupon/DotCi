@@ -33,6 +33,7 @@ import com.groupon.jenkins.mongo.BuildInfo;
 import com.groupon.jenkins.mongo.MongoRepository;
 import com.groupon.jenkins.mongo.MongoRunMap;
 import com.groupon.jenkins.util.GReflectionUtils;
+import com.mongodb.ReadPreference;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.util.RunList;
@@ -65,7 +66,7 @@ public class DynamicBuildRepository extends MongoRepository {
     }
 
     public <T extends DbBackedBuild> T getFirstBuild(final DbBackedProject project) {
-        final DbBackedBuild build = getDatastore().createQuery(DbBackedBuild.class).disableValidation().
+        final DbBackedBuild build = createDbBackedBuildReadQuery().
             limit(1).order("number").
             get();
 
@@ -74,8 +75,12 @@ public class DynamicBuildRepository extends MongoRepository {
         return (T) build;
     }
 
+    private Query<DbBackedBuild> createDbBackedBuildReadQuery() {
+        return getDatastore().createQuery(DbBackedBuild.class).disableValidation().useReadPreference(ReadPreference.primaryPreferred());
+    }
+
     private Query<DbBackedBuild> getQuery(final DbBackedProject project) {
-        return getDatastore().createQuery(DbBackedBuild.class).disableValidation().field("projectId").equal(project.getId());
+        return createDbBackedBuildReadQuery().field("projectId").equal(project.getId());
     }
 
     public <T extends DbBackedBuild> T getLastBuild(final DbBackedProject project) {
@@ -304,7 +309,7 @@ public class DynamicBuildRepository extends MongoRepository {
     }
 
     private Query<DynamicBuild> getDynamicBuildsForUser(final String user, final int numberOfBuilds) {
-        final Query<DynamicBuild> query = getDatastore().createQuery(DynamicBuild.class)
+        final Query<DynamicBuild> query = getDatastore().createQuery(DynamicBuild.class).useReadPreference(ReadPreference.primaryPreferred())
             .limit(numberOfBuilds)
             .disableValidation()
             .order("-timestamp")
@@ -328,7 +333,7 @@ public class DynamicBuildRepository extends MongoRepository {
     }
 
     public List<BuildInfo> getBuildHistory(final String nodeName) {
-        final List<DbBackedBuild> builds = getDatastore().createQuery(DbBackedBuild.class)
+        final List<DbBackedBuild> builds = createDbBackedBuildReadQuery()
             .field("builtOn").equal(nodeName)
             .asList();
 
