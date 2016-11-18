@@ -28,6 +28,8 @@ import com.google.inject.Provides;
 import com.groupon.jenkins.mongo.JenkinsMapper;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.ReadPreference;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 import org.mongodb.morphia.mapping.Mapper;
@@ -46,7 +48,8 @@ public class DotCiModule extends AbstractModule {
         Mongo mongo = null;
 
         try {
-            mongo = new MongoClient(SetupConfig.get().getMongoServerAddresses());
+            final MongoClientOptions mongoClientOptions = MongoClientOptions.builder().autoConnectRetry(true).readPreference(ReadPreference.primaryPreferred()).build();
+            mongo = new MongoClient(SetupConfig.get().getMongoServerAddresses(), mongoClientOptions);
         } catch (final UnknownHostException e) {
             addError(e);
         }
