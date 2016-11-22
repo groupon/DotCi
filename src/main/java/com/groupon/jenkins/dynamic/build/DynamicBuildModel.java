@@ -30,6 +30,7 @@ import com.groupon.jenkins.dynamic.build.commithistory.CommitHistoryView;
 import com.groupon.jenkins.git.GitBranch;
 import com.groupon.jenkins.git.GitUrl;
 import com.groupon.jenkins.github.services.GithubRepositoryService;
+import hudson.model.BuildListener;
 import hudson.model.Cause.UserIdCause;
 import hudson.model.TaskListener;
 import hudson.scm.ChangeLogSet;
@@ -58,13 +59,13 @@ public class DynamicBuildModel {
     }
 
 
-    public void run() throws IOException {
-        addBuildCauseForNonGithubCauses();
+    public void run(final BuildListener listener) throws IOException, InterruptedException {
+        addBuildCauseForNonGithubCauses(listener);
         this.build.addAction(new CommitHistoryView());
     }
 
-    private void addBuildCauseForNonGithubCauses() throws IOException {
-        final String branch = this.build.getEnvVars().get("BRANCH");
+    private void addBuildCauseForNonGithubCauses(final BuildListener listener) throws IOException, InterruptedException {
+        final String branch = this.build.getEnvironment(listener).get("BRANCH");
         final GitBranch gitBranch = new GitBranch(branch);
         if (this.build.getCause(UserIdCause.class) != null) {
             final GHCommit commit = this.githubRepositoryService.getHeadCommitForBranch(branch);

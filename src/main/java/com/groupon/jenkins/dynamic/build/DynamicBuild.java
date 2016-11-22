@@ -330,7 +330,7 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         protected Result doRun(final BuildListener listener) throws Exception, hudson.model.Run.RunnerAbortedException {
             final BuildEnvironment buildEnvironment = new BuildEnvironment(DynamicBuild.this, this.launcher, listener);
             try {
-                DynamicBuild.this.model.run();
+                DynamicBuild.this.model.run(listener);
                 if (!buildEnvironment.initialize()) {
                     return Result.FAILURE;
                 }

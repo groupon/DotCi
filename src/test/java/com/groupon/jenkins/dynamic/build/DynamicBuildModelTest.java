@@ -23,7 +23,6 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.dynamic.build;
 
-import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import com.groupon.jenkins.dynamic.build.cause.GithubLogEntry;
 import com.groupon.jenkins.dynamic.build.cause.UnknownBuildCause;
@@ -58,12 +57,16 @@ import static org.mockito.Mockito.when;
 public class DynamicBuildModelTest {
 
     @Test
-    public void should_add_commit_history_view_to_build() throws IOException {
+    public void should_add_commit_history_view_to_build() throws IOException, InterruptedException {
         final DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().manualStart("surya", "master").get();
         final GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
+        final EnvVars envVars = new EnvVars();
+        envVars.put("BRANCH", "master");
+        when(dynamicBuild.getEnvironment(null)).thenReturn(envVars);
+
         when(githubRepositoryService.getHeadCommitForBranch("master")).thenReturn(getGHCommit());
         final DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
-        model.run();
+        model.run(null);
         verify(dynamicBuild).addAction(any(CommitHistoryView.class));
     }
 
@@ -132,15 +135,17 @@ public class DynamicBuildModelTest {
     }
 
     @Test
-    public void should_add_unknown_build_cause_if_build_kickedoff_by_an_upstream_build() throws IOException {
+    public void should_add_unknown_build_cause_if_build_kickedoff_by_an_upstream_build() throws IOException, InterruptedException {
         final DynamicBuild dynamicBuild = DynamicBuildFactory.newBuild().get();
         when(dynamicBuild.getCause()).thenReturn(BuildCause.NULL_BUILD_CAUSE);
-        when(dynamicBuild.getEnvVars()).thenReturn(ImmutableMap.of("BRANCH", "master"));
+        final EnvVars envVars = new EnvVars();
+        envVars.put("BRANCH", "master");
+        when(dynamicBuild.getEnvironment(null)).thenReturn(envVars);
 
         final GithubRepositoryService githubRepositoryService = mock(GithubRepositoryService.class);
         when(githubRepositoryService.getHeadCommitForBranch("master")).thenReturn(getGHCommit());
         final DynamicBuildModel model = new DynamicBuildModel(dynamicBuild, githubRepositoryService);
-        model.run();
+        model.run(null);
         final ArgumentCaptor<UnknownBuildCause> argument = ArgumentCaptor.forClass(UnknownBuildCause.class);
         verify(dynamicBuild).addCause(argument.capture());
         final UnknownBuildCause buildCause = argument.getValue();
