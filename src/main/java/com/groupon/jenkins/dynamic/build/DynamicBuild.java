@@ -131,7 +131,12 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
     @Override
     public void delete() throws IOException {
         this.model.deleteSubBuilds();
-        super.delete();
+        try {
+            super.delete();
+        } catch (final IOException e) {
+            getParent().removeRun(this);
+            throw e;
+        }
     }
 
     @Override
