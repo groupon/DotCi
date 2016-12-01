@@ -134,8 +134,11 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
         try {
             super.delete();
         } catch (final IOException e) {
-            getParent().removeRun(this);
-            throw e;
+            if (e.getMessage().contains("already been deleted")) {
+                getParent().removeRun(this);
+            } else {
+                throw e;
+            }
         }
     }
 
