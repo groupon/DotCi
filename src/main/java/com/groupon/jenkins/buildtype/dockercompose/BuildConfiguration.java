@@ -43,114 +43,18 @@ import static java.lang.String.format;
 
 public class BuildConfiguration {
 
-    private Map config;
+    private final Map config;
 
-    public BuildConfiguration(Map config) {
+    public BuildConfiguration(final Map config) {
         this.config = config;
     }
 
-    public ShellCommands getBeforeRunCommandsIfPresent() {
-        return getShellCommands("before_run");
-    }
-
-    public ShellCommands getAfterRunCommandsIfPresent() {
-        return getShellCommands("after_run");
-    }
-
-    public ShellCommands getCommands(Combination combination, Map<String, Object> dotCiEnvVars) {
-        String dockerComposeContainerName = combination.get("script");
-        String projectName = (String) dotCiEnvVars.get("COMPOSE_PROJECT_NAME");
-        String fileName = getDockerComposeFileName();
-
-        ShellCommands shellCommands = new ShellCommands();
-        shellCommands.add(BuildConfiguration.getCheckoutCommands(dotCiEnvVars));
-
-        shellCommands.add(String.format("trap \"docker-compose -f %s down; exit\" PIPE QUIT INT HUP EXIT TERM", fileName));
-
-        appendCommands("before", shellCommands); //deprecated
-        appendCommands("before_each", shellCommands);
-
-        shellCommands.add(String.format("docker-compose -f %s pull", fileName));
-        if (config.get("run") != null) {
-            Map runConfig = (Map) config.get("run");
-            String dockerComposeRunCommand = getDockerComposeRunCommand(dockerComposeContainerName, fileName, runConfig);
-            shellCommands.add(format("export COMPOSE_CMD='%s'", dockerComposeRunCommand));
-            shellCommands.add(" set +e && hash unbuffer >/dev/null 2>&1 ;  if [ $? = 0 ]; then set -e && unbuffer $COMPOSE_CMD ;else set -e && $COMPOSE_CMD ;fi");
-        }
-        extractWorkingDirIntoWorkSpace(dockerComposeContainerName, projectName, shellCommands);
-
-        appendCommands("after_each", shellCommands);
-        if (!isParallelized()) {
-            appendCommands("after_run", shellCommands);
-        }
-        return shellCommands;
-    }
-
-    private String getDockerComposeRunCommand(String dockerComposeContainerName, String fileName, Map runConfig) {
-        Object dockerComposeCommand = runConfig.get(dockerComposeContainerName);
-        if (dockerComposeCommand != null) {
-            return String.format("docker-compose -f %s run -T %s %s", fileName, dockerComposeContainerName, dockerComposeCommand);
-        } else {
-            return String.format("docker-compose -f %s run %s ", fileName, dockerComposeContainerName);
-        }
-    }
-
-    private void extractWorkingDirIntoWorkSpace(String dockerComposeContainerName, String projectName, ShellCommands shellCommands) {
-        if (config.get("plugins") != null) {
-            shellCommands.add(getCopyWorkDirIntoWorkspaceCommands(dockerComposeContainerName, projectName));
-        }
-    }
-
-    public AxisList getAxisList() {
-        String dockerComposeContainerName = getOnlyRun();
-        AxisList axisList = new AxisList(new Axis("script", dockerComposeContainerName));
-        if (isParallelized()) {
-            Set commandKeys = ((Map) config.get("run")).keySet();
-            axisList = new AxisList(new Axis("script", new ArrayList<String>(commandKeys)));
-        }
-        return axisList;
-    }
-
-    public String getOnlyRun() {
-        Map runConfig = (Map) config.get("run");
-
-        return (String) runConfig.keySet().iterator().next();
-    }
-
-    public boolean isParallelized() {
-        return ((Map) config.get("run")).size() > 1;
-    }
-
-    public ShellCommands getCopyWorkDirIntoWorkspaceCommands(String run, String projectName) {
-        ShellCommands copyCommands = new ShellCommands();
-        copyCommands.add(String.format("if docker inspect %s_%s_1 &>/dev/null ; then containerName=%s_%s_1 ; else containerName=%s_%s_run_1 ; fi ; export containerName", projectName, run, projectName, run, projectName, run));
-        copyCommands.add("export workingDir=`docker inspect -f '{{ .Config.WorkingDir }}' $containerName | sed -e 's|^/||g'`");
-        copyCommands.add("stripComponents=0 ; if [ ! \"x\" == \"x$workingDir\" ]; then set +e ; (( stripComponents+=1 )) ; set -e ; fi ; export stripComponents");
-        copyCommands.add("numOfSlashes=`grep -o \"/\" <<< \"$workingDir\" | wc -l` ; set +e ; (( stripComponents+=numOfSlashes )) ; set -e ; export stripComponents");
-        copyCommands.add("docker export $containerName | tar --no-same-owner --no-same-permissions --exclude=proc --exclude=dev -x ${workingDir} --strip-components=${stripComponents}");
-        return copyCommands;
-    }
-
-    public List<DotCiPluginAdapter> getPlugins() {
-        List plugins = config.get("plugins") != null ? (List) config.get("plugins") : Collections.emptyList();
-        return new DotCiExtensionsHelper().createPlugins(plugins);
-    }
-
-    public List<PostBuildNotifier> getNotifiers() {
-        List notifiers = config.get("notifications") != null ? (List) config.get("notifications") : Collections.emptyList();
-        return new DotCiExtensionsHelper().createNotifiers(notifiers);
-    }
-
-    public String getDockerComposeFileName() {
-        return config.get("docker-compose-file") != null ? (String) config.get("docker-compose-file") : "docker-compose.yml";
-    }
-
-    public static ShellCommands getCheckoutCommands(Map<String, Object> dotCiEnvVars) {
-        String gitCloneUrl = (String) dotCiEnvVars.get("DOTCI_DOCKER_COMPOSE_GIT_CLONE_URL");
-        GitUrl gitRepoUrl = new GitUrl(gitCloneUrl);
-        boolean isPrivateRepo = Boolean.parseBoolean((String) dotCiEnvVars.get("DOTCI_IS_PRIVATE_REPO"));
-        String gitUrl = isPrivateRepo ? gitRepoUrl.getGitUrl() : gitCloneUrl;
-        ShellCommands shellCommands = new ShellCommands();
+    public static ShellCommands getCheckoutCommands(final Map<String, Object> dotCiEnvVars) {
+        final String gitCloneUrl = (String) dotCiEnvVars.get("DOTCI_DOCKER_COMPOSE_GIT_CLONE_URL");
+        final GitUrl gitRepoUrl = new GitUrl(gitCloneUrl);
+        final boolean isPrivateRepo = Boolean.parseBoolean((String) dotCiEnvVars.get("DOTCI_IS_PRIVATE_REPO"));
+        final String gitUrl = isPrivateRepo ? gitRepoUrl.getGitUrl() : gitCloneUrl;
+        final ShellCommands shellCommands = new ShellCommands();
         shellCommands.add("chmod -R u+w . ; find . ! -path \"./deploykey_rsa.pub\" ! -path \"./deploykey_rsa\" -delete");
         shellCommands.add("git init");
         shellCommands.add(format("git remote add origin %s", gitUrl));
@@ -175,26 +79,118 @@ public class BuildConfiguration {
         return shellCommands;
     }
 
-    private void appendCommands(String key, ShellCommands commands) {
-        ShellCommands added = getShellCommands(key);
+    public ShellCommands getBeforeRunCommandsIfPresent() {
+        return getShellCommands("before_run");
+    }
+
+    public ShellCommands getAfterRunCommandsIfPresent() {
+        return getShellCommands("after_run");
+    }
+
+    public List<ShellCommands> getCommands(final Combination combination, final Map<String, Object> dotCiEnvVars) {
+        final List<ShellCommands> allCommands = new ArrayList<>();
+        final String dockerComposeContainerName = combination.get("script");
+        final String projectName = (String) dotCiEnvVars.get("COMPOSE_PROJECT_NAME");
+        final String fileName = getDockerComposeFileName();
+
+        final ShellCommands shellCommands = new ShellCommands();
+        shellCommands.add(BuildConfiguration.getCheckoutCommands(dotCiEnvVars));
+
+        shellCommands.add(String.format("trap \"docker-compose -f %s down; exit\" PIPE QUIT INT HUP EXIT TERM", fileName));
+
+        appendCommands("before", shellCommands); //deprecated
+        appendCommands("before_each", shellCommands);
+
+        shellCommands.add(String.format("docker-compose -f %s pull", fileName));
+        if (this.config.get("run") != null) {
+            final Map runConfig = (Map) this.config.get("run");
+            final String dockerComposeRunCommand = getDockerComposeRunCommand(dockerComposeContainerName, fileName, runConfig);
+            shellCommands.add(format("export COMPOSE_CMD='%s'", dockerComposeRunCommand));
+            shellCommands.add(" set +e && hash unbuffer >/dev/null 2>&1 ;  if [ $? = 0 ]; then set -e && unbuffer $COMPOSE_CMD ;else set -e && $COMPOSE_CMD ;fi");
+        }
+
+        appendCommands("after_each", shellCommands);
+        if (!isParallelized()) {
+            appendCommands("after_run", shellCommands);
+        }
+        allCommands.add(shellCommands);
+        allCommands.add(getCopyWorkDirIntoWorkspaceCommands(dockerComposeContainerName, projectName));
+        return allCommands;
+    }
+
+    private String getDockerComposeRunCommand(final String dockerComposeContainerName, final String fileName, final Map runConfig) {
+        final Object dockerComposeCommand = runConfig.get(dockerComposeContainerName);
+        if (dockerComposeCommand != null) {
+            return String.format("docker-compose -f %s run -T %s %s", fileName, dockerComposeContainerName, dockerComposeCommand);
+        } else {
+            return String.format("docker-compose -f %s run %s ", fileName, dockerComposeContainerName);
+        }
+    }
+
+    public AxisList getAxisList() {
+        final String dockerComposeContainerName = getOnlyRun();
+        AxisList axisList = new AxisList(new Axis("script", dockerComposeContainerName));
+        if (isParallelized()) {
+            final Set commandKeys = ((Map) this.config.get("run")).keySet();
+            axisList = new AxisList(new Axis("script", new ArrayList<>(commandKeys)));
+        }
+        return axisList;
+    }
+
+    public String getOnlyRun() {
+        final Map runConfig = (Map) this.config.get("run");
+
+        return (String) runConfig.keySet().iterator().next();
+    }
+
+    public boolean isParallelized() {
+        return ((Map) this.config.get("run")).size() > 1;
+    }
+
+    public ShellCommands getCopyWorkDirIntoWorkspaceCommands(final String run, final String projectName) {
+        final ShellCommands copyCommands = new ShellCommands(false);
+        copyCommands.add(String.format("if docker inspect %s_%s_1 &>/dev/null ; then containerName=%s_%s_1 ; else containerName=%s_%s_run_1 ; fi ; export containerName", projectName, run, projectName, run, projectName, run));
+        copyCommands.add("export workingDir=`docker inspect -f '{{ .Config.WorkingDir }}' $containerName | sed -e 's|^/||g'`");
+        copyCommands.add("stripComponents=0 ; if [ ! \"x\" == \"x$workingDir\" ]; then set +e ; (( stripComponents+=1 )) ; set -e ; fi ; export stripComponents");
+        copyCommands.add("numOfSlashes=`grep -o \"/\" <<< \"$workingDir\" | wc -l` ; set +e ; (( stripComponents+=numOfSlashes )) ; set -e ; export stripComponents");
+        copyCommands.add("docker export $containerName | tar --no-same-owner --no-same-permissions --exclude=proc --exclude=dev -x ${workingDir} --strip-components=${stripComponents}");
+        return copyCommands;
+    }
+
+    public List<DotCiPluginAdapter> getPlugins() {
+        final List plugins = this.config.get("plugins") != null ? (List) this.config.get("plugins") : Collections.emptyList();
+        return new DotCiExtensionsHelper().createPlugins(plugins);
+    }
+
+    public List<PostBuildNotifier> getNotifiers() {
+        final List notifiers = this.config.get("notifications") != null ? (List) this.config.get("notifications") : Collections.emptyList();
+        return new DotCiExtensionsHelper().createNotifiers(notifiers);
+    }
+
+    public String getDockerComposeFileName() {
+        return this.config.get("docker-compose-file") != null ? (String) this.config.get("docker-compose-file") : "docker-compose.yml";
+    }
+
+    private void appendCommands(final String key, final ShellCommands commands) {
+        final ShellCommands added = getShellCommands(key);
         if (added != null) {
             commands.add(added);
         }
     }
 
-    private ShellCommands getShellCommands(String key) {
-        Object value = config.get(key);
+    private ShellCommands getShellCommands(final String key) {
+        final Object value = this.config.get(key);
         if (value == null) {
             return null;
         }
 
-        ShellCommands commands = new ShellCommands();
+        final ShellCommands commands = new ShellCommands();
         if (value instanceof String) {
             commands.add((String) value);
         } else if (value instanceof List) {
-            List l = (List) value;
+            final List l = (List) value;
 
-            for (Object v : l) {
+            for (final Object v : l) {
                 if (!(v instanceof String)) {
                     throw new RuntimeException(String.format("Unexpected type: %s. Expected String for key: %s", v.getClass().getName(), key));
                 }
@@ -205,6 +201,6 @@ public class BuildConfiguration {
     }
 
     public boolean isSkipped() {
-        return config.containsKey("skip");
+        return this.config.containsKey("skip");
     }
 }

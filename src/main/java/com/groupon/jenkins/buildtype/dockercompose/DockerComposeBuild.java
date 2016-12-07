@@ -87,13 +87,22 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
 
     @Override
     public Result runSubBuild(final Combination combination, final BuildExecutionContext buildExecutionContext, final BuildListener listener) throws IOException, InterruptedException {
-        final ShellCommands commands = this.buildConfiguration.getCommands(combination, buildExecutionContext.getBuildEnvironmentVariables());
+        final List<ShellCommands> commands = this.buildConfiguration.getCommands(combination, buildExecutionContext.getBuildEnvironmentVariables());
         return runCommands(commands, buildExecutionContext, listener);
     }
+
 
     private Result doCheckout(final Map<String, Object> buildEnvironment, final BuildExecutionContext buildExecutionContext, final BuildListener listener) throws IOException, InterruptedException {
         final ShellCommands commands = BuildConfiguration.getCheckoutCommands(buildEnvironment);
         return runCommands(commands, buildExecutionContext, listener);
+    }
+
+    private Result runCommands(final List<ShellCommands> commandList, final BuildExecutionContext buildExecutionContext, final BuildListener listener) throws IOException, InterruptedException {
+        final Result result = Result.SUCCESS;
+        for (final ShellCommands commands : commandList) {
+            result.combine(runCommands(commands, buildExecutionContext, listener));
+        }
+        return result;
     }
 
     private Result runCommands(final ShellCommands commands, final BuildExecutionContext buildExecutionContext, final BuildListener listener) throws IOException, InterruptedException {
