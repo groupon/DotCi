@@ -34,13 +34,12 @@ public abstract class GithubPushPullWebhookCause extends BuildCause {
     private final String parentSha;
     private final String pullRequestNumber;
     private final String pusher;
-    @SuppressWarnings("unused")
-    private transient WebhookPayload payload; // For backward compatibility
     private final GitBranch branch;
     private final List<GithubLogEntry> logEntries;
-    private CommitInfo commitInfo;
+    private final CommitInfo commitInfo;
+    private transient WebhookPayload payload; // For backward compatibility
 
-    public GithubPushPullWebhookCause(PushAndPullRequestPayload payload, String sha) {
+    public GithubPushPullWebhookCause(final PushAndPullRequestPayload payload, final String sha) {
         this.pusher = payload.getPusher();
         this.pullRequestNumber = payload.isPullRequest() ? payload.getPullRequestNumber() : null;
         this.sha = sha;
@@ -52,12 +51,12 @@ public abstract class GithubPushPullWebhookCause extends BuildCause {
 
     @Override
     public String getSha() {
-        return sha;
+        return this.sha;
     }
 
     @Override
     public String getParentSha() {
-        return parentSha;
+        return this.parentSha;
     }
 
     @Override
@@ -68,26 +67,26 @@ public abstract class GithubPushPullWebhookCause extends BuildCause {
 
     @Override
     public String getPusher() {
-        return pusher;
+        return this.pusher;
     }
 
     @Override
     public String getPullRequestNumber() {
-        return pullRequestNumber;
+        return this.pullRequestNumber;
     }
 
     @Override
     public CommitInfo getCommitInfo() {
-        return commitInfo;
+        return this.commitInfo;
     }
 
     @Override
     public GitBranch getBranch() {
-        return branch;
+        return this.branch;
     }
 
     @Override
     public List<GithubLogEntry> getChangeLogEntries() {
-        return logEntries;
+        return this.logEntries;
     }
 }

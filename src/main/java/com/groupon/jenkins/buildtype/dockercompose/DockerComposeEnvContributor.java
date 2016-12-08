@@ -39,9 +39,8 @@ import java.util.logging.Logger;
 
 @Extension
 public class DockerComposeEnvContributor extends EnvironmentContributor {
-    private static final Logger LOGGER = Logger.getLogger(DockerComposeEnvContributor.class.getName());
-
     public final static String COMPOSE_PROJECT_NAME = "COMPOSE_PROJECT_NAME";
+    private static final Logger LOGGER = Logger.getLogger(DockerComposeEnvContributor.class.getName());
 
     @Override
     public void buildEnvironmentFor(Run run, EnvVars envs, TaskListener listener) throws IOException, InterruptedException {

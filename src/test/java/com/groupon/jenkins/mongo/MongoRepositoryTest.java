@@ -66,8 +66,8 @@ public class MongoRepositoryTest {
 
     @Rule
     public RuleChain chain = RuleChain
-            .outerRule(new JenkinsRule())
-            .around(new MongoDataLoadRule());
+        .outerRule(new JenkinsRule())
+        .around(new MongoDataLoadRule());
 
     @Test
     @LocalData
@@ -76,7 +76,7 @@ public class MongoRepositoryTest {
 
         GHRepository ghRepository = setupMockGHRepository();
 
-        DynamicProject project = repo.createNewProject(ghRepository,null,null);
+        DynamicProject project = repo.createNewProject(ghRepository, null, null);
 
         project.addProperty(new CyclicProperty(project));
         project.save();
@@ -91,7 +91,7 @@ public class MongoRepositoryTest {
     @LocalData
     public void should_save_mixed_type_lists() {
         MixedTypeListClass mixed = new MixedTypeListClass();
-        Serializable [] mixedList = {1, "teststring", new DummySerialiazable()};
+        Serializable[] mixedList = {1, "teststring", new DummySerialiazable()};
         mixed.mixedTypeList = mixedList;
         Datastore ds = SetupConfig.get().getInjector().getInstance(Datastore.class);
         ds.save(mixed);
@@ -101,7 +101,7 @@ public class MongoRepositoryTest {
         assertEquals("teststring", restoredMixed.mixedTypeList[1]);
         assertNotNull(restoredMixed.mixedTypeList[2]);
         assertTrue(restoredMixed.mixedTypeList[2] instanceof DummySerialiazable);
-        DummySerialiazable dummy = (DummySerialiazable)restoredMixed.mixedTypeList[2];
+        DummySerialiazable dummy = (DummySerialiazable) restoredMixed.mixedTypeList[2];
         assertEquals("test", dummy.test);
     }
 
@@ -113,13 +113,13 @@ public class MongoRepositoryTest {
         GHRepository ghRepository = setupMockGHRepository();
 
         DynamicProjectRepository repo = SetupConfig.get().getDynamicProjectRepository();
-        DynamicProject project = repo.createNewProject(ghRepository,null,null);
+        DynamicProject project = repo.createNewProject(ghRepository, null, null);
 
         project.scheduleBuild2(0).get();
 
-        assert(repo.getDatastore().getCount(DbBackedBuild.class) > 0);
+        assert (repo.getDatastore().getCount(DbBackedBuild.class) > 0);
 
-        for(DbBackedBuild build : SetupConfig.get().getDynamicBuildRepository().getBuilds(project)) {
+        for (DbBackedBuild build : SetupConfig.get().getDynamicBuildRepository().getBuilds(project)) {
             assertNotNull(build.getParent());
             assertNotNull(build.getState());
             assertNotNull(build.getResult());
@@ -134,7 +134,7 @@ public class MongoRepositoryTest {
     }
 
     // TODO Organize this into a utility class for greater reusablility
-    private GHRepository setupMockGHRepository() throws Exception{
+    private GHRepository setupMockGHRepository() throws Exception {
         GHRepository ghRepository = PowerMockito.mock(GHRepository.class);
 
         PowerMockito.whenNew(GHRepository.class).withNoArguments().thenReturn(ghRepository);
@@ -176,7 +176,6 @@ public class MongoRepositoryTest {
         PowerMockito.when(github.getRepository("groupon/DotCi")).thenReturn(ghRepository);
 
 
-
         SecurityContext context = PowerMockito.mock(SecurityContext.class);
 //        PowerMockito.when(context.getAuthentication()).thenReturn(token);
         SecurityContextHolder.setContext(context);
@@ -188,6 +187,7 @@ public class MongoRepositoryTest {
 class CyclicProperty extends JobProperty<DynamicProject> {
     private DynamicProject project;
     private ArbitraryCycleClass cyclicObject;
+
     CyclicProperty(DynamicProject project) {
         super();
         this.project = project;
@@ -208,6 +208,7 @@ class DummySerialiazable implements Serializable {
 
 class ArbitraryCycleClass {
     private ArbitraryCycleClass cyclicObject;
+
     ArbitraryCycleClass() {
         cyclicObject = this;
     }

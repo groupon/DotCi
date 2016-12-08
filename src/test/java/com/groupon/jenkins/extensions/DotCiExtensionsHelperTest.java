@@ -24,30 +24,35 @@
 
 package com.groupon.jenkins.extensions;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
-import hudson.*;
-import hudson.model.*;
-
-import java.io.*;
-import java.util.*;
-
-import hudson.tasks.*;
+import hudson.DescriptorExtensionList;
+import hudson.ExtensionList;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.BuildListener;
+import hudson.model.Descriptor;
+import hudson.model.Run;
+import hudson.model.TaskListener;
+import hudson.tasks.Builder;
 import jenkins.model.Jenkins;
-import jenkins.tasks.*;
+import jenkins.tasks.SimpleBuildStep;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockingDetails;
 import static org.mockito.Mockito.when;
 
 public class DotCiExtensionsHelperTest {
 
     @Test
-    public void should_create_plugins_from_dotci_extensions(){
+    public void should_create_plugins_from_dotci_extensions() {
         Jenkins jenkins = mock(Jenkins.class);
         DotCiPluginAdapter plugin1 = getPlugin();
         ExtensionList extensionList = mock(ExtensionList.class);
@@ -56,11 +61,12 @@ public class DotCiExtensionsHelperTest {
         List<DotCiPluginAdapter> plugins = new DotCiExtensionsHelper(jenkins).createPlugins(Arrays.asList("plugin1"));
 
         Assert.assertNotNull(plugins);
-        Assert.assertEquals(plugin1.getName(),plugins.get(0).getName());
+        Assert.assertEquals(plugin1.getName(), plugins.get(0).getName());
 
     }
+
     @Test
-    public void should_create_plugins_from_build_step_plugins(){
+    public void should_create_plugins_from_build_step_plugins() {
         Jenkins jenkins = mock(Jenkins.class);
 
         ExtensionList extensionList = mock(ExtensionList.class);
@@ -68,7 +74,7 @@ public class DotCiExtensionsHelperTest {
         when(jenkins.getExtensionList(any(Class.class))).thenReturn(extensionList);
 
 
-        DescriptorExtensionList<Builder, Descriptor<Builder>> descriptors =  mock(DescriptorExtensionList.class);
+        DescriptorExtensionList<Builder, Descriptor<Builder>> descriptors = mock(DescriptorExtensionList.class);
         when(jenkins.getDescriptorList(any(Class.class))).thenReturn(descriptors);
         Descriptor<Builder> buildStepDescriptor = new FakeBuildStepPlugin.FakeDescriptor();
         when(descriptors.iterator()).thenReturn(Lists.newArrayList(buildStepDescriptor).iterator());
@@ -82,13 +88,14 @@ public class DotCiExtensionsHelperTest {
     }
 
     private DotCiPluginAdapter getPlugin() {
-        return new FakePlugin() ;
+        return new FakePlugin();
     }
 
-    private static class FakePlugin extends DotCiPluginAdapter{
-        public FakePlugin(){
-            super("plugin1",null);
+    private static class FakePlugin extends DotCiPluginAdapter {
+        public FakePlugin() {
+            super("plugin1", null);
         }
+
         @Override
         public boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener) {
             return false;
@@ -96,14 +103,14 @@ public class DotCiExtensionsHelperTest {
     }
 
 
-    private static  class FakeBuildStepPlugin extends Builder implements  SimpleBuildStep{
+    private static class FakeBuildStepPlugin extends Builder implements SimpleBuildStep {
         @Override
         public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
 
         }
 
 
-        private static class FakeDescriptor extends  Descriptor{
+        private static class FakeDescriptor extends Descriptor {
 
             @Override
             public String getDisplayName() {

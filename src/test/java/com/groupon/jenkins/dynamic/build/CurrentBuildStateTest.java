@@ -24,7 +24,6 @@ THE SOFTWARE.
 package com.groupon.jenkins.dynamic.build;
 
 import hudson.model.Result;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;

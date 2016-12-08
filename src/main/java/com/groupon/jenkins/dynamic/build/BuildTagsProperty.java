@@ -33,16 +33,15 @@ import org.kohsuke.stapler.StaplerRequest;
 
 public class BuildTagsProperty extends JobProperty<Job<?, ?>> {
 
-    public boolean isShouldBuildTags() {
-        return shouldBuildTags;
-    }
-
     private final boolean shouldBuildTags;
 
-    public BuildTagsProperty(boolean shouldBuildTags) {
+    public BuildTagsProperty(final boolean shouldBuildTags) {
         this.shouldBuildTags = shouldBuildTags;
     }
 
+    public boolean isShouldBuildTags() {
+        return this.shouldBuildTags;
+    }
 
     @Extension
     public static final class BuildTagsPropertyDescriptor extends JobPropertyDescriptor {
@@ -53,12 +52,12 @@ public class BuildTagsProperty extends JobProperty<Job<?, ?>> {
         }
 
         @Override
-        public boolean isApplicable(Class<? extends Job> jobType) {
+        public boolean isApplicable(final Class<? extends Job> jobType) {
             return DynamicProject.class.equals(jobType);
         }
 
         @Override
-        public BuildTagsProperty newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+        public BuildTagsProperty newInstance(final StaplerRequest req, final JSONObject formData) throws FormException {
             return new BuildTagsProperty(formData.getBoolean("shouldBuildTags"));
         }
     }

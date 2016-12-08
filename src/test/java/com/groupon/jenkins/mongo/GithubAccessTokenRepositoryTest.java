@@ -29,16 +29,17 @@ import com.groupon.jenkins.github.services.GithubAccessTokenRepository;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.rules.RuleChain;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.recipes.LocalData;
 
+import static org.junit.Assert.assertEquals;
+
 public class GithubAccessTokenRepositoryTest {
     @Rule
     public RuleChain chain = RuleChain
-            .outerRule(new JenkinsRule())
-            .around(new MongoDataLoadRule());
+        .outerRule(new JenkinsRule())
+        .around(new MongoDataLoadRule());
 
     @Test
     @LocalData

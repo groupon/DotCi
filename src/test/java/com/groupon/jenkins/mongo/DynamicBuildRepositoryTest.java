@@ -23,11 +23,9 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.mongo;
 
-import com.groupon.jenkins.SetupConfig;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.rules.RuleChain;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.recipes.LocalData;
@@ -35,8 +33,8 @@ import org.jvnet.hudson.test.recipes.LocalData;
 public class DynamicBuildRepositoryTest {
     @Rule
     public RuleChain chain = RuleChain
-            .outerRule(new JenkinsRule())
-            .around(new MongoDataLoadRule());
+        .outerRule(new JenkinsRule())
+        .around(new MongoDataLoadRule());
 
     @Test
     @LocalData

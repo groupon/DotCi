@@ -23,18 +23,15 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.dynamic.build;
 
+import com.google.common.collect.ImmutableMap;
+import com.groupon.jenkins.dynamic.build.cause.BuildCause;
 import hudson.EnvVars;
+import org.junit.Test;
 
 import java.io.IOException;
 
-import org.junit.Test;
-
-import com.google.common.collect.ImmutableMap;
-import com.groupon.jenkins.dynamic.build.cause.BuildCause;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;

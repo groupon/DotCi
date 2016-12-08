@@ -26,15 +26,16 @@ package com.groupon.jenkins.github.services;
 
 import com.google.common.collect.ImmutableMap;
 import com.groupon.jenkins.SetupConfig;
+import org.junit.Before;
+import org.junit.Test;
+import org.kohsuke.github.GHEvent;
+import org.kohsuke.github.GHRepository;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import org.kohsuke.github.GHEvent;
-import org.kohsuke.github.GHRepository;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -57,7 +58,7 @@ public class GithubRepositoryServiceTest {
         setupConfig = mock(SetupConfig.class);
         githubAccessTokenRepository = mock(GithubAccessTokenRepository.class);
         githubDeployKeyRepository = mock(GithubDeployKeyRepository.class);
-        githubRepositoryService = spy(new GithubRepositoryService(githubRepository, githubAccessTokenRepository,githubDeployKeyRepository));
+        githubRepositoryService = spy(new GithubRepositoryService(githubRepository, githubAccessTokenRepository, githubDeployKeyRepository));
         doReturn(setupConfig).when(githubRepositoryService).getSetupConfig();
     }
 
@@ -65,7 +66,7 @@ public class GithubRepositoryServiceTest {
     public void should_add_hook_with_the_url_from_dotci_configuration() throws IOException {
         when(setupConfig.getGithubCallbackUrl()).thenReturn("http://jenkins/githook/");
 
-        githubRepositoryService.addHook("access_token","user");
+        githubRepositoryService.addHook("access_token", "user");
 
         List<GHEvent> events = Arrays.asList(GHEvent.PUSH, GHEvent.PULL_REQUEST);
         verify(githubRepository).createHook("web", ImmutableMap.of("url", "http://jenkins/githook/"), events, true);
@@ -85,12 +86,11 @@ public class GithubRepositoryServiceTest {
     public void should_add_traling_slash_if_missing() throws IOException {
         when(setupConfig.getGithubCallbackUrl()).thenReturn("http://jenkins/githook");
 
-        githubRepositoryService.addHook("access_token",null);
+        githubRepositoryService.addHook("access_token", null);
 
         List<GHEvent> events = Arrays.asList(GHEvent.PUSH, GHEvent.PULL_REQUEST);
         verify(githubRepository).createHook("web", ImmutableMap.of("url", "http://jenkins/githook/"), events, true);
     }
-
 
 
 //    @Test //TODO: uncomment this when encryption service branch is merged in

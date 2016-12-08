@@ -23,21 +23,18 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.views;
 
+import com.groupon.jenkins.util.AuthenticationMixin;
+import hudson.model.Descriptor.FormException;
 import hudson.model.Item;
 import hudson.model.ModifiableItemGroup;
-import hudson.model.Descriptor.FormException;
-
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.kohsuke.stapler.StaplerRequest;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
-import com.groupon.jenkins.util.AuthenticationMixin;
+import javax.servlet.ServletException;
+import java.io.IOException;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;

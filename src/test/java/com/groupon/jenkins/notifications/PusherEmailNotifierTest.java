@@ -23,20 +23,17 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.notifications;
 
-import hudson.model.BuildListener;
-
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.cause.GitHubPushCause;
 import com.groupon.jenkins.dynamic.build.cause.GithubPushPullWebhookCause;
+import hudson.model.BuildListener;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

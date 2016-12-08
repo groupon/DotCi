@@ -34,9 +34,6 @@ import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 import org.junit.rules.RuleChain;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.recipes.LocalData;
@@ -46,11 +43,19 @@ import org.kohsuke.github.GHUser;
 import java.net.URL;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
 public class DynamicProjectRepositoryTest {
     @Rule
     public RuleChain chain = RuleChain
-            .outerRule(new JenkinsRule())
-            .around(new MongoDataLoadRule());
+        .outerRule(new JenkinsRule())
+        .around(new MongoDataLoadRule());
 
     private DynamicProjectRepository repo;
 
@@ -89,7 +94,7 @@ public class DynamicProjectRepositoryTest {
         DynamicProject parent = repo.getProjectById(parentId);
         List<DynamicSubProject> children = Lists.newArrayList(repo.getChildren(parent));
         assertEquals(3, children.size()); // database has three sub-builds
-        for(DynamicSubProject subProject : children) {
+        for (DynamicSubProject subProject : children) {
             assertEquals(parentId, subProject.getParent().getId());
         }
     }
@@ -98,7 +103,7 @@ public class DynamicProjectRepositoryTest {
     @LocalData
     public void should_delete_a_project() {
         assertEquals(1L, repo.getDatastore().createQuery(DynamicProject.class).countAll());
-        DynamicProject project = spy( repo.getProjectById(new ObjectId("5451e5ee30047b534b7bd50b")));
+        DynamicProject project = spy(repo.getProjectById(new ObjectId("5451e5ee30047b534b7bd50b")));
         OrganizationContainer parent = new OrganizationContainer(Jenkins.getInstance(), "groupon");
         doReturn(parent).when(project).getParent();
         repo.delete(project);
@@ -111,7 +116,7 @@ public class DynamicProjectRepositoryTest {
         String testUrl = "https://localhost/test_group/test_job";
         Iterable<DynamicProject> projects = repo.getJobsFor(testUrl);
         assertTrue("Unable to find any projects with test url", projects.iterator().hasNext()); // there is at least one item
-        for(DynamicProject project : projects) {
+        for (DynamicProject project : projects) {
             assertEquals(testUrl, project.getGithubRepoUrl());
         }
     }
@@ -126,13 +131,13 @@ public class DynamicProjectRepositoryTest {
         when(ghRepository.getOwner()).thenReturn(ghUser);
         when(ghRepository.getName()).thenReturn("test_job");
 
-        int totalBefore = (int)repo.getDatastore().createQuery(DynamicProject.class).countAll();
+        int totalBefore = (int) repo.getDatastore().createQuery(DynamicProject.class).countAll();
 
         DynamicProject project = repo.createNewProject(ghRepository, "test", "username");
         assertNotNull(project);
         DynamicProject retrieved = repo.getProjectById(project.getId());
         assertNotNull(retrieved);
-        int totalAfter = (int)repo.getDatastore().createQuery(DynamicProject.class).countAll();
+        int totalAfter = (int) repo.getDatastore().createQuery(DynamicProject.class).countAll();
         assertEquals(totalAfter, totalBefore + 1);
     }
 

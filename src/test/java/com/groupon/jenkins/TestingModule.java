@@ -39,12 +39,14 @@ public class TestingModule extends AbstractModule {
     protected void configure() {
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     Mongo providesMongo() {
         return new Fongo(SetupConfig.get().getDbName()).getMongo();
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     Datastore provideDatastore(Mongo mongo) {
         String databaseName = SetupConfig.get().getDbName();
 

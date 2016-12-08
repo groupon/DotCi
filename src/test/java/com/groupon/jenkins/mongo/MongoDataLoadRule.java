@@ -46,13 +46,13 @@ public class MongoDataLoadRule implements TestRule {
     }
 
     @Override
-    public Statement apply(final Statement base, final Description description){
+    public Statement apply(final Statement base, final Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                if(Jenkins.getInstance() == null
-                        || SetupConfig.get().getInjector() == null
-                        || SetupConfig.get().getInjector().getInstance(Datastore.class) == null ) {
+                if (Jenkins.getInstance() == null
+                    || SetupConfig.get().getInjector() == null
+                    || SetupConfig.get().getInjector().getInstance(Datastore.class) == null) {
                     throw new IllegalStateException("Requires configured Jenkins and Mongo configurations");
                 }
 
@@ -61,15 +61,15 @@ public class MongoDataLoadRule implements TestRule {
                 //Load mongo data
                 File homedir = Jenkins.getInstance().getRootDir();
 
-                for(File fileOfData : homedir.listFiles()) {
-                    if(! fileOfData.getName().endsWith(".json") ) continue;
+                for (File fileOfData : homedir.listFiles()) {
+                    if (!fileOfData.getName().endsWith(".json")) continue;
 
                     String collectionName = fileOfData.getName().replaceAll("\\.json$", "");
                     DBCollection collection = db.createCollection(collectionName, new BasicDBObject());
 
                     String data = FileUtils.readFileToString(fileOfData);
                     Object bsonObject = JSON.parse(data);
-                    if(bsonObject instanceof BasicDBList) {
+                    if (bsonObject instanceof BasicDBList) {
                         BasicDBList basicDBList = (BasicDBList) bsonObject;
                         collection.insert(basicDBList.toArray(new DBObject[0]));
                     } else {
@@ -78,14 +78,14 @@ public class MongoDataLoadRule implements TestRule {
 
                 }
 
-                for(OrganizationContainer container : Jenkins.getInstance().getAllItems(OrganizationContainer.class)) {
+                for (OrganizationContainer container : Jenkins.getInstance().getAllItems(OrganizationContainer.class)) {
                     container.reloadItems();
                 }
 
                 base.evaluate();
 
                 // Clean up mongo data
-                for(String collectioName : db.getCollectionNames()) {
+                for (String collectioName : db.getCollectionNames()) {
                     db.getCollection(collectioName).drop();
                 }
             }

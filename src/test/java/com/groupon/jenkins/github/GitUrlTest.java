@@ -26,7 +26,7 @@ package com.groupon.jenkins.github;
 import com.groupon.jenkins.git.GitUrl;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class GitUrlTest {
 
@@ -53,11 +53,13 @@ public class GitUrlTest {
         String projectUrl = new GitUrl("https://github.acme.com/foo/bar.rb").getUrl();
         assertEquals("git@github.acme.com:foo/bar.rb.git", projectUrl);
     }
+
     @Test
     public void should_convert_http_url_into_git_url() {
         String projectUrl = new GitUrl("https://github.com/groupon/DotCi").getGitUrl();
         assertEquals("git@github.com:groupon/DotCi.git", projectUrl);
     }
+
     @Test
     public void should_convert_git_url_into_https_url() {
         String projectUrl = new GitUrl("git@github.com:groupon/DotCi.git").getHttpsUrl();

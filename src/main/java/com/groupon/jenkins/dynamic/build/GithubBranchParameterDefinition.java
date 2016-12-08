@@ -35,24 +35,35 @@ import java.util.ArrayList;
 
 public class GithubBranchParameterDefinition extends StringParameterDefinition {
 
-    private String githubRepoUrl;
+    private final String githubRepoUrl;
 
     @DataBoundConstructor
-    public GithubBranchParameterDefinition(String name, String defaultValue, String description, String githubRepoUrl) {
+    public GithubBranchParameterDefinition(final String name, final String defaultValue, final String description, final String githubRepoUrl) {
         super(name, defaultValue, description);
         this.githubRepoUrl = githubRepoUrl;
     }
 
-    public GithubBranchParameterDefinition(String name, String defaultValue, String githubRepoUrl) {
+    public GithubBranchParameterDefinition(final String name, final String defaultValue, final String githubRepoUrl) {
         super(name, defaultValue);
         this.githubRepoUrl = githubRepoUrl;
     }
 
 
     public String getGithubRepoUrl() {
-        return githubRepoUrl;
+        return this.githubRepoUrl;
     }
 
+    public Iterable<String> getBranches() throws IOException {
+        final ArrayList<String> branches = new ArrayList<>();
+        final GHRepository githubRepo = getGhRepository();
+        branches.addAll(githubRepo.getBranches().keySet());
+        branches.add("Pull Request: ");
+        return branches;
+    }
+
+    GHRepository getGhRepository() {
+        return new GithubRepositoryService(this.githubRepoUrl).getGithubRepository();
+    }
 
     @Extension
     public static class DescriptorImpl extends ParameterDescriptor {
@@ -61,18 +72,6 @@ public class GithubBranchParameterDefinition extends StringParameterDefinition {
             return "Github Branch Selector";
         }
 
-    }
-
-    public Iterable<String> getBranches() throws IOException {
-        ArrayList<String> branches = new ArrayList<String>();
-        GHRepository githubRepo = getGhRepository();
-        branches.addAll(githubRepo.getBranches().keySet());
-        branches.add("Pull Request: ");
-        return branches;
-    }
-
-    GHRepository getGhRepository() {
-        return new GithubRepositoryService(githubRepoUrl).getGithubRepository();
     }
 
 }

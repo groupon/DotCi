@@ -43,23 +43,24 @@ public class GithubBranchParameterDefinitionTest {
     private GHRepository githubRepo;
 
     @Before
-     public void setup(){
+    public void setup() {
         githubBranchParameterDefinition = Mockito.spy(new GithubBranchParameterDefinition("name", "defaultVaulue", "http://github.url"));
         githubRepo = Mockito.mock(GHRepository.class);
         Mockito.doReturn(githubRepo).when(githubBranchParameterDefinition).getGhRepository();
-     }
+    }
+
     @Test
     public void should_suggest_branches() throws Exception {
         when(githubRepo.getBranches()).thenReturn(ImmutableMap.<String, GHBranch>of("branch1", mock(GHBranch.class)));
         Iterable<String> branches = githubBranchParameterDefinition.getBranches();
-        Assert.assertEquals("branch1", Iterables.get(branches,0));
+        Assert.assertEquals("branch1", Iterables.get(branches, 0));
     }
 
     @Test
     public void should_suggest_prs() throws Exception {
 
         Iterable<String> branches = githubBranchParameterDefinition.getBranches();
-        Assert.assertEquals("Pull Request: ", Iterables.get(branches,0));
+        Assert.assertEquals("Pull Request: ", Iterables.get(branches, 0));
     }
 
 }

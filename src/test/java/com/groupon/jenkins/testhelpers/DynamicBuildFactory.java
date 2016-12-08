@@ -23,17 +23,27 @@ THE SOFTWARE.
  */
 package com.groupon.jenkins.testhelpers;
 
-import com.google.common.collect.*;
-import com.groupon.jenkins.dynamic.build.*;
-import com.groupon.jenkins.dynamic.build.cause.*;
-import com.groupon.jenkins.github.services.*;
-import hudson.model.*;
-import hudson.model.Cause.*;
-import org.mockito.stubbing.*;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
+import com.groupon.jenkins.dynamic.build.DynamicSubProject;
+import com.groupon.jenkins.dynamic.build.cause.BuildCause;
+import com.groupon.jenkins.github.services.GithubRepositoryService;
+import hudson.model.Cause;
+import hudson.model.Cause.UpstreamCause;
+import hudson.model.Cause.UserIdCause;
+import hudson.model.Result;
+import org.mockito.stubbing.OngoingStubbing;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class DynamicBuildFactory {
 
@@ -128,7 +138,6 @@ public class DynamicBuildFactory {
         addBranchParam(branch);
         return this;
     }
-
 
 
 }

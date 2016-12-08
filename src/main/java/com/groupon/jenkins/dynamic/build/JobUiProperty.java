@@ -32,14 +32,14 @@ import org.kohsuke.stapler.StaplerRequest;
 
 public class JobUiProperty extends JobProperty<Job<?, ?>> {
 
-    public boolean isNewUi() {
-        return newUi;
-    }
-
     private boolean newUi;
 
-    public JobUiProperty(boolean newUi) {
+    public JobUiProperty(final boolean newUi) {
         this.newUi = newUi;
+    }
+
+    public boolean isNewUi() {
+        return this.newUi;
     }
 
     public void toggle() {
@@ -56,12 +56,12 @@ public class JobUiProperty extends JobProperty<Job<?, ?>> {
         }
 
         @Override
-        public boolean isApplicable(Class<? extends Job> jobType) {
+        public boolean isApplicable(final Class<? extends Job> jobType) {
             return DynamicProject.class.equals(jobType) || DynamicSubProject.class.equals(jobType);
         }
 
         @Override
-        public JobUiProperty newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+        public JobUiProperty newInstance(final StaplerRequest req, final JSONObject formData) throws FormException {
             return new JobUiProperty(formData.getBoolean("newUi"));
         }
     }

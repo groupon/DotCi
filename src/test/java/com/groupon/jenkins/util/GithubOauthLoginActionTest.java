@@ -25,17 +25,19 @@
 package com.groupon.jenkins.util;
 
 import com.groupon.jenkins.SetupConfig;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.StaplerRequest;
 
 import javax.servlet.http.HttpSession;
-import static org.junit.Assert.*;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -78,16 +80,17 @@ public class GithubOauthLoginActionTest {
         List<String> scopes = Arrays.asList(githubOauthLoginAction.getScopes().split(","));
         assertFalse(scopes.contains("repo,"));
     }
+
     @Test
     public void should_set_access_token_in_the_session() throws IOException {
         StaplerRequest request = mock(StaplerRequest.class);
         HttpSession httpSession = mock(HttpSession.class);
         when(request.getSession()).thenReturn(httpSession);
         when(request.getParameter("code")).thenReturn("code");
-        when(httpPoster.post(anyString(),anyMap())).thenReturn("access_token=meow_token");
+        when(httpPoster.post(anyString(), anyMap())).thenReturn("access_token=meow_token");
         HttpResponse response = githubOauthLoginAction.doFinishLogin(request, null);
 
-        verify(httpSession).setAttribute("access_token","meow_token");
+        verify(httpSession).setAttribute("access_token", "meow_token");
         assertNotNull(response);
 
     }

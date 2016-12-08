@@ -35,8 +35,10 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DynamicProject.class)
@@ -66,7 +68,7 @@ public class DockerComposeEnvContributorTest {
         when(build.getNumber()).thenReturn(8);
 
         DynamicBuild parentBuild = DynamicBuildFactory.newBuild()
-                .withSubBuilds(build).get();
+            .withSubBuilds(build).get();
         DynamicProject parentProject = parentBuild.getParent();
         when(parentProject.getBuildType()).thenReturn("com.other.BuildType");
 

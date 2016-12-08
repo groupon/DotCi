@@ -27,12 +27,13 @@ package com.groupon.jenkins.dynamic.build.execution;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.tasks.Shell;
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,19 +41,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class WorkspaceFileExporterTest {
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();
-   @Test
-    public void should_export_file_into_workspace_for_create_operation() throws IOException, InterruptedException, ExecutionException {
-       WorkspaceFileExporter createFile = new WorkspaceFileExporter(new WorkspaceFileExporter.WorkspaceFile("test.txt","test Content","rw-r--r--"), WorkspaceFileExporter.Operation.CREATE);
-       FreeStyleProject project = jenkinsRule.createFreeStyleProject();
-       project.getBuildersList().add(createFile);
-       project.getBuildersList().add(new Shell("ls -la"));
-       project.getBuildersList().add(new Shell("cat test.txt"));
-       FreeStyleBuild build = project.scheduleBuild2(0).get();
-       String output = FileUtils.readFileToString(build.getLogFile());
-       assertThat(output).contains("test.txt");
-       assertThat(output).contains("test Content");
 
-   }
+    @Test
+    public void should_export_file_into_workspace_for_create_operation() throws IOException, InterruptedException, ExecutionException {
+        WorkspaceFileExporter createFile = new WorkspaceFileExporter(new WorkspaceFileExporter.WorkspaceFile("test.txt", "test Content", "rw-r--r--"), WorkspaceFileExporter.Operation.CREATE);
+        FreeStyleProject project = jenkinsRule.createFreeStyleProject();
+        project.getBuildersList().add(createFile);
+        project.getBuildersList().add(new Shell("ls -la"));
+        project.getBuildersList().add(new Shell("cat test.txt"));
+        FreeStyleBuild build = project.scheduleBuild2(0).get();
+        String output = FileUtils.readFileToString(build.getLogFile());
+        assertThat(output).contains("test.txt");
+        assertThat(output).contains("test Content");
+
+    }
 
     @Test
     public void should_delete_file_from_workspace_for_delete_operation() throws IOException, InterruptedException, ExecutionException {

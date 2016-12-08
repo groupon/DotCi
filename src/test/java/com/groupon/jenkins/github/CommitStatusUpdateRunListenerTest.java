@@ -25,11 +25,12 @@ package com.groupon.jenkins.github;
 
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.testhelpers.BuildListenerFactory;
-import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import org.kohsuke.github.GHCommitState;
 import org.kohsuke.github.GHRepository;
+
+import java.io.IOException;
 
 import static com.groupon.jenkins.testhelpers.DynamicBuildFactory.newBuild;
 import static org.mockito.Mockito.mock;
@@ -41,7 +42,7 @@ public class CommitStatusUpdateRunListenerTest {
     private CommitStatusUpdateRunListener commitStatusUpdateRunListener;
 
     @Before
-    public void setupTaget(){
+    public void setupTaget() {
         githubRepository = mock(GHRepository.class);
         commitStatusUpdateRunListener = new CommitStatusUpdateRunListener() {
             @Override
@@ -57,7 +58,7 @@ public class CommitStatusUpdateRunListenerTest {
         DynamicBuild build = newBuild().get();
         commitStatusUpdateRunListener.onStarted(build, null);
 
-        verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.PENDING, build.getFullUrl(), "Build in progress","DotCi/push");
+        verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.PENDING, build.getFullUrl(), "Build in progress", "DotCi/push");
     }
 
     @Test
@@ -70,15 +71,15 @@ public class CommitStatusUpdateRunListenerTest {
 
     }
 
-	@Test
-	public void should_set_skipped_message_on_skipped_build() throws IOException {
-		DynamicBuild build = newBuild().success().skipped().get();
+    @Test
+    public void should_set_skipped_message_on_skipped_build() throws IOException {
+        DynamicBuild build = newBuild().success().skipped().get();
 
-		commitStatusUpdateRunListener.onCompleted(build, BuildListenerFactory.newBuildListener().get());
-		verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.SUCCESS, build.getFullUrl(), "Success - Skipped", "DotCi/push");
+        commitStatusUpdateRunListener.onCompleted(build, BuildListenerFactory.newBuildListener().get());
+        verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.SUCCESS, build.getFullUrl(), "Success - Skipped", "DotCi/push");
 
 
-	}
+    }
 
     @Test
     public void should_set_failure_status_on_commit_if_build_fails() throws IOException {
@@ -90,7 +91,7 @@ public class CommitStatusUpdateRunListenerTest {
     @Test
     public void should_set_failure_status_on_commit_if_build_is_unstable() throws IOException {
         DynamicBuild build = newBuild().unstable().get();
-        commitStatusUpdateRunListener.onCompleted(build,  BuildListenerFactory.newBuildListener().get());
+        commitStatusUpdateRunListener.onCompleted(build, BuildListenerFactory.newBuildListener().get());
         verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.FAILURE, build.getFullUrl(), "Unstable", "DotCi/push");
     }
 

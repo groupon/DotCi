@@ -23,11 +23,9 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.notifications;
 
-import hudson.model.BuildListener;
-
-import org.junit.Test;
-
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
+import hudson.model.BuildListener;
+import org.junit.Test;
 
 import static com.groupon.jenkins.testhelpers.DynamicBuildFactory.newBuild;
 import static org.junit.Assert.assertFalse;
@@ -66,8 +64,8 @@ public class PostBuildNotifierTest {
 
     private static class PostBuildNotifierExt extends PostBuildNotifier {
 
-        private boolean wasPerformed;
         private final Type type;
+        private boolean wasPerformed;
 
         public PostBuildNotifierExt(Type type) {
             super("test");

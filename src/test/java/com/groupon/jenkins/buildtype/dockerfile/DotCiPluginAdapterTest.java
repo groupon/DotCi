@@ -29,20 +29,22 @@ import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import hudson.Launcher;
 import hudson.model.BuildListener;
-import java.io.IOException;
 import org.junit.Test;
+
+import java.io.IOException;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+
 public class DotCiPluginAdapterTest {
 
 
     @Test
     public void should_copy_files_only_when_specified() throws IOException {
-        DotCiPluginAdapter plugin =spy( new DotCiPluginAdapter("myplugin", "") {
+        DotCiPluginAdapter plugin = spy(new DotCiPluginAdapter("myplugin", "") {
 
             @Override
             public boolean perform(DynamicBuild dynamicBuild, Launcher launcher, BuildListener listener) {
@@ -50,8 +52,8 @@ public class DotCiPluginAdapterTest {
             }
         });
 
-        plugin.runFinished(null,null,null);
-        verify(plugin,never()).copyFiles(any(DynamicSubBuild.class),any(DynamicBuild.class),anyString(),any(BuildListener.class));
+        plugin.runFinished(null, null, null);
+        verify(plugin, never()).copyFiles(any(DynamicSubBuild.class), any(DynamicBuild.class), anyString(), any(BuildListener.class));
     }
 
 }

@@ -25,7 +25,7 @@ package com.groupon.jenkins.mongo;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class SpecialClassConverterTest {
     @Test
@@ -39,4 +39,5 @@ public class SpecialClassConverterTest {
 
 }
 
-class SomeTestClass {}
+class SomeTestClass {
+}

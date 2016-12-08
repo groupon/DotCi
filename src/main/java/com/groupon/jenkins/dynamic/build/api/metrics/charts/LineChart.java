@@ -8,6 +8,16 @@ import java.util.List;
 @ExportedBean(defaultVisibility = 100)
 public class LineChart extends Chart {
     private List<String> labels;
+    private List<DataSet> dataSets;
+    private String xLabel;
+    private String yLabel;
+
+    public LineChart(List<String> labels, List<DataSet> dataSets, String xLabel, String yLabel) {
+        this.labels = labels;
+        this.dataSets = dataSets;
+        this.xLabel = xLabel;
+        this.yLabel = yLabel;
+    }
 
     @Exported(inline = true)
     public List<DataSet> getDataSets() {
@@ -19,8 +29,6 @@ public class LineChart extends Chart {
         return labels;
     }
 
-    private List<DataSet> dataSets;
-
     @Exported(inline = true)
     public String getxLabel() {
         return xLabel;
@@ -29,16 +37,6 @@ public class LineChart extends Chart {
     @Exported(inline = true)
     public String getyLabel() {
         return yLabel;
-    }
-
-    private String xLabel;
-    private String yLabel;
-
-    public LineChart(List<String> labels, List<DataSet> dataSets, String xLabel, String yLabel) {
-        this.labels = labels;
-        this.dataSets = dataSets;
-        this.xLabel = xLabel;
-        this.yLabel = yLabel;
     }
 
     @Override
@@ -50,6 +48,31 @@ public class LineChart extends Chart {
     @ExportedBean
     public static class DataSet {
         private String label;
+        private String fillColor;
+        private String strokeColor;
+        private String pointColor;
+        private String pointStrokeColor;
+        private String pointHighlightFill;
+        private String pointHighlightStroke;
+        private List<Long> data;
+
+        public DataSet(String label, String fillColor, String strokeColor, String pointColor, String pointStrokeColor, String pointHighlightFill, String pointHighlightStroke, List<Long> data) {
+            this.label = label;
+            this.fillColor = fillColor;
+            this.strokeColor = strokeColor;
+            this.pointColor = pointColor;
+            this.pointStrokeColor = pointStrokeColor;
+            this.pointHighlightFill = pointHighlightFill;
+            this.pointHighlightStroke = pointHighlightStroke;
+            this.data = data;
+        }
+
+        public DataSet(String label, List<Long> data) {
+            this(label, data, ChartColor.DARK_GREY);
+        }
+        public DataSet(String label, List<Long> data, ChartColor color) {
+            this(label, color.fillColor, color.strokeColor, color.pointColor, color.pointStrokeColor, color.pointHighlightFill, color.pointHighlightStroke, data);
+        }
 
         @Exported(inline = true)
         public String getLabel() {
@@ -89,35 +112,6 @@ public class LineChart extends Chart {
         @Exported(inline = true)
         public List<Long> getData() {
             return data;
-        }
-
-        private String fillColor;
-        private String strokeColor;
-        private String pointColor;
-        private String pointStrokeColor;
-
-
-        private String pointHighlightFill;
-        private String pointHighlightStroke;
-        private List<Long> data;
-
-        public DataSet(String label, String fillColor, String strokeColor, String pointColor, String pointStrokeColor, String pointHighlightFill, String pointHighlightStroke, List<Long> data) {
-            this.label = label;
-            this.fillColor = fillColor;
-            this.strokeColor = strokeColor;
-            this.pointColor = pointColor;
-            this.pointStrokeColor = pointStrokeColor;
-            this.pointHighlightFill = pointHighlightFill;
-            this.pointHighlightStroke = pointHighlightStroke;
-            this.data = data;
-        }
-
-        public DataSet(String label, List<Long> data) {
-            this(label, data, ChartColor.DARK_GREY);
-        }
-
-        public DataSet(String label, List<Long> data, ChartColor color) {
-            this(label, color.fillColor, color.strokeColor, color.pointColor, color.pointStrokeColor, color.pointHighlightFill, color.pointHighlightStroke, data);
         }
 
     }

@@ -31,7 +31,7 @@ import java.lang.reflect.Field;
 /**
  * Hack to address issues in Jenkins mapping
  * These methods are copied directly from Morphia 1.07 so we can get around the method access limits.
- * <p/>
+ * <p>
  * Deprecated because we want to use the original classes.
  */
 @Deprecated

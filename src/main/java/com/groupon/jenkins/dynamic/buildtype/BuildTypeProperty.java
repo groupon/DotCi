@@ -58,16 +58,15 @@ import org.kohsuke.stapler.StaplerRequest;
 
 public class BuildTypeProperty extends JobProperty<Job<?, ?>> {
 
-    public String getBuildType() {
-        return buildType;
-    }
-
     private final String buildType;
 
     public BuildTypeProperty(String buildType) {
         this.buildType = buildType;
     }
 
+    public String getBuildType() {
+        return buildType;
+    }
 
     @Extension
     public static final class BuildTypePropertyDescriptor extends JobPropertyDescriptor {

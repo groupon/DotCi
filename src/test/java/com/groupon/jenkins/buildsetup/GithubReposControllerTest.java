@@ -23,16 +23,19 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.buildsetup;
 
-import com.google.common.collect.*;
-import com.groupon.jenkins.github.services.*;
-import org.junit.*;
-import org.jvnet.hudson.test.*;
-import org.kohsuke.github.*;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.groupon.jenkins.github.services.GithubCurrentUserService;
+import org.junit.Rule;
+import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
+import org.kohsuke.github.GHRepository;
 
-import java.io.*;
+import java.io.IOException;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class GithubReposControllerTest {
 

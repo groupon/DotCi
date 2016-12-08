@@ -32,23 +32,19 @@ import hudson.model.Run;
 public abstract class PostBuildNotifier extends DotCiExtension {
 
 
-    public enum Type {
-        FAILURE_AND_RECOVERY, ALL
-    }
-
     private final String name;
     private Object options;
 
-    public PostBuildNotifier(String name) {
+    public PostBuildNotifier(final String name) {
         this.name = name;
     }
 
-    protected boolean didBranchRecover(DynamicBuild build, BuildListener listener) {
-        Run r = build.getPreviousFinishedBuildOfSameBranch(listener);
+    protected boolean didBranchRecover(final DynamicBuild build, final BuildListener listener) {
+        final Run r = build.getPreviousFinishedBuildOfSameBranch(listener);
         return r != null && r.getResult().equals(Result.FAILURE);
     }
 
-    public boolean perform(DynamicBuild build, BuildListener listener) {
+    public boolean perform(final DynamicBuild build, final BuildListener listener) {
         return doesBuildNeedNotification(build, listener) ? notify(build, listener) : true;
     }
 
@@ -56,7 +52,7 @@ public abstract class PostBuildNotifier extends DotCiExtension {
 
     protected abstract boolean notify(DynamicBuild build, BuildListener listener);
 
-    protected boolean doesBuildNeedNotification(DynamicBuild build, BuildListener listener) {
+    protected boolean doesBuildNeedNotification(final DynamicBuild build, final BuildListener listener) {
         if (getType().equals(Type.ALL)) {
             return true;
         }
@@ -65,8 +61,8 @@ public abstract class PostBuildNotifier extends DotCiExtension {
         return Result.FAILURE.equals(build.getResult());
     }
 
-    protected String getNotificationMessage(DynamicBuild build, BuildListener listener) {
-        String subject;
+    protected String getNotificationMessage(final DynamicBuild build, final BuildListener listener) {
+        final String subject;
         if (Result.FAILURE.equals(build.getResult())) {
             subject = "Build  failed for  branch " + build.getCurrentBranch() + "  " + build.getParent().getName() + " - " + build.getNumber();
         } else {
@@ -75,16 +71,19 @@ public abstract class PostBuildNotifier extends DotCiExtension {
         return subject;
     }
 
-
-    public void setOptions(Object options) {
-        this.options = options;
-    }
-
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public Object getOptions() {
-        return options;
+        return this.options;
+    }
+
+    public void setOptions(final Object options) {
+        this.options = options;
+    }
+
+    public enum Type {
+        FAILURE_AND_RECOVERY, ALL
     }
 }
