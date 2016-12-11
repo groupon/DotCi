@@ -44,13 +44,13 @@ public class WorkspaceFileExporterTest {
 
     @Test
     public void should_export_file_into_workspace_for_create_operation() throws IOException, InterruptedException, ExecutionException {
-        WorkspaceFileExporter createFile = new WorkspaceFileExporter(new WorkspaceFileExporter.WorkspaceFile("test.txt", "test Content", "rw-r--r--"), WorkspaceFileExporter.Operation.CREATE);
-        FreeStyleProject project = jenkinsRule.createFreeStyleProject();
+        final WorkspaceFileExporter createFile = new WorkspaceFileExporter(new WorkspaceFileExporter.WorkspaceFile("test.txt", "test Content", "rw-r--r--"), WorkspaceFileExporter.Operation.CREATE);
+        final FreeStyleProject project = this.jenkinsRule.createFreeStyleProject();
         project.getBuildersList().add(createFile);
         project.getBuildersList().add(new Shell("ls -la"));
         project.getBuildersList().add(new Shell("cat test.txt"));
-        FreeStyleBuild build = project.scheduleBuild2(0).get();
-        String output = FileUtils.readFileToString(build.getLogFile());
+        final FreeStyleBuild build = project.scheduleBuild2(0).get();
+        final String output = FileUtils.readFileToString(build.getLogFile());
         assertThat(output).contains("test.txt");
         assertThat(output).contains("test Content");
 
@@ -58,12 +58,12 @@ public class WorkspaceFileExporterTest {
 
     @Test
     public void should_delete_file_from_workspace_for_delete_operation() throws IOException, InterruptedException, ExecutionException {
-        WorkspaceFileExporter deleteFile = new WorkspaceFileExporter(new WorkspaceFileExporter.WorkspaceFile("test.txt"), WorkspaceFileExporter.Operation.DELETE);
-        FreeStyleProject project = jenkinsRule.createFreeStyleProject();
+        final WorkspaceFileExporter deleteFile = new WorkspaceFileExporter(new WorkspaceFileExporter.WorkspaceFile("test.txt"), WorkspaceFileExporter.Operation.DELETE);
+        final FreeStyleProject project = this.jenkinsRule.createFreeStyleProject();
         project.getBuildersList().add(new Shell("touch text.txt"));
         project.getBuildersList().add(deleteFile);
-        FreeStyleBuild build = project.scheduleBuild2(0).get();
-        String output = FileUtils.readFileToString(build.getLogFile());
+        final FreeStyleBuild build = project.scheduleBuild2(0).get();
+        final String output = FileUtils.readFileToString(build.getLogFile());
         assertThat(output).doesNotContain("test.txt");
 
     }

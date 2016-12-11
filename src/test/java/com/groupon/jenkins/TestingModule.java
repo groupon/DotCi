@@ -47,11 +47,11 @@ public class TestingModule extends AbstractModule {
 
     @Provides
     @Singleton
-    Datastore provideDatastore(Mongo mongo) {
-        String databaseName = SetupConfig.get().getDbName();
+    Datastore provideDatastore(final Mongo mongo) {
+        final String databaseName = SetupConfig.get().getDbName();
 
-        Mapper mapper = new JenkinsMapper();
-        Morphia morphia = new Morphia(mapper);
+        final Mapper mapper = new JenkinsMapper();
+        final Morphia morphia = new Morphia(mapper);
         return morphia.createDatastore(mongo, databaseName);
 
     }

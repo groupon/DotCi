@@ -54,41 +54,41 @@ public class GithubOauthLoginActionTest {
 
     @Before
     public void setup() throws IOException {
-        httpPoster = mock(HttpPoster.class);
-        githubOauthLoginAction = spy(new GithubOauthLoginAction(httpPoster));
-        setupConfig = mock(SetupConfig.class);
-        doNothing().when(githubOauthLoginAction).updateOfflineAccessTokenForUser(anyString());
-        doReturn(setupConfig).when(githubOauthLoginAction).getSetupConfig();
-        doReturn("http://localhost:8080/jenkins").when(githubOauthLoginAction).getJenkinsRootUrl();
-        when(setupConfig.getGithubApiUrl()).thenReturn("githubApiUrl");
-        when(setupConfig.getGithubWebUrl()).thenReturn("githubWebUrl");
-        when(setupConfig.getGithubClientID()).thenReturn("githubClientId");
-        when(setupConfig.getGithubClientSecret()).thenReturn("githubClientSecret");
+        this.httpPoster = mock(HttpPoster.class);
+        this.githubOauthLoginAction = spy(new GithubOauthLoginAction(this.httpPoster));
+        this.setupConfig = mock(SetupConfig.class);
+        doNothing().when(this.githubOauthLoginAction).updateOfflineAccessTokenForUser(anyString());
+        doReturn(this.setupConfig).when(this.githubOauthLoginAction).getSetupConfig();
+        doReturn("http://localhost:8080/jenkins").when(this.githubOauthLoginAction).getJenkinsRootUrl();
+        when(this.setupConfig.getGithubApiUrl()).thenReturn("githubApiUrl");
+        when(this.setupConfig.getGithubWebUrl()).thenReturn("githubWebUrl");
+        when(this.setupConfig.getGithubClientID()).thenReturn("githubClientId");
+        when(this.setupConfig.getGithubClientSecret()).thenReturn("githubClientSecret");
 
     }
 
     @Test
     public void should_ask_for_private_repo_permssions_on_if_setup_in_config() {
-        when(setupConfig.hasPrivateRepoSupport()).thenReturn(true);
-        List<String> scopes = Arrays.asList(githubOauthLoginAction.getScopes().split(","));
+        when(this.setupConfig.hasPrivateRepoSupport()).thenReturn(true);
+        final List<String> scopes = Arrays.asList(this.githubOauthLoginAction.getScopes().split(","));
         assertTrue(scopes.contains("repo"));
     }
 
     @Test
     public void should_not_ask_for_private_repo_permssions_on_if_not_setup_in_config() {
-        when(setupConfig.hasPrivateRepoSupport()).thenReturn(false);
-        List<String> scopes = Arrays.asList(githubOauthLoginAction.getScopes().split(","));
+        when(this.setupConfig.hasPrivateRepoSupport()).thenReturn(false);
+        final List<String> scopes = Arrays.asList(this.githubOauthLoginAction.getScopes().split(","));
         assertFalse(scopes.contains("repo,"));
     }
 
     @Test
     public void should_set_access_token_in_the_session() throws IOException {
-        StaplerRequest request = mock(StaplerRequest.class);
-        HttpSession httpSession = mock(HttpSession.class);
+        final StaplerRequest request = mock(StaplerRequest.class);
+        final HttpSession httpSession = mock(HttpSession.class);
         when(request.getSession()).thenReturn(httpSession);
         when(request.getParameter("code")).thenReturn("code");
-        when(httpPoster.post(anyString(), anyMap())).thenReturn("access_token=meow_token");
-        HttpResponse response = githubOauthLoginAction.doFinishLogin(request, null);
+        when(this.httpPoster.post(anyString(), anyMap())).thenReturn("access_token=meow_token");
+        final HttpResponse response = this.githubOauthLoginAction.doFinishLogin(request, null);
 
         verify(httpSession).setAttribute("access_token", "meow_token");
         assertNotNull(response);

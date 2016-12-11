@@ -36,47 +36,47 @@ public class GroovyYamlTemplateProcessorTest {
 
     @Test
     public void should_filter_out_elements_that_are_filter_out_by_if_conditions() {
-        Map<String, Object> envVars = new HashMap<String, Object>();
+        final Map<String, Object> envVars = new HashMap<>();
         envVars.put("DOTCI_BRANCH", "gh-pages");
-        GroovyYamlTemplateProcessor effectiveConfiguration = new GroovyYamlTemplateProcessor(ResourceUtils.readResource(getClass(), ".ci_skip_versions.yml"), envVars);
-        Map<?, ?> config = effectiveConfiguration.getConfig();
+        final GroovyYamlTemplateProcessor effectiveConfiguration = new GroovyYamlTemplateProcessor(ResourceUtils.readResource(getClass(), ".ci_skip_versions.yml"), envVars);
+        final Map<?, ?> config = effectiveConfiguration.getConfig();
         assertNotNull(config);
-        List<?> langugeVersions = (List<?>) ((Map<?, ?>) config.get("environment")).get("language_versions");
+        final List<?> langugeVersions = (List<?>) ((Map<?, ?>) config.get("environment")).get("language_versions");
         assertEquals(1, langugeVersions.size());
     }
 
     @Test
     public void should_export_missing_variables_asis() {
-        Map<String, Object> envVars = new HashMap<String, Object>();
+        final Map<String, Object> envVars = new HashMap<>();
         envVars.put("NOT_MISSING_PROP", "1.9.0");
-        GroovyYamlTemplateProcessor effectiveConfiguration = new GroovyYamlTemplateProcessor(ResourceUtils.readResource(getClass(), ".ci_missing_props.yml"), envVars);
-        Map<?, ?> config = effectiveConfiguration.getConfig();
+        final GroovyYamlTemplateProcessor effectiveConfiguration = new GroovyYamlTemplateProcessor(ResourceUtils.readResource(getClass(), ".ci_missing_props.yml"), envVars);
+        final Map<?, ?> config = effectiveConfiguration.getConfig();
         assertNotNull(config);
-        Map<?, ?> env = (Map<?, ?>) config.get("environment");
-        List<?> versions = (List<?>) env.get("language_versions");
+        final Map<?, ?> env = (Map<?, ?>) config.get("environment");
+        final List<?> versions = (List<?>) env.get("language_versions");
         assertEquals("$MISSING_PROP", versions.get(0));
         assertEquals("1.9.0", versions.get(1));
     }
 
     @Test
     public void should_not_subsitute_PATH() {
-        Map<String, Object> envVars = new HashMap<String, Object>();
+        final Map<String, Object> envVars = new HashMap<>();
         envVars.put("PATH", "/PATH/BIN");
-        GroovyYamlTemplateProcessor effectiveConfiguration = new GroovyYamlTemplateProcessor(ResourceUtils.readResource(getClass(), ".ci_PATH.yml"), envVars);
-        Map<?, ?> config = effectiveConfiguration.getConfig();
+        final GroovyYamlTemplateProcessor effectiveConfiguration = new GroovyYamlTemplateProcessor(ResourceUtils.readResource(getClass(), ".ci_PATH.yml"), envVars);
+        final Map<?, ?> config = effectiveConfiguration.getConfig();
         assertNotNull(config);
-        Object run = ((Map<?, ?>) config.get("build")).get("run");
+        final Object run = ((Map<?, ?>) config.get("build")).get("run");
         assertEquals("echo $PATH", run);
     }
 
     @Test
     public void should_return_null_for_missing_DOTCI_vars() {
-        Map<String, Object> envVars = new HashMap<String, Object>();
+        final Map<String, Object> envVars = new HashMap<>();
         envVars.put("DOTCI_PULL_REQUEST", "1");
-        GroovyYamlTemplateProcessor effectiveConfiguration = new GroovyYamlTemplateProcessor(ResourceUtils.readResource(getClass(), ".ci_pr.yml"), envVars);
-        Map<?, ?> config = effectiveConfiguration.getConfig();
+        final GroovyYamlTemplateProcessor effectiveConfiguration = new GroovyYamlTemplateProcessor(ResourceUtils.readResource(getClass(), ".ci_pr.yml"), envVars);
+        final Map<?, ?> config = effectiveConfiguration.getConfig();
         assertNotNull(config);
-        Object run = ((Map<?, ?>) config.get("build")).get("run");
+        final Object run = ((Map<?, ?>) config.get("build")).get("run");
         assertEquals("echo pr 1", run);
     }
 }
