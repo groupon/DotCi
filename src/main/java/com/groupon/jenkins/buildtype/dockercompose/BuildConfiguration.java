@@ -96,7 +96,6 @@ public class BuildConfiguration {
         final ShellCommands shellCommands = new ShellCommands();
         shellCommands.add(BuildConfiguration.getCheckoutCommands(dotCiEnvVars));
 
-        shellCommands.add(String.format("trap \"docker-compose -f %s down; exit\" PIPE QUIT INT HUP EXIT TERM", fileName));
 
         appendCommands("before", shellCommands); //deprecated
         appendCommands("before_each", shellCommands);
@@ -114,9 +113,16 @@ public class BuildConfiguration {
             appendCommands("after_run", shellCommands);
         }
         allCommands.add(shellCommands);
-        allCommands.add(getCopyWorkDirIntoWorkspaceCommands(dockerComposeContainerName, projectName));
+        allCommands.add(getCleanupCommands(dockerComposeContainerName, projectName));
         return allCommands;
     }
+
+    private ShellCommands getCleanupCommands(final String dockerComposeContainerName, final String projectName) {
+        final ShellCommands cleanupCommands = getCopyWorkDirIntoWorkspaceCommands(dockerComposeContainerName, projectName);
+        cleanupCommands.add(String.format("docker-compose -f %s down", getDockerComposeFileName()));
+        return cleanupCommands;
+    }
+
 
     private String getDockerComposeRunCommand(final String dockerComposeContainerName, final String fileName, final Map runConfig) {
         final Object dockerComposeCommand = runConfig.get(dockerComposeContainerName);

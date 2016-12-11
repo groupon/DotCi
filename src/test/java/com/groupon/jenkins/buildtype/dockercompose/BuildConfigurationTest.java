@@ -48,36 +48,34 @@ public class BuildConfigurationTest {
 
     @Test
     public void should_cleanup_after_test_run() {
-        final ShellCommands commands = getRunCommands();
-        Assert.assertEquals("trap \"docker-compose -f docker-compose.yml down; exit\" PIPE QUIT INT HUP EXIT TERM", commands.get(5));
+        final ShellCommands commands = getCleanupCommands();
+        Assert.assertEquals("docker-compose -f docker-compose.yml down", commands.get(commands.size() - 1));
     }
 
     @Test
     public void should_pull_latest_image_from_registry() {
         final ShellCommands commands = getRunCommands();
-        Assert.assertEquals("docker-compose -f docker-compose.yml pull", commands.get(6));
+        Assert.assertEquals("docker-compose -f docker-compose.yml pull", commands.get(5));
     }
 
     @Test
     public void should_run_cmd_from_ci_yml() {
         final ShellCommands commands = getRunCommands();
-        Assert.assertEquals("export COMPOSE_CMD='docker-compose -f docker-compose.yml run -T unit command'", commands.get(7));
-        Assert.assertEquals(" set +e && hash unbuffer >/dev/null 2>&1 ;  if [ $? = 0 ]; then set -e && unbuffer $COMPOSE_CMD ;else set -e && $COMPOSE_CMD ;fi", commands.get(8));
+        Assert.assertEquals("export COMPOSE_CMD='docker-compose -f docker-compose.yml run -T unit command'", commands.get(6));
+        Assert.assertEquals(" set +e && hash unbuffer >/dev/null 2>&1 ;  if [ $? = 0 ]; then set -e && unbuffer $COMPOSE_CMD ;else set -e && $COMPOSE_CMD ;fi", commands.get(7));
     }
 
     @Test
     public void should_run_before_each_command_string() {
         final ShellCommands commands = getRunCommands(ImmutableMap.of("before_each", "before_each cmd", "run", of("unit", "command", "integration", "integration")));
-        Assert.assertEquals("trap \"docker-compose -f docker-compose.yml down; exit\" PIPE QUIT INT HUP EXIT TERM", commands.get(5));
-        Assert.assertEquals("before_each cmd", commands.get(6));
+        Assert.assertEquals("before_each cmd", commands.get(5));
     }
 
     @Test
     public void should_run_before_each_command_list() {
         final ShellCommands commands = getRunCommands(ImmutableMap.of("before_each", ImmutableList.of("cmd 1", "cmd 2"), "run", of("unit", "command", "integration", "integration")));
-        Assert.assertEquals("trap \"docker-compose -f docker-compose.yml down; exit\" PIPE QUIT INT HUP EXIT TERM", commands.get(5));
-        Assert.assertEquals("cmd 1", commands.get(6));
-        Assert.assertEquals("cmd 2", commands.get(7));
+        Assert.assertEquals("cmd 1", commands.get(5));
+        Assert.assertEquals("cmd 2", commands.get(6));
     }
 
     @Test
@@ -109,10 +107,9 @@ public class BuildConfigurationTest {
     @Test
     public void should_accept_alternative_docker_compose_file() {
         final ShellCommands commands = getRunCommands(ImmutableMap.of("docker-compose-file", "./jenkins/docker-compose.yml", "run", of("unit", "command")));
-        Assert.assertEquals("trap \"docker-compose -f ./jenkins/docker-compose.yml down; exit\" PIPE QUIT INT HUP EXIT TERM", commands.get(5));
-        Assert.assertEquals("docker-compose -f ./jenkins/docker-compose.yml pull", commands.get(6));
-        Assert.assertEquals("export COMPOSE_CMD='docker-compose -f ./jenkins/docker-compose.yml run -T unit command'", commands.get(7));
-        Assert.assertEquals(" set +e && hash unbuffer >/dev/null 2>&1 ;  if [ $? = 0 ]; then set -e && unbuffer $COMPOSE_CMD ;else set -e && $COMPOSE_CMD ;fi", commands.get(8));
+        Assert.assertEquals("docker-compose -f ./jenkins/docker-compose.yml pull", commands.get(5));
+        Assert.assertEquals("export COMPOSE_CMD='docker-compose -f ./jenkins/docker-compose.yml run -T unit command'", commands.get(6));
+        Assert.assertEquals(" set +e && hash unbuffer >/dev/null 2>&1 ;  if [ $? = 0 ]; then set -e && unbuffer $COMPOSE_CMD ;else set -e && $COMPOSE_CMD ;fi", commands.get(7));
     }
 
     @Test
@@ -181,6 +178,11 @@ public class BuildConfigurationTest {
     private ShellCommands getRunCommands() {
         final BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("run", of("unit", "command", "integration", "integration")));
         return buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars()).get(0);
+    }
+
+    private ShellCommands getCleanupCommands() {
+        final BuildConfiguration buildConfiguration = new BuildConfiguration(ImmutableMap.of("run", of("unit", "command", "integration", "integration")));
+        return buildConfiguration.getCommands(Combination.fromString("script=unit"), getEnvVars()).get(1);
     }
 
     private Map<String, Object> getEnvVars() {
