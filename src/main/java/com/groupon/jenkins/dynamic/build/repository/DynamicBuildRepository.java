@@ -65,7 +65,7 @@ public class DynamicBuildRepository extends MongoRepository {
     }
 
     public <T extends DbBackedBuild> T getFirstBuild(final DbBackedProject project) {
-        final DbBackedBuild build = getDatastore().createQuery(DbBackedBuild.class).disableValidation().
+        final DbBackedBuild build = getQuery(project).disableValidation().
             limit(1).order("number").
             get();
 
