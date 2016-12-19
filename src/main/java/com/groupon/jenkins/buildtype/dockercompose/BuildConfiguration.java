@@ -24,29 +24,52 @@
 
 package com.groupon.jenkins.buildtype.dockercompose;
 
+import com.groupon.jenkins.buildtype.dockercompose.buildconfiguration.ComposeFileNameSection;
+import com.groupon.jenkins.buildtype.dockercompose.buildconfiguration.GenericCommandsSection;
+import com.groupon.jenkins.buildtype.dockercompose.buildconfiguration.NotificationsSection;
+import com.groupon.jenkins.buildtype.dockercompose.buildconfiguration.PluginsSection;
+import com.groupon.jenkins.buildtype.dockercompose.buildconfiguration.RunSection;
+import com.groupon.jenkins.buildtype.dockercompose.buildconfiguration.SkipSection;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.extensions.DotCiExtensionsHelper;
 import com.groupon.jenkins.git.GitUrl;
 import com.groupon.jenkins.notifications.PostBuildNotifier;
-import hudson.matrix.Axis;
 import hudson.matrix.AxisList;
 import hudson.matrix.Combination;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static java.lang.String.format;
 
 public class BuildConfiguration {
 
-    private final Map config;
+    private final SkipSection skipSection;
+    private GenericCommandsSection afterEachSection;
+    private GenericCommandsSection afterRunSection;
+    private GenericCommandsSection beforeRunSection;
+    private GenericCommandsSection beforeSection;
+    private GenericCommandsSection beforeEachSection;
+    private ComposeFileNameSection composeFileNameSection;
+    private NotificationsSection notificationsSection;
+    private PluginsSection pluginsSection;
+    private RunSection runSection;
 
     public BuildConfiguration(final Map config) {
-        this.config = config;
+        this.skipSection = new SkipSection(config.get(SkipSection.KEY));
+        if (isSkipped())
+            return; //don't initialize/validate other sections if skipped
+        this.runSection = new RunSection(config.get(RunSection.KEY));
+        this.pluginsSection = new PluginsSection(config.get(PluginsSection.KEY));
+        this.notificationsSection = new NotificationsSection(config.get(NotificationsSection.KEY));
+        this.composeFileNameSection = new ComposeFileNameSection(config.get(ComposeFileNameSection.KEY));
+        this.beforeEachSection = new GenericCommandsSection(config.get("before_each"));
+        this.beforeSection = new GenericCommandsSection(config.get("before"));
+        this.beforeRunSection = new GenericCommandsSection(config.get("before_run"));
+        this.afterRunSection = new GenericCommandsSection(config.get("after_run"));
+        this.afterEachSection = new GenericCommandsSection(config.get("after_each"));
     }
 
     public static ShellCommands getCheckoutCommands(final Map<String, Object> dotCiEnvVars) {
@@ -80,11 +103,11 @@ public class BuildConfiguration {
     }
 
     public ShellCommands getBeforeRunCommandsIfPresent() {
-        return getShellCommands("before_run");
+        return new ShellCommands(this.beforeRunSection.getCommands());
     }
 
     public ShellCommands getAfterRunCommandsIfPresent() {
-        return getShellCommands("after_run");
+        return new ShellCommands(this.afterRunSection.getCommands());
     }
 
     public List<ShellCommands> getCommands(final Combination combination, final Map<String, Object> dotCiEnvVars) {
@@ -96,21 +119,17 @@ public class BuildConfiguration {
         final ShellCommands shellCommands = new ShellCommands();
         shellCommands.add(BuildConfiguration.getCheckoutCommands(dotCiEnvVars));
 
-
-        appendCommands("before", shellCommands); //deprecated
-        appendCommands("before_each", shellCommands);
+        shellCommands.addAll(this.beforeEachSection.getCommands());
+        shellCommands.addAll(this.beforeSection.getCommands());//deprecated
 
         shellCommands.add(String.format("docker-compose -f %s pull", fileName));
-        if (this.config.get("run") != null) {
-            final Map runConfig = (Map) this.config.get("run");
-            final String dockerComposeRunCommand = getDockerComposeRunCommand(dockerComposeContainerName, fileName, runConfig);
-            shellCommands.add(format("export COMPOSE_CMD='%s'", dockerComposeRunCommand));
-            shellCommands.add(" set +e && hash unbuffer >/dev/null 2>&1 ;  if [ $? = 0 ]; then set -e && unbuffer $COMPOSE_CMD ;else set -e && $COMPOSE_CMD ;fi");
-        }
 
-        appendCommands("after_each", shellCommands);
+
+        shellCommands.addAll(this.runSection.getCommands(dockerComposeContainerName, fileName));
+
+        shellCommands.addAll(this.afterEachSection.getCommands());
         if (!isParallelized()) {
-            appendCommands("after_run", shellCommands);
+            shellCommands.addAll(this.afterRunSection.getCommands());
         }
         allCommands.add(shellCommands);
         allCommands.add(getCleanupCommands(dockerComposeContainerName, projectName));
@@ -124,33 +143,13 @@ public class BuildConfiguration {
     }
 
 
-    private String getDockerComposeRunCommand(final String dockerComposeContainerName, final String fileName, final Map runConfig) {
-        final Object dockerComposeCommand = runConfig.get(dockerComposeContainerName);
-        if (dockerComposeCommand != null) {
-            return String.format("docker-compose -f %s run -T %s %s", fileName, dockerComposeContainerName, dockerComposeCommand);
-        } else {
-            return String.format("docker-compose -f %s run %s ", fileName, dockerComposeContainerName);
-        }
-    }
-
     public AxisList getAxisList() {
-        final String dockerComposeContainerName = getOnlyRun();
-        AxisList axisList = new AxisList(new Axis("script", dockerComposeContainerName));
-        if (isParallelized()) {
-            final Set commandKeys = ((Map) this.config.get("run")).keySet();
-            axisList = new AxisList(new Axis("script", new ArrayList<>(commandKeys)));
-        }
-        return axisList;
+        return this.runSection.getAxisList();
     }
 
-    public String getOnlyRun() {
-        final Map runConfig = (Map) this.config.get("run");
-
-        return (String) runConfig.keySet().iterator().next();
-    }
 
     public boolean isParallelized() {
-        return ((Map) this.config.get("run")).size() > 1;
+        return this.runSection.isParallelized();
     }
 
     public ShellCommands getCopyWorkDirIntoWorkspaceCommands(final String run, final String projectName) {
@@ -164,49 +163,19 @@ public class BuildConfiguration {
     }
 
     public List<DotCiPluginAdapter> getPlugins() {
-        final List plugins = this.config.get("plugins") != null ? (List) this.config.get("plugins") : Collections.emptyList();
-        return new DotCiExtensionsHelper().createPlugins(plugins);
+        return new DotCiExtensionsHelper().createPlugins(this.pluginsSection.getPlugins());
     }
 
     public List<PostBuildNotifier> getNotifiers() {
-        final List notifiers = this.config.get("notifications") != null ? (List) this.config.get("notifications") : Collections.emptyList();
-        return new DotCiExtensionsHelper().createNotifiers(notifiers);
+        return new DotCiExtensionsHelper().createNotifiers(this.notificationsSection.getNotifiers());
     }
 
     public String getDockerComposeFileName() {
-        return this.config.get("docker-compose-file") != null ? (String) this.config.get("docker-compose-file") : "docker-compose.yml";
+        return this.composeFileNameSection.getComposeFileName();
     }
 
-    private void appendCommands(final String key, final ShellCommands commands) {
-        final ShellCommands added = getShellCommands(key);
-        if (added != null) {
-            commands.add(added);
-        }
-    }
-
-    private ShellCommands getShellCommands(final String key) {
-        final Object value = this.config.get(key);
-        if (value == null) {
-            return null;
-        }
-
-        final ShellCommands commands = new ShellCommands();
-        if (value instanceof String) {
-            commands.add((String) value);
-        } else if (value instanceof List) {
-            final List l = (List) value;
-
-            for (final Object v : l) {
-                if (!(v instanceof String)) {
-                    throw new RuntimeException(String.format("Unexpected type: %s. Expected String for key: %s", v.getClass().getName(), key));
-                }
-                commands.add((String) v);
-            }
-        }
-        return commands;
-    }
 
     public boolean isSkipped() {
-        return this.config.containsKey("skip");
+        return this.skipSection.isSkipped();
     }
 }

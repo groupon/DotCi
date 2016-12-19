@@ -24,7 +24,7 @@
 
 package com.groupon.jenkins.buildtype.dockercompose;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
@@ -77,7 +77,7 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
             if (this.buildConfiguration.isParallelized()) {
                 result = runParallelBuild(build, buildExecutionContext, this.buildConfiguration, listener);
             } else {
-                result = runSubBuild(new Combination(ImmutableMap.of("script", this.buildConfiguration.getOnlyRun())), buildExecutionContext, listener);
+                result = runSubBuild(Iterables.getOnlyElement(this.buildConfiguration.getAxisList().list()), buildExecutionContext, listener);
             }
         }
         final Result pluginResult = runPlugins(build, this.buildConfiguration.getPlugins(), listener, launcher);
