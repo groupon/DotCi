@@ -21,30 +21,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.buildtype;
+package com.groupon.jenkins.buildtype.dockercompose.buildconfiguration;
 
-import com.google.common.base.Joiner;
+import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import java.util.Arrays;
+public class GenericCommandsSectionTest {
 
-public class InvalidBuildConfigurationException extends RuntimeException {
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
 
-    private final Iterable<String> validationErrors;
-
-    public InvalidBuildConfigurationException(final Iterable<String> validationErrors) {
-        this.validationErrors = validationErrors;
-    }
-
-    public InvalidBuildConfigurationException(final String validationError) {
-        this(Arrays.asList(validationError));
-    }
-
-    public Iterable<String> getValidationErrors() {
-        return this.validationErrors;
-    }
-
-    @Override
-    public String getMessage() {
-        return Joiner.on(",").join(this.validationErrors);
+    @Test
+    public void commands_should_be_string_or_list() {
+        this.expectedEx.expect(InvalidBuildConfigurationException.class);
+        this.expectedEx.expectMessage(GenericCommandsSection.INVALID_CI_YML_COMMANDS_SHOULD_BE_STRING_OR_LIST);
+        new GenericCommandsSection(1);
     }
 }

@@ -1,7 +1,7 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2014, Groupon, Inc.
+Copyright (c) 2016, Groupon, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,30 +21,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.buildtype;
+package com.groupon.jenkins.buildtype.dockercompose.buildconfiguration;
 
-import com.google.common.base.Joiner;
+import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 
-import java.util.Arrays;
+public class ComposeFileNameSection {
+    public static final String KEY = "docker-compose-file";
+    protected static final String INVALID_CI_YML_COMPOSE_FILE_NAME = "Invalid .ci.yml. Compose file name should be a string.";
+    private final String commposeFileName;
 
-public class InvalidBuildConfigurationException extends RuntimeException {
-
-    private final Iterable<String> validationErrors;
-
-    public InvalidBuildConfigurationException(final Iterable<String> validationErrors) {
-        this.validationErrors = validationErrors;
+    public ComposeFileNameSection(final Object composeFileNameConfig) {
+        if (composeFileNameConfig != null && !(composeFileNameConfig instanceof String)) {
+            throw new InvalidBuildConfigurationException(INVALID_CI_YML_COMPOSE_FILE_NAME);
+        }
+        this.commposeFileName = (String) composeFileNameConfig;
     }
 
-    public InvalidBuildConfigurationException(final String validationError) {
-        this(Arrays.asList(validationError));
-    }
-
-    public Iterable<String> getValidationErrors() {
-        return this.validationErrors;
-    }
-
-    @Override
-    public String getMessage() {
-        return Joiner.on(",").join(this.validationErrors);
+    public String getComposeFileName() {
+        return this.commposeFileName != null ? this.commposeFileName : "docker-compose.yml";
     }
 }

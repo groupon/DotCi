@@ -21,30 +21,21 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.buildtype;
+package com.groupon.jenkins.buildtype.dockercompose.buildconfiguration;
 
-import com.google.common.base.Joiner;
+import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import java.util.Arrays;
+public class PluginsSectionTest {
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
 
-public class InvalidBuildConfigurationException extends RuntimeException {
-
-    private final Iterable<String> validationErrors;
-
-    public InvalidBuildConfigurationException(final Iterable<String> validationErrors) {
-        this.validationErrors = validationErrors;
-    }
-
-    public InvalidBuildConfigurationException(final String validationError) {
-        this(Arrays.asList(validationError));
-    }
-
-    public Iterable<String> getValidationErrors() {
-        return this.validationErrors;
-    }
-
-    @Override
-    public String getMessage() {
-        return Joiner.on(",").join(this.validationErrors);
+    @Test
+    public void run_config_should_be_a_list_if_specified() {
+        this.expectedEx.expect(InvalidBuildConfigurationException.class);
+        this.expectedEx.expectMessage(PluginsSection.INVALID_CI_YML_PLUGINS_SHOULD_BE_A_LIST);
+        new PluginsSection("meow");
     }
 }

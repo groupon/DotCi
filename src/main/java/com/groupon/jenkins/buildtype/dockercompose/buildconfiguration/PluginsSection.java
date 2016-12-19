@@ -1,7 +1,7 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2014, Groupon, Inc.
+Copyright (c) 2016, Groupon, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,30 +21,27 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package com.groupon.jenkins.buildtype;
+package com.groupon.jenkins.buildtype.dockercompose.buildconfiguration;
 
-import com.google.common.base.Joiner;
+import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-public class InvalidBuildConfigurationException extends RuntimeException {
+public class PluginsSection {
+    public static final String KEY = "plugins";
+    protected static final String INVALID_CI_YML_PLUGINS_SHOULD_BE_A_LIST = "Invalid .ci.yml. Plugins should be a list.";
+    private final List<?> config;
 
-    private final Iterable<String> validationErrors;
+    public PluginsSection(final Object pluginsConfig) {
+        if (pluginsConfig != null && !(pluginsConfig instanceof List)) {
+            throw new InvalidBuildConfigurationException(INVALID_CI_YML_PLUGINS_SHOULD_BE_A_LIST);
+        }
 
-    public InvalidBuildConfigurationException(final Iterable<String> validationErrors) {
-        this.validationErrors = validationErrors;
+        this.config = (List<?>) pluginsConfig;
     }
 
-    public InvalidBuildConfigurationException(final String validationError) {
-        this(Arrays.asList(validationError));
-    }
-
-    public Iterable<String> getValidationErrors() {
-        return this.validationErrors;
-    }
-
-    @Override
-    public String getMessage() {
-        return Joiner.on(",").join(this.validationErrors);
+    public List<?> getPlugins() {
+        return this.config != null ? this.config : Collections.emptyList();
     }
 }
