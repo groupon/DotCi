@@ -23,19 +23,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  -->
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
         <version>2.5</version>
-        <relativePath/>
+        <relativePath />
     </parent>
     <groupId>com.groupon.jenkins-ci.plugins</groupId>
     <artifactId>DotCi</artifactId>
-    <version>2.38.9-SNAPSHOT</version>
+    <version>2.38.9</version>
     <packaging>hpi</packaging>
     <licenses>
         <license>
@@ -59,7 +57,7 @@ THE SOFTWARE.
         <developerConnection>scm:git:ssh://git@github.com/groupon/DotCi.git
         </developerConnection>
         <url>https://github.com/groupon/DotCi</url>
-        <tag>HEAD</tag>
+        <tag>DotCi-2.38.9</tag>
     </scm>
 
     <repositories>
