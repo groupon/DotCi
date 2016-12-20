@@ -36,24 +36,24 @@ public class DbBackedRunList<P extends DbBackedProject<P, B>, B extends DbBacked
     private final DbBackedProject<P, B> project;
     private final DynamicBuildRepository dynamicBuildRepository;
 
-    public DbBackedRunList(DbBackedProject<P, B> project) {
+    public DbBackedRunList(final DbBackedProject<P, B> project) {
         this.project = project;
         this.dynamicBuildRepository = SetupConfig.get().getDynamicBuildRepository();
     }
 
     @Override
     public Iterator<R> iterator() {
-        return null;
+        return this.dynamicBuildRepository.<R>latestBuilds(this.project, 20).iterator();
     }
 
 
     @Override
-    public List subList(int fromIndex, int toIndex) {
-        return Lists.newArrayList(dynamicBuildRepository.getBuilds(project, fromIndex));
+    public List subList(final int fromIndex, final int toIndex) {
+        return Lists.newArrayList(this.dynamicBuildRepository.getBuilds(this.project, fromIndex));
     }
 
     @Override
     public int size() {
-        return dynamicBuildRepository.getBuildCount(project);
+        return this.dynamicBuildRepository.getBuildCount(this.project);
     }
 }
