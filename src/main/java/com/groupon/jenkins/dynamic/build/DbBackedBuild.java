@@ -204,7 +204,7 @@ public abstract class DbBackedBuild<P extends DbBackedProject<P, B>, B extends D
 
     @Override
     public B getNextBuild() {
-        return getParent().getBuildByNumber(getNumber() + 1);
+        return getParent().getNextBuild(getNumber());
     }
 
     @Override

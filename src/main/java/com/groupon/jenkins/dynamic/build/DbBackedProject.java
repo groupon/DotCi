@@ -250,4 +250,8 @@ public abstract class DbBackedProject<P extends DbBackedProject<P, B>, B extends
     public long getEstimatedDuration() {
         return -1;
     }
+
+    public B getNextBuild(final int number) {
+        return this.dynamicBuildRepository.getNextBuild(this, number);
+    }
 }

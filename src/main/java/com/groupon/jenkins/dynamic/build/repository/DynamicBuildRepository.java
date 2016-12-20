@@ -360,5 +360,15 @@ public class DynamicBuildRepository extends MongoRepository {
 
         return (Iterable<T>) query.asList();
     }
+
+    public <B extends DbBackedBuild<P, B>, P extends DbBackedProject<P, B>> B getNextBuild(final DbBackedProject<P, B> project, final int number) {
+        final DbBackedBuild build = getQuery(project).
+            field("number").greaterThan(number).order("number").
+            get();
+        if (build != null) {
+            associateProject(project, build);
+        }
+        return (B) build;
+    }
 }
 
