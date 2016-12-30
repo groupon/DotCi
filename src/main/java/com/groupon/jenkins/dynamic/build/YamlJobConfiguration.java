@@ -1,13 +1,11 @@
 package com.groupon.jenkins.dynamic.build;
 
-import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import hudson.model.listeners.ItemListener;
-import hudson.tasks.BuildWrapper;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.github.GHContent;
@@ -20,43 +18,42 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Extension
-public class YamlJobConfiguration extends ItemListener{
+public class YamlJobConfiguration extends ItemListener {
     @Override
-    public void onCreated(Item item) {
+    public void onCreated(final Item item) {
         if (item instanceof DynamicProject) {
             try {
                 apply((DynamicProject) item);
-            } catch (IOException e) {
-               throw  new RuntimeException(e) ;
-            } catch (Descriptor.FormException e) {
-               throw new RuntimeException(e);
+            } catch (final IOException e) {
+                throw new RuntimeException(e);
+            } catch (final Descriptor.FormException e) {
+                throw new RuntimeException(e);
             }
         }
     }
 
 
-    public void apply(DynamicProject job) throws IOException, Descriptor.FormException {
-        try{
-            GHRepository repo = job.getGithubRepository();
-            GHContent configFile = repo.getFileContent(".ci.config.yml", repo.getMasterBranch());
-            Yaml yaml= new Yaml();
-            Map<String,Object> jobConfig= (Map) yaml.load(configFile.read());
+    public void apply(final DynamicProject job) throws IOException, Descriptor.FormException {
+        try {
+            final GHRepository repo = null;//job.dynamicBu
+            final GHContent configFile = repo.getFileContent(".ci.config.yml", repo.getMasterBranch());
+            final Yaml yaml = new Yaml();
+            final Map<String, Object> jobConfig = (Map) yaml.load(configFile.read());
 
-            Map<String, Descriptor<?>> jobProperties = getDescriptors(JobProperty.class);
+            final Map<String, Descriptor<?>> jobProperties = getDescriptors(JobProperty.class);
 
-            for(String key: jobConfig.keySet()){
-                    JobPropertyDescriptor descriptor = (JobPropertyDescriptor) (jobProperties.containsKey(key)? jobProperties.get(key): jobProperties.get(key+"Property"));
-                    if(descriptor != null && descriptor.isApplicable(job.getClass())){
-                        JSONObject jsonConfig=new JSONObject();
-                        jsonConfig.accumulateAll((Map) jobConfig.get(key));
-                        JobProperty newProperty  = descriptor.newInstance(Stapler.getCurrentRequest(),jsonConfig);
-                        if(newProperty !=null){
-                            JobProperty oldProperty = job.getProperty(newProperty.getClass());
-                            job.removeProperty(oldProperty);
-                            job.addProperty(newProperty );
-                        }
+            for (final String key : jobConfig.keySet()) {
+                final JobPropertyDescriptor descriptor = (JobPropertyDescriptor) (jobProperties.containsKey(key) ? jobProperties.get(key) : jobProperties.get(key + "Property"));
+                if (descriptor != null && descriptor.isApplicable(job.getClass())) {
+                    final JSONObject jsonConfig = new JSONObject();
+                    jsonConfig.accumulateAll((Map) jobConfig.get(key));
+                    final JobProperty newProperty = descriptor.newInstance(Stapler.getCurrentRequest(), jsonConfig);
+                    if (newProperty != null) {
+                        final JobProperty oldProperty = job.getProperty(newProperty.getClass());
+                        job.removeProperty(oldProperty);
+                        job.addProperty(newProperty);
                     }
+                }
 
             }
 //            Map<String, Descriptor<?>> jobWrappers = getDescriptors(BuildWrapper.class);
@@ -70,21 +67,21 @@ public class YamlJobConfiguration extends ItemListener{
 ////            }
             job.save();
 
-        }catch (FileNotFoundException _){
-           //do nothing
+        } catch (final FileNotFoundException _) {
+            //do nothing
         }
 
     }
 
 
-    private <T extends Describable<T>,D extends Descriptor<T>> Map<String,Descriptor<?>> getDescriptors(Class<T> c) {
-        Jenkins jenkins = Jenkins.getActiveInstance();
-        Map<String,Descriptor<?>> r = new HashMap<String, Descriptor<?>>();
+    private <T extends Describable<T>, D extends Descriptor<T>> Map<String, Descriptor<?>> getDescriptors(final Class<T> c) {
+        final Jenkins jenkins = Jenkins.getActiveInstance();
+        final Map<String, Descriptor<?>> r = new HashMap<>();
         if (jenkins == null) {
             return r;
         }
-        for (Descriptor<?> d : jenkins.getDescriptorList(c)) {
-                r.put(d.clazz.getSimpleName(), d);
+        for (final Descriptor<?> d : jenkins.getDescriptorList(c)) {
+            r.put(d.clazz.getSimpleName(), d);
         }
         return r;
     }
