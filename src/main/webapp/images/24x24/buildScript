@@ -1,0 +1,5 @@
+chmod -R u+w . ; find . ! -path "./deploykey_rsa.pub" ! -path "./deploykey_rsa" -delete
+git init
+git remote add origin https://github.com/suryagaddipati/DotCi.git
+git fetch origin master
+git reset --hard  12a7850061f62184459b5590b35ee4f095659004

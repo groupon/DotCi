@@ -1,0 +1,36 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core"
+         xmlns:l="/lib/layout" xmlns:f="/lib/form"
+>
+    <l:layout>
+        <l:main-panel>
+            <div class="main">
+                <script
+                    src="${resURL}/plugin/DotCi/js/highlight.pack.js"></script>
+                <link rel="stylesheet" type="text/css"
+                      href="${resURL}/plugin/DotCi/css/github.css"/>
+
+                <script>hljs.initHighlightingOnLoad();</script>
+                <p>
+                    <b>.ci.yml</b>
+                    <pre>
+                        <code class="yaml">${it.buildConfiguration}</code>
+                    </pre>
+
+                </p>
+                <p>
+                    <b>Bash Script</b>
+                    <pre>
+                        <code class="bash">${it.script}</code>
+                    </pre>
+                    <p>
+                        <f:form method="post" action="buildScript"
+                                name="downloadScript">
+                            <f:submit value="Download Script"/>
+                        </f:form>
+                    </p>
+                </p>
+            </div>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>

@@ -29,6 +29,7 @@ import com.groupon.jenkins.buildtype.InvalidBuildConfigurationException;
 import com.groupon.jenkins.buildtype.plugins.DotCiPluginAdapter;
 import com.groupon.jenkins.buildtype.util.shell.ShellCommands;
 import com.groupon.jenkins.buildtype.util.shell.ShellScriptRunner;
+import com.groupon.jenkins.dynamic.build.DotCiBuildInfoAction;
 import com.groupon.jenkins.dynamic.build.DynamicBuild;
 import com.groupon.jenkins.dynamic.build.DynamicSubBuild;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
@@ -43,6 +44,8 @@ import hudson.Launcher;
 import hudson.matrix.Combination;
 import hudson.model.BuildListener;
 import hudson.model.Result;
+import hudson.model.Run;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.util.List;
@@ -66,6 +69,7 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
             return result;
         }
         final Map config = new GroovyYamlTemplateProcessor(getDotCiYml(build), buildEnvironment).getConfig();
+        addProcessedYamlToDotCiInfoAction(buildExecutionContext.getRun(), config);
         this.buildConfiguration = new BuildConfiguration(config);
         if (this.buildConfiguration.isSkipped()) {
             build.skip();
@@ -83,6 +87,15 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
         final Result pluginResult = runPlugins(build, this.buildConfiguration.getPlugins(), listener, launcher);
         final Result notifierResult = runNotifiers(build, this.buildConfiguration.getNotifiers(), listener);
         return result.combine(pluginResult).combine(notifierResult);
+    }
+
+    private void addProcessedYamlToDotCiInfoAction(final Run run, final Map config) {
+        final DotCiBuildInfoAction dotCiBuildInfoAction = run.getAction(DotCiBuildInfoAction.class);
+        if (dotCiBuildInfoAction == null) {
+            run.addAction(new DotCiBuildInfoAction(new Yaml().dump(config)));
+        } else {
+            dotCiBuildInfoAction.setBuildConfiguration(new Yaml().dump(config));
+        }
     }
 
     @Override

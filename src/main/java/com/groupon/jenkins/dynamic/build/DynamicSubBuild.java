@@ -35,6 +35,7 @@ import hudson.model.BuildListener;
 import hudson.model.Cause;
 import hudson.model.Node;
 import hudson.model.Result;
+import hudson.model.Run;
 import hudson.slaves.WorkspaceList;
 import hudson.slaves.WorkspaceList.Lease;
 import hudson.tasks.BuildStep;
@@ -194,6 +195,11 @@ public class DynamicSubBuild extends DbBackedBuild<DynamicSubProject, DynamicSub
             } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        @Override
+        public Run getRun() {
+            return DynamicSubBuild.this;
         }
 
     }

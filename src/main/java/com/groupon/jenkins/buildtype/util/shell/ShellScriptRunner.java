@@ -24,41 +24,54 @@
 
 package com.groupon.jenkins.buildtype.util.shell;
 
+import com.groupon.jenkins.dynamic.build.DotCiBuildInfoAction;
 import com.groupon.jenkins.dynamic.build.execution.BuildExecutionContext;
 import hudson.Functions;
 import hudson.model.BuildListener;
 import hudson.model.Executor;
 import hudson.model.Result;
+import hudson.model.Run;
 import hudson.tasks.Shell;
 
 import java.io.IOException;
 
 public class ShellScriptRunner {
-    private BuildExecutionContext buildExecutionContext;
-    private BuildListener listener;
+    private final BuildExecutionContext buildExecutionContext;
+    private final BuildListener listener;
 
-    public ShellScriptRunner(BuildExecutionContext buildExecutionContext, BuildListener listener) {
+    public ShellScriptRunner(final BuildExecutionContext buildExecutionContext, final BuildListener listener) {
         this.buildExecutionContext = buildExecutionContext;
         this.listener = listener;
 
     }
 
-    public Result runScript(ShellCommands commands) throws IOException, InterruptedException {
+    public Result runScript(final ShellCommands commands) throws IOException, InterruptedException {
         Result r = Result.FAILURE;
         //Todo: use VitualChannel to figure out OS
-        String shellInterpreter = Functions.isWindows() ? "sh" : "/bin/bash";
+        final String shellInterpreter = Functions.isWindows() ? "sh" : "/bin/bash";
+        final Run run = this.buildExecutionContext.getRun();
+        addExecutionInfoAction(run, commands);
         try {
-            Shell execution = new Shell("#!" + shellInterpreter + " -le \n" + commands.toShellScript());
-            if (buildExecutionContext.performStep(execution, listener)) {
+            final Shell execution = new Shell("#!" + shellInterpreter + " -le \n" + commands.toShellScript());
+            if (this.buildExecutionContext.performStep(execution, this.listener)) {
                 r = Result.SUCCESS;
             }
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             r = Executor.currentExecutor().abortResult();
             throw e;
         } finally {
-            buildExecutionContext.setResult(r);
+            this.buildExecutionContext.setResult(r);
         }
         return r;
+    }
+
+    private void addExecutionInfoAction(final Run run, final ShellCommands commands) {
+        final DotCiBuildInfoAction dotCiBuildInfoAction = run.getAction(DotCiBuildInfoAction.class);
+        if (dotCiBuildInfoAction == null) {
+            run.addAction(new DotCiBuildInfoAction(commands));
+        } else {
+            dotCiBuildInfoAction.addCommands(commands);
+        }
     }
 
 }

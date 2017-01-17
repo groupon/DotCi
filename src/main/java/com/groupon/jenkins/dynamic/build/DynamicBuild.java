@@ -44,6 +44,7 @@ import hudson.model.Cause;
 import hudson.model.CauseAction;
 import hudson.model.Executor;
 import hudson.model.Result;
+import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStep;
 import hudson.util.HttpResponses;
@@ -331,6 +332,11 @@ public class DynamicBuild extends DbBackedBuild<DynamicProject, DynamicBuild> {
             } catch (final InterruptedException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        @Override
+        public Run getRun() {
+            return DynamicBuild.this;
         }
 
 

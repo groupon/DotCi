@@ -25,6 +25,7 @@ package com.groupon.jenkins.dynamic.build.execution;
 
 import hudson.model.BuildListener;
 import hudson.model.Result;
+import hudson.model.Run;
 import hudson.tasks.BuildStep;
 
 import java.io.IOException;
@@ -38,4 +39,5 @@ public interface BuildExecutionContext {
 
     Map<String, Object> getBuildEnvironmentVariables();
 
+    Run getRun();
 }
