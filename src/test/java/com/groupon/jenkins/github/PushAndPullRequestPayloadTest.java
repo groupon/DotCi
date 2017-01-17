@@ -100,6 +100,21 @@ public class PushAndPullRequestPayloadTest {
         assertTrue(payload.needsBuild(getProject()));
     }
 
+    @Test
+    public void pullRequestChangedBranchShouldTriggerABuild() throws IOException {
+        final String payloadReq = readFile("pull_request_edited_branch_change.json");
+        final PushAndPullRequestPayload payload = new PushAndPullRequestPayload(payloadReq);
+        assertTrue(payload.needsBuild(getProject()));
+    }
+
+
+    @Test
+    public void pullRequestEditedBodyShouldNotTriggerABuild() throws IOException {
+        final String payloadReq = readFile("pull_request_edited_body.json");
+        final PushAndPullRequestPayload payload = new PushAndPullRequestPayload(payloadReq);
+        assertFalse(payload.needsBuild(getProject()));
+    }
+
     private DynamicProject getProject() {
         return Mockito.mock(DynamicProject.class);
     }
