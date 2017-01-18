@@ -6,9 +6,9 @@
         <l:main-panel>
             <div class="main">
                 <script
-                    src="${resURL}/plugin/DotCi/js/highlight.pack.js"></script>
+                    src="${resURL}/plugin/DotCi/highlight/js/highlight.pack.js"></script>
                 <link rel="stylesheet" type="text/css"
-                      href="${resURL}/plugin/DotCi/css/github.css"/>
+                      href="${resURL}/plugin/DotCi/highlight/css/github.css"/>
 
                 <script>hljs.initHighlightingOnLoad();</script>
                 <p>
