@@ -65,13 +65,14 @@ public class ShellScriptRunner {
         return r;
     }
 
-    private void addExecutionInfoAction(final Run run, final ShellCommands commands) {
+    private void addExecutionInfoAction(final Run run, final ShellCommands commands) throws IOException {
         final DotCiBuildInfoAction dotCiBuildInfoAction = run.getAction(DotCiBuildInfoAction.class);
         if (dotCiBuildInfoAction == null) {
             run.addAction(new DotCiBuildInfoAction(commands));
         } else {
             dotCiBuildInfoAction.addCommands(commands);
         }
+        run.save();
     }
 
 }

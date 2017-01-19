@@ -89,13 +89,14 @@ public class DockerComposeBuild extends BuildType implements SubBuildRunner {
         return result.combine(pluginResult).combine(notifierResult);
     }
 
-    private void addProcessedYamlToDotCiInfoAction(final Run run, final Map config) {
+    private void addProcessedYamlToDotCiInfoAction(final Run run, final Map config) throws IOException {
         final DotCiBuildInfoAction dotCiBuildInfoAction = run.getAction(DotCiBuildInfoAction.class);
         if (dotCiBuildInfoAction == null) {
             run.addAction(new DotCiBuildInfoAction(new Yaml().dump(config)));
         } else {
             dotCiBuildInfoAction.setBuildConfiguration(new Yaml().dump(config));
         }
+        run.save();
     }
 
     @Override
