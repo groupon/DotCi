@@ -29,10 +29,10 @@ import hudson.Extension;
 import hudson.model.Result;
 import hudson.model.TaskListener;
 import hudson.model.listeners.RunListener;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.kohsuke.github.GHCommitState;
 import org.kohsuke.github.GHRepository;
 
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,39 +45,44 @@ public class CommitStatusUpdateRunListener extends RunListener<DynamicBuild> {
     private static final Logger LOGGER = Logger.getLogger(CommitStatusUpdateRunListener.class.getName());
 
     @Override
-    public void onStarted(DynamicBuild build, TaskListener listener) {
-        GHRepository repository = getGithubRepository(build);
+    public void onStarted(final DynamicBuild build, final TaskListener listener) {
+        final GHRepository repository = getGithubRepository(build);
 
         try {
             String url = "";
             try {
                 url = build.getFullUrl();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // do nothing
-                // TODO DO SOMETHING
             }
             repository.createCommitStatus(build.getSha(), GHCommitState.PENDING, url, "Build in progress", getContext(build));
-        } catch (IOException e) {
+        } catch (final Exception e) {
             // Ignore if cannot create a pending status
             LOGGER.log(Level.WARNING, "Failed to Update commit status", e);
+            printErrorToBuildConsole(listener, e);
         }
     }
 
-    private String getContext(DynamicBuild build) {
+    private void printErrorToBuildConsole(final TaskListener listener, final Exception e) {
+        listener.getLogger().println("Failed to update Commit status");
+        listener.getLogger().println(ExceptionUtils.getStackTrace(e));
+    }
+
+    private String getContext(final DynamicBuild build) {
         return build.isPullRequest() ? "DotCi/PR" : "DotCi/push";
     }
 
     @Override
-    public void onCompleted(DynamicBuild build, TaskListener listener) {
-        String sha1 = build.getSha();
+    public void onCompleted(final DynamicBuild build, final TaskListener listener) {
+        final String sha1 = build.getSha();
         if (sha1 == null) {
             return;
         }
 
-        GHRepository repository = getGithubRepository(build);
-        GHCommitState state;
+        final GHRepository repository = getGithubRepository(build);
+        final GHCommitState state;
         String msg;
-        Result result = build.getResult();
+        final Result result = build.getResult();
         if (result.isBetterOrEqualTo(SUCCESS)) {
             state = GHCommitState.SUCCESS;
             msg = "Success";
@@ -92,15 +97,15 @@ public class CommitStatusUpdateRunListener extends RunListener<DynamicBuild> {
             msg += " - Skipped";
         }
         try {
+            listener.getLogger().println("setting commit status on Github for " + repository.getHtmlUrl() + "/commit/" + sha1);
             repository.createCommitStatus(sha1, state, build.getFullUrl(), msg, getContext(build));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (final Exception e) {
+            printErrorToBuildConsole(listener, e);
         }
-        listener.getLogger().println("setting commit status on Github for " + repository.getHtmlUrl() + "/commit/" + sha1);
 
     }
 
-    protected GHRepository getGithubRepository(DynamicBuild build) {
+    protected GHRepository getGithubRepository(final DynamicBuild build) {
         return new GithubRepositoryService(build.getGithubRepoUrl()).getGithubRepository();
     }
 
