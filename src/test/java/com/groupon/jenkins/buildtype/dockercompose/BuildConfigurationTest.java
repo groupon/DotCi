@@ -32,6 +32,7 @@ import hudson.matrix.Combination;
 import org.junit.Assert;
 import org.junit.Test;
 
+
 import java.util.Map;
 
 import static com.google.common.collect.ImmutableMap.of;
@@ -61,7 +62,7 @@ public class BuildConfigurationTest {
     @Test
     public void should_run_cmd_from_ci_yml() {
         final ShellCommands commands = getRunCommands();
-        Assert.assertEquals("export COMPOSE_CMD='docker-compose -f docker-compose.yml run -T unit command'", commands.get(6));
+        Assert.assertEquals("COMPOSE_CMD='docker-compose -f docker-compose.yml run -T unit command'; export $COMPOSE_CMD", commands.get(6));
         Assert.assertEquals(" set +e && hash unbuffer >/dev/null 2>&1 ;  if [ $? = 0 ]; then set -e && unbuffer $COMPOSE_CMD ;else set -e && $COMPOSE_CMD ;fi", commands.get(7));
     }
 
@@ -108,7 +109,7 @@ public class BuildConfigurationTest {
     public void should_accept_alternative_docker_compose_file() {
         final ShellCommands commands = getRunCommands(ImmutableMap.of("docker-compose-file", "./jenkins/docker-compose.yml", "run", of("unit", "command")));
         Assert.assertEquals("docker-compose -f ./jenkins/docker-compose.yml pull", commands.get(5));
-        Assert.assertEquals("export COMPOSE_CMD='docker-compose -f ./jenkins/docker-compose.yml run -T unit command'", commands.get(6));
+        Assert.assertEquals("COMPOSE_CMD='docker-compose -f ./jenkins/docker-compose.yml run -T unit command'; export $COMPOSE_CMD", commands.get(6));
         Assert.assertEquals(" set +e && hash unbuffer >/dev/null 2>&1 ;  if [ $? = 0 ]; then set -e && unbuffer $COMPOSE_CMD ;else set -e && $COMPOSE_CMD ;fi", commands.get(7));
     }
 

@@ -76,7 +76,7 @@ public class RunSection {
     public List<String> getCommands(final String dockerComposeContainerName, final String fileName) {
         final List<String> commands = new ArrayList<>();
         final String dockerComposeRunCommand = getDockerComposeRunCommand(dockerComposeContainerName, fileName, this.config);
-        commands.add(format("export COMPOSE_CMD='%s'", dockerComposeRunCommand));
+        commands.add(format("COMPOSE_CMD='%s'; export $COMPOSE_CMD", dockerComposeRunCommand));
         commands.add(" set +e && hash unbuffer >/dev/null 2>&1 ;  if [ $? = 0 ]; then set -e && unbuffer $COMPOSE_CMD ;else set -e && $COMPOSE_CMD ;fi");
         return commands;
     }
