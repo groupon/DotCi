@@ -94,10 +94,10 @@ public class PushAndPullRequestPayload implements WebhookPayload {
             shouldBuildPullRequestBasedOnAction();
     }
 
-    //only build for webhook actions of "opened", "reopened", or "synchronize"
+    //only build for webhook actions of "opened", "reopened", "synchronize", or "edited" (and branch changed)
     //https://developer.github.com/v3/activity/events/types/#events-api-payload-17
     private boolean shouldBuildPullRequestBasedOnAction() {
-        return isOpenedAction() || isReOpenedAction() || isSynchronizeAction();
+        return isOpenedAction() || isReOpenedAction() || isSynchronizeAction() || isBranchChange();
     }
 
     private boolean isPullRequestClosed() {
@@ -114,6 +114,18 @@ public class PushAndPullRequestPayload implements WebhookPayload {
 
     private boolean isSynchronizeAction() {
         return isPullRequest() && "synchronize".equals(this.payloadJson.getString("action"));
+    }
+
+    private boolean isBranchChange() {
+        if (!isEditedAction()) {
+            return false;
+        }
+        JSONObject changes = this.payloadJson.getJSONObject("changes");
+        return !changes.isNullObject() && changes.containsKey("base");
+    }
+
+    private boolean isEditedAction() {
+        return isPullRequest() && "edited".equals(this.payloadJson.getString("action"));
     }
 
     public String getPullRequestSourceBranch() {
