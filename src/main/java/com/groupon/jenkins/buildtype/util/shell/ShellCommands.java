@@ -47,7 +47,7 @@ public class ShellCommands {
     }
 
     private final List<String> commands;
-    private boolean echoCommands;
+    private final boolean echoCommands;
 
     public ShellCommands(final boolean echoCommands, final String... commands) {
         this.echoCommands = echoCommands;
@@ -59,7 +59,7 @@ public class ShellCommands {
     }
 
     public ShellCommands(final List<String> commands) {
-        this.commands = commands;
+        this(true, commands.toArray(new String[]{}));
     }
 
     public static ShellCommands combine(final List<ShellCommands> subPhases) {
