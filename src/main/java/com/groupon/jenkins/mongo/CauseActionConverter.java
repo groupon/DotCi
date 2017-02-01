@@ -27,6 +27,9 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
 import hudson.model.CauseAction;
+import hudson.security.ACL;
+import hudson.security.ACLContext;
+import jenkins.model.Jenkins;
 import org.mongodb.morphia.converters.SimpleValueConverter;
 import org.mongodb.morphia.converters.TypeConverter;
 import org.mongodb.morphia.mapping.MappedField;
@@ -41,26 +44,28 @@ public class CauseActionConverter extends TypeConverter implements SimpleValueCo
     }
 
     @Override
-    public CauseAction decode(Class targetClass, Object fromDBObject, MappedField optionalExtraInfo) {
-        if (fromDBObject == null) return null;
+    public CauseAction decode(final Class targetClass, final Object fromDBObject, final MappedField optionalExtraInfo) {
+        try (ACLContext _ = ACL.as(Jenkins.ANONYMOUS)) {
+            if (fromDBObject == null) return null;
 
-        List causes = new ArrayList();
-        List rawList = (List) ((DBObject) fromDBObject).get("causes");
-        for (Object obj : rawList) {
-            DBObject dbObj = (DBObject) obj;
-            Object cause = getMapper().fromDBObject(optionalExtraInfo.getSubClass(), dbObj, getMapper().createEntityCache());
-            causes.add(cause);
+            final List causes = new ArrayList();
+            final List rawList = (List) ((DBObject) fromDBObject).get("causes");
+            for (final Object obj : rawList) {
+                final DBObject dbObj = (DBObject) obj;
+                final Object cause = getMapper().fromDBObject(optionalExtraInfo.getSubClass(), dbObj, getMapper().createEntityCache());
+                causes.add(cause);
+            }
+            return new CauseAction(causes);
         }
-        return new CauseAction(causes);
     }
 
     @Override
-    public Object encode(Object value, MappedField optionalExtraInfo) {
+    public Object encode(final Object value, final MappedField optionalExtraInfo) {
         if (value == null) return null;
-        CauseAction action = (CauseAction) value;
-        List causes = new BasicDBList();
+        final CauseAction action = (CauseAction) value;
+        final List causes = new BasicDBList();
 
-        for (Object obj : action.getCauses()) {
+        for (final Object obj : action.getCauses()) {
             causes.add(getMapper().toDBObject(obj));
         }
         return BasicDBObjectBuilder.start("causes", causes).add("className", CauseAction.class.getName()).get();
