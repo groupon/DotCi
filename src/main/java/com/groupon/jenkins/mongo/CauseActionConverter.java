@@ -27,10 +27,9 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
 import hudson.model.CauseAction;
+import hudson.security.ACL;
+import hudson.security.ACLContext;
 import jenkins.model.Jenkins;
-import org.acegisecurity.Authentication;
-import org.acegisecurity.context.SecurityContext;
-import org.acegisecurity.context.SecurityContextHolder;
 import org.mongodb.morphia.converters.SimpleValueConverter;
 import org.mongodb.morphia.converters.TypeConverter;
 import org.mongodb.morphia.mapping.MappedField;
@@ -46,19 +45,18 @@ public class CauseActionConverter extends TypeConverter implements SimpleValueCo
 
     @Override
     public CauseAction decode(final Class targetClass, final Object fromDBObject, final MappedField optionalExtraInfo) {
-        if (fromDBObject == null) return null;
-        final SecurityContext securityContext = SecurityContextHolder.getContext();
-        final Authentication currentAuth = securityContext.getAuthentication();
-        securityContext.setAuthentication(Jenkins.ANONYMOUS);
-        final List causes = new ArrayList();
-        final List rawList = (List) ((DBObject) fromDBObject).get("causes");
-        for (final Object obj : rawList) {
-            final DBObject dbObj = (DBObject) obj;
-            final Object cause = getMapper().fromDBObject(optionalExtraInfo.getSubClass(), dbObj, getMapper().createEntityCache());
-            causes.add(cause);
+        try (ACLContext _ = ACL.as(Jenkins.ANONYMOUS)) {
+            if (fromDBObject == null) return null;
+
+            final List causes = new ArrayList();
+            final List rawList = (List) ((DBObject) fromDBObject).get("causes");
+            for (final Object obj : rawList) {
+                final DBObject dbObj = (DBObject) obj;
+                final Object cause = getMapper().fromDBObject(optionalExtraInfo.getSubClass(), dbObj, getMapper().createEntityCache());
+                causes.add(cause);
+            }
+            return new CauseAction(causes);
         }
-        securityContext.setAuthentication(currentAuth);
-        return new CauseAction(causes);
     }
 
     @Override
