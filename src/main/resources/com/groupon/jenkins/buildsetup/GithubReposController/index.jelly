@@ -25,87 +25,99 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-    <head>
-      <st:setHeader name="Expires" value="0" />
-      <st:contentType value="text/html;charset=UTF-8" />
-      <j:invokeStatic var="developmentMode" className="java.lang.Boolean" method="getBoolean">
-        <j:arg type="java.lang.String" value="hudson.hpi.run"/>
-      </j:invokeStatic>
-      <j:new var="h" className="hudson.Functions" />
-      ${h.initPageVariables(context)}
-      <title>New DotCi Project</title>
-      <meta charset="utf-8"/>
-      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-      <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes"/>
+    <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+        <head>
+            <st:setHeader name="Expires" value="0"/>
+            <st:contentType value="text/html;charset=UTF-8"/>
+            <j:invokeStatic var="developmentMode" className="java.lang.Boolean"
+                            method="getBoolean">
+                <j:arg type="java.lang.String" value="hudson.hpi.run"/>
+            </j:invokeStatic>
+            <j:new var="h" className="hudson.Functions"/>
+            ${h.initPageVariables(context)}
+            <title>New DotCi Project</title>
+            <meta charset="utf-8"/>
+            <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+            <meta name="viewport"
+                  content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes"/>
 
-      <script src="${resURL}/plugin/DotCi/js/webcomponentsjs/webcomponents-lite.min.js"></script>
-      <link rel="icon" href="${resURL}/plugin/DotCi/favicons/default.ico" type="image/vnd.microsoft.icon" />
+            <script
+                src="${resURL}/plugin/DotCi/js/webcomponentsjs/webcomponents-lite.min.js"></script>
+            <link rel="icon" href="${resURL}/plugin/DotCi/favicons/default.ico"
+                  type="image/vnd.microsoft.icon"/>
 
-      <j:if test='${developmentMode}'>
-        <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports.html"/>
-      </j:if>
-      <j:if test='${!developmentMode}'>
-        <link rel="import" href="${resURL}/plugin/DotCi/webcomponent-imports-vulcanized.html"/>
-      </j:if>
-      <style is="custom-style">
-      .list {
-      padding-top: 12px;
-      background-color: white;
-      display: inline-block;
-      margin: 12px;
-      @apply(--shadow-elevation-2dp);
-      }
-        paper-tabs, paper-toolbar {
-        background-color: #3f51b5;
-        color: #fff;
-        box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
-        }
-        paper-toolbar paper-tabs {
-        box-shadow: none;
-        }
-        paper-tabs[noink][no-bar] paper-tab.iron-selected {
-        color: #ffff8d;
-        }
-        paper-tabs[align-bottom] {
-        box-shadow: 0px -2px 6px rgba(0, 0, 0, 0.15);
-        }
-        .org-tab{
-        color: #FFFFFF;
-        text-decoration: none;
-        }
-      </style>
-    </head>
+            <j:if test='${developmentMode}'>
+                <link rel="import"
+                      href="${resURL}/plugin/DotCi/webcomponent-imports.html"/>
+            </j:if>
+            <j:if test='${!developmentMode}'>
+                <link rel="import"
+                      href="${resURL}/plugin/DotCi/webcomponent-imports-vulcanized.html"/>
+            </j:if>
+            <style is="custom-style">
+                .list {
+                padding-top: 12px;
+                background-color: white;
+                display: inline-block;
+                margin: 12px;
+                @apply(--shadow-elevation-2dp);
+                }
+                paper-tabs, paper-toolbar {
+                background-color: #3f51b5;
+                color: #fff;
+                box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+                }
+                paper-toolbar paper-tabs {
+                box-shadow: none;
+                }
+                paper-tabs[noink][no-bar] paper-tab.iron-selected {
+                color: #ffff8d;
+                }
+                paper-tabs[align-bottom] {
+                box-shadow: 0px -2px 6px rgba(0, 0, 0, 0.15);
+                }
+                .org-tab{
+                color: #FFFFFF;
+                text-decoration: none;
+                }
+            </style>
+        </head>
 
 
-    <body>
+        <body>
 
-      <paper-toolbar>
-        <paper-icon-button  src='${resURL}/plugin/DotCi/logo.png' onclick="window.location='${rootURL}'" />
-        <div class="title"> New DotCi Project</div>
-      </paper-toolbar>
-      <paper-tabs selected="${it.selectedOrgIndex}">
-        <j:forEach items="${it.orgs}" var="i">
-          <paper-tab link="true"> <a  class=" org-tab horizontal center-center layout" href="${i}"><h3>${i}</h3></a> </paper-tab>
-        </j:forEach>
-      </paper-tabs>
-      <div class="list">
+            <paper-toolbar>
+                <paper-icon-button src='${resURL}/plugin/DotCi/logo.png'
+                                   onclick="window.location='${rootURL}'"/>
+                <div class="title">New DotCi Project</div>
+            </paper-toolbar>
+            <paper-tabs selected="${it.selectedOrgIndex}">
+                <j:forEach items="${it.orgs}" var="i">
+                    <paper-tab link="true">
+                        <a class=" org-tab horizontal center-center layout"
+                           href="${rootURL}/${it.urlName}/${i}">
+                            <h3>${i}</h3>
+                        </a>
+                    </paper-tab>
+                </j:forEach>
+            </paper-tabs>
+            <div class="list">
 
-      <j:forEach items="${it.repositories}" var="j">
+                <j:forEach items="${it.repositories}" var="j">
 
-        <paper-material>
-          <paper-item>
-            <paper-item-body two-line="true">
-              <div> ${j.name} </div>
-              <div secondary="true">
-                <st:include page="repo_actions.jelly" />
-              </div>
-            </paper-item-body>
-          </paper-item>
-        </paper-material>
+                    <paper-material>
+                        <paper-item>
+                            <paper-item-body two-line="true">
+                                <div>${j.name}</div>
+                                <div secondary="true">
+                                    <st:include page="repo_actions.jelly"/>
+                                </div>
+                            </paper-item-body>
+                        </paper-item>
+                    </paper-material>
 
-      </j:forEach>
-      </div>
-    </body>
-  </j:jelly>
+                </j:forEach>
+            </div>
+        </body>
+    </j:jelly>
 </html>

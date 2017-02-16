@@ -38,18 +38,25 @@ import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.Iterator;
+import java.util.stream.StreamSupport;
 
 @Extension
 public class GithubReposController implements RootAction, StaplerProxy {
 
     public static final String URL = "mygithubprojects";
+    private final String currentOrg;
+
+    public GithubReposController() {
+        this(null);
+    }
+
+    public GithubReposController(final String currentOrg) {
+        this.currentOrg = currentOrg;
+    }
 
     @Override
     public String getIconFileName() {
@@ -70,39 +77,31 @@ public class GithubReposController implements RootAction, StaplerProxy {
         return getCurrentUser().getOrgs();
     }
 
-    public Iterable<ProjectConfigInfo> getRepositories() throws IOException {
-        List<ProjectConfigInfo> projectInfos = new LinkedList<ProjectConfigInfo>();
-        Map<String, GHRepository> ghRepos = getCurrentUser().getRepositories(getCurrentOrg());
-        for (Map.Entry<String, GHRepository> entry : ghRepos.entrySet()) {
-            if (entry.getValue().hasAdminAccess()) {
-                projectInfos.add(new ProjectConfigInfo(entry.getKey(), entry.getValue()));
-            }
-        }
-        return projectInfos;
+    public Iterator<ProjectConfigInfo> getRepositories() throws IOException {
+        final String currentOrg = getCurrentOrg();
+        final Iterable<GHRepository> ghRepos = getCurrentUser().getRepositories(currentOrg);
+        return StreamSupport.stream(ghRepos.spliterator(), false).
+            filter(r -> r.hasAdminAccess() && currentOrg.equals(r.getOwnerName())).map(r -> new ProjectConfigInfo(r.getName(), r)).iterator();
     }
 
     protected GithubCurrentUserService getCurrentUser() throws IOException {
         return new GithubCurrentUserService(getGitHub(Stapler.getCurrentRequest()));
     }
 
-    public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException, InvocationTargetException, IllegalAccessException {
-        String[] tokens = req.getRestOfPath().split("/");
-        String leadToken = tokens.length > 0 ? tokens[1] : null;
-        GithubRepoAction repoAction = getRepoAction(leadToken);
+    public Object getDynamic(final String token, final StaplerRequest req, final StaplerResponse rsp) throws InvocationTargetException, IllegalAccessException {
+        final GithubRepoAction repoAction = getRepoAction(token);
         if (repoAction != null) {
-            String methodToken = tokens.length > 1 ? tokens[2] : "index";
-            String methodName = "do" + StringUtils.capitalize(methodToken);
-            Method method = ReflectionUtils.getPublicMethodNamed(repoAction.getClass(), methodName);
+            final String[] tokens = req.getRestOfPath().split("/");
+            final String methodToken = tokens.length > 1 ? tokens[1] : "index";
+            final String methodName = "do" + StringUtils.capitalize(methodToken);
+            final Method method = ReflectionUtils.getPublicMethodNamed(repoAction.getClass(), methodName);
             method.invoke(repoAction, req, rsp);
-        } else {
-            String orgToken = req.getRestOfPath().replace("/", "");
-            req.getSession().setAttribute("setupOrg" + this.getCurrentGithubLogin(), orgToken);
-            rsp.forwardToPreviousPage(req);
         }
+        return new GithubReposController(token);
     }
 
-    private GithubRepoAction getRepoAction(String leadToken) {
-        for (GithubRepoAction repoAction : getRepoActions()) {
+    private GithubRepoAction getRepoAction(final String leadToken) {
+        for (final GithubRepoAction repoAction : getRepoActions()) {
             if (repoAction.getName().equals(leadToken)) return repoAction;
         }
         return null;
@@ -113,12 +112,11 @@ public class GithubReposController implements RootAction, StaplerProxy {
     }
 
     public String getCurrentOrg() throws IOException {
-        String currentOrg = (String) Stapler.getCurrentRequest().getSession().getAttribute("setupOrg" + getCurrentGithubLogin());
-        return StringUtils.isEmpty(currentOrg) ? Iterables.get(getOrgs(), 0) : currentOrg;
+        return StringUtils.isEmpty(this.currentOrg) ? getCurrentGithubLogin() : this.currentOrg;
     }
 
     public int getSelectedOrgIndex() throws IOException {
-        Iterable<String> orgs = getOrgs();
+        final Iterable<String> orgs = getOrgs();
         for (int i = 0; i < Iterables.size(orgs); i++) {
             if (Iterables.get(orgs, i).equals(getCurrentOrg())) return i;
         }
@@ -129,7 +127,7 @@ public class GithubReposController implements RootAction, StaplerProxy {
         return GithubRepoAction.getGithubRepoActions();
     }
 
-    private GitHub getGitHub(StaplerRequest request) throws IOException {
+    private GitHub getGitHub(final StaplerRequest request) throws IOException {
         return GitHub.connectUsingOAuth(getSetupConfig().getGithubApiUrl(), getAccessToken(request));
     }
 
@@ -138,14 +136,14 @@ public class GithubReposController implements RootAction, StaplerProxy {
     }
 
 
-    private String getAccessToken(StaplerRequest request) {
+    private String getAccessToken(final StaplerRequest request) {
         return (String) request.getSession().getAttribute("access_token");
     }
 
 
     @Override
     public Object getTarget() {
-        StaplerRequest currentRequest = Stapler.getCurrentRequest();
+        final StaplerRequest currentRequest = Stapler.getCurrentRequest();
         if (getAccessToken(currentRequest) == null)
             return new GithubOauthLoginAction();
         return this;

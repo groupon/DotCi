@@ -23,8 +23,7 @@ THE SOFTWARE.
 */
 package com.groupon.jenkins.buildsetup;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.groupon.jenkins.github.services.GithubCurrentUserService;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,6 +31,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.kohsuke.github.GHRepository;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -45,10 +45,15 @@ public class GithubReposControllerTest {
     @Test
     public void should_show_repos_with_admin_access_only() throws IOException {
         final GithubCurrentUserService githubCurrentUser = mock(GithubCurrentUserService.class);
-        GHRepository repoWithAdminAccess = mock(GHRepository.class);
+        final GHRepository repoWithAdminAccess = mock(GHRepository.class);
         when(repoWithAdminAccess.hasAdminAccess()).thenReturn(true);
-        when(githubCurrentUser.getRepositories("meow")).thenReturn(ImmutableMap.of("one", mock(GHRepository.class), "two", repoWithAdminAccess));
-        GithubReposController controller = new GithubReposController() {
+        final GHRepository repoWithoutAdminAcess = mock(GHRepository.class);
+
+        when(repoWithAdminAccess.getOwnerName()).thenReturn("meow");
+        when(repoWithoutAdminAcess.getOwnerName()).thenReturn("meow");
+
+        when(githubCurrentUser.getRepositories("meow")).thenReturn(Arrays.asList(repoWithoutAdminAcess, repoWithAdminAccess));
+        final GithubReposController controller = new GithubReposController() {
             @Override
             protected GithubCurrentUserService getCurrentUser() {
                 return githubCurrentUser;
@@ -59,6 +64,6 @@ public class GithubReposControllerTest {
                 return "meow";
             }
         };
-        assertEquals(1, Iterables.size(controller.getRepositories()));
+        assertEquals(1, Iterators.size(controller.getRepositories()));
     }
 }
