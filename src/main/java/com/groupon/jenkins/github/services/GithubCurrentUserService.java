@@ -30,46 +30,45 @@ import org.kohsuke.github.GitHub;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class GithubCurrentUserService {
 
     private final GHMyself user;
     private final GitHub gh;
 
-    public GithubCurrentUserService(GitHub gh) {
+    public GithubCurrentUserService(final GitHub gh) {
         this.gh = gh;
         try {
             this.user = gh.getMyself();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
 
 
-    public Map<String, GHRepository> getRepositories(String orgName) {
+    public Iterable<GHRepository> getRepositories(final String orgName) {
         try {
-            if (orgName.equals(user.getLogin())) {
-                return user.getRepositories();
+            if (orgName.equals(this.user.getLogin())) {
+                return this.gh.getMyself().listRepositories();
             } else {
-                return gh.getOrganization(orgName).getRepositories();
+                return this.gh.getOrganization(orgName).listRepositories();
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public String getCurrentLogin() {
-        return user.getLogin();
+        return this.user.getLogin();
     }
 
     public Iterable<String> getOrgs() {
         try {
-            List<String> allOrgs = new ArrayList<String>();
+            final List<String> allOrgs = new ArrayList<>();
             allOrgs.add(getCurrentLogin());
-            allOrgs.addAll(gh.getMyOrganizations().keySet());
+            allOrgs.addAll(this.gh.getMyOrganizations().keySet());
             return allOrgs;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
