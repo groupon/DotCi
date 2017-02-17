@@ -43,11 +43,11 @@ public class CommitStatusUpdateRunListenerTest {
 
     @Before
     public void setupTaget() {
-        githubRepository = mock(GHRepository.class);
-        commitStatusUpdateRunListener = new CommitStatusUpdateRunListener() {
+        this.githubRepository = mock(GHRepository.class);
+        this.commitStatusUpdateRunListener = new CommitStatusUpdateRunListener() {
             @Override
-            protected GHRepository getGithubRepository(DynamicBuild build) {
-                return githubRepository;
+            protected GHRepository getGithubRepository(final DynamicBuild build) {
+                return CommitStatusUpdateRunListenerTest.this.githubRepository;
             }
         };
 
@@ -55,44 +55,44 @@ public class CommitStatusUpdateRunListenerTest {
 
     @Test
     public void should_set_building_status_on_commit() throws IOException {
-        DynamicBuild build = newBuild().get();
-        commitStatusUpdateRunListener.onStarted(build, null);
+        final DynamicBuild build = newBuild().get();
+        this.commitStatusUpdateRunListener.onInitialize(build);
 
-        verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.PENDING, build.getFullUrl(), "Build in progress", "DotCi/push");
+        verify(this.githubRepository).createCommitStatus(build.getSha(), GHCommitState.PENDING, build.getFullUrl(), "Build in progress", "DotCi/push");
     }
 
     @Test
     public void should_set_success_status_on_commit_if_build_is_successful() throws IOException {
-        DynamicBuild build = newBuild().success().get();
+        final DynamicBuild build = newBuild().success().get();
 
-        commitStatusUpdateRunListener.onCompleted(build, BuildListenerFactory.newBuildListener().get());
-        verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.SUCCESS, build.getFullUrl(), "Success", "DotCi/push");
+        this.commitStatusUpdateRunListener.onCompleted(build, BuildListenerFactory.newBuildListener().get());
+        verify(this.githubRepository).createCommitStatus(build.getSha(), GHCommitState.SUCCESS, build.getFullUrl(), "Success", "DotCi/push");
 
 
     }
 
     @Test
     public void should_set_skipped_message_on_skipped_build() throws IOException {
-        DynamicBuild build = newBuild().success().skipped().get();
+        final DynamicBuild build = newBuild().success().skipped().get();
 
-        commitStatusUpdateRunListener.onCompleted(build, BuildListenerFactory.newBuildListener().get());
-        verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.SUCCESS, build.getFullUrl(), "Success - Skipped", "DotCi/push");
+        this.commitStatusUpdateRunListener.onCompleted(build, BuildListenerFactory.newBuildListener().get());
+        verify(this.githubRepository).createCommitStatus(build.getSha(), GHCommitState.SUCCESS, build.getFullUrl(), "Success - Skipped", "DotCi/push");
 
 
     }
 
     @Test
     public void should_set_failure_status_on_commit_if_build_fails() throws IOException {
-        DynamicBuild build = newBuild().fail().get();
-        commitStatusUpdateRunListener.onCompleted(build, BuildListenerFactory.newBuildListener().get());
-        verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.FAILURE, build.getFullUrl(), "Failed", "DotCi/push");
+        final DynamicBuild build = newBuild().fail().get();
+        this.commitStatusUpdateRunListener.onCompleted(build, BuildListenerFactory.newBuildListener().get());
+        verify(this.githubRepository).createCommitStatus(build.getSha(), GHCommitState.FAILURE, build.getFullUrl(), "Failed", "DotCi/push");
     }
 
     @Test
     public void should_set_failure_status_on_commit_if_build_is_unstable() throws IOException {
-        DynamicBuild build = newBuild().unstable().get();
-        commitStatusUpdateRunListener.onCompleted(build, BuildListenerFactory.newBuildListener().get());
-        verify(githubRepository).createCommitStatus(build.getSha(), GHCommitState.FAILURE, build.getFullUrl(), "Unstable", "DotCi/push");
+        final DynamicBuild build = newBuild().unstable().get();
+        this.commitStatusUpdateRunListener.onCompleted(build, BuildListenerFactory.newBuildListener().get());
+        verify(this.githubRepository).createCommitStatus(build.getSha(), GHCommitState.FAILURE, build.getFullUrl(), "Unstable", "DotCi/push");
     }
 
 

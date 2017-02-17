@@ -45,7 +45,7 @@ public class CommitStatusUpdateRunListener extends RunListener<DynamicBuild> {
     private static final Logger LOGGER = Logger.getLogger(CommitStatusUpdateRunListener.class.getName());
 
     @Override
-    public void onStarted(final DynamicBuild build, final TaskListener listener) {
+    public void onInitialize(final DynamicBuild build) {
         final GHRepository repository = getGithubRepository(build);
 
         try {
@@ -59,7 +59,7 @@ public class CommitStatusUpdateRunListener extends RunListener<DynamicBuild> {
         } catch (final Exception e) {
             // Ignore if cannot create a pending status
             LOGGER.log(Level.WARNING, "Failed to Update commit status", e);
-            printErrorToBuildConsole(listener, e);
+//            printErrorToBuildConsole(listener, e);
         }
     }
 
