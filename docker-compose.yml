@@ -22,7 +22,7 @@ plugin:
     BOWER_ALLOW_ROOT: 'True'
     MAVEN_OPTS: "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=8000,suspend=n"
   command: mvn hpi:run
- 
+
 ci:
   image: maven:3
   volumes_from:
