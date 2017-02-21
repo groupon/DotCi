@@ -23,14 +23,18 @@
   -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:test="/lib/test">
+<j:jelly xmlns:j="jelly:core"
+>
     <j:if test="${p.hookConfigured}">
-        <form action="${it.name}/refreshHook" method="get" id="addHook${p.name}" name="addhook">
-            <input type="hidden" name="fullName" value="${p.fullName}" />
-            <paper-button  raised="true"  onclick="document.getElementById('addHook${p.name}').submit();">
+        <form action="repoAction/${it.name}/refreshHook" method="get"
+              id="addHook${p.name}" name="addhook">
+            <input type="hidden" name="fullName" value="${p.fullName}"/>
+            <paper-button raised="true"
+                          onclick="document.getElementById('addHook${p.name}').submit();">
                 Use my login to access github
             </paper-button>
-            <label>(currently using <b>${p.hookAssignedTo}</b>)</label>
+            <label>(currently using<b>${p.hookAssignedTo}</b>)
+            </label>
         </form>
     </j:if>
 </j:jelly>

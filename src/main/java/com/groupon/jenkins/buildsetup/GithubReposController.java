@@ -89,15 +89,18 @@ public class GithubReposController implements RootAction, StaplerProxy {
     }
 
     public Object getDynamic(final String token, final StaplerRequest req, final StaplerResponse rsp) throws InvocationTargetException, IllegalAccessException {
-        final GithubRepoAction repoAction = getRepoAction(token);
+        return new GithubReposController(token);
+    }
+
+    public void doRepoAction(final StaplerRequest req, final StaplerResponse rsp) throws InvocationTargetException, IllegalAccessException {
+        final String[] tokens = StringUtils.split(req.getRestOfPath(), "/");
+        final GithubRepoAction repoAction = getRepoAction(tokens[0]);
         if (repoAction != null) {
-            final String[] tokens = req.getRestOfPath().split("/");
             final String methodToken = tokens.length > 1 ? tokens[1] : "index";
             final String methodName = "do" + StringUtils.capitalize(methodToken);
             final Method method = ReflectionUtils.getPublicMethodNamed(repoAction.getClass(), methodName);
             method.invoke(repoAction, req, rsp);
         }
-        return new GithubReposController(token);
     }
 
     private GithubRepoAction getRepoAction(final String leadToken) {
