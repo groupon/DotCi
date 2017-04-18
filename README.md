@@ -5,7 +5,7 @@ Brings ease of build configuration of cloud ci systems like travisci and ease of
 
 [http://groupon.github.io/DotCi](http://groupon.github.io/DotCi)
 
-###License
+### License
 ```
 The MIT License (MIT)
 

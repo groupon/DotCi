@@ -15,7 +15,7 @@
 
 
     
-###Using Docker:
+### Using Docker:
 
 * Install docker: https://docs.docker.com/mac/started/
 * Install docker-compose: https://docs.docker.com/compose/install/
