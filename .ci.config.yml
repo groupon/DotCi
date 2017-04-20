@@ -1,0 +1,15 @@
+Should Build Tags:
+   shouldBuildTags: true
+JobUi:
+   newUi: false
+Rebuild:
+   autoRebuild: false
+   rebuildDisabled: false
+BuildTimeoutWrapper: 
+   strategy: 
+       $class: hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy
+       timeoutMinutes: 10
+   timeoutEnvVar: 10    
+   
+BuildType: 
+  buildType: DockerComposeBuild
