@@ -25,6 +25,7 @@
 package com.groupon.jenkins.buildsetup;
 
 import com.groupon.jenkins.SetupConfig;
+import com.groupon.jenkins.util.EncryptionService;
 import hudson.ExtensionPoint;
 import jenkins.model.Jenkins;
 import org.apache.commons.jelly.JellyContext;
@@ -33,6 +34,7 @@ import org.apache.commons.jelly.XMLOutput;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHUser;
 import org.kohsuke.github.GitHub;
+import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.ByteArrayOutputStream;
@@ -62,6 +64,9 @@ public abstract class GithubRepoAction implements ExtensionPoint {
     public String getName() {
         return getClass().getSimpleName();
     }
+    public String getAccessToken(){
+       return new EncryptionService().encrypt(getAccessTokenFromSession(Stapler.getCurrentRequest()));
+    }
 
     protected GHRepository getGithubRepository(StaplerRequest request) throws IOException {
         String repoName = request.getParameter("fullName");
@@ -71,19 +76,19 @@ public abstract class GithubRepoAction implements ExtensionPoint {
     }
 
     protected GitHub getGitHub(StaplerRequest request) throws IOException {
-        return GitHub.connectUsingOAuth(getSetupConfig().getGithubApiUrl(), getAccessToken(request));
+        return GitHub.connectUsingOAuth(getSetupConfig().getGithubApiUrl(), getAccessTokenFromSession(request));
     }
 
     protected SetupConfig getSetupConfig() {
         return SetupConfig.get();
     }
 
-    protected String getAccessToken(StaplerRequest request) {
+    protected String getAccessTokenFromSession(StaplerRequest request) {
         return (String) request.getSession().getAttribute("access_token");
     }
 
     protected String getCurrentUserLogin(StaplerRequest request) throws IOException {
-        GHUser self = GitHub.connectUsingOAuth(getSetupConfig().getGithubApiUrl(), getAccessToken(request)).getMyself();
+        GHUser self = GitHub.connectUsingOAuth(getSetupConfig().getGithubApiUrl(), getAccessTokenFromSession(request)).getMyself();
         return self.getLogin();
     }
 }

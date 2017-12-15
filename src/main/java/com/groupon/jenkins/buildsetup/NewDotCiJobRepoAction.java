@@ -26,6 +26,7 @@ package com.groupon.jenkins.buildsetup;
 
 import com.groupon.jenkins.SetupConfig;
 import com.groupon.jenkins.dynamic.build.DynamicProject;
+import com.groupon.jenkins.util.EncryptionService;
 import hudson.Extension;
 import hudson.model.TopLevelItem;
 import jenkins.model.Jenkins;
@@ -37,8 +38,13 @@ import java.io.IOException;
 @Extension
 public class NewDotCiJobRepoAction extends GithubRepoAction {
     public void doCreateProject(StaplerRequest request, StaplerResponse response) throws IOException {
-        DynamicProject project = SetupConfig.get().getDynamicProjectRepository().createNewProject(getGithubRepository(request), getAccessToken(request), getCurrentUserLogin(request));
+        DynamicProject project = SetupConfig.get().getDynamicProjectRepository().createNewProject(getGithubRepository(request), getAccessTokenFromRequest(request), getCurrentUserLogin(request));
         response.sendRedirect2(redirectAfterCreateItem(request, project));
+    }
+
+    private String getAccessTokenFromRequest(StaplerRequest request) {
+        String accessToken = request.getParameter("accessToken");
+        return new EncryptionService().decrypt(accessToken);
     }
 
     protected String redirectAfterCreateItem(StaplerRequest req, TopLevelItem result) throws IOException {

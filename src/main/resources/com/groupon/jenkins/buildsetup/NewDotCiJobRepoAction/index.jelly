@@ -31,6 +31,7 @@ THE SOFTWARE.
         <form action="repoAction/${it.name}/createProject"
               id="addProject${p.name}" name="addproject">
             <input type="hidden" name="fullName" value="${p.fullName}"/>
+            <input type="hidden" name="accessToken" value="${it.accessToken}"/>
             <paper-button raised="true"
                           onclick="document.getElementById('addProject${p.name}').submit();">
                 <iron-icon icon="add"/>

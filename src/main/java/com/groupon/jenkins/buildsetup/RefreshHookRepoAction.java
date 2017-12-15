@@ -35,7 +35,7 @@ import java.io.IOException;
 @Extension
 public class RefreshHookRepoAction extends GithubRepoAction {
     public void doRefreshHook(StaplerRequest request, StaplerResponse response) throws IOException, ServletException {
-        new GithubRepositoryService(getGithubRepository(request)).addHook(getAccessToken(request), getCurrentUserLogin(request));
+        new GithubRepositoryService(getGithubRepository(request)).addHook(getAccessTokenFromSession(request), getCurrentUserLogin(request));
         response.forwardToPreviousPage(request);
     }
 
