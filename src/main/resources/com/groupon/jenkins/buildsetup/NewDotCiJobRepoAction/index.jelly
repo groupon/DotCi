@@ -28,7 +28,7 @@ THE SOFTWARE.
            className="hudson.Functions"/><!-- instead of JSP functions -->
     ${h.initPageVariables(context)}
     <j:if test="${!p.projectPresent}">
-        <form action="repoAction/${it.name}/createProject"
+        <form action="repoAction/${it.name}/createProject/${p.fullName}"
               id="addProject${p.name}" name="addproject">
             <input type="hidden" name="fullName" value="${p.fullName}"/>
             <input type="hidden" name="accessToken" value="${it.accessToken}"/>
