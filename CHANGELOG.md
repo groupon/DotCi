@@ -1,40 +1,40 @@
-##2.6.3 (3/03/2015)
+## 2.6.3 (3/03/2015)
 - Add build header for new build page
 - Add cancel/restart button in the new ui
 
-##2.6.2(28/03/2015)
+## 2.6.2(28/03/2015)
  - Add console log with line numbers for the new UI
 
-##2.6.1(26/03/2015)
+## 2.6.1(26/03/2015)
  - Add option in build configuration to switch to new ui
 
-##2.6.0(17/03/2015)
+## 2.6.0(17/03/2015)
   - Replace `d3.js` with `chart.js` for build metrics.
   
-##2.6.0(16/03/2015)
+## 2.6.0(16/03/2015)
   - Optional new ui preview at ``<job-url>/newUi``
   
-##2.5.3(23/12/2014)
+## 2.5.3(23/12/2014)
  Bugfix:
   - Fix issue #98. Parallization error for docker sub builds.
-##2.5.2(16/12/2014)
+## 2.5.2(16/12/2014)
  Bugfix: 
   - Fix typo in github ouath url.
-##2.5.1(10/12/2014)
+## 2.5.1(10/12/2014)
  Bugfix: 
   - Request `write:repo_hook` in github scopes
 
-##2.5.0(10/12/2014)
+## 2.5.0(10/12/2014)
  Features:
   - Remove dependency on github oauth plugin. 
   - This Change lets dotci to be used with any(or no) authentication instead of mandating github oauth authentication.
  
-##2.4.0(01/12/2014)
+## 2.4.0(01/12/2014)
 Bugfix: 
  - Fix docker link container cleanup bug where linked containers were not being discarded if the build failed.
  - Store empty lists in database.
 
-##2.3.0(11/24/2014)
+## 2.3.0(11/24/2014)
 Features:
  - Add Commit History View for the `SHA` in current build.
  - Add support for private repos.
@@ -50,13 +50,13 @@ Bugfixes:
   - Fixes https://github.com/groupon/DotCi/issues/64.
   - Githook authenticates as `SYSTEM` user now.
 
-##2.2.0(11/19/2014)
+## 2.2.0(11/19/2014)
  - Changed serialization from XStream (XML) to Morphia (MongoDB/BSON)
     * Supports most classes that were previously serializable in XML
     * Does not currently support non-static inner classes
     * Includes [migration script] (./src/main/groovy/dotci_db_xml_morphia_migration.groovy) to assist transitioning from Mongo stored XML to BSON
 
-##2.0.0(09/05/2014)
+## 2.0.0(09/05/2014)
  - Introduced BuildType extension with two currently supported buildtypes
     * Install Packages
     * Docker Image

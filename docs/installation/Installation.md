@@ -27,7 +27,7 @@ following installed in addition to required Jenkins software:
 * [docker](https://www.docker.com)
 * [docker-compose](https://docs.docker.com/compose/install/)
 
-#MongoDB indexes
+# MongoDB indexes
 
 * Builds for project
 ```
