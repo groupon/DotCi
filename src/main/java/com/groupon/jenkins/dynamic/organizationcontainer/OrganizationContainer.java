@@ -170,7 +170,20 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
 
     @Override
     public DynamicProject getItem(final String name) {
-        return this.items.get(name);
+        DynamicProject project = this.items.get(name);
+        if(project == null){
+            project = SetupConfig.get().getDynamicProjectRepository().getProjectForOrg(this, name);
+            if(project !=null ){
+
+                try {
+                    this.items.put(name,project);
+                    project.onLoad(this,name);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return project;
     }
 
     @Override
