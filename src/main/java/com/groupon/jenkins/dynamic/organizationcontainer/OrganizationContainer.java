@@ -36,6 +36,7 @@ import hudson.model.Item;
 import hudson.model.ItemGroup;
 import hudson.model.ItemGroupMixIn;
 import hudson.model.Job;
+import hudson.model.Run;
 import hudson.model.TopLevelItem;
 import hudson.model.TopLevelItemDescriptor;
 import hudson.model.View;
@@ -170,7 +171,23 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
 
     @Override
     public DynamicProject getItem(final String name) {
-        return this.items.get(name);
+        DynamicProject project = this.items.get(name);
+        if(project == null){
+            project = SetupConfig.get().getDynamicProjectRepository().getProjectForOrg(this, name);
+            addProjectToContainer(name, project);
+        }
+        return project;
+    }
+
+    private void addProjectToContainer(String name, DynamicProject project) {
+        if(project !=null ){
+            try {
+                this.items.put(name,project);
+                project.onLoad(this,name);
+            } catch (IOException e) {
+               throw new RuntimeException(e);
+            }
+        }
     }
 
     @Override

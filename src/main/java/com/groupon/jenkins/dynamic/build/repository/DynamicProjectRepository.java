@@ -182,6 +182,14 @@ public class DynamicProjectRepository extends MongoRepository {
             .asList();
     }
 
+    public DynamicProject getProjectForOrg(OrganizationContainer organizationContainer, String name) {
+        return getDatastore().createQuery(DynamicProject.class).disableValidation()
+            .field("containerName").equal(organizationContainer.getName())
+            .field("name").equal(name)
+            .get();
+
+    }
+
     public DynamicProject getProjectById(final ObjectId id) {
         return getDatastore()
             .createQuery(DynamicProject.class)
@@ -212,4 +220,6 @@ public class DynamicProjectRepository extends MongoRepository {
 
         return seq.getCounter() + 1;
     }
+
+
 }
