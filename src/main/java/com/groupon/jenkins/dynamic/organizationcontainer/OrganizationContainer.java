@@ -36,7 +36,6 @@ import hudson.model.Item;
 import hudson.model.ItemGroup;
 import hudson.model.ItemGroupMixIn;
 import hudson.model.Job;
-import hudson.model.Run;
 import hudson.model.TopLevelItem;
 import hudson.model.TopLevelItemDescriptor;
 import hudson.model.View;
@@ -57,6 +56,7 @@ import org.kohsuke.stapler.StaplerOverridable;
 import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.export.Exported;
 
 import javax.servlet.ServletException;
 import java.io.File;
@@ -159,6 +159,7 @@ public class OrganizationContainer extends AbstractItem implements IdentifableIt
         throw new UnsupportedOperationException();
     }
 
+    @Exported(name="jobs")
     @Override
     public Collection<DynamicProject> getItems() {
         return this.items.values();
