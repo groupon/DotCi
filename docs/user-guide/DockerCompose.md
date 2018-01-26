@@ -79,7 +79,7 @@ This is useful when combined with templating. Eg,
 ```yaml
 #only build master or pull request.
 <% if (DOTCI_BRANCH != 'master' && !DOTCI_PULL_REQUEST ) { %>
-skip:
+skip: true
 <% } %>
 run:
   ci: 
