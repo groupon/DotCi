@@ -141,16 +141,16 @@ THE SOFTWARE.
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <executable>${npm-executable}</executable>
-                    <environmentVariables>
-                        <NODE_ENV>production</NODE_ENV>
-                    </environmentVariables>
-                    <arguments>
-                        <argument>run</argument>
-                        <argument>build</argument>
-                    </arguments>
-                </configuration>
+                <!-- <configuration> -->
+                <!--     <executable>${npm-executable}</executable> -->
+                <!--     <environmentVariables> -->
+                <!--         <NODE_ENV>production</NODE_ENV> -->
+                <!--     </environmentVariables> -->
+                <!--     <arguments> -->
+                <!--         <argument>run</argument> -->
+                <!--         <argument>build</argument> -->
+                <!--     </arguments> -->
+                <!-- </configuration> -->
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
